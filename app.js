@@ -1,0 +1,3285 @@
+// ===== APP STATE =====
+let state = {
+  currentPage: 'landing',
+  user: JSON.parse(localStorage.getItem('jj_user')) || null,
+  get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
+  filters: { search: '', category: '', type: '', radius: 50, hours: '', city: '', sort: 'date' },
+  chatOpen: false,
+  aiOpen: false,
+  activeChat: null,
+  wizardStep: 0,
+  newJob: {},
+  dropdownOpen: false
+};
+
+// ===== NAVIGATION =====
+function navigate(page, data) {
+  state.currentPage = page;
+  state.pageData = data;
+  render();
+  window.scrollTo(0, 0);
+}
+
+function navigateToSection(page, sectionId) {
+  // Richtigen Schritt für die Profilseite setzen
+  if (page === 'worker-profile' && sectionId) {
+    const idx = PROFILE_STEPS.findIndex(s => s.id === sectionId);
+    if (idx >= 0) state.profileStep = idx;
+  }
+  state.currentPage = page;
+  state.pageData = {};
+  render();
+  window.scrollTo(0, 0);
+}
+
+function render() {
+  const app = document.getElementById('app');
+  updateNav();
+
+  const pages = {
+    'landing': renderLanding,
+    'jobs': renderJobSearch,
+    'job-detail': renderJobDetail,
+    'login': renderLogin,
+    'register': renderRegister,
+    'worker-dashboard': renderWorkerDashboard,
+    'worker-profile': renderWorkerProfile,
+    'worker-profile-view': renderWorkerProfileView,
+    'saved-jobs': renderSavedJobs,
+    'applications': renderApplications,
+    'cv-builder': renderCVBuilder,
+    'employer-landing': renderEmployerLanding,
+    'employer-dashboard': renderEmployerDashboard,
+    'post-job': renderPostJob,
+    'employer-profile': renderEmployerProfile,
+    'applicants': renderApplicants,
+    'applicant-profile': renderApplicantProfile,
+    'interview': renderInterview,
+    'messages': renderMessages,
+    'chat': renderChatDetail,
+    'reviews': renderReviews
+  };
+
+  const renderFn = pages[state.currentPage] || renderLanding;
+  app.innerHTML = renderFn();
+
+  // Auto-scroll chat to bottom
+  if (state.currentPage === 'chat') {
+    setTimeout(() => {
+      const el = document.getElementById('chat-messages-page');
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
+  }
+
+  // Show/hide widgets based on login
+  // chat-widget removed
+  document.getElementById('ai-widget').classList.toggle('hidden', state.aiOpen);
+
+  // Re-attach event listeners
+  attachEventListeners();
+}
+
+function updateNav() {
+  const actions = document.getElementById('nav-actions');
+  if (state.user) {
+    const isEmployer = state.user.role === 'employer';
+    actions.innerHTML = `
+      <div class="user-menu">
+
+        <div class="user-avatar" onclick="toggleDropdown()">${state.user.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown">
+          <a href="#" onclick="navigate('${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}'); toggleDropdown()">Dashboard</a>
+          <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
+          ${!isEmployer ? '<a href="#" onclick="navigate(\'saved-jobs\'); toggleDropdown()">Gespeicherte Jobs</a>' : ''}
+          ${!isEmployer ? '<a href="#" onclick="navigate(\'cv-builder\'); toggleDropdown()">Lebenslauf</a>' : ''}
+          ${isEmployer ? '<a href="#" onclick="navigate(\'post-job\'); toggleDropdown()">Anzeige schalten</a>' : ''}
+          <a href="#" onclick="navigate('messages'); toggleDropdown()">Nachrichten</a>
+          <div class="divider"></div>
+          <button onclick="logout()">Abmelden</button>
+        </div>
+      </div>`;
+  } else {
+    actions.innerHTML = `
+      <button class="btn btn-outline" onclick="navigate('login')">Anmelden</button>
+      <button class="btn btn-primary" onclick="navigate('register')">Registrieren</button>`;
+  }
+
+  // Show/hide mobile profile icon button
+  const mobileProfileBtn = document.getElementById('mobile-profile-btn');
+  if (mobileProfileBtn) {
+    mobileProfileBtn.style.display = state.user ? 'flex' : 'none';
+  }
+}
+
+function mobileProfileNav() {
+  if (!state.user) { navigate('login'); return; }
+  navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+}
+
+function toggleDropdown() {
+  state.dropdownOpen = !state.dropdownOpen;
+  const dd = document.getElementById('user-dropdown');
+  if (dd) dd.classList.toggle('hidden');
+}
+
+function toggleMobileMenu() {
+  document.getElementById('mobile-menu').classList.toggle('open');
+}
+
+// ===== AUTH =====
+function loadUserSession(user) {
+  // Load all user-specific data into state
+  state.user = user;
+  localStorage.setItem('jj_user', JSON.stringify(user));
+  loadUserChats();
+}
+
+function login(email, password) {
+  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  // Find by email (password not enforced in prototype)
+  const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
+  if (user) {
+    // Reload latest saved version of this user
+    const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
+    loadUserSession(latestUser);
+    navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } else {
+    const err = document.getElementById('login-error');
+    if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
+  }
+}
+
+function register(data) {
+  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
+    const err = document.getElementById('register-error');
+    if (err) { err.textContent = 'Diese E-Mail ist bereits registriert. Bitte melde dich an.'; err.style.display='block'; }
+    return;
+  }
+  const user = { ...data, id: Date.now(), createdAt: new Date().toISOString(), profileComplete: 20 };
+  users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
+  localStorage.setItem('jj_users', JSON.stringify(users));
+  // Save full user data under its own key
+  localStorage.setItem('jj_user_' + user.id, JSON.stringify(user));
+  loadUserSession(user);
+  navigate(user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+}
+
+function logout() {
+  state.user = null;
+  state.dropdownOpen = false;
+  localStorage.removeItem('jj_user');
+  navigate('landing');
+}
+
+// ===== TOAST =====
+function showToast(msg, type='success') {
+  const existing = document.getElementById('jj-toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'jj-toast';
+  t.textContent = msg;
+  t.style.cssText = `position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+    background:${type==='success'?'var(--success)':type==='error'?'var(--danger)':'var(--primary)'};
+    color:#fff;padding:0.75rem 1.5rem;border-radius:100px;font-size:0.9rem;font-weight:600;
+    z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.15);animation:fadeIn 0.2s ease`;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ===== BEWERBUNG =====
+// applications loaded per-user via getUserApps()
+
+function getUserApps() {
+  if (!state.user) return [];
+  return JSON.parse(localStorage.getItem('jj_apps_' + state.user.id) || '[]');
+}
+function saveUserApps(apps) {
+  if (!state.user) return;
+  localStorage.setItem('jj_apps_' + state.user.id, JSON.stringify(apps));
+}
+function submitApplication(jobId) {
+  const apps = getUserApps();
+  if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
+  apps.push(jobId);
+  saveUserApps(apps);
+  showToast('Bewerbung erfolgreich gesendet!');
+  render();
+}
+
+// ===== PROFIL SPEICHERN =====
+function saveWorkerProfile(btn) {
+  // Alle Formularfelder auslesen und in user speichern
+  const page = btn.closest('.dashboard-content');
+  const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],textarea,select') : [];
+  inputs.forEach(inp => {
+    if (inp.name) state.user[inp.name] = inp.value;
+  });
+  // Fortschritt berechnen
+  state.user.address = state.user.address || (page && page.querySelector('input[placeholder*="Stadt"]')?.value) || '';
+  state.user.hasSkills = true;
+  state.user.hasHours = true;
+  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  showToast('Profil gespeichert!');
+  render();
+}
+
+// ===== STELLENANZEIGE VERÖFFENTLICHEN =====
+function publishJob() {
+  const newJob = {
+    id: Date.now(),
+    title: document.querySelector('.wizard-body input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
+    company: state.user?.name || 'Unternehmen',
+    companyLogo: state.user?.name?.[0] || 'U',
+    location: document.querySelector('.wizard-body input[placeholder*="Straße"]')?.value || 'Berlin',
+    city: 'Berlin', distance: 3,
+    salary: document.querySelector('.wizard-body input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
+    hours: document.querySelector('.wizard-body input[placeholder*="Std/Woche"]')?.value || 'Flexible',
+    category: 'Sonstiges', type: 'Minijob',
+    posted: new Date().toISOString(),
+    views: 0, clicks: 0, applications: 0,
+    promoted: false, tags: [],
+    description: 'Neue Stellenanzeige', requirements: '', benefits: '',
+    images: [], reviews: [],
+    companyInfo: { about: '', industry: '', employees: '', founded: '', instagram: '', website: '' }
+  };
+  JOBS.unshift(newJob);
+  state.wizardStep = 0;
+  showToast('Stellenanzeige veröffentlicht!');
+  navigate('employer-dashboard');
+}
+
+// ===== KI GENERIEREN =====
+function aiGenerateJob(btn) {
+  btn.textContent = 'Wird generiert…';
+  btn.disabled = true;
+  const examples = [
+    { tasks: 'Kundenberatung und Kassentätigkeit\nWareneinräumen und Regalpflege\nSauberhalten des Verkaufsbereichs', req: 'Freundliches Auftreten\nZuverlässigkeit und Pünktlichkeit', benefits: 'Flexible Arbeitszeiten\nFahrgeld\nMitarbeiterrabatte' },
+    { tasks: 'Unterstützung des Teams im Tagesgeschäft\nBearbeitung von Kundenanfragen\nAllgemeine Bürotätigkeiten', req: 'Gute Kommunikationsfähigkeit\nMS-Office Grundkenntnisse', benefits: 'Moderne Arbeitsumgebung\nJobticket\nSocial Events' },
+  ];
+  const ex = examples[Math.floor(Math.random() * examples.length)];
+  setTimeout(() => {
+    const textareas = document.querySelectorAll('.wizard-body textarea');
+    if (textareas[0]) textareas[0].value = ex.tasks;
+    if (textareas[1]) textareas[1].value = ex.req;
+    if (textareas[2]) textareas[2].value = ex.benefits;
+    btn.textContent = '✓ Generiert';
+    btn.disabled = false;
+    showToast('KI hat die Stellenanzeige vorgeneriert!');
+  }, 1200);
+}
+
+// ===== BEWERTUNG ABSENDEN =====
+function submitReview(btn) {
+  const card = btn.closest('.card-body');
+  const stars = card.querySelectorAll('.star.filled').length;
+  const text = card.querySelector('textarea')?.value?.trim();
+  if (!stars) { showToast('Bitte wähle eine Bewertung (1-5 Sterne).', 'error'); return; }
+  if (!text) { showToast('Bitte schreibe einen kurzen Text.', 'error'); return; }
+  showToast('Bewertung abgegeben! Sie wird nach Prüfung sichtbar.');
+  card.querySelector('textarea').value = '';
+  card.querySelectorAll('.star').forEach(s => s.classList.remove('filled'));
+}
+
+// ===== SKILLS MAX 3 =====
+function limitSkills(cb, max) {
+  const all = [...document.querySelectorAll('.checkbox-group input[type=checkbox]')];
+  const checked = all.filter(c => c.checked);
+  if (checked.length > max) {
+    cb.checked = false;
+    showToast(`Maximal ${max} Skills wählbar.`, 'error');
+  }
+}
+
+// ===== LEBENSLAUF ZUM PROFIL HINZUFÜGEN =====
+function addCVToProfile() {
+  if (!state.user) { navigate('login'); return; }
+  state.user.cvUploaded = true;
+  state.user.cvFileName = 'Lebenslauf (Builder)';
+  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
+}
+
+function previewCV() {
+  showToast('Vorschau wird geöffnet…', 'info');
+}
+
+// ===== LEBENSLAUF DOWNLOAD =====
+function downloadCV() {
+  const u = state.user || {};
+  const content = `LEBENSLAUF\n\n${u.name || 'Name'}\n${u.email || 'E-Mail'}\n\n--- Erstellt mit EasyJobs ---`;
+  const blob = new Blob([content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lebenslauf.txt';
+  a.click();
+  showToast('Lebenslauf wird heruntergeladen…');
+}
+
+// ===== DOKUMENT GESCANNT =====
+function docScanned(input) {
+  if (input.files.length) {
+    state.user.docsUploaded = true;
+    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    showToast('Dokument erfolgreich hochgeladen!');
+    render();
+  }
+}
+
+// ===== SAVE JOB =====
+function toggleSaveJob(jobId, e) {
+  if (e) e.stopPropagation();
+  if (!state.user) { navigate('register'); return; }
+  const key = 'jj_saved_' + state.user.id;
+  const saved = JSON.parse(localStorage.getItem(key) || '[]');
+  const idx = saved.indexOf(jobId);
+  if (idx > -1) saved.splice(idx, 1);
+  else saved.push(jobId);
+  localStorage.setItem(key, JSON.stringify(saved));
+  render();
+}
+
+// ===== GUARDS =====
+function requireEmployerLogin(then) {
+  if (!state.user) { navigate('login'); return; }
+  if (state.user.role !== 'employer') { navigate('login'); return; }
+  if (then) then();
+}
+
+function goPostJob() {
+  requireEmployerLogin(() => navigate('post-job'));
+}
+
+// ===== CHAT =====
+function toggleChat() {
+  if (!state.user) { navigate('login'); return; }
+  if (state.user.role === 'employer') return; // Arbeitgeber kommen nicht auf Worker-Nachrichten
+  navigate('messages');
+}
+
+function chatKey() {
+  return state.user ? 'jj_chats_' + state.user.id : null;
+}
+function loadUserChats() {
+  if (!state.user) return;
+  const key = chatKey();
+  const chats = JSON.parse(localStorage.getItem(key) || '[]');
+  if (state.user.role === 'employer') {
+    EMPLOYER_CHAT_MESSAGES.length = 0;
+    chats.forEach(c => EMPLOYER_CHAT_MESSAGES.push(c));
+  } else {
+    WORKER_CHAT_MESSAGES.length = 0;
+    chats.forEach(c => WORKER_CHAT_MESSAGES.push(c));
+  }
+}
+function saveUserChats() {
+  const key = chatKey();
+  if (!key) return;
+  const chats = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+  localStorage.setItem(key, JSON.stringify(chats));
+}
+function getChatList() {
+  if (!state.user) return [];
+  return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+}
+
+function findChat(id) {
+  return [...WORKER_CHAT_MESSAGES, ...EMPLOYER_CHAT_MESSAGES].find(c => c.id === id);
+}
+
+function renderChatWidget() {
+  const content = document.getElementById('chat-content');
+  const chatList = getChatList();
+  if (!state.activeChat) {
+    content.innerHTML = `
+      <div class="chat-list">
+        ${chatList.map(c => `
+          <div class="chat-list-item" onclick="openChat(${c.id})">
+            <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-weight:600;font-size:0.85rem">${c.partnerName}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${c.jobTitle}</div>
+              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:0.7rem;color:var(--gray-400)">${c.time}</div>
+              ${c.unread ? '<div class="unread" style="margin-left:auto;margin-top:4px"></div>' : ''}
+            </div>
+          </div>
+        `).join('')}
+        ${chatList.length === 0 ? '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">Noch keine Nachrichten</div>' : ''}
+      </div>`;
+  } else {
+    const chat = findChat(state.activeChat);
+    content.innerHTML = `
+      <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
+        <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
+        <strong style="font-size:0.85rem">${chat.partnerName}</strong>
+      </div>
+      <div class="chat-messages" style="flex:1;overflow-y:auto;padding:0.75rem">
+        ${chat.messages.map(m => `
+          <div class="chat-msg ${m.sent ? 'sent' : 'received'}">
+            ${m.text}
+            <div class="msg-time">${m.time}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="chat-input-area">
+        <input type="text" placeholder="Nachricht..." id="chat-input" onkeydown="if(event.key==='Enter')sendChatMessage()">
+        <button onclick="sendChatMessage()">→</button>
+      </div>`;
+  }
+}
+
+function openChat(id) {
+  state.activeChat = id;
+  renderChatWidget();
+}
+
+function openApplicantChat(applicantId) {
+  const a = MOCK_APPLICANTS.find(x => x.id === applicantId);
+  if (!a) { navigate('messages'); return; }
+  let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
+  if (!chat) {
+    chat = {
+      id: 100 + applicantId,
+      partnerId: 'worker-' + applicantId,
+      partnerName: a.name,
+      partnerInitials: a.initials,
+      jobTitle: a.job,
+      lastMessage: '',
+      time: '',
+      unread: false,
+      messages: []
+    };
+    EMPLOYER_CHAT_MESSAGES.push(chat);
+  saveUserChats();
+  }
+  state.activeChat = chat.id;
+  navigate('chat', { chatId: chat.id });
+}
+
+function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  if (!input || !input.value.trim()) return;
+  const chat = findChat(state.activeChat);
+  if (chat) {
+    const now = new Date();
+    chat.messages.push({ text: input.value, sent: true, time: `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}` });
+    saveUserChats();
+    input.value = '';
+    if (state.currentPage === 'chat') {
+      render();
+      // Scroll to bottom after render
+      setTimeout(() => {
+        const el = document.getElementById('chat-messages-page');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 50);
+    } else {
+      renderChatWidget();
+    }
+    setTimeout(() => {
+      chat.messages.push({ text: 'Danke für deine Nachricht! Ich melde mich bald.', sent: false, time: `${now.getHours()}:${String(now.getMinutes()+1).padStart(2,'0')}` });
+      saveUserChats();
+      if (state.currentPage === 'chat') {
+        render();
+        setTimeout(() => {
+          const el = document.getElementById('chat-messages-page');
+          if (el) el.scrollTop = el.scrollHeight;
+        }, 50);
+      } else {
+        renderChatWidget();
+      }
+    }, 1500);
+  }
+}
+
+// ===== AI ASSISTANT =====
+function toggleAI() {
+  state.aiOpen = !state.aiOpen;
+  document.getElementById('ai-panel').classList.toggle('hidden');
+  document.getElementById('ai-widget').classList.toggle('hidden', state.aiOpen);
+}
+
+function sendAIMessage() {
+  const input = document.getElementById('ai-input');
+  if (!input || !input.value.trim()) return;
+  const msg = input.value.trim();
+  const container = document.getElementById('ai-messages');
+  container.innerHTML += `<div class="ai-msg user">${escapeHtml(msg)}</div>`;
+  input.value = '';
+
+  // Find matching response
+  const lower = msg.toLowerCase();
+  let response = AI_RESPONSES['default'];
+  for (const [key, val] of Object.entries(AI_RESPONSES)) {
+    if (lower.includes(key)) { response = val; break; }
+  }
+
+  setTimeout(() => {
+    container.innerHTML += `<div class="ai-msg bot">${response.replace(/\n/g, '<br>')}</div>`;
+    container.scrollTop = container.scrollHeight;
+  }, 800);
+}
+
+// ===== HELPER =====
+function escapeHtml(text) {
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML;
+}
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  const diff = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+  if (diff === 0) return 'Heute';
+  if (diff === 1) return 'Gestern';
+  if (diff < 7) return `Vor ${diff} Tagen`;
+  return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function getFilteredJobs() {
+  let jobs = [...JOBS];
+  const f = state.filters;
+  if (f.search) {
+    const s = f.search.toLowerCase();
+    jobs = jobs.filter(j => j.title.toLowerCase().includes(s) || j.company.toLowerCase().includes(s) || j.tags.some(t => t.toLowerCase().includes(s)));
+  }
+  if (f.category) jobs = jobs.filter(j => j.category === f.category);
+  if (f.type) jobs = jobs.filter(j => j.type === f.type);
+  if (f.radius < 50) jobs = jobs.filter(j => j.distance <= f.radius);
+  if (f.city) jobs = jobs.filter(j => j.city === f.city);
+  if (f.sort === 'date') jobs.sort((a, b) => new Date(b.posted) - new Date(a.posted));
+  if (f.sort === 'views') jobs.sort((a, b) => b.views - a.views);
+  if (f.sort === 'distance') jobs.sort((a, b) => a.distance - b.distance);
+  // Promoted jobs first
+  jobs.sort((a, b) => (b.promoted ? 1 : 0) - (a.promoted ? 1 : 0));
+  return jobs;
+}
+
+// ===== PAGE RENDERERS =====
+
+function renderLanding() {
+  return `
+    <div class="hero">
+      <div class="hero-content slide-up">
+        <h1>Finde deinen perfekten Nebenjob</h1>
+        <p>Die Plattform, die junge Talente mit den besten Arbeitgebern verbindet. Einfach, schnell und sicher.</p>
+        <div class="hero-buttons">
+          <button class="btn btn-lg btn-primary" onclick="navigate('jobs')">Jobs entdecken</button>
+          <button class="btn btn-lg btn-outline" onclick="navigate('employer-landing')">Stellenanzeige schalten</button>
+        </div>
+        <div class="stats-bar">
+          <div class="stat"><div class="stat-number">2.500</div><div class="stat-label">Aktive Jobs</div></div>
+          <div class="stat"><div class="stat-number">15.000</div><div class="stat-label">Registrierte Nutzer</div></div>
+          <div class="stat"><div class="stat-number">800</div><div class="stat-label">Unternehmen</div></div>
+          <div class="stat"><div class="stat-number">98%</div><div class="stat-label">Zufriedenheit</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-band section-band-white">
+    <div class="features-section">
+      <div class="section-header">
+        <h2>Warum EasyJobs?</h2>
+        <p>Alles was du brauchst, um den perfekten Job zu finden oder die besten Talente einzustellen.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></div>
+          <h3>Smarte Jobsuche</h3>
+          <p>Finde Jobs in deiner Nähe mit intelligenten Filtern nach Umkreis, Arbeitszeit und Branche.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div>
+          <h3>KI-Unterstützung</h3>
+          <p>Unser KI-Assistent hilft dir bei Motivationsschreiben, Lebenslauf und beantwortet deine Fragen.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Direkter Chat</h3>
+          <p>Kommuniziere direkt mit Arbeitgebern über unseren integrierten Chat.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg></div>
+          <h3>Lebenslauf-Builder</h3>
+          <p>Erstelle professionelle Lebensläufe mit unseren modernen Vorlagen.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <h3>Analytics Dashboard</h3>
+          <p>Arbeitgeber sehen in Echtzeit wie ihre Anzeigen performen.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <h3>Bewertungssystem</h3>
+          <p>Transparente Bewertungen von beiden Seiten für mehr Vertrauen.</p>
+        </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-band section-band-soft">
+    <div class="cta-section">
+      <h2>Bereit, deinen nächsten Job zu finden?</h2>
+      <p>Entdecke hunderte Minijobs und Nebenjobs in deiner Nähe – kostenlos und ohne Umwege.</p>
+      <button class="btn btn-lg" onclick="navigate('jobs')">Jobs finden</button>
+    </div>
+    </div>
+
+    <div class="section-band section-band-mid">
+    <div class="photo-strip">
+      <div class="photo-strip-item">
+        <img src="images/foto1.jpg" alt="Junger Kellner im Café" loading="lazy">
+        <div class="photo-strip-label">Gastronomie</div>
+      </div>
+      <div class="photo-strip-item">
+        <img src="images/foto2.jpg" alt="Azubi an der Kasse" loading="lazy">
+        <div class="photo-strip-label">Einzelhandel</div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-band section-band-soft">
+    <div class="testimonials-section">
+      <div class="section-header">
+        <h2>Das sagen unsere Nutzer</h2>
+        <p>Tausende Schüler haben über EasyJobs ihren ersten Job gefunden.</p>
+      </div>
+      <div class="testimonials-grid">
+        ${TESTIMONIALS.slice(0, 3).map(t => `
+          <div class="testimonial-card fade-in">
+            <div class="testimonial-stars">${'&#9733;'.repeat(t.rating)}${'&#9734;'.repeat(5 - t.rating)}</div>
+            <div class="testimonial-text">"${t.text}"</div>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">${t.initials}</div>
+              <div>
+                <div class="testimonial-name">${t.name}</div>
+                <div class="testimonial-role">${t.role}</div>
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    </div>
+
+    <div class="section-band section-band-white">
+    <div class="cta-section">
+      <h2>Starte jetzt durch!</h2>
+      <p>Egal ob Arbeitnehmer oder Arbeitgeber - registriere dich kostenlos und leg los.</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+        <button class="btn btn-lg" onclick="navigate('register')">Kostenlos registrieren</button>
+        <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff" onclick="navigate('employer-landing')">Stellenanzeige schalten</button>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-band section-band-soft">
+    <div class="faq-section">
+      <div class="section-header">
+        <h2>Häufige Fragen</h2>
+        <p>Alles was du über EasyJobs wissen musst.</p>
+      </div>
+      <div class="faq-list">
+        ${[
+          { q: 'Ist EasyJobs kostenlos?', a: 'Ja, für Schüler und Jobsuchende ist EasyJobs vollständig kostenlos. Du kannst dich registrieren, Bewerbungen abschicken und Arbeitgeber kontaktieren – ohne versteckte Kosten.' },
+          { q: 'Wie alt muss ich sein, um mich zu bewerben?', a: 'Du kannst dich ab 13 Jahren registrieren. Für bestimmte Jobs gelten gesetzliche Altersgrenzen – diese sind direkt in der Stellenanzeige angegeben.' },
+          { q: 'Was ist ein Minijob?', a: 'Ein Minijob ist eine geringfügige Beschäftigung mit einem Verdienst bis 538 € pro Monat. Du zahlst keine Steuern und Sozialabgaben sind minimal – ideal als erster Job neben der Schule.' },
+          { q: 'Wie bewerbe ich mich auf einen Job?', a: 'Einfach Profil anlegen, Lebenslauf hochladen und auf „Jetzt bewerben" klicken. Der Arbeitgeber erhält deine Bewerbung sofort und kann dich direkt über den Chat kontaktieren.' },
+          { q: 'Kann ich mehrere Jobs gleichzeitig haben?', a: 'Grundsätzlich ja – bei mehreren Minijobs musst du jedoch darauf achten, dass du die 538 €-Grenze insgesamt nicht überschreitest. Bei Unsicherheiten hilft dein Steuerberater oder das Finanzamt weiter.' },
+          { q: 'Wie sicher sind meine Daten?', a: 'Deine Daten werden verschlüsselt gespeichert und niemals ohne deine Zustimmung an Dritte weitergegeben. Arbeitgeber sehen nur die Informationen, die du in deinem Profil freigibst.' },
+        ].map((item, i) => `
+          <div class="faq-item" onclick="this.classList.toggle('open')">
+            <div class="faq-question">
+              <span>${item.q}</span>
+              <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+            </div>
+            <div class="faq-answer">${item.a}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    </div>`;
+}
+
+function renderJobSearch() {
+  const jobs = getFilteredJobs();
+  return `
+    <div class="page page-wide">
+      <div class="search-header">
+        <div class="search-bar">
+          <input type="text" placeholder="Job, Unternehmen oder Stichwort..." value="${state.filters.search}" oninput="state.filters.search=this.value;render()">
+          <button class="btn btn-primary" onclick="render()">Suchen</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:1rem">
+          <span class="search-results-count">${jobs.length} Jobs gefunden</span>
+          <select class="sort-select" onchange="state.filters.sort=this.value;render()">
+            <option value="date" ${state.filters.sort==='date'?'selected':''}>Neueste zuerst</option>
+            <option value="distance" ${state.filters.sort==='distance'?'selected':''}>Entfernung</option>
+            <option value="views" ${state.filters.sort==='views'?'selected':''}>Beliebtheit</option>
+          </select>
+        </div>
+      </div>
+      <div class="search-layout">
+        <aside class="search-sidebar">
+          <h3 style="font-size:1rem;margin-bottom:1rem">Filter</h3>
+
+          <div class="filter-section">
+            <h4>Kategorie</h4>
+            <select class="form-select" onchange="state.filters.category=this.value;render()">
+              <option value="">Alle Kategorien</option>
+              ${CATEGORIES.map(c => `<option value="${c.name}" ${state.filters.category===c.name?'selected':''}>${c.icon} ${c.name} (${c.count})</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <h4>Stadt</h4>
+            <select class="form-select" onchange="state.filters.city=this.value;render()">
+              <option value="">Alle Städte</option>
+              ${[...new Set(JOBS.map(j => j.city))].sort().map(c => `<option value="${c}" ${state.filters.city===c?'selected':''}>${c}</option>`).join('')}
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <h4>Umkreis: ${state.filters.radius >= 50 ? '50+ km' : state.filters.radius + ' km'}</h4>
+            <input type="range" class="range-slider" min="5" max="50" step="5" value="${state.filters.radius}" oninput="state.filters.radius=parseInt(this.value);render()">
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-400)">
+              <span>5 km</span><span>25 km</span><span>50+ km</span>
+            </div>
+          </div>
+
+          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:'',city:'',sort:'date'};render()">Filter zurücksetzen</button>
+        </aside>
+
+        <div class="jobs-grid">
+          ${jobs.map(j => renderJobCard(j)).join('')}
+          ${jobs.length === 0 ? `
+            <div class="empty-state">
+              <div class="empty-state-icon"></div>
+              <h3>Keine Jobs gefunden</h3>
+              <p>Versuche andere Filter oder erweitere deinen Suchradius.</p>
+            </div>` : ''}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderJobCard(j) {
+  const saved = state.savedJobs.includes(j.id);
+  return `
+    <div class="job-card ${j.promoted ? 'promoted' : ''}" onclick="navigate('job-detail', {jobId: ${j.id}})">
+      ${j.promoted ? '<div class="promoted-badge">&#9733; Hervorgehoben</div>' : ''}
+      <div class="job-card-left">
+        <div class="job-card-header">
+          <div class="job-company-logo">${j.companyLogo}</div>
+          <div class="job-card-info">
+            <h3>${j.title}</h3>
+            <div class="job-company-name">${j.company}</div>
+          </div>
+        </div>
+        <div class="job-card-meta">
+          <span class="job-meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            ${j.city} (${j.distance} km)
+          </span>
+          <span class="job-meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${j.hours}
+          </span>
+          <span class="job-meta-item">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            ${j.salary}
+          </span>
+        </div>
+        <div class="job-card-tags">
+          <span class="badge badge-primary">${j.type}</span>
+          ${j.tags.slice(0,3).map(t => `<span class="tag">${t}</span>`).join('')}
+        </div>
+        <div class="job-card-date">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${formatDate(j.posted)}
+        </div>
+      </div>
+      <div class="job-card-actions">
+        <div class="job-stats">
+          <div class="job-stat-row" title="Gespeichert von">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            ${j.saves || 0}
+          </div>
+          <div class="job-stat-row" title="Bewerbungen">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            ${j.applications || 0}
+          </div>
+        </div>
+        <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${j.id}, event)" title="${saved ? 'Gespeichert' : 'Speichern'}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </div>
+    </div>`;
+}
+
+function renderJobDetail() {
+  const jobId = state.pageData?.jobId;
+  const job = JOBS.find(j => j.id === jobId);
+  if (!job) return '<div class="page"><p>Job nicht gefunden.</p></div>';
+
+  const saved = state.savedJobs.includes(job.id);
+  return `
+    <div class="page">
+      <button class="btn btn-ghost mb-2" onclick="navigate('jobs')">&#8592; Zurück zur Suche</button>
+      <div class="job-detail-layout">
+        <div class="job-detail-main">
+          <div class="job-detail-header">
+            <div style="display:flex;justify-content:space-between;align-items:start">
+              <div>
+                <h1>${job.title}</h1>
+                <div class="job-detail-company">
+                  <span class="job-company-logo" style="width:40px;height:40px">${job.companyLogo}</span>
+                  <span style="font-weight:600">${job.company}</span>
+                </div>
+              </div>
+              <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem">${saved ? '♥' : '♡'}</button>
+            </div>
+            <div class="job-detail-badges">
+              <span class="badge badge-primary">${job.type}</span>
+              <span class="badge badge-gray">${job.location}</span>
+              <span class="badge badge-gray">${job.hours}</span>
+              <span class="badge badge-success">${job.salary}</span>
+            </div>
+            <div style="margin-top:1rem;display:flex;gap:1.5rem;font-size:0.8rem;color:var(--gray-500)">
+              <span>Hochgeladen: ${formatDate(job.posted)}</span>
+              <span>${job.views} Aufrufe</span>
+              <span>${job.clicks} Klicks</span>
+              <span>${job.applications} Bewerbungen</span>
+            </div>
+          </div>
+          <div class="job-detail-body">
+            ${job.description}
+          </div>
+          ${job.images.length > 0 ? `
+            <div style="padding:0 2rem 2rem">
+              <h3 style="font-size:1.05rem;margin-bottom:0.75rem">Bilder</h3>
+              <div class="job-images">
+                ${job.images.map(img => `<div class="job-image-placeholder">${img}</div>`).join('')}
+              </div>
+            </div>` : ''}
+          <div style="padding:0 2rem 2rem">
+            <h3 style="font-size:1.05rem;margin-bottom:0.75rem">★ Bewertungen</h3>
+            ${job.reviews.length > 0 ? job.reviews.map(r => `
+              <div class="review-card">
+                <div class="review-header">
+                  <div class="review-author">
+                    <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${r.author.split(' ').map(n=>n[0]).join('')}</div>
+                    <div>
+                      <strong style="font-size:0.85rem">${r.author}</strong>
+                      ${r.active ? '<span class="badge badge-success" style="margin-left:0.5rem;font-size:0.7rem">Aktiv beschäftigt</span>' : ''}
+                    </div>
+                  </div>
+                  <div class="stars">${'<span class="star filled">&#9733;</span>'.repeat(r.rating)}${'<span class="star">&#9734;</span>'.repeat(5-r.rating)}</div>
+                </div>
+                <div class="review-text">${r.text}</div>
+                <div class="review-date">${formatDate(r.date)}</div>
+              </div>
+            `).join('') : '<p style="font-size:0.85rem;color:var(--gray-400);margin-bottom:1rem">Noch keine Bewertungen.</p>'}
+            ${state.user ? `
+              <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--gray-200)">
+                <div class="review-restriction" style="margin-bottom:0.75rem">
+                  ! Bewertungen sind nur möglich, solange ein aktives Arbeitsverhältnis besteht.
+                </div>
+                <div class="form-group" style="margin-bottom:0.75rem">
+                  <label class="form-label" style="font-size:0.8rem">Deine Bewertung</label>
+                  <div class="stars" id="job-rating-stars-${job.id}" style="font-size:1.4rem">
+                    ${[1,2,3,4,5].map(i => `<span class="star" onclick="setJobRating(${job.id},${i})" data-v="${i}">&#9734;</span>`).join('')}
+                  </div>
+                </div>
+                <div class="form-group" style="margin-bottom:0.75rem">
+                  <textarea class="form-textarea" rows="2" placeholder="Deine Erfahrung beschreiben..." style="font-size:0.85rem" id="job-review-text-${job.id}"></textarea>
+                </div>
+                <button class="btn btn-primary btn-sm" onclick="submitJobReview(${job.id})">Bewertung abgeben</button>
+              </div>` : `
+              <p style="font-size:0.85rem;color:var(--gray-400)">
+                <a href="#" onclick="navigate('login')" style="color:var(--primary)">Anmelden</a>, um eine Bewertung abzugeben.
+              </p>`}
+          </div>
+        </div>
+
+        <div class="job-detail-sidebar">
+          <div class="card">
+            <div class="card-body">
+              <button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${state.user && state.user.role !== 'employer' ? `submitApplication(${job.id})` : `navigate('login')`}">
+                ${state.user && state.user.role !== 'employer' ? (getUserApps().includes(job.id) ? '✓ Beworben' : 'Jetzt bewerben') : 'Anmelden zum Bewerben'}
+              </button>
+              <button class="btn btn-outline btn-block" onclick="${state.user && state.user.role !== 'employer' ? 'toggleChat()' : "navigate('register')"}">
+                ${state.user && state.user.role !== 'employer' ? 'Nachricht senden' : 'Nachricht senden'}
+              </button>
+
+              <div style="margin-top:1.5rem">
+                <h3 style="font-size:1rem;margin-bottom:1rem">Über ${job.company}</h3>
+                <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:1rem">${job.companyInfo.about}</p>
+                <div style="display:flex;flex-direction:column;gap:0.5rem">
+                  <div class="company-info-row"><span class="label">Branche:</span> <span>${job.companyInfo.industry}</span></div>
+                  <div class="company-info-row"><span class="label">Mitarbeiter:</span> <span>${job.companyInfo.employees}</span></div>
+                  <div class="company-info-row"><span class="label">Gegründet:</span> <span>${job.companyInfo.founded}</span></div>
+                  <div class="company-info-row"><span class="label">Instagram:</span> <span style="color:var(--primary)">${job.companyInfo.instagram}</span></div>
+                  <div class="company-info-row"><span class="label">Website:</span> <span style="color:var(--primary)">${job.companyInfo.website}</span></div>
+                  <div class="company-info-row"><span class="label">Adresse:</span> <span>${job.location}</span></div>
+                </div>
+              </div>
+
+              <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--gray-200)">
+                <div style="font-size:0.8rem;color:var(--gray-500)">
+                  <div>Anzeige läuft bis: ${new Date(job.expires).toLocaleDateString('de-DE')}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderLogin() {
+  return `
+    <div class="auth-page">
+      <div class="auth-card fade-in">
+        <h2>Willkommen zurück!</h2>
+        <p class="subtitle">Melde dich an, um fortzufahren.</p>
+        <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
+          <div class="form-group">
+            <label class="form-label">E-Mail</label>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passwort</label>
+            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" value="test1234" required>
+          </div>
+          <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
+        </form>
+        <div class="auth-divider">oder</div>
+        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" onclick="navigate('register')" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
+      </div>
+    </div>`;
+}
+
+function renderRegister() {
+  return `
+    <div class="auth-page">
+      <div class="auth-card fade-in" style="max-width:500px">
+        <h2>Konto erstellen</h2>
+        <p class="subtitle">Registriere dich kostenlos und leg los.</p>
+        <form onsubmit="event.preventDefault(); submitRegister(this)">
+          <div class="form-group">
+            <label class="form-label">Ich bin...</label>
+            <div class="role-selector">
+              <div class="role-option selected" onclick="selectRole(this, 'worker')" data-role="worker">
+                <div class="role-icon">&#9786;</div>
+                <div class="role-name">Arbeitnehmer</div>
+                <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
+              </div>
+              <div class="role-option" onclick="selectRole(this, 'employer')" data-role="employer">
+                <div class="role-icon">&#9962;</div>
+                <div class="role-name">Arbeitgeber</div>
+                <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
+              </div>
+            </div>
+            <input type="hidden" name="role" value="worker">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vorname</label>
+              <input type="text" name="firstName" class="form-input" placeholder="Max" value="Max" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nachname</label>
+              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" value="Mustermann" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-Mail</label>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Passwort</label>
+            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" value="test1234" required minlength="8">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
+        </form>
+        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
+      </div>
+    </div>`;
+}
+
+function selectRole(el, role) {
+  document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  document.querySelector('input[name="role"]').value = role;
+}
+
+function submitRegister(form) {
+  const data = {
+    role: form.role.value,
+    name: form.firstName.value + ' ' + form.lastName.value,
+    email: form.email.value,
+    password: form.password.value
+  };
+  register(data);
+}
+
+// ===== WORKER PAGES =====
+
+function getProfileSteps() {
+  const u = state.user || {};
+  return [
+    { key: 'registered', label: 'Konto erstellt',          done: true,                           pct: 10, page: null,             section: null },
+    { key: 'address',    label: 'Adresse & Umkreis',        done: !!u.address,                    pct: 15, page: 'worker-profile',  section: 'section-address' },
+    { key: 'cv',         label: 'Lebenslauf hochladen',     done: !!u.cvUploaded,                 pct: 20, page: 'worker-profile',  section: 'section-cv' },
+    { key: 'documents',  label: 'Zeugnis hochladen',        done: !!u.docsUploaded,               pct: 15, page: 'worker-profile',  section: 'section-docs' },
+    { key: 'skills',     label: 'Stärken auswählen',        done: !!(u.skills && u.skills.length),pct: 15, page: 'worker-profile',  section: 'section-skills' },
+    { key: 'refs',       label: 'Berufserfahrung angeben',  done: !!(u.refs   && u.refs.length),  pct: 15, page: 'worker-profile',  section: 'section-skills' },
+    { key: 'hours',      label: 'Wochenstunden angeben',    done: !!u.weeklyHours,                pct: 10, page: 'worker-profile',  section: 'section-skills' },
+  ];
+}
+
+function calcProfilePct() {
+  return getProfileSteps().filter(s => s.done).reduce((sum, s) => sum + s.pct, 0);
+}
+
+function renderWorkerDashboard() {
+  if (!state.user) return renderLogin();
+  const steps   = getProfileSteps();
+  const pct     = calcProfilePct();
+  const todo    = steps.filter(s => !s.done);
+  const msgs    = WORKER_CHAT_MESSAGES.slice(0, 3);
+  const saved   = JOBS.filter(j => state.savedJobs.includes(j.id)).slice(0, 3);
+
+  const pctColor = pct < 40 ? 'var(--danger)' : pct < 75 ? '#f59e0b' : 'var(--success)';
+  const pctLabel = pct === 100 ? '🎉 Perfektes Profil!' : pct >= 75 ? 'Fast fertig!' : pct >= 40 ? 'Gut unterwegs' : 'Gerade gestartet';
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('dashboard')}
+        <div class="dashboard-content">
+
+          <h2 class="dashboard-title">Hallo, ${state.user.name.split(' ')[0]}!</h2>
+
+          <!-- ── 3 Schnell-Kacheln ── -->
+          <div class="worker-dash-grid">
+
+            <!-- Nachrichten -->
+            <div class="worker-dash-tile" onclick="navigate('messages')">
+              <div class="wdt-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                <span>Nachrichten</span>
+                <span class="wdt-badge">${msgs.length}</span>
+              </div>
+              ${msgs.length > 0 ? msgs.map(m => `
+                <div class="wdt-msg-row">
+                  <div class="wdt-msg-avatar">${m.partnerInitials}</div>
+                  <div class="wdt-msg-info">
+                    <div class="wdt-msg-name">${m.partnerName}</div>
+                    <div class="wdt-msg-preview">${m.messages[m.messages.length-1]?.text?.slice(0,45) || ''}…</div>
+                  </div>
+                </div>`).join('') : `<p class="wdt-empty">Noch keine Nachrichten</p>`}
+              <div class="wdt-link">Alle Nachrichten →</div>
+            </div>
+
+            <!-- Gespeicherte Jobs -->
+            <div class="worker-dash-tile" onclick="navigate('saved-jobs')">
+              <div class="wdt-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                <span>Gespeicherte Jobs</span>
+                <span class="wdt-badge">${state.savedJobs.length}</span>
+              </div>
+              ${saved.length > 0 ? saved.map(j => `
+                <div class="wdt-job-row" onclick="event.stopPropagation();navigate('job-detail',${j.id})">
+                  <div class="wdt-job-logo">${j.company[0]}</div>
+                  <div class="wdt-job-info">
+                    <div class="wdt-job-title">${j.title}</div>
+                    <div class="wdt-job-company">${j.company} · ${j.city}</div>
+                  </div>
+                </div>`).join('') : `<p class="wdt-empty">Noch keine Jobs gespeichert</p>`}
+              <div class="wdt-link">Alle gespeicherten Jobs →</div>
+            </div>
+
+            <!-- Lebenslauf -->
+            <div class="worker-dash-tile">
+              <div class="wdt-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                <span>Lebenslauf</span>
+                ${state.user.cvUploaded ? '<span class="wdt-badge wdt-badge-green">Hochgeladen</span>' : '<span class="wdt-badge wdt-badge-warn">Fehlt noch</span>'}
+              </div>
+              <p class="wdt-cv-hint">${state.user.cvUploaded ? 'Dein Lebenslauf ist für Arbeitgeber sichtbar.' : 'Lade deinen Lebenslauf hoch damit Arbeitgeber dich finden.'}</p>
+              <div style="display:flex;gap:0.5rem;flex-direction:column;margin-top:0.75rem">
+                <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();navigate('cv-builder')">
+                  ${state.user.cvUploaded ? 'Lebenslauf bearbeiten' : 'Lebenslauf erstellen'}
+                </button>
+                <label class="btn btn-outline btn-sm" style="cursor:pointer;text-align:center">
+                  PDF hochladen
+                  <input type="file" accept=".pdf,.doc,.docx" style="display:none" onchange="uploadCV(this)">
+                </label>
+              </div>
+            </div>
+
+            <!-- Interview-Simulation -->
+            <div class="worker-dash-tile" onclick="navigate('interview')" style="border-top:3px solid var(--primary)">
+              <div class="wdt-header">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <span>Vorstellungsgespräch üben</span>
+                <span class="wdt-badge" style="background:var(--primary);color:#fff">KI</span>
+              </div>
+              <p class="wdt-cv-hint">Simuliere ein echtes Bewerbungsgespräch mit unserer KI und erhalte direktes Feedback.</p>
+              <div class="wdt-link">Jetzt üben →</div>
+            </div>
+
+          </div>
+
+          <!-- ── Profil-Fortschritt (unten, dezent) ── -->
+          ${todo.length > 0 ? `
+          <div class="profile-progress-card">
+            <div class="pprogress-bar-row" style="margin-bottom:0.75rem">
+              <div class="pprogress-title" style="flex:1">Profil vervollständigen</div>
+              <span class="pprogress-pct-small" style="color:${pctColor}">${pct}%</span>
+            </div>
+            <div class="progress-bar" style="height:5px;margin-bottom:0.85rem">
+              <div class="progress-fill" style="width:${pct}%;background:${pctColor};transition:width 0.5s"></div>
+            </div>
+            <div class="pprogress-steps-row">
+              ${todo.map(s => `
+                <div class="pprogress-step-pill" onclick="${s.page ? `navigateToSection('${s.page}','${s.section||''}')` : ''}">
+                  <span class="pprogress-step-dot"></span>
+                  <span>${s.label}</span>
+                  <span class="pprogress-step-pct">+${s.pct}%</span>
+                </div>`).join('')}
+            </div>
+          </div>` : `
+          <div class="profile-progress-card" style="display:flex;align-items:center;gap:0.75rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            <span style="font-size:0.85rem;color:var(--success);font-weight:600">Perfektes Profil – du bekommst die besten Jobangebote!</span>
+            <span class="pprogress-pct-small" style="color:${pctColor};margin-left:auto">${pct}%</span>
+          </div>`}
+
+        </div>
+      </div>
+    </div>`;
+}
+
+function uploadCV(input) {
+  if (input.files.length) {
+    state.user.cvUploaded = true;
+    state.user.cvFileName = input.files[0].name;
+    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    showToast('Lebenslauf erfolgreich hochgeladen!');
+    render();
+  }
+}
+
+function addRef() {
+  const name = prompt('Arbeitgeber & Position (z.B. Rewe – Kassierer/in):');
+  if (!name || !name.trim()) return;
+  if (!state.user.refs) state.user.refs = [];
+  state.user.refs.push(name.trim());
+  state.user.hasRefs = true;
+  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  render();
+  setTimeout(() => navigateToSection('worker-profile', 'section-skills'), 10);
+}
+
+function removeRef(i) {
+  state.user.refs.splice(i, 1);
+  if (!state.user.refs.length) state.user.hasRefs = false;
+  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  render();
+  setTimeout(() => navigateToSection('worker-profile', 'section-skills'), 10);
+}
+
+function renderWorkerSidebar(active) {
+  return `
+    <div class="dashboard-sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="${active==='dashboard'?'active':''}" onclick="navigate('worker-dashboard')">Dashboard</a>
+        <a href="#" class="${active==='profile-view'?'active':''}" onclick="navigate('worker-profile-view')">Mein Profil</a>
+        <a href="#" class="${active==='saved'?'active':''}" onclick="navigate('saved-jobs')">Gespeicherte Jobs</a>
+        <a href="#" class="${active==='applications'?'active':''}" onclick="navigate('applications')">Bewerbungen</a>
+        <a href="#" class="${active==='cv'?'active':''}" onclick="navigate('cv-builder')">Lebenslauf</a>
+        <div class="divider"></div>
+        <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+      </nav>
+    </div>`;
+}
+
+function renderWorkerProfileView() {
+  if (!state.user) return renderLogin();
+  const u = state.user;
+  const pct = calcProfilePct();
+  const pctColor = pct < 40 ? 'var(--danger)' : pct < 75 ? '#f59e0b' : 'var(--success)';
+
+  // Platzhalter-Daten wenn noch nicht ausgefüllt
+  const address   = u.address    || null;
+  const radius    = u.radius     || 15;
+  const hours     = u.weeklyHours|| null;
+  const skills    = u.skills     || [];
+  const refs      = u.refs       || [];
+
+  const missingTag = (label, step) =>
+    `<span class="pv-missing-chip" onclick="state.profileStep=${step};navigate('worker-profile')">+ ${label} hinzufügen</span>`;
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('profile-view')}
+        <div class="dashboard-content">
+
+          <!-- Hinweis-Banner -->
+          <div class="pv-banner">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            So sieht dein Profil für Arbeitgeber aus
+            <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.profileStep=0;navigate('worker-profile')">
+              Profil bearbeiten
+            </button>
+          </div>
+
+          <!-- Arbeitgeber-Ansicht: Profil-Karte -->
+          <div class="employer-profile-card">
+
+            <!-- Kopfbereich -->
+            <div class="epc-header">
+              <div class="epc-avatar">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+              <div class="epc-info">
+                <h2 class="epc-name">${u.name}</h2>
+                <div class="epc-meta-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  ${u.email}
+                </div>
+                ${address ? `
+                <div class="epc-meta-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  ${address}
+                </div>
+                <div class="epc-meta-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  Arbeitsumkreis: ${radius} km
+                </div>` : missingTag('Adresse & Umkreis', 0)}
+                ${hours ? `
+                <div class="epc-meta-row">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Verfügbar: ${hours}
+                </div>` : missingTag('Wochenstunden', 3)}
+              </div>
+              <!-- Vollständigkeit -->
+              <div class="epc-completeness">
+                <div class="epc-pct" style="color:${pctColor}">${pct}%</div>
+                <div class="progress-bar" style="height:4px;width:64px">
+                  <div class="progress-fill" style="width:${pct}%;background:${pctColor}"></div>
+                </div>
+                <div style="font-size:0.68rem;color:var(--gray-400);margin-top:0.2rem">vollständig</div>
+              </div>
+            </div>
+
+            <div class="epc-divider"></div>
+
+            <!-- Skills -->
+            <div class="epc-section">
+              <div class="epc-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Stärken
+              </div>
+              <div class="epc-skills">
+                ${skills.length
+                  ? skills.map(s => `<span class="epc-skill-tag">${s}</span>`).join('')
+                  : missingTag('Skills', 3)}
+              </div>
+            </div>
+
+            <div class="epc-divider"></div>
+
+            <!-- Berufserfahrung -->
+            <div class="epc-section">
+              <div class="epc-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 1 4 0v2"/></svg>
+                Berufserfahrung
+              </div>
+              ${refs.length ? `
+              <div class="epc-refs">
+                ${refs.map(r => `
+                  <div class="epc-ref-item">
+                    <div class="epc-ref-dot"></div>
+                    <span>${r}</span>
+                  </div>`).join('')}
+              </div>` : missingTag('Referenzen', 3)}
+            </div>
+
+            <div class="epc-divider"></div>
+
+            <!-- Dokumente -->
+            <div class="epc-section">
+              <div class="epc-section-title">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                Dokumente
+              </div>
+              <div class="epc-docs">
+                <div class="epc-doc-row ${u.cvUploaded ? 'ok' : 'missing'}">
+                  ${u.cvUploaded
+                    ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                       <span>${u.cvFileName || 'Lebenslauf'}</span>`
+                    : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                       <span>Kein Lebenslauf</span>
+                       <button class="pv-edit-btn" onclick="state.profileStep=1;navigate('worker-profile')">Hochladen</button>`}
+                </div>
+                <div class="epc-doc-row ${u.docsUploaded ? 'ok' : 'missing'}">
+                  ${u.docsUploaded
+                    ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                       <span>Zeugnis hochgeladen</span>`
+                    : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                       <span>Kein Zeugnis</span>
+                       <button class="pv-edit-btn" onclick="state.profileStep=2;navigate('worker-profile')">Hochladen</button>`}
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>`;
+}
+
+const PROFILE_STEPS = [
+  { id: 'section-address', label: 'Adresse' },
+  { id: 'section-cv',      label: 'Lebenslauf' },
+  { id: 'section-docs',    label: 'Zeugnisse' },
+  { id: 'section-skills',  label: 'Skills' },
+];
+
+function renderWorkerProfile() {
+  if (!state.user) return renderLogin();
+  if (state.profileStep === undefined) state.profileStep = 0;
+  const step = state.profileStep;
+  const total = PROFILE_STEPS.length;
+  const u = state.user;
+
+  const stepContent = [
+    // ── Schritt 0: Adresse ──
+    `<h3 class="profile-step-title">Adresse & Umkreis</h3>
+    <p class="profile-step-hint">Damit wir dir passende Jobs in deiner Nähe zeigen können.</p>
+    <div class="form-group">
+      <label class="form-label">Deine Adresse</label>
+      <input type="text" id="ps-address" class="form-input" placeholder="Musterstraße 1, 10115 Berlin" value="${u.address || ''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Suchradius: <strong id="radius-label">${u.radius || 15} km</strong></label>
+      <input type="range" class="range-slider" min="5" max="50" step="5" value="${u.radius || 15}"
+        oninput="document.getElementById('radius-label').textContent=this.value+' km'">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-400);margin-top:0.25rem">
+        <span>5 km</span><span>25 km</span><span>50 km</span>
+      </div>
+    </div>`,
+
+    // ── Schritt 1: Lebenslauf ──
+    `<h3 class="profile-step-title">Lebenslauf</h3>
+    <p class="profile-step-hint">Arbeitgeber sehen deinen Lebenslauf direkt bei deiner Bewerbung.</p>
+    ${u.cvUploaded ? `
+      <div class="upload-success-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>${u.cvFileName || 'Lebenslauf hochgeladen'}</span>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.cvUploaded=false;localStorage.setItem('jj_user',JSON.stringify(state.user));render()">Entfernen</button>
+      </div>
+      <p style="margin-top:1rem;font-size:0.85rem;color:var(--gray-500);text-align:center">
+        <a href="#" onclick="navigate('cv-builder')" style="color:var(--primary);font-weight:600">Mit dem Builder bearbeiten</a>
+      </p>` : `
+      <div class="cv-upload-area">
+        <div class="cv-upload-option">
+          <label class="cv-upload-btn" style="cursor:pointer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>PDF hochladen</span>
+            <small>PDF oder DOC, max. 5 MB</small>
+            <input type="file" accept=".pdf,.doc,.docx" style="display:none" onchange="uploadCV(this)">
+          </label>
+        </div>
+        <div class="cv-upload-divider">oder</div>
+        <div class="cv-upload-option">
+          <button class="cv-upload-btn" onclick="navigate('cv-builder')">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span>Mit Builder erstellen</span>
+            <small>Vorlage ausfüllen & fertig</small>
+          </button>
+        </div>
+      </div>`}`,
+
+    // ── Schritt 2: Zeugnisse ──
+    `<h3 class="profile-step-title">Zeugnisse & Zertifikate</h3>
+    <p class="profile-step-hint">Lade Schulzeugnisse oder andere Nachweise hoch.</p>
+    ${u.docsUploaded ? `
+      <div class="upload-success-bar">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        <span>Dokument hochgeladen</span>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.docsUploaded=false;localStorage.setItem('jj_user',JSON.stringify(state.user));render()">Entfernen</button>
+      </div>` : `
+      <div class="cv-upload-area">
+        <div class="cv-upload-option">
+          <label class="cv-upload-btn" style="cursor:pointer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <span>Datei hochladen</span>
+            <small>PDF, JPG oder PNG</small>
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none" onchange="docScanned(this)">
+          </label>
+        </div>
+        <div class="cv-upload-divider">oder</div>
+        <div class="cv-upload-option">
+          <label class="cv-upload-btn" style="cursor:pointer">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span>Mit Kamera scannen</span>
+            <small>Direkt fotografieren</small>
+            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="docScanned(this)">
+          </label>
+        </div>
+      </div>`}`,
+
+    // ── Schritt 3: Skills ──
+    `<h3 class="profile-step-title">Skills & Referenzen</h3>
+    <p class="profile-step-hint">Zeig Arbeitgebern deine Stärken und bisherigen Erfahrungen.</p>
+    <div class="form-group">
+      <label class="form-label">Deine Top-3 Stärken <span style="color:var(--gray-400);font-weight:400;font-size:0.8rem">(max. 3 wählbar)</span></label>
+      <div class="checkbox-group">
+        ${SKILLS.map(s => `<label class="checkbox-label"><input type="checkbox" ${u.skills?.includes(s)?'checked':''} onchange="limitSkills(this,3)"> <span>${s}</span></label>`).join('')}
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:1.25rem">
+      <label class="form-label">Bisherige Jobs / Referenzen</label>
+      <div id="refs-list">
+        ${(u.refs||[]).map((r,i) => `
+          <div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.75rem;background:var(--gray-50);border-radius:8px;margin-bottom:0.4rem;font-size:0.88rem">
+            <span style="flex:1">${r}</span>
+            <button class="btn btn-sm btn-ghost" onclick="removeRef(${i})">✕</button>
+          </div>`).join('')}
+      </div>
+      <button class="btn btn-outline btn-sm" onclick="addRef()">+ Referenz hinzufügen</button>
+    </div>
+    <div class="form-group" style="margin-top:1.25rem">
+      <label class="form-label">Wochenstunden</label>
+      <select class="form-select" id="ps-hours">
+        ${['5–10 Std', '10–15 Std', '15–20 Std', '20+ Std'].map(h => `<option ${u.weeklyHours===h?'selected':''}>${h}</option>`).join('')}
+      </select>
+    </div>`
+  ][step];
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('profile')}
+        <div class="dashboard-content">
+
+          <div class="profile-header-card">
+            <div class="profile-avatar">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+            <div class="profile-info">
+              <h2>${u.name}</h2>
+              <p>${u.email}</p>
+            </div>
+          </div>
+
+          <!-- Schritt-Indikatoren -->
+          <div class="profile-step-indicators">
+            ${PROFILE_STEPS.map((s,i) => `
+              <div class="psi-item ${i===step?'active':''} ${i<step?'done':''}" onclick="saveProfileStep();state.profileStep=${i};render()">
+                <div class="psi-dot">
+                  ${i < step
+                    ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
+                    : i+1}
+                </div>
+                <span class="psi-label">${s.label}</span>
+              </div>
+              ${i < PROFILE_STEPS.length-1 ? '<div class="psi-line '+(i<step?'done':'')+'"></div>' : ''}`
+            ).join('')}
+          </div>
+
+          <!-- Aktiver Schritt -->
+          <div class="profile-step-card">
+            ${stepContent}
+          </div>
+
+          <!-- Navigation -->
+          <div class="profile-step-nav">
+            ${step > 0
+              ? `<button class="btn btn-outline" onclick="saveProfileStep();state.profileStep=Math.max(0,state.profileStep-1);render()">← Zurück</button>`
+              : `<button class="btn btn-outline" onclick="navigate('worker-dashboard')">← Dashboard</button>`}
+            ${step < total-1
+              ? `<button class="btn btn-primary" onclick="saveProfileStep();state.profileStep=Math.min(${total-1},state.profileStep+1);render()">Weiter →</button>`
+              : `<button class="btn btn-primary" onclick="saveProfileStep();showToast('Profil gespeichert!');navigate('worker-dashboard')">✓ Profil speichern</button>`}
+          </div>
+
+        </div>
+      </div>
+    </div>`;
+}
+
+function saveProfileStep() {
+  const u = state.user;
+  const step = state.profileStep;
+  if (step === 0) {
+    const addr   = document.getElementById('ps-address');
+    const radius = document.querySelector('.range-slider');
+    if (addr   && addr.value.trim())  u.address = addr.value.trim();
+    if (radius) u.radius = parseInt(radius.value);
+  }
+  if (step === 3) {
+    const hours   = document.getElementById('ps-hours');
+    if (hours) u.weeklyHours = hours.value;
+    const checked = [...document.querySelectorAll('.checkbox-group input:checked')]
+      .map(c => c.nextElementSibling.textContent.trim());
+    if (checked.length) u.skills = checked;
+    // Referenzen werden via addRef() direkt gespeichert
+  }
+  localStorage.setItem('jj_user', JSON.stringify(u));
+}
+
+function renderSavedJobs() {
+  if (!state.user) return renderLogin();
+  const jobs = JOBS.filter(j => state.savedJobs.includes(j.id));
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('saved')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">Gespeicherte Jobs</h2>
+          ${jobs.length > 0 ? `
+            <div class="jobs-grid">${jobs.map(j => renderJobCard(j)).join('')}</div>
+          ` : `
+            <div class="empty-state">
+              <div class="empty-state-icon"></div>
+              <h3>Keine gespeicherten Jobs</h3>
+              <p>Speichere interessante Jobs, um sie später wiederzufinden.</p>
+              <button class="btn btn-primary" onclick="navigate('jobs')">Jobs entdecken</button>
+            </div>
+          `}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderApplications() {
+  if (!state.user) return renderLogin();
+  const apps = [
+    { job: JOBS[1], status: 'reviewing', statusText: 'In Prüfung', date: '2026-03-22' },
+    { job: JOBS[0], status: 'accepted', statusText: 'Eingeladen', date: '2026-03-20' },
+    { job: JOBS[3], status: 'new', statusText: 'Gesendet', date: '2026-03-23' }
+  ];
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('applications')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">Meine Bewerbungen</h2>
+          <div class="jobs-grid">
+            ${apps.map(a => `
+              <div class="card" style="cursor:pointer" onclick="navigate('job-detail', {jobId: ${a.job.id}})">
+                <div class="card-body" style="display:flex;justify-content:space-between;align-items:center">
+                  <div style="display:flex;align-items:center;gap:1rem">
+                    <div class="job-company-logo">${a.job.companyLogo}</div>
+                    <div>
+                      <h3 style="font-size:1rem;margin-bottom:0.25rem">${a.job.title}</h3>
+                      <div style="font-size:0.85rem;color:var(--gray-500)">${a.job.company}</div>
+                    </div>
+                  </div>
+                  <div style="text-align:right">
+                    <div class="badge ${a.status==='accepted'?'badge-success':a.status==='reviewing'?'badge-secondary':'badge-primary'}">${a.statusText}</div>
+                    <div style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem">${formatDate(a.date)}</div>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderCVBuilder() {
+  if (!state.user) return renderLogin();
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderWorkerSidebar('cv')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">Lebenslauf Builder</h2>
+
+          <div style="margin-bottom:2rem">
+            <h3 style="font-size:1.1rem;margin-bottom:1rem">Vorlage wählen</h3>
+            <div class="cv-templates">
+              ${CV_TEMPLATES.map((t, i) => `
+                <div class="cv-template ${i===0?'selected':''}" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
+                  <div class="cv-preview" style="background:${t.preview.headerColor};opacity:0.1;position:relative">
+                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;opacity:1;padding:1rem">
+                      <div style="background:${t.preview.headerColor};height:40px;border-radius:4px;margin-bottom:0.75rem"></div>
+                      <div style="display:flex;gap:0.5rem;flex:1">
+                        ${t.preview.layout === 'sidebar' ? `
+                          <div style="width:35%;display:flex;flex-direction:column;gap:0.375rem">
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:80%"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:60%"></div>
+                            <div style="height:20px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:70%"></div>
+                          </div>
+                          <div style="flex:1;display:flex;flex-direction:column;gap:0.375rem">
+                            <div style="height:8px;background:var(--gray-300);border-radius:2px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:90%"></div>
+                            <div style="height:20px"></div>
+                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:50%"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
+                          </div>
+                        ` : `
+                          <div style="flex:1;display:flex;flex-direction:column;gap:0.375rem">
+                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:40%"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:85%"></div>
+                            <div style="height:20px"></div>
+                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:35%"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:90%"></div>
+                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:75%"></div>
+                          </div>
+                        `}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="cv-template-name">${t.name}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">Deine Daten</div>
+            <div class="card-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Vorname</label>
+                  <input type="text" class="form-input" value="${state.user.name.split(' ')[0]}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nachname</label>
+                  <input type="text" class="form-input" value="${state.user.name.split(' ').slice(1).join(' ')}">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">E-Mail</label>
+                  <input type="email" class="form-input" value="${state.user.email}">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Telefon</label>
+                  <input type="tel" class="form-input" placeholder="+49 ...">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Adresse</label>
+                <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt">
+              </div>
+
+              <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Schulbildung</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Schule</label>
+                  <input type="text" class="form-input" placeholder="Name der Schule">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Zeitraum</label>
+                  <input type="text" class="form-input" placeholder="z.B. 2020 - heute">
+                </div>
+              </div>
+
+              <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Erfahrungen</h3>
+              <div class="form-group">
+                <label class="form-label">Praktika / Jobs</label>
+                <textarea class="form-textarea" placeholder="Beschreibe deine bisherigen Erfahrungen..."></textarea>
+              </div>
+
+              <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Fähigkeiten</h3>
+              <div class="form-group">
+                <div class="checkbox-group">
+                  ${SKILLS.slice(0,10).map(s => `<label class="checkbox-label"><input type="checkbox"> <span>${s}</span></label>`).join('')}
+                </div>
+              </div>
+
+              <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Hobbys & Interessen</h3>
+              <div class="form-group">
+                <textarea class="form-textarea" rows="3" placeholder="Deine Hobbys und Interessen..."></textarea>
+              </div>
+            </div>
+            <div class="card-footer" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem">
+              <button class="btn btn-outline" onclick="previewCV()">Vorschau anzeigen</button>
+              <div style="display:flex;gap:0.5rem">
+                <button class="btn btn-outline" onclick="downloadCV()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.3rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Herunterladen
+                </button>
+                <button class="btn btn-primary" onclick="addCVToProfile()">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.3rem"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Zum Profil hinzufügen
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:1.5rem">
+            <div class="card-body" style="text-align:center;padding:2rem">
+              <div style="font-size:2rem;margin-bottom:0.5rem">KI</div>
+              <h3 style="margin-bottom:0.5rem">KI Motivationsschreiben</h3>
+              <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1rem">Lass dir von unserer KI ein individuelles Motivationsschreiben erstellen.</p>
+              <button class="btn btn-primary" onclick="toggleAI()">KI-Assistent öffnen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== EMPLOYER PAGES =====
+
+function renderEmployerLanding() {
+  return `
+    <div class="employer-hero">
+      <div style="max-width:800px;margin:0 auto">
+        <h1>Finde junge Talente für dein Team</h1>
+        <p>Schalte deine Stellenanzeige und erreiche tausende motivierte Jugendliche in deiner Region.</p>
+        <button class="btn btn-lg" style="background:#fff;color:#0284c7;font-size:1.1rem;padding:1rem 3rem" onclick="goPostJob()">Jetzt Stellenanzeige schalten</button>
+      </div>
+    </div>
+
+    <div class="features-section">
+      <div class="section-header">
+        <h2>Warum EasyJobs für Arbeitgeber?</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <h3>Zielgruppe Jugendliche</h3>
+          <p>Erreiche gezielt junge, motivierte Arbeitnehmer in deiner Umgebung.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <h3>Analytics Dashboard</h3>
+          <p>Verfolge Klicks, Views und Bewerbungen in Echtzeit.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <h3>Direkter Kontakt</h3>
+          <p>Chatte direkt mit Bewerbern und führe Gespräche über die Plattform.</p>
+        </div>
+      </div>
+    </div>
+
+    <div style="max-width:1000px;margin:0 auto;padding:0 1.5rem">
+      <div class="section-header">
+        <h2>Unsere Pakete</h2>
+        <p>Wähle das passende Paket für deine Bedürfnisse.</p>
+      </div>
+      <div class="pricing-cards">
+        <div class="pricing-card">
+          <h3>Basis</h3>
+          <div class="pricing-price">29€ <span>/ Anzeige</span></div>
+          <ul class="pricing-features">
+            <li>30 Tage Laufzeit</li>
+            <li>Standard-Platzierung</li>
+            <li>Chat mit Bewerbern</li>
+            <li>Basis-Analytics</li>
+          </ul>
+          <button class="btn btn-outline btn-block" onclick="goPostJob()">Auswählen</button>
+        </div>
+        <div class="pricing-card featured">
+          <h3>Premium</h3>
+          <div class="pricing-price">59€ <span>/ Anzeige</span></div>
+          <ul class="pricing-features">
+            <li>60 Tage Laufzeit</li>
+            <li>Hervorgehobene Platzierung</li>
+            <li>Chat + Video-Gespräche</li>
+            <li>Erweiterte Analytics</li>
+            <li>KI-generierte Anzeige</li>
+          </ul>
+          <button class="btn btn-primary btn-block" onclick="goPostJob()">Auswählen</button>
+        </div>
+        <div class="pricing-card">
+          <h3>Enterprise</h3>
+          <div class="pricing-price">149€ <span>/ Monat</span></div>
+          <ul class="pricing-features">
+            <li>Unbegrenzte Anzeigen</li>
+            <li>Top-Platzierung</li>
+            <li>Alle Features inklusive</li>
+            <li>Persönlicher Ansprechpartner</li>
+            <li>Recruiting-Beratung</li>
+          </ul>
+          <button class="btn btn-outline btn-block" onclick="goPostJob()">Kontakt aufnehmen</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-section" style="margin-top:3rem">
+      <h2>Bereit loszulegen?</h2>
+      <p>Schalte jetzt deine erste Stellenanzeige und finde die besten jungen Talente.</p>
+      <button class="btn btn-lg" onclick="goPostJob()">Stellenanzeige schalten</button>
+    </div>`;
+}
+
+function renderEmployerDashboard() {
+  if (!state.user || state.user.role !== 'employer') return renderLogin();
+  return `
+    <div class="page employer-page">
+      <div class="dashboard-layout">
+        ${renderEmployerSidebar('dashboard')}
+        <div class="dashboard-content">
+          <div class="employer-dash-header">
+            <div>
+              <h2 class="dashboard-title" style="margin-bottom:0.15rem">Willkommen, ${state.user.name.split(' ')[0]}!</h2>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin:0">Verwalte deine Stellenanzeigen und Bewerbungen</p>
+            </div>
+            <button class="btn btn-employer" onclick="goPostJob()">+ Neue Anzeige schalten</button>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card employer-stat">
+              <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 1 4 0v2"/></svg></div>
+              <div class="stat-value">3</div>
+              <div class="stat-label">Aktive Anzeigen</div>
+              <div class="stat-change up">↑ +1 diese Woche</div>
+            </div>
+            <div class="stat-card employer-stat">
+              <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
+              <div class="stat-value">1.847</div>
+              <div class="stat-label">Gesamte Views</div>
+              <div class="stat-change up">↑ +234 diese Woche</div>
+            </div>
+            <div class="stat-card employer-stat">
+              <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+              <div class="stat-value">35</div>
+              <div class="stat-label">Bewerbungen</div>
+              <div class="stat-change up">↑ +8 diese Woche</div>
+            </div>
+            <div class="stat-card employer-stat">
+              <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+              <div class="stat-value">12</div>
+              <div class="stat-label">Neue Nachrichten</div>
+              <div class="stat-change up">↑ +3 heute</div>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>Views & Klicks (letzte 7 Tage)</h3>
+              <select class="sort-select">
+                <option>Letzte 7 Tage</option>
+                <option>Letzte 30 Tage</option>
+                <option>Letztes Quartal</option>
+              </select>
+            </div>
+            <div class="chart-placeholder">
+              <div class="chart-bar" style="height:40%"></div>
+              <div class="chart-bar" style="height:60%"></div>
+              <div class="chart-bar" style="height:45%"></div>
+              <div class="chart-bar" style="height:80%"></div>
+              <div class="chart-bar" style="height:65%"></div>
+              <div class="chart-bar" style="height:90%"></div>
+              <div class="chart-bar" style="height:75%"></div>
+            </div>
+            <div style="display:flex;justify-content:space-around;font-size:0.75rem;color:var(--gray-400);margin-top:0.5rem">
+              <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
+            </div>
+          </div>
+
+          <h3 style="font-size:1.1rem;margin-bottom:1rem">Deine Anzeigen</h3>
+          <div class="jobs-grid">
+            ${JOBS.slice(0,3).map(j => `
+              <div class="card">
+                <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
+                  <div style="display:flex;align-items:center;gap:1rem;flex:1">
+                    <div class="job-company-logo">${j.companyLogo}</div>
+                    <div>
+                      <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${j.title}</h3>
+                      <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
+                        <span>${j.views}</span>
+                        <span>${j.clicks}</span>
+                        <span>${j.applications} Bew.</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
+                    ${j.promoted
+                      ? '<span class="badge badge-secondary">&#9733; Aktiv geboosted</span>'
+                      : `<button class="btn btn-sm btn-secondary" onclick="showBoostModal('${j.title}')">Boosten</button>`}
+                    <span class="badge badge-success">Aktiv</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="card" style="margin-top:1.5rem;border-color:var(--secondary)">
+            <div class="card-body" style="display:flex;align-items:center;gap:1rem;background:rgba(245,158,11,0.05)">
+              <div style="font-size:1.5rem"></div>
+              <div style="flex:1">
+                <strong>Erinnerung:</strong> Du hast eine Anzeige im Entwurf, die noch nicht veröffentlicht wurde.
+                <div style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Nur noch 2 Schritte bis zur Veröffentlichung!</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="goPostJob()">Fortfahren</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderEmployerSidebar(active) {
+  return `
+    <div class="dashboard-sidebar">
+      <nav class="sidebar-nav">
+        <a href="#" class="${active==='dashboard'?'active':''}" onclick="navigate('employer-dashboard')">Dashboard</a>
+        <a href="#" class="${active==='post'?'active':''}" onclick="navigate('post-job')">Anzeige schalten</a>
+        <a href="#" class="${active==='applicants'?'active':''}" onclick="navigate('applicants')">Bewerber</a>
+        <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
+        <div class="divider"></div>
+        <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+      </nav>
+    </div>`;
+}
+
+function renderPostJob() {
+  if (!state.user || state.user.role !== 'employer') return renderLogin();
+  const step = state.wizardStep;
+  const steps = ['Grundinfos', 'Details', 'Bilder', 'Vorschau'];
+
+  return `
+    <div class="page page-narrow" style="max-width:900px">
+      <h2 class="dashboard-title">Stellenanzeige schalten</h2>
+
+      <div class="wizard-steps">
+        ${steps.map((s, i) => `
+          <div class="wizard-step ${i === step ? 'active' : i < step ? 'completed' : ''}">
+            <span class="step-num">${i < step ? '✓' : i + 1}</span>
+            <span>${s}</span>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="wizard-content">
+        ${step === 0 ? renderWizardStep1() : ''}
+        ${step === 1 ? renderWizardStep2() : ''}
+        ${step === 2 ? renderWizardStep3() : ''}
+        ${step === 3 ? renderWizardStep5() : ''}
+      </div>
+
+      <div class="wizard-footer">
+        ${step === 0
+          ? `<button class="btn btn-outline" onclick="navigate('employer-dashboard')">&#8592; Dashboard</button>`
+          : `<button class="btn btn-outline" onclick="state.wizardStep=Math.max(0,state.wizardStep-1);render()">&#8592; Zurück</button>`}
+        ${step < 3 ? `
+          <button class="btn btn-primary" onclick="state.wizardStep=Math.min(3,state.wizardStep+1);render()">Weiter &#8594;</button>
+        ` : `
+          <button class="btn btn-success btn-lg" onclick="publishJob()">✓ Veröffentlichen</button>
+        `}
+      </div>
+    </div>`;
+}
+
+function renderWizardStep1() {
+  return `
+    <h3 style="margin-bottom:1.5rem">Grundinformationen</h3>
+    <div class="form-group">
+      <label class="form-label">Jobtitel *</label>
+      <input type="text" class="form-input" placeholder="z.B. Aushilfe im Einzelhandel" value="Aushilfe im Einzelhandel">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Kategorie *</label>
+        <select class="form-select">
+          <option value="">Kategorie wählen...</option>
+          ${CATEGORIES.map(c => `<option value="${c.name}" ${c.name==='Einzelhandel'?'selected':''}>${c.icon} ${c.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Jobtyp *</label>
+        <select class="form-select">
+          ${JOB_TYPES.map(t => `<option value="${t}" ${t==='Minijob'?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Arbeitsort / Adresse *</label>
+      <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt" value="Musterstraße 1, 10115 Berlin">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Stundenlohn</label>
+        <input type="text" class="form-input" placeholder="z.B. 12,50€/Std" value="12,50€/Std">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Arbeitszeit</label>
+        <input type="text" class="form-input" placeholder="z.B. 10-15 Std/Woche" value="10-15 Std/Woche">
+      </div>
+    </div>
+
+    <div style="background:rgba(79,70,229,0.05);border:1px solid rgba(79,70,229,0.15);border-radius:var(--radius-sm);padding:1rem;margin-top:1rem">
+      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
+        <span>KI</span>
+        <strong style="font-size:0.9rem">KI-Unterstützung</strong>
+      </div>
+      <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.75rem">Lass die KI deine Stellenanzeige basierend auf den Grundinfos vorgenerieren.</p>
+      <button class="btn btn-primary btn-sm" id="ai-gen-btn" onclick="aiGenerateJob(this)">Mit KI generieren</button>
+    </div>`;
+}
+
+function renderWizardStep2() {
+  return `
+    <h3 style="margin-bottom:1.5rem">Stellenbeschreibung</h3>
+    <div class="form-group">
+      <label class="form-label">Aufgaben *</label>
+      <textarea class="form-textarea" rows="4" placeholder="Beschreibe die Aufgaben...">Kassentätigkeit und Kundenberatung
+Wareneinräumen und Regalpflege
+Sauberhalten des Verkaufsbereichs</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Anforderungen *</label>
+      <textarea class="form-textarea" rows="4" placeholder="Was bringt der ideale Bewerber mit?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Wir bieten</label>
+      <textarea class="form-textarea" rows="4" placeholder="Was bietet ihr den Bewerbern?"></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Gewünschte Eigenschaften</label>
+      <div class="checkbox-group">
+        ${SKILLS.map(s => `<label class="checkbox-label"><input type="checkbox"> <span>${s}</span></label>`).join('')}
+      </div>
+    </div>`;
+}
+
+function renderWizardStep3() {
+  return `
+    <h3 style="margin-bottom:1.5rem">Bilder hochladen</h3>
+    <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1.5rem">Bilder machen deine Anzeige attraktiver. Sie werden angezeigt, wenn Bewerber auf deine Anzeige klicken.</p>
+    <div class="file-upload" style="margin-bottom:1rem" onclick="this.querySelector('input').click()">
+      <div class="file-upload-icon"></div>
+      <div><strong>Bilder hochladen</strong></div>
+      <div style="font-size:0.8rem;color:var(--gray-500)">JPG oder PNG, max. 5MB pro Bild, bis zu 5 Bilder</div>
+      <input type="file" accept=".jpg,.png" multiple style="display:none">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem">
+      <div class="job-image-placeholder" style="aspect-ratio:1">Bild 1</div>
+      <div class="job-image-placeholder" style="aspect-ratio:1;border:2px dashed var(--gray-300)">+ Hinzufügen</div>
+    </div>`;
+}
+
+function renderWizardStep4() {
+  return `
+    <h3 style="margin-bottom:1.5rem">Laufzeit & Bezahlung</h3>
+    <div class="form-group">
+      <label class="form-label">Laufzeit der Anzeige</label>
+      <div class="radio-group" style="flex-direction:column">
+        <label class="radio-label"><input type="radio" name="duration" value="30" checked> <span>30 Tage &mdash; 29€</span></label>
+        <label class="radio-label"><input type="radio" name="duration" value="60"> <span>60 Tage &mdash; 49€ <span class="badge badge-success" style="margin-left:0.5rem">Beliebt</span></span></label>
+        <label class="radio-label"><input type="radio" name="duration" value="90"> <span>90 Tage &mdash; 69€</span></label>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Anzeige boosten?</label>
+      <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:0.75rem">
+        Hebe deine Anzeige hervor und erscheine ganz oben in den Suchergebnissen. Du kannst deinen Boost auch jederzeit nach der Veröffentlichung aktivieren.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
+        <div class="card" style="border-color:var(--gray-200);cursor:pointer" onclick="selectBoost(this,'none')">
+          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
+            <input type="radio" name="boost" value="none" checked>
+            <div style="flex:1">
+              <strong>Kein Boost</strong>
+              <div style="font-size:0.85rem;color:var(--gray-500)">Standard-Platzierung in den Suchergebnissen.</div>
+            </div>
+            <div style="font-weight:700;color:var(--gray-500)">+0€</div>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--secondary);background:rgba(249,115,22,0.03);cursor:pointer" onclick="selectBoost(this,'standard')">
+          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
+            <input type="radio" name="boost" value="standard">
+            <div style="flex:1">
+              <strong>↑ Standard Boost</strong>
+              <div style="font-size:0.85rem;color:var(--gray-500)">Hervorgehoben auf der Suchergebnisseite. 2&times; mehr Sichtbarkeit.</div>
+            </div>
+            <div style="font-weight:800;font-size:1.1rem;color:var(--secondary)">+15€</div>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--primary);background:rgba(22,163,74,0.03);cursor:pointer" onclick="selectBoost(this,'premium')">
+          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
+            <input type="radio" name="boost" value="premium">
+            <div style="flex:1">
+              <strong>&#9733; Premium Boost</strong>
+              <div style="font-size:0.85rem;color:var(--gray-500)">Ganz oben + farblich hervorgehoben + E-Mail-Newsletter an passende Bewerber. 5&times; mehr Sichtbarkeit.</div>
+            </div>
+            <div style="font-weight:800;font-size:1.1rem;color:var(--primary)">+35€</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="price-summary" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:1.25rem;margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
+        <span>Anzeige (30 Tage)</span><span>29,00€</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem" id="boost-line" class="hidden">
+        <span id="boost-label">Standard Boost</span><span id="boost-price">15,00€</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)" id="tax-line">
+        <span>MwSt. (19%)</span><span id="tax-amount">5,51€</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem">
+        <span>Gesamt</span><span id="total-price">34,51€</span>
+      </div>
+    </div>`;
+}
+
+function renderWizardStep5() {
+  return `
+    <h3 style="margin-bottom:1.5rem">Vorschau deiner Anzeige</h3>
+    <div class="job-card" style="cursor:default">
+      <div>
+        <div class="job-card-header">
+          <div class="job-company-logo"></div>
+          <div class="job-card-info">
+            <h3>Dein Jobtitel</h3>
+            <div class="job-company-name">Dein Unternehmen</div>
+          </div>
+        </div>
+        <div class="job-card-meta">
+          <span>Deine Adresse</span>
+          <span>Arbeitszeit</span>
+          <span>Stundenlohn</span>
+          <span>Heute</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:1rem;margin-top:1.5rem;display:flex;align-items:center;gap:0.75rem">
+      <span style="font-size:1.25rem">!</span>
+      <div>
+        <strong>Fast geschafft!</strong>
+        <div style="font-size:0.85rem;color:var(--gray-600)">Nach der Bezahlung wird deine Anzeige sofort veröffentlicht. Du kannst sie jederzeit bearbeiten oder pausieren.</div>
+      </div>
+    </div>`;
+}
+
+function renderEmployerProfile() {
+  if (!state.user) return renderLogin();
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderEmployerSidebar('profile')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">Unternehmensprofil</h2>
+
+          <div class="profile-header-card" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">
+            <div class="profile-avatar" style="font-size:1.5rem"></div>
+            <div class="profile-info">
+              <h2>${state.user.name}'s Unternehmen</h2>
+              <p>Unternehmensprofil bearbeiten</p>
+            </div>
+          </div>
+
+          <div class="profile-sections">
+            <div class="profile-section">
+              <h3>Allgemeine Informationen</h3>
+              <div class="form-group">
+                <label class="form-label">Unternehmensname</label>
+                <input type="text" class="form-input" placeholder="Name des Unternehmens">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Branche</label>
+                <select class="form-select">
+                  <option>Branche wählen...</option>
+                  ${CATEGORIES.map(c => `<option>${c.name}</option>`).join('')}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Beschreibung</label>
+                <textarea class="form-textarea" placeholder="Beschreibe dein Unternehmen..."></textarea>
+              </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Kontakt & Standort</h3>
+              <div class="form-group">
+                <label class="form-label">Adresse</label>
+                <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefon</label>
+                <input type="tel" class="form-input" placeholder="+49 ...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Website</label>
+                <input type="url" class="form-input" placeholder="https://...">
+              </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Social Media</h3>
+              <div class="form-group">
+                <label class="form-label">Instagram</label>
+                <input type="text" class="form-input" placeholder="@dein_unternehmen">
+                <p class="form-hint">Gib Bewerbern Einblick in deinen Arbeitsalltag!</p>
+              </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Unternehmensdaten</h3>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Gründungsjahr</label>
+                  <input type="number" class="form-input" placeholder="z.B. 2020">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Mitarbeiterzahl</label>
+                  <input type="text" class="form-input" placeholder="z.B. 10-50">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:1.5rem;text-align:right">
+            <button class="btn btn-primary btn-lg" onclick="saveWorkerProfile(this)">✓ Profil speichern</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+
+const MOCK_APPLICANTS = [
+  { id: 1, name: 'Lisa Müller', initials: 'LM', age: 19, city: 'Berlin', job: 'Aushilfe im Einzelhandel', status: 'new', statusText: 'Neu', date: '2026-03-23', skills: ['Kundenservice', 'Teamarbeit'], weeklyHours: 15, refs: ['Supermarkt Frisch (2025)', 'Bäckerei Müller (2024)'], cvUploaded: true, docsUploaded: true, about: 'Ich bin eine zuverlässige und freundliche Schülerin, die nach einem Minijob im Einzelhandel sucht.' },
+  { id: 2, name: 'Tom Fischer', initials: 'TF', age: 17, city: 'Berlin', job: 'Aushilfe im Einzelhandel', status: 'reviewing', statusText: 'In Prüfung', date: '2026-03-22', skills: ['Zuverlässigkeit', 'Kasse'], weeklyHours: 10, refs: ['Aldi Nord (2025)'], cvUploaded: true, docsUploaded: false, about: 'Schüler im letzten Schuljahr, sehr motiviert und lernbereit.' },
+  { id: 3, name: 'Anna Becker', initials: 'AB', age: 20, city: 'Hamburg', job: 'Kellner/in im Café', status: 'accepted', statusText: 'Eingeladen', date: '2026-03-21', skills: ['Gastronomie', 'Freundlich'], weeklyHours: 20, refs: ['Café Central (2025)', 'Restaurant Adler (2024)', 'Eisdiele Süß (2023)'], cvUploaded: true, docsUploaded: true, about: 'Erfahrene Servicekraft mit Leidenschaft für gute Küche und freundlichen Umgang mit Gästen.' },
+  { id: 4, name: 'Max Weber', initials: 'MW', age: 18, city: 'München', job: 'Kellner/in im Café', status: 'new', statusText: 'Neu', date: '2026-03-23', skills: ['Service', 'Belastbar'], weeklyHours: 12, refs: [], cvUploaded: false, docsUploaded: true, about: 'Student im ersten Semester, suche Nebenjob an Wochenenden.' },
+  { id: 5, name: 'Sarah Koch', initials: 'SK', age: 21, city: 'Köln', job: 'Lagerhelfer/in', status: 'rejected', statusText: 'Abgelehnt', date: '2026-03-20', skills: ['Logistik'], weeklyHours: 20, refs: ['DHL Paketcenter (2025)'], cvUploaded: true, docsUploaded: true, about: 'Erfahren im Lager- und Logistikbereich, körperlich fit und strukturiert.' }
+];
+
+function renderApplicants() {
+  if (!state.user) return renderLogin();
+  const applicants = MOCK_APPLICANTS;
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderEmployerSidebar('applicants')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">Bewerber verwalten</h2>
+
+          <div class="tabs">
+            <button class="tab active">Alle (${applicants.length})</button>
+            <button class="tab">Neu (${applicants.filter(a=>a.status==='new').length})</button>
+            <button class="tab">In Prüfung (${applicants.filter(a=>a.status==='reviewing').length})</button>
+            <button class="tab">Eingeladen (${applicants.filter(a=>a.status==='accepted').length})</button>
+          </div>
+
+          <div class="card">
+            <table class="applicants-table">
+              <thead>
+                <tr>
+                  <th>Bewerber</th>
+                  <th>Stelle</th>
+                  <th>Skills</th>
+                  <th>Status</th>
+                  <th>Datum</th>
+                  <th>Aktionen</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${applicants.map(a => `
+                  <tr>
+                    <td>
+                      <div class="applicant-row">
+                        <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${a.initials}</div>
+                        <strong>${a.name}</strong>
+                      </div>
+                    </td>
+                    <td>${a.job}</td>
+                    <td>${a.skills.map(s => `<span class="tag">${s}</span>`).join(' ')}</td>
+                    <td><span class="badge ${a.status==='new'?'badge-primary':a.status==='reviewing'?'badge-secondary':a.status==='accepted'?'badge-success':'badge-danger'}">${a.statusText}</span></td>
+                    <td>${formatDate(a.date)}</td>
+                    <td>
+                      <div style="display:flex;gap:0.375rem">
+                        <button class="btn btn-sm btn-outline" onclick="navigate('applicant-profile', {applicantId: ${a.id}})">Profil</button>
+                        <button class="btn btn-sm btn-primary" onclick="navigate('messages')">Nachricht</button>
+                      </div>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderApplicantProfile() {
+  if (!state.user || state.user.role !== 'employer') return renderLogin();
+  const id = state.pageData?.applicantId;
+  const a = MOCK_APPLICANTS.find(x => x.id === id) || MOCK_APPLICANTS[0];
+  const statusColor = { new: 'badge-primary', reviewing: 'badge-secondary', accepted: 'badge-success', rejected: 'badge-danger' };
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${renderEmployerSidebar('applicants')}
+        <div class="dashboard-content">
+
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+            <button class="btn btn-sm btn-outline" onclick="navigate('applicants')">&#8592; Zurück</button>
+            <h2 class="dashboard-title" style="margin:0">Bewerberprofil</h2>
+          </div>
+
+          <div class="pv-banner" style="background:linear-gradient(135deg,var(--primary-light) 0%,var(--primary) 100%);height:110px;border-radius:12px 12px 0 0;position:relative">
+            <div style="position:absolute;bottom:-30px;left:1.5rem;width:64px;height:64px;font-size:1.3rem;border:3px solid #fff;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700">
+              ${a.initials}
+            </div>
+          </div>
+
+          <div class="card" style="border-radius:0 0 12px 12px;padding-top:2.5rem;margin-bottom:1rem">
+            <div class="card-body">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
+                <div>
+                  <h2 style="font-size:1.3rem;margin-bottom:0.25rem">${a.name}</h2>
+                  <div style="font-size:0.85rem;color:var(--gray-500)">
+                    ${a.age} Jahre &bull; ${a.city} &bull; max. ${a.weeklyHours} Std./Woche
+                  </div>
+                  <div style="margin-top:0.5rem">
+                    <span class="badge ${statusColor[a.status] || 'badge-primary'}">${a.statusText}</span>
+                    <span style="font-size:0.8rem;color:var(--gray-400);margin-left:0.5rem">Beworben auf: <strong>${a.job}</strong></span>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.4rem;vertical-align:-2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                  Nachricht senden
+                </button>
+              </div>
+              ${a.about ? `
+                <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100);font-size:0.88rem;color:var(--gray-600);line-height:1.5">
+                  ${a.about}
+                </div>` : ''}
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-body">
+                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Stärken</h4>
+                ${a.skills.length > 0
+                  ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${a.skills.map(s => `<span class="epc-skill-tag">${s}</span>`).join('')}</div>`
+                  : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Berufserfahrung</h4>
+                ${a.refs && a.refs.length > 0
+                  ? `<ul style="margin:0;padding-left:1.1rem;font-size:0.88rem;line-height:1.8">${a.refs.map(r => `<li>${r}</li>`).join('')}</ul>`
+                  : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Dokumente</h4>
+                <div class="epc-doc-row">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                  <span style="flex:1;font-size:0.88rem">Lebenslauf</span>
+                  ${a.cvUploaded ? '<span class="badge badge-success" style="font-size:0.72rem">Hochgeladen</span>' : '<span class="pv-missing-chip">Fehlt</span>'}
+                </div>
+                <div class="epc-doc-row" style="margin-top:0.5rem">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><polyline points="9 11 12 14 22 4"></polyline></svg>
+                  <span style="flex:1;font-size:0.88rem">Zeugnis / Zertifikat</span>
+                  ${a.docsUploaded ? '<span class="badge badge-success" style="font-size:0.72rem">Hochgeladen</span>' : '<span class="pv-missing-chip">Fehlt</span>'}
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Verfügbarkeit</h4>
+                <div style="font-size:0.88rem">
+                  <div style="display:flex;justify-content:space-between;padding:0.25rem 0;border-bottom:1px solid var(--gray-100)">
+                    <span style="color:var(--gray-500)">Wochenstunden</span>
+                    <strong>${a.weeklyHours} Std.</strong>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;padding:0.25rem 0">
+                    <span style="color:var(--gray-500)">Standort</span>
+                    <strong>${a.city}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:1.5rem">
+            <button class="btn btn-primary btn-lg" onclick="openApplicantChat(${a.id})">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;vertical-align:-2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+              ${a.name.split(' ')[0]} anschreiben
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderChatDetail() {
+  if (!state.user) return renderLogin();
+  const isEmployer = state.user.role === 'employer';
+  const chatId = state.pageData?.chatId !== undefined ? state.pageData.chatId : state.activeChat;
+  if (chatId !== undefined && chatId !== null) state.activeChat = chatId;
+  const chat = findChat(state.activeChat);
+  if (!chat) return renderMessages();
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${isEmployer ? renderEmployerSidebar('messages') : renderWorkerSidebar('messages')}
+        <div class="dashboard-content" style="display:flex;flex-direction:column;max-height:calc(100vh - 140px)">
+
+          <!-- Chat-Kopfzeile -->
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)">
+            <button class="btn btn-sm btn-outline" onclick="navigate('messages')">&#8592; Zurück</button>
+            <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
+            <div>
+              <strong style="font-size:0.95rem">${chat.partnerName}</strong>
+              <div style="font-size:0.78rem;color:var(--gray-500)">${chat.jobTitle}</div>
+            </div>
+          </div>
+
+          <!-- Nachrichten -->
+          <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
+            ${chat.messages.length === 0 ? `
+              <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
+                Noch keine Nachrichten. Schreib ${chat.partnerName.split(' ')[0]} eine erste Nachricht!
+              </div>` : ''}
+            ${chat.messages.map(m => `
+              <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
+                <div style="max-width:72%;padding:0.6rem 0.85rem;border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};font-size:0.88rem;line-height:1.45">
+                  ${escapeHtml(m.text)}
+                  <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+
+          <!-- Eingabezeile -->
+          <div style="display:flex;gap:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200);max-width:620px">
+            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" onkeydown="if(event.key==='Enter')sendChatMessage()">
+            <button class="btn btn-primary" onclick="sendChatMessage()">Senden</button>
+          </div>
+
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== SHARED PAGES =====
+
+function renderMessages() {
+  if (!state.user) return renderLogin();
+  const isEmployer = state.user.role === 'employer';
+  const chatList = getChatList();
+  const unreadCount = chatList.filter(c => c.unread).length;
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${isEmployer ? renderEmployerSidebar('messages') : renderWorkerSidebar('messages')}
+        <div class="dashboard-content">
+          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem">
+            <h2 class="dashboard-title" style="margin-bottom:0;font-size:1.25rem">Nachrichten</h2>
+            ${unreadCount > 0 ? `<span class="badge badge-danger">${unreadCount} neu</span>` : ''}
+          </div>
+          <div class="card" style="max-width:620px">
+            ${chatList.map(c => `
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'" onclick="navigate('chat',{chatId:${c.id}})">
+                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;justify-content:space-between;align-items:baseline">
+                    <strong style="font-size:0.85rem">${c.partnerName}</strong>
+                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                  </div>
+                  <div style="font-size:0.75rem;color:var(--primary)">${c.jobTitle}</div>
+                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+                </div>
+                ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
+              </div>
+            `).join('')}
+            ${chatList.length === 0 ? `
+              <div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">
+                ${isEmployer ? 'Noch keine Bewerbernachrichten.' : 'Noch keine Nachrichten von Arbeitgebern.'}
+              </div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+// ===== INTERVIEW SIMULATION =====
+
+// Adaptive question bank — questions chosen based on what applicant says
+const IQ = {
+  Gastronomie: {
+    intro:     { q: 'Schön, dass du da bist! Stell dich kurz vor – wer bist du, wie alt bist du, und was hat dich zu diesem Job gebracht?', tip: 'Nenn deinen Namen, dein Alter und eine echte Motivation.' },
+    followups: [
+      // branching on erfahrung
+      { trigger: ['erfahrung','gearbeitet','job','restaurant','café','kellner','bedient'],
+        q: 'Das klingt interessant – magst du mir mehr davon erzählen? Was hast du dabei gelernt?', tip: 'Konkrete Erlebnisse wirken überzeugend.' },
+      { trigger: ['keine','nie','noch nicht','wenig','kaum','leider'],
+        q: 'Kein Problem – jeder fängt irgendwo an. Was glaubst du, bringst du mit, das dir bei diesem Job hilft?', tip: 'Soft Skills wie Freundlichkeit oder Pünktlichkeit zählen.' },
+      // stress
+      { trigger: ['stress','viel','gleichzeitig','druck','hektisch','schnell'],
+        q: 'Du hast Stress erwähnt – wie bleibst du in solchen Momenten ruhig und behältst den Überblick?', tip: 'Zeig eine konkrete Strategie.' },
+      // motivation
+      { trigger: ['geld','verdienen','taschengeld','nebenjob','nebenher'],
+        q: 'Finanziell motiviert zu sein ist völlig legitim. Aber was interessiert dich abseits davon an der Gastronomie?', tip: 'Auch echte Neugier am Job überzeugt.' },
+    ],
+    fixed: [
+      { q: 'Stell dir vor, ein Gast beschwert sich lautstark über das Essen – was tust du?', tip: 'Ruhig bleiben, zuhören, Lösung anbieten.' },
+      { q: 'Kannst du flexibel arbeiten – also auch abends oder am Wochenende?', tip: 'Sei ehrlich, lieber jetzt klären.' },
+      { q: 'Was würdest du tun, wenn du siehst, dass ein Kollege einen Fehler macht?', tip: 'Teamgeist zeigen, nicht anklagen.' },
+      { q: 'Wie wichtig ist dir Sauberkeit und Hygiene am Arbeitsplatz?', tip: 'In der Gastronomie ist das ein Muss – nenn ein Beispiel.' },
+      { q: 'Wo siehst du dich in einem Jahr – was möchtest du beruflich erreicht haben?', tip: 'Zeig Ambitionen ohne zu übertreiben.' },
+      { q: 'Hast du noch Fragen an uns?', tip: 'Immer eine Frage stellen – das zeigt echtes Interesse.' },
+    ]
+  },
+  Einzelhandel: {
+    intro:     { q: 'Herzlich willkommen! Erzähl mir kurz – wer bist du, und warum interessierst du dich für den Einzelhandel?', tip: 'Persönlich und konkret antworten.' },
+    followups: [
+      { trigger: ['erfahrung','gearbeitet','shop','laden','kasse','verkauft'],
+        q: 'Schön – was hat dir an dieser Erfahrung besonders gefallen oder nicht gefallen?', tip: 'Ehrlichkeit wirkt sympathisch.' },
+      { trigger: ['keine','nie','erstmal','neu','noch nicht'],
+        q: 'Neu einzusteigen ist völlig in Ordnung. Was macht dir Lust auf den Kontakt mit Kunden?', tip: 'Kundennähe ist das Herzstück des Einzelhandels.' },
+      { trigger: ['mode','technik','sport','produkt','mag','interesse'],
+        q: 'Du hast ein konkretes Interesse erwähnt – wie würde dir das helfen, Kunden zu beraten?', tip: 'Produktwissen ist ein echter Vorteil.' },
+      { trigger: ['freundlich','kommunikativ','offen','hilfsbereit','kontakt'],
+        q: 'Gut – kannst du mir eine Situation nennen, in der du genau das unter Beweis gestellt hast?', tip: 'Konkrete Beispiele sind immer besser als allgemeine Aussagen.' },
+    ],
+    fixed: [
+      { q: 'Ein Kunde ist aggressiv und laut – was machst du?', tip: 'Deeskalation zeigen: ruhig, zuhören, Lösung suchen.' },
+      { q: 'Wie gehst du damit um, wenn du kurz vor Feierabend noch viele Aufgaben offen hast?', tip: 'Priorisierung und Kommunikation mit dem Team.' },
+      { q: 'Was würdest du tun, wenn du Ware falsch eingepreist entdeckst?', tip: 'Direkt melden – zeigt Verantwortungsbewusstsein.' },
+      { q: 'Wie wichtig ist dir Ordnung und eine saubere Verkaufsfläche?', tip: 'Sehr wichtig – kauf dir Überzeugungspunkte mit einem Beispiel.' },
+      { q: 'Kannst du dir vorstellen, langfristig in diesem Bereich zu bleiben?', tip: 'Zeig Interesse an Entwicklung – Ausbildung, Aufstieg.' },
+      { q: 'Hast du noch Fragen an uns?', tip: 'Immer mindestens eine Frage stellen.' },
+    ]
+  },
+  Büro: {
+    intro:     { q: 'Schön, Sie kennenzulernen! Bitte stell dich kurz vor – was bringst du mit, und warum interessiert dich Büroarbeit?', tip: 'Struktur, Genauigkeit, digitale Affinität betonen.' },
+    followups: [
+      { trigger: ['excel','word','outlook','computer','programm','digital','office'],
+        q: 'Du hast digitale Kenntnisse erwähnt – auf welchem Niveau würdest du dich einschätzen?', tip: 'Lieber ehrlich als übertrieben.' },
+      { trigger: ['keine','wenig','grundkenntnisse','lerne','neu'],
+        q: 'Lernbereitschaft ist sehr wertvoll. Wie gehst du vor, wenn du etwas Neues schnell lernen musst?', tip: 'Zeig eine konkrete Lernstrategie.' },
+      { trigger: ['organisiert','struktur','ordentlich','plan','genau'],
+        q: 'Interessant – kannst du mir ein konkretes Beispiel nennen, wo deine Organisationsstärke hilfreich war?', tip: 'Schulprojekte, Verein, Alltag – alles zählt.' },
+      { trigger: ['teamarbeit','kollegen','zusammen','kommunikation','absprache'],
+        q: 'Du scheinst teamorientiert zu sein. Wie gehst du mit unterschiedlichen Meinungen im Team um?', tip: 'Kompromissfähigkeit ist gefragt.' },
+    ],
+    fixed: [
+      { q: 'Du bekommst eine Aufgabe, die du nicht verstehst – was tust du als erstes?', tip: 'Nachfragen ist besser als Fehler machen.' },
+      { q: 'Wie priorisierst du, wenn mehrere Aufgaben gleichzeitig erledigt werden müssen?', tip: 'Zeig eine klare Methode: wichtig vs. dringend.' },
+      { q: 'Du bemerkst einen Fehler in einem Dokument, das dein Vorgesetzter erstellt hat – was machst du?', tip: 'Ruhig und respektvoll ansprechen.' },
+      { q: 'Wie gehst du mit vertraulichen Informationen um?', tip: 'Datenschutz und Diskretion sind im Büro essenziell.' },
+      { q: 'Was erwartest du von einem guten Arbeitsumfeld?', tip: 'Zeig, dass du realistisch bist und Wert auf Zusammenarbeit legst.' },
+      { q: 'Hast du noch Fragen an uns?', tip: 'Frag nach Aufgaben, Einarbeitung oder Team.' },
+    ]
+  }
+};
+
+if (!window._interview) window._interview = { phase: 'select' };
+
+function getNextQuestion(iv) {
+  const bank = IQ[iv.category];
+  // First question is always the intro
+  if (iv.answers.length === 0) return bank.intro;
+  // After intro, check if any followup triggers match last answer
+  const lastAnswer = (iv.answers[iv.answers.length - 1]?.a || '').toLowerCase();
+  const usedFollowups = iv.usedFollowups || [];
+  for (const fu of bank.followups) {
+    if (!usedFollowups.includes(fu.q) && fu.trigger.some(t => lastAnswer.includes(t))) {
+      iv.usedFollowups = [...usedFollowups, fu.q];
+      return fu;
+    }
+  }
+  // Otherwise pick next fixed question not yet asked
+  const askedFixed = iv.usedFixed || [];
+  for (const fq of bank.fixed) {
+    if (!askedFixed.includes(fq.q)) {
+      iv.usedFixed = [...askedFixed, fq.q];
+      return fq;
+    }
+  }
+  return null; // done
+}
+
+function setInterviewVoice(voiceId) {
+  AZURE_VOICE = voiceId;
+  localStorage.setItem('easyjobs_voice', voiceId);
+  render();
+}
+
+function startInterview(category) {
+  window._interview = {
+    phase: 'talking', category,
+    listening: false, interimText: '',
+    messages: [], answers: [],
+    usedFollowups: [], usedFixed: [],
+    aiSpeaking: false, currentQuestion: null,
+    micStarted: false
+  };
+  const intro = 'Guten Tag! Mein Name ist Sarah, ich bin heute für das Gespräch zuständig. Schön, dass du dir die Zeit genommen hast. Wir werden uns ein paar Minuten unterhalten – antworte einfach so natürlich wie möglich, ganz ohne Druck. Ich werde dir nach unserem Gespräch ein ausführliches Feedback geben. Fangen wir an!';
+  window._interview.messages.push({ role: 'ai', text: intro });
+  render();
+  window._interview.aiSpeaking = true;
+  speakText(intro, () => {
+    window._interview.aiSpeaking = false;
+    setTimeout(() => nextInterviewQuestion(), 600);
+  });
+  // Start always-on mic after a short delay
+  setTimeout(() => startContinuousMic(), 800);
+}
+
+function startContinuousMic() {
+  const iv = window._interview;
+  if (!iv || iv.micStarted) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  iv.micStarted = true;
+
+  const recognition = new SR();
+  recognition.lang = 'de-DE';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+  window._recognition = recognition;
+
+  let accumulated = '';
+  let silenceTimer = null;
+
+  recognition.onresult = (e) => {
+    if (iv.aiSpeaking) {
+      // Ignore speech while AI is talking
+      accumulated = '';
+      return;
+    }
+    iv.listening = true;
+    let interim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) accumulated += e.results[i][0].transcript + ' ';
+      else interim = e.results[i][0].transcript;
+    }
+    iv.interimText = interim;
+    const el = document.getElementById('interview-interim');
+    if (el) el.textContent = interim;
+    clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(() => {
+      const text = accumulated.trim();
+      if (text.length > 1) {
+        accumulated = '';
+        iv.listening = false;
+        iv.interimText = '';
+        iv.answers.push({ q: iv.currentQuestion?.q || 'Frage', a: text });
+        iv.messages.push({ role: 'user', text });
+        render();
+        scrollInterviewToBottom();
+        setTimeout(() => nextInterviewQuestion(), 700);
+      } else {
+        accumulated = '';
+      }
+    }, 1800);
+  };
+
+  recognition.onend = () => {
+    // Auto-restart if interview still active
+    if (iv && iv.phase === 'talking') {
+      try { recognition.start(); } catch (err) {}
+    } else {
+      iv.listening = false;
+    }
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'no-speech' || e.error === 'aborted') return;
+    iv.listening = false;
+  };
+
+  recognition.start();
+}
+
+function nextInterviewQuestion() {
+  const iv = window._interview;
+  if (!iv || iv.phase !== 'talking') return;
+  const next = getNextQuestion(iv);
+  if (next) {
+    iv.currentQuestion = next;
+    iv.messages.push({ role: 'ai', text: next.q });
+    render();
+    scrollInterviewToBottom();
+    iv.aiSpeaking = true;
+    speakText(next.q, () => { iv.aiSpeaking = false; });
+  } else {
+    iv.phase = 'done';
+    if (window._recognition) { try { window._recognition.stop(); } catch (e) {} }
+    const closing = 'Vielen Dank, das war sehr aufschlussreich. Ich schätze, dass du dir die Zeit genommen hast. Dein Feedback wartet bereits auf dich – ich wünsche dir viel Erfolg!';
+    iv.messages.push({ role: 'ai', text: closing });
+    render();
+    scrollInterviewToBottom();
+    iv.aiSpeaking = true;
+    speakText(closing, () => { iv.aiSpeaking = false; render(); });
+  }
+}
+
+// ── Azure TTS ──────────────────────────────────────────────────────────────
+const AZURE_KEY    = 'A9F7bHPiSFUuiAlaZFJjAEsV7R6DYsYNHXXCPVwUQE4oMk2F6nKRJQQJ99CCAC5RqLJXJ3w3AAAYACOGMZtF';
+const AZURE_REGION = 'westeurope';
+const AZURE_VOICES = [
+  { id: 'de-DE-SeraphinaMultilingualNeural', label: 'Seraphina', desc: 'Weiblich · realistischste Stimme', gender: '👩' },
+];
+let AZURE_VOICE = localStorage.getItem('easyjobs_voice') || 'de-DE-SeraphinaMultilingualNeural';
+
+function stopCurrentAudio() {
+  // Abort any in-flight Azure fetch
+  if (window._ttsAbortCtrl) { window._ttsAbortCtrl.abort(); window._ttsAbortCtrl = null; }
+  // Stop playing audio
+  if (window._currentAudio) {
+    window._currentAudio.onended = null;
+    window._currentAudio.onerror = null;
+    window._currentAudio.pause();
+    window._currentAudio.src = '';
+    window._currentAudio = null;
+  }
+  // Stop browser TTS
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function preprocessSpeech(text) {
+  return text
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/\bz\.B\./g, 'zum Beispiel')
+    .replace(/\busw\./g, 'und so weiter')
+    .replace(/\bbzw\./g, 'beziehungsweise')
+    .replace(/\bca\./g, 'circa')
+    .replace(/\bggf\./g, 'gegebenenfalls')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function speakTextBrowser(text, onEnd) {
+  const synth = window.speechSynthesis;
+  if (!synth) { if (onEnd) onEnd(); return; }
+  synth.cancel();
+  const chunks = text.split(/(?<=[.!?…,])\s+/).map(s => s.trim()).filter(Boolean);
+  const voices = synth.getVoices();
+  const priority = ['Microsoft Katja Online (Natural)', 'Microsoft Katja Online', 'Google Deutsch', 'Microsoft Katja', 'Anna'];
+  let voice = null;
+  for (const name of priority) { voice = voices.find(v => v.name.includes(name)); if (voice) break; }
+  if (!voice) voice = voices.find(v => v.lang === 'de-DE' && !v.localService) || voices.find(v => v.lang === 'de-DE');
+  let idx = 0;
+  const next = () => {
+    if (idx >= chunks.length) { if (onEnd) onEnd(); return; }
+    const utter = new SpeechSynthesisUtterance(chunks[idx++]);
+    utter.lang = 'de-DE'; utter.rate = 0.88; utter.pitch = 1.06; utter.volume = 1;
+    if (voice) utter.voice = voice;
+    utter.onend = () => setTimeout(next, 110);
+    utter.onerror = () => setTimeout(next, 110);
+    synth.speak(utter);
+  };
+  if (synth.getVoices().length > 0) next();
+  else { synth.onvoiceschanged = () => { synth.onvoiceschanged = null; next(); }; }
+}
+
+async function speakText(text, onEnd) {
+  stopCurrentAudio();
+  const ctrl = new AbortController();
+  window._ttsAbortCtrl = ctrl;
+  const processed = preprocessSpeech(text);
+  const ssml = `<speak version='1.0' xml:lang='de-DE'><voice name='${AZURE_VOICE}'><prosody rate='+5%' pitch='+1%'>${processed}</prosody></voice></speak>`;
+  try {
+    const res = await fetch(`https://${AZURE_REGION}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+      method: 'POST',
+      signal: ctrl.signal,
+      headers: {
+        'Ocp-Apim-Subscription-Key': AZURE_KEY,
+        'Content-Type': 'application/ssml+xml',
+        'X-Microsoft-OutputFormat': 'audio-48khz-192kbitrate-mono-mp3'
+      },
+      body: ssml
+    });
+    if (ctrl.signal.aborted) return;
+    if (!res.ok) throw new Error(`Azure ${res.status}`);
+    const blob = await res.blob();
+    if (ctrl.signal.aborted) return;
+    const url  = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    window._currentAudio = audio;
+    window._ttsAbortCtrl = null;
+    audio.onended = () => { URL.revokeObjectURL(url); if (onEnd) onEnd(); };
+    audio.onerror = () => { URL.revokeObjectURL(url); speakTextBrowser(text, onEnd); };
+    audio.play();
+  } catch(e) {
+    if (e.name === 'AbortError') return;
+    console.warn('Azure TTS Fehler, nutze Browser-Stimme:', e);
+    speakTextBrowser(text, onEnd);
+  }
+}
+
+function autoListen() {
+  // Legacy shim — use startContinuousMic for new interviews
+  startContinuousMic();
+}
+
+function startListening() {
+  startContinuousMic();
+}
+
+function buildFinalFeedback(answers, category) {
+  if (!answers || answers.length === 0) return '<p style="color:var(--gray-500)">Keine Antworten vorhanden.</p>';
+
+  const items = answers.map((a, i) => {
+    const text  = a.a || '';
+    const lower = text.toLowerCase();
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const wc    = words.length;
+
+    const hasExample    = /beispiel|als ich|einmal|damals|letztes|bei meinem|in meiner|wenn ich/.test(lower);
+    const hasReason     = /weil|da ich|deshalb|deswegen|denn|dadurch|daher/.test(lower);
+    const hasMotivation = /freue|gerne|interessier|begeister|möchte|wünsch|strebe/.test(lower);
+    const hasStructure  = /erstens|zunächst|außerdem|zudem|abschließend|zusammenfassend/.test(lower);
+
+    let score = 0;
+    if (wc >= 8)  score += 20;
+    if (wc >= 20) score += 15;
+    if (wc >= 40) score += 10;
+    if (hasExample)    score += 25;
+    if (hasReason)     score += 15;
+    if (hasMotivation) score += 10;
+    if (hasStructure)  score += 5;
+
+    let level, color, border, icon, bewertung, tipp;
+
+    if (score >= 70) {
+      level = 'Überzeugend'; color = '#059669'; border = '#6ee7b7'; icon = '✓';
+      if (hasExample && hasReason)
+        bewertung = 'Sehr starke Antwort – du hast ein konkretes Beispiel genannt und deine Aussage begründet. Genau das suchen Arbeitgeber.';
+      else if (hasExample)
+        bewertung = 'Gute Antwort mit einem konkreten Beispiel. Das macht dich glaubwürdig und bleibt im Gedächtnis.';
+      else
+        bewertung = 'Ausführliche und klare Antwort. Du bist direkt auf die Frage eingegangen und hast dich gut ausgedrückt.';
+      tipp = 'Sehr gut – diese Art zu antworten in allen Fragen beibehalten.';
+
+    } else if (score >= 40) {
+      level = 'Solide'; color = '#0284c7'; border = '#93c5fd'; icon = '◎';
+      if (wc < 20)
+        bewertung = 'Die Antwort war etwas kurz. Du hast die Frage grundsätzlich verstanden, aber ein Interviewer erwartet mehr Tiefe und Details.';
+      else if (!hasExample)
+        bewertung = 'Du hast die Frage beantwortet, aber ohne ein konkretes Erlebnis zu nennen. Allgemeine Aussagen klingen schnell austauschbar.';
+      else
+        bewertung = 'Grundsätzlich eine ordentliche Antwort – mit etwas mehr Struktur würde sie noch überzeugender wirken.';
+      if (!hasExample)
+        tipp = 'Ergänze ein kurzes Erlebnis aus Schule, Praktikum oder Alltag, das deine Aussage belegt.';
+      else if (!hasReason)
+        tipp = 'Begründe deine Aussagen mit "weil" oder "da" – das macht dich überzeugender.';
+      else
+        tipp = 'Versuche deine Antwort mit einem klaren Abschlusssatz zu beenden, der dein Interesse nochmals zeigt.';
+
+    } else {
+      level = 'Ausbaufähig'; color = '#d97706'; border = '#fcd34d'; icon = '!';
+      if (wc < 8)
+        bewertung = 'Die Antwort war sehr kurz. In einem echten Vorstellungsgespräch würde das einen unprepared Eindruck hinterlassen – Interviewer erwarten mindestens 2–3 vollständige Sätze.';
+      else
+        bewertung = 'Die Antwort ist noch zu oberflächlich. Es fehlen konkrete Angaben, Begründungen oder ein persönliches Beispiel, das deine Aussage stützt.';
+      if (wc < 8)
+        tipp = 'Übe diese Frage laut vor dem Spiegel. Formuliere mindestens 3 Sätze – stell dir vor, du erklärst es einem Freund.';
+      else
+        tipp = 'Denk an ein echtes Erlebnis aus deinem Leben, das die Frage beantwortet. Persönliche Geschichten machen den größten Eindruck.';
+    }
+
+    return { score, level, color, border, icon, bewertung, tipp, a, i };
+  });
+
+  // Overall score
+  const avg = items.reduce((s, x) => s + x.score, 0) / items.length;
+  let overallLabel, overallColor, overallBg, overallText;
+  if (avg >= 65) {
+    overallLabel = 'Sehr guter Gesamteindruck';
+    overallColor = '#059669'; overallBg = '#ecfdf5';
+    overallText = 'Du hast dich in diesem Gespräch sehr gut präsentiert. Deine Antworten waren größtenteils ausführlich und glaubwürdig. Mit dieser Leistung hinterlässt du einen starken ersten Eindruck bei Arbeitgebern.';
+  } else if (avg >= 40) {
+    overallLabel = 'Solider Gesamteindruck';
+    overallColor = '#0284c7'; overallBg = '#eff6ff';
+    overallText = 'Du hast die wichtigsten Fragen grundsätzlich gut beantwortet. Mit mehr konkreten Beispielen aus deinem Leben und etwas mehr Tiefe in den Antworten kannst du in einem echten Gespräch deutlich überzeugender wirken.';
+  } else {
+    overallLabel = 'Noch viel Potenzial';
+    overallColor = '#d97706'; overallBg = '#fffbeb';
+    overallText = 'Dieses Gespräch zeigt, dass noch Vorbereitung nötig ist – aber das ist völlig normal. Übe deine Antworten regelmäßig laut. Mit 2–3 Durchläufen wirst du deutlich sicherer. Der größte Hebel: konkrete Beispiele aus deinem eigenen Leben.';
+  }
+
+  const overallHtml = `
+    <div style="background:${overallBg};border:1.5px solid ${overallColor}40;border-radius:var(--radius-lg);padding:1.25rem 1.5rem;margin-bottom:1.5rem">
+      <div style="font-weight:800;font-size:1rem;color:${overallColor};margin-bottom:0.4rem">${overallLabel}</div>
+      <div style="font-size:0.9rem;color:var(--gray-700);line-height:1.55">${overallText}</div>
+    </div>`;
+
+  const itemsHtml = items.map(fi => `
+    <div style="background:#fff;border:1px solid ${fi.border};border-radius:var(--radius);padding:1.25rem;margin-bottom:0.9rem;border-left:4px solid ${fi.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem">
+        <div style="font-weight:700;font-size:0.88rem;color:var(--gray-700);max-width:75%">${fi.i+1}. ${fi.a.q || 'Frage'}</div>
+        <div style="font-size:0.8rem;font-weight:700;color:${fi.color};background:${fi.color}18;padding:0.2rem 0.6rem;border-radius:99px;white-space:nowrap">${fi.icon} ${fi.level}</div>
+      </div>
+      <div style="font-size:0.82rem;color:var(--gray-500);margin-bottom:0.75rem;padding:0.5rem 0.75rem;background:#f8fafc;border-radius:6px;font-style:italic;border-left:2px solid var(--gray-200)">"${fi.a.a}"</div>
+      <div style="font-size:0.87rem;color:var(--gray-800);margin-bottom:0.4rem;line-height:1.5">${fi.bewertung}</div>
+      <div style="font-size:0.84rem;color:${fi.color};font-weight:600;margin-top:0.5rem">💡 ${fi.tipp}</div>
+    </div>`).join('');
+
+  return overallHtml + itemsHtml;
+}
+
+function scrollInterviewToBottom() {
+  setTimeout(() => {
+    const el = document.getElementById('interview-messages');
+    if (el) el.scrollTop = el.scrollHeight;
+  }, 100);
+}
+
+function submitInterviewText() {
+  const input = document.getElementById('interview-text-input');
+  if (!input || !input.value.trim()) return;
+  const iv = window._interview;
+  const txt = input.value.trim();
+  iv.answers.push({ q: iv.currentQuestion?.q || 'Frage', a: txt });
+  iv.messages.push({ role: 'user', text: txt });
+  input.value = '';
+  render();
+  scrollInterviewToBottom();
+  setTimeout(() => nextInterviewQuestion(), 400);
+}
+
+function renderInterview() {
+  if (!state.user) return renderLogin();
+  const iv = window._interview || { phase: 'select' };
+  const isEmployer = state.user.role === 'employer';
+
+  if (iv.phase === 'select') {
+    return `
+    <div class="page page-narrow">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+        <button class="btn btn-sm btn-outline" onclick="navigate('worker-dashboard')">&#8592; Dashboard</button>
+        <h2 class="dashboard-title" style="margin:0">Vorstellungsgespräch üben</h2>
+      </div>
+      <div class="card" style="padding:2rem;text-align:center;margin-bottom:1.5rem">
+        <div style="width:64px;height:64px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </div>
+        <h3 style="font-size:1.3rem;margin-bottom:0.5rem">KI-Bewerbungsgespräch</h3>
+        <p style="color:var(--gray-500);max-width:420px;margin:0 auto">Die KI stellt dir echte Interviewfragen – du antwortest per Sprache oder Text. Danach bekommst du direktes Feedback.</p>
+      </div>
+      <div class="card" style="padding:1.5rem">
+        <h3 style="margin-bottom:1rem;font-size:1rem">Für welchen Bereich möchtest du üben?</h3>
+        <div style="display:flex;flex-direction:column;gap:0.75rem">
+          ${Object.keys(IQ).map(cat => `
+            <button class="btn btn-outline" style="justify-content:flex-start;padding:1rem 1.25rem;font-size:1rem" onclick="startInterview('${cat}')">
+              ${cat === 'Gastronomie' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>' : cat === 'Einzelhandel' ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>'}
+              <span style="margin-left:0.75rem">${cat}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  const bank = IQ[iv.category];
+  const totalQ = bank ? (1 + (bank.followups?.length || 0) + (bank.fixed?.length || 0)) : 10;
+  const progress = Math.min(100, Math.round((iv.answers.length / totalQ) * 100));
+
+  if (iv.phase === 'done') {
+    return `
+    <div class="page page-narrow">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+        <button class="btn btn-sm btn-outline" onclick="window._interview={phase:'select'};speechSynthesis.cancel();navigate('interview')">&#8592; Zurück</button>
+        <h2 class="dashboard-title" style="margin:0">Dein Feedback</h2>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--primary),#0369a1);color:#fff;border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;text-align:center">
+        <div style="font-size:2rem;font-weight:800;margin-bottom:0.25rem">Interview abgeschlossen</div>
+        <div style="opacity:0.85">${iv.category} · ${iv.answers.length} Fragen beantwortet</div>
+      </div>
+      <div style="margin-bottom:1.5rem">
+        <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--gray-600)">Auswertung deiner Antworten</h3>
+        ${buildFinalFeedback(iv.answers, iv.category)}
+      </div>
+      <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1.5rem">
+        <div style="font-weight:700;margin-bottom:0.35rem;color:var(--primary)">Allgemeiner Tipp</div>
+        <div style="font-size:0.9rem;color:var(--gray-600)">Übe regelmäßig – nach 2–3 Durchläufen wirst du deutlich sicherer und natürlicher klingen. Stell dir vor, du erzählst einem Freund von dir, warum du diesen Job möchtest.</div>
+      </div>
+      <div style="display:flex;gap:0.75rem">
+        <button class="btn btn-primary btn-block" onclick="startInterview('${iv.category}')">Nochmal üben</button>
+        <button class="btn btn-outline btn-block" onclick="window._interview={phase:'select'};navigate('interview')">Anderen Bereich wählen</button>
+      </div>
+    </div>`;
+  }
+
+  return `
+    <div class="page page-narrow" style="display:flex;flex-direction:column;height:calc(100vh - 120px)">
+      <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;flex-shrink:0">
+        <button class="btn btn-sm btn-outline" onclick="window._interview={phase:'select'};speechSynthesis.cancel();navigate('interview')">&#8592; Zurück</button>
+        <h2 class="dashboard-title" style="margin:0;flex:1">${iv.category}</h2>
+        <span style="font-size:0.8rem;color:var(--gray-500)">Frage ${iv.answers.length} / ${totalQ}</span>
+      </div>
+
+      <div style="background:var(--gray-200);border-radius:99px;height:5px;margin-bottom:1rem;flex-shrink:0">
+        <div style="background:var(--primary);height:5px;border-radius:99px;width:${progress}%;transition:width 0.5s ease"></div>
+      </div>
+
+      <div id="interview-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:1rem;padding-bottom:1rem">
+        ${(iv.messages||[]).map(m => `
+          <div style="display:flex;gap:0.75rem;align-items:flex-start;${m.role==='user'?'flex-direction:row-reverse':''}">
+            <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;background:${m.role==='ai'?'var(--primary)':'var(--gray-200)'};color:${m.role==='ai'?'#fff':'var(--gray-700)'}">
+              ${m.role==='ai' ? 'KI' : state.user.name[0]}
+            </div>
+            <div style="max-width:78%">
+              <div style="background:${m.role==='ai'?'#fff':'var(--primary)'};color:${m.role==='ai'?'var(--gray-800)':'#fff'};padding:0.875rem 1.1rem;border-radius:${m.role==='ai'?'4px 14px 14px 14px':'14px 4px 14px 14px'};box-shadow:var(--shadow);font-size:0.95rem;line-height:1.6;border:${m.role==='ai'?'1px solid var(--gray-200)':'none'}">
+                ${m.text}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+        ${iv.listening && !iv.aiSpeaking ? `
+          <div style="display:flex;gap:0.75rem;align-items:flex-start">
+            <div style="width:36px;height:36px;border-radius:50%;background:var(--gray-100);border:2px solid #ef4444;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+            </div>
+            <div style="flex:1;background:#fff;border:2px solid #ef4444;padding:0.75rem 1rem;border-radius:4px 14px 14px 14px;min-height:44px">
+              <div style="font-size:0.78rem;color:#ef4444;font-weight:600;margin-bottom:0.2rem">● Aufnahme läuft</div>
+              <div id="interview-interim" style="font-size:0.9rem;color:var(--gray-500);font-style:italic;min-height:1.2em"></div>
+            </div>
+          </div>` : ''}
+      </div>
+
+      <div style="flex-shrink:0;padding-top:0.75rem;border-top:1px solid var(--gray-200);display:flex;flex-direction:column;gap:0.5rem">
+        ${iv.aiSpeaking ? `
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:0.75rem;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:var(--radius);border:1px solid #bae6fd">
+            <span style="width:10px;height:10px;border-radius:50%;background:var(--primary);display:inline-block;animation:pulse 0.9s ease infinite"></span>
+            <span style="font-weight:600;color:var(--primary);font-size:0.9rem">Sarah spricht …</span>
+          </div>` : iv.listening ? `
+          <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem;padding:0.75rem;background:linear-gradient(135deg,#f0f9ff,#e0f2fe);border-radius:var(--radius);border:1px solid #bae6fd">
+            <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;display:inline-block;animation:pulse 0.9s ease infinite"></span>
+            <span style="font-weight:600;color:var(--primary);font-size:0.9rem">Mikrofon aktiv — sprich jetzt</span>
+          </div>` : `
+          <div style="display:flex;align-items:center;gap:0.5rem;padding:0.5rem 0.75rem;background:#f8fafc;border-radius:var(--radius);border:1px solid var(--gray-200);font-size:0.82rem;color:var(--gray-400)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
+            Mikrofon wartet …
+          </div>`}
+        <div style="display:flex;gap:0.5rem">
+          <input id="interview-text-input" type="text" class="form-input" placeholder="Oder Antwort tippen …" style="flex:1" onkeydown="if(event.key==='Enter')submitInterviewText()">
+          <button class="btn btn-outline" onclick="submitInterviewText()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderReviews() {
+  if (!state.user) return renderLogin();
+  const isEmployer = state.user.role === 'employer';
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${isEmployer ? renderEmployerSidebar('reviews') : renderWorkerSidebar('reviews')}
+        <div class="dashboard-content">
+          <h2 class="dashboard-title">★ Bewertungen</h2>
+
+          <div class="review-restriction">
+            ! Bewertungen können nur abgegeben werden, solange ein aktives Arbeitsverhältnis besteht. Dies stellt sicher, dass nur faire und aktuelle Bewertungen abgegeben werden.
+          </div>
+
+          <div class="tabs">
+            <button class="tab active">Erhaltene Bewertungen</button>
+            <button class="tab">Abgegebene Bewertungen</button>
+          </div>
+
+          <div class="rating-display" style="margin-bottom:1.5rem;padding:1.5rem;background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200)">
+            <div style="font-size:3rem;font-weight:800;color:var(--secondary)">4.5</div>
+            <div>
+              <div class="stars" style="font-size:1.5rem">
+                ${'<span class="star filled">&#9733;</span>'.repeat(4)}
+                <span class="star filled" style="opacity:0.5">&#9733;</span>
+              </div>
+              <div style="font-size:0.85rem;color:var(--gray-500)">Basierend auf 6 Bewertungen</div>
+            </div>
+          </div>
+
+          ${JOBS[0].reviews.concat(JOBS[1].reviews).concat(JOBS[4].reviews).map(r => `
+            <div class="review-card">
+              <div class="review-header">
+                <div class="review-author">
+                  <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${r.author.split(' ').map(n=>n[0]).join('')}</div>
+                  <div>
+                    <strong style="font-size:0.9rem">${r.author}</strong>
+                    ${r.active ? '<span class="badge badge-success" style="margin-left:0.5rem">Aktiv</span>' : ''}
+                  </div>
+                </div>
+                <div class="stars">${'<span class="star filled">&#9733;</span>'.repeat(r.rating)}${'<span class="star">&#9734;</span>'.repeat(5-r.rating)}</div>
+              </div>
+              <div class="review-text">${r.text}</div>
+              <div class="review-date">${formatDate(r.date)}</div>
+            </div>
+          `).join('')}
+
+          <div class="card" style="margin-top:1.5rem">
+            <div class="card-header">Bewertung abgeben</div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Bewertung</label>
+                <div class="stars" style="font-size:1.75rem" id="rating-stars">
+                  ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Dein Feedback</label>
+                <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function selectBoost(card, type) {
+  // Alle Karten zurücksetzen
+  document.querySelectorAll('[onclick^="selectBoost"]').forEach(c => {
+    c.style.borderColor = 'var(--gray-200)';
+    c.style.background = '';
+  });
+  card.querySelector('input[type=radio]').checked = true;
+
+  const boostLine = document.getElementById('boost-line');
+  const boostLabel = document.getElementById('boost-label');
+  const boostPrice = document.getElementById('boost-price');
+  const taxAmount = document.getElementById('tax-amount');
+  const totalPrice = document.getElementById('total-price');
+
+  const base = 29;
+  let boostCost = 0;
+  if (type === 'standard') {
+    boostCost = 15;
+    boostLine?.classList.remove('hidden');
+    if (boostLabel) boostLabel.textContent = 'Standard Boost';
+    if (boostPrice) boostPrice.textContent = '15,00€';
+    card.style.borderColor = 'var(--secondary)';
+    card.style.background = 'rgba(249,115,22,0.03)';
+  } else if (type === 'premium') {
+    boostCost = 35;
+    boostLine?.classList.remove('hidden');
+    if (boostLabel) boostLabel.textContent = 'Premium Boost';
+    if (boostPrice) boostPrice.textContent = '35,00€';
+    card.style.borderColor = 'var(--primary)';
+    card.style.background = 'rgba(22,163,74,0.03)';
+  } else {
+    boostLine?.classList.add('hidden');
+    card.style.borderColor = 'var(--gray-200)';
+  }
+
+  const net = base + boostCost;
+  const tax = (net * 0.19).toFixed(2).replace('.', ',');
+  const total = (net * 1.19).toFixed(2).replace('.', ',');
+  if (taxAmount) taxAmount.textContent = tax + '€';
+  if (totalPrice) totalPrice.textContent = total + '€';
+}
+
+function showBoostModal(jobTitle) {
+  document.getElementById('boost-modal-title').textContent = 'Anzeige boosten: ' + jobTitle;
+  document.getElementById('boost-modal').classList.add('open');
+}
+
+function closeBoostModal() {
+  document.getElementById('boost-modal').classList.remove('open');
+  // Reset
+  document.querySelectorAll('#boost-modal .card').forEach(c => {
+    c.style.borderColor = 'var(--gray-200)'; c.style.background = '';
+  });
+  document.getElementById('boost-opt-standard').style.borderColor = 'var(--secondary)';
+  document.getElementById('boost-modal-summary')?.classList.add('hidden');
+  const btn = document.getElementById('boost-modal-pay-btn');
+  if (btn) btn.disabled = true;
+}
+
+function selectBoostModal(card, type, price) {
+  document.querySelectorAll('#boost-modal .card').forEach(c => {
+    c.style.borderColor = 'var(--gray-200)'; c.style.background = '';
+  });
+  card.querySelector('input[type=radio]').checked = true;
+  card.style.borderColor = type === 'premium' ? 'var(--primary)' : 'var(--secondary)';
+  card.style.background = type === 'premium' ? 'rgba(22,163,74,0.04)' : 'rgba(249,115,22,0.04)';
+
+  const summary = document.getElementById('boost-modal-summary');
+  summary?.classList.remove('hidden');
+  const labels = { standard: 'Standard Boost (7 Tage)', standard30: 'Standard Boost (30 Tage)', premium: 'Premium Boost (14 Tage)' };
+  const tax = (price * 0.19).toFixed(2).replace('.', ',');
+  const total = (price * 1.19).toFixed(2).replace('.', ',');
+  if (document.getElementById('bms-label')) document.getElementById('bms-label').textContent = labels[type];
+  if (document.getElementById('bms-net')) document.getElementById('bms-net').textContent = price.toFixed(2).replace('.', ',') + '€';
+  if (document.getElementById('bms-tax')) document.getElementById('bms-tax').textContent = tax + '€';
+  if (document.getElementById('bms-total')) document.getElementById('bms-total').textContent = total + '€';
+
+  const btn = document.getElementById('boost-modal-pay-btn');
+  if (btn) btn.disabled = false;
+}
+
+function setRating(n) {
+  document.querySelectorAll('#rating-stars .star').forEach((s, i) => {
+    s.innerHTML = i < n ? '&#9733;' : '&#9734;';
+    s.classList.toggle('filled', i < n);
+  });
+}
+
+function setJobRating(jobId, n) {
+  document.querySelectorAll(`#job-rating-stars-${jobId} .star`).forEach((s, i) => {
+    s.innerHTML = i < n ? '&#9733;' : '&#9734;';
+    s.classList.toggle('filled', i < n);
+  });
+}
+
+function submitJobReview(jobId) {
+  const stars = document.querySelectorAll(`#job-rating-stars-${jobId} .star.filled`).length;
+  const text = document.getElementById(`job-review-text-${jobId}`)?.value?.trim();
+  if (!stars) { alert('Bitte wähle eine Bewertung (1-5 Sterne).'); return; }
+  if (!text) { alert('Bitte schreibe einen kurzen Text.'); return; }
+  alert('Bewertung abgegeben! Sie wird nach Prüfung veröffentlicht.');
+}
+
+// ===== EVENT LISTENERS =====
+function attachEventListeners() {
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (state.dropdownOpen && !e.target.closest('.user-menu')) {
+      state.dropdownOpen = false;
+      const dd = document.getElementById('user-dropdown');
+      if (dd) dd.classList.add('hidden');
+    }
+  });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  render();
+});
+
+// Close mobile menu on nav
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#navbar')) {
+    const menu = document.getElementById('mobile-menu');
+    if (menu) menu.classList.remove('open');
+  }
+});
