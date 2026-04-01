@@ -9,8 +9,115 @@ let state = {
   activeChat: null,
   wizardStep: 0,
   newJob: {},
-  dropdownOpen: false
+  dropdownOpen: false,
+  adminLoggedIn: false
 };
+
+// ===== ADMIN CONFIG =====
+const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
+const ADMIN_PASSWORD = 'Tauranga@2025';
+
+// ===== ANALYTICS TRACKING =====
+function trackVisit() {
+  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const now = new Date().toISOString();
+  const userRole = state.user ? state.user.role : 'guest';
+  const userId = state.user ? state.user.id : 'anon_' + (sessionStorage.getItem('jj_anon_id') || (() => { const id = Date.now(); sessionStorage.setItem('jj_anon_id', id); return id; })());
+  // Prüfe ob dieser User in den letzten 5 Minuten schon getrackt wurde
+  const recent = visits.find(v => v.userId === userId && (new Date(now) - new Date(v.timestamp)) < 300000);
+  if (!recent) {
+    visits.push({ userId, role: userRole, timestamp: now, page: state.currentPage });
+    // Maximal 10000 Einträge behalten
+    if (visits.length > 10000) visits.splice(0, visits.length - 10000);
+    localStorage.setItem('jj_analytics_visits', JSON.stringify(visits));
+  }
+}
+
+function trackPurchase(product, price) {
+  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
+  purchases.push({
+    product,
+    price,
+    timestamp: new Date().toISOString(),
+    userId: state.user ? state.user.id : null
+  });
+  localStorage.setItem('jj_analytics_purchases', JSON.stringify(purchases));
+}
+
+function getAnalyticsData() {
+  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
+  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  const now = new Date();
+
+  // Online-Besucher (letzte 15 Minuten)
+  const onlineThreshold = 15 * 60 * 1000;
+  const recentVisits = visits.filter(v => (now - new Date(v.timestamp)) < onlineThreshold);
+  const uniqueOnline = [...new Set(recentVisits.map(v => v.userId))];
+  const onlineByRole = {
+    employer: [...new Set(recentVisits.filter(v => v.role === 'employer').map(v => v.userId))].length,
+    worker: [...new Set(recentVisits.filter(v => v.role === 'worker').map(v => v.userId))].length,
+    guest: [...new Set(recentVisits.filter(v => v.role === 'guest').map(v => v.userId))].length
+  };
+
+  // Registrierte Benutzer
+  const totalUsers = allUsers.length;
+  const employers = allUsers.filter(u => u.role === 'employer').length;
+  const workers = allUsers.filter(u => u.role === 'worker').length;
+
+  // Besucher heute
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const visitsToday = [...new Set(visits.filter(v => new Date(v.timestamp) >= todayStart).map(v => v.userId))].length;
+
+  // Besucher diese Woche
+  const weekStart = new Date(todayStart);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+  const visitsThisWeek = [...new Set(visits.filter(v => new Date(v.timestamp) >= weekStart).map(v => v.userId))].length;
+
+  // Besucher diesen Monat
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const visitsThisMonth = [...new Set(visits.filter(v => new Date(v.timestamp) >= monthStart).map(v => v.userId))].length;
+
+  // Umsatz pro Produkt
+  const revenue = {};
+  let totalRevenue = 0;
+  purchases.forEach(p => {
+    if (!revenue[p.product]) revenue[p.product] = { count: 0, total: 0 };
+    revenue[p.product].count++;
+    revenue[p.product].total += p.price;
+    totalRevenue += p.price;
+  });
+
+  // Umsatz heute
+  const purchasesToday = purchases.filter(p => new Date(p.timestamp) >= todayStart);
+  const revenueToday = purchasesToday.reduce((sum, p) => sum + p.price, 0);
+
+  // Umsatz diesen Monat
+  const purchasesThisMonth = purchases.filter(p => new Date(p.timestamp) >= monthStart);
+  const revenueThisMonth = purchasesThisMonth.reduce((sum, p) => sum + p.price, 0);
+
+  // Letzte 7 Tage Besucher-Verlauf
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const day = new Date(todayStart);
+    day.setDate(day.getDate() - i);
+    const nextDay = new Date(day);
+    nextDay.setDate(nextDay.getDate() + 1);
+    const count = [...new Set(visits.filter(v => {
+      const d = new Date(v.timestamp);
+      return d >= day && d < nextDay;
+    }).map(v => v.userId))].length;
+    last7Days.push({ date: day.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }), count });
+  }
+
+  return {
+    online: { total: uniqueOnline.length, ...onlineByRole },
+    users: { total: totalUsers, employers, workers },
+    visits: { today: visitsToday, thisWeek: visitsThisWeek, thisMonth: visitsThisMonth, last7Days },
+    revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
+    purchases: { total: purchases.length, today: purchasesToday.length }
+  };
+}
 
 // ===== NAVIGATION =====
 function navigate(page, data) {
@@ -57,11 +164,21 @@ function render() {
     'interview': renderInterview,
     'messages': renderMessages,
     'chat': renderChatDetail,
-    'reviews': renderReviews
+    'reviews': renderReviews,
+    'admin-login': renderAdminLogin,
+    'admin-panel': renderAdminPanel
   };
+
+  // Admin-Panel Zugangsschutz
+  if (state.currentPage === 'admin-panel' && !state.adminLoggedIn) {
+    state.currentPage = 'admin-login';
+  }
 
   const renderFn = pages[state.currentPage] || renderLanding;
   app.innerHTML = renderFn();
+
+  // Analytics tracking
+  trackVisit();
 
   // Auto-scroll chat to bottom
   if (state.currentPage === 'chat') {
@@ -3257,6 +3374,258 @@ function submitJobReview(jobId) {
   if (!stars) { alert('Bitte wähle eine Bewertung (1-5 Sterne).'); return; }
   if (!text) { alert('Bitte schreibe einen kurzen Text.'); return; }
   alert('Bewertung abgegeben! Sie wird nach Prüfung veröffentlicht.');
+}
+
+// ===== BOOST PURCHASE TRACKING =====
+function handleBoostPurchase() {
+  const selected = document.querySelector('#boost-modal input[type=radio]:checked');
+  if (!selected) return;
+  const labels = { standard: 'Standard Boost (7 Tage)', standard30: 'Standard Boost (30 Tage)', premium: 'Premium Boost (14 Tage)' };
+  const prices = { standard: 15, standard30: 29, premium: 35 };
+  const type = selected.value;
+  trackPurchase(labels[type] || type, prices[type] || 0);
+  alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');
+}
+
+// ===== ADMIN LOGIN =====
+function adminLogin() {
+  const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
+  const password = document.getElementById('admin-password')?.value;
+  const err = document.getElementById('admin-login-error');
+
+  if (!ADMIN_EMAILS.includes(email)) {
+    if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
+    return;
+  }
+  if (password !== ADMIN_PASSWORD) {
+    if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
+    return;
+  }
+
+  state.adminLoggedIn = true;
+  navigate('admin-panel');
+}
+
+function adminLogout() {
+  state.adminLoggedIn = false;
+  navigate('landing');
+}
+
+function renderAdminLogin() {
+  return `
+    <div class="page-narrow" style="padding-top:4rem">
+      <div class="card" style="max-width:440px;margin:0 auto">
+        <div class="card-body" style="padding:2.5rem">
+          <div style="text-align:center;margin-bottom:2rem">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),#6366f1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1rem">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 style="font-size:1.5rem;margin-bottom:0.25rem">Admin-Kontrollpanel</h2>
+            <p style="color:var(--gray-500);font-size:0.9rem">Nur autorisierte Administratoren</p>
+          </div>
+          <div id="admin-login-error" class="form-error" style="display:none;background:#fef2f2;color:#dc2626;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem"></div>
+          <div class="form-group">
+            <label class="form-label">Admin E-Mail</label>
+            <input type="email" id="admin-email" class="form-input" placeholder="admin@email.de" onkeydown="if(event.key==='Enter')adminLogin()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zugangs-Code</label>
+            <input type="password" id="admin-password" class="form-input" placeholder="Zugangs-Code eingeben" onkeydown="if(event.key==='Enter')adminLogin()">
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
+          <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)">
+            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurueck zur Startseite</a>
+          </p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderAdminPanel() {
+  const data = getAnalyticsData();
+
+  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
+
+  // Balkendiagramm fuer letzte 7 Tage
+  const maxVisits = Math.max(...data.visits.last7Days.map(d => d.count), 1);
+  const chartBars = data.visits.last7Days.map(d => `
+    <div class="admin-chart-bar-wrap">
+      <div class="admin-chart-bar" style="height:${Math.max((d.count / maxVisits) * 120, 4)}px"></div>
+      <div class="admin-chart-label">${d.date}</div>
+      <div class="admin-chart-value">${d.count}</div>
+    </div>
+  `).join('');
+
+  // Umsatz-Tabelle pro Produkt
+  const revenueRows = Object.entries(data.revenue.byProduct).length > 0
+    ? Object.entries(data.revenue.byProduct).map(([product, info]) => `
+      <tr>
+        <td style="padding:0.75rem 1rem;font-weight:500">${product}</td>
+        <td style="padding:0.75rem 1rem;text-align:center">${info.count}</td>
+        <td style="padding:0.75rem 1rem;text-align:right;font-weight:700;color:var(--success)">${formatEuro(info.total)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="3" style="padding:1.5rem;text-align:center;color:var(--gray-400)">Noch keine Verkaeufe</td></tr>';
+
+  return `
+    <div class="page-wide admin-panel" style="padding-top:2rem">
+      <!-- Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div style="width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#6366f1);display:flex;align-items:center;justify-content:center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <h1 style="font-size:1.5rem;margin:0">Admin-Kontrollpanel</h1>
+            <p style="color:var(--gray-500);font-size:0.85rem;margin:0">EasyJobs - Uebersicht & Statistiken</p>
+          </div>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <button class="btn btn-outline" onclick="navigate('admin-panel')" style="font-size:0.85rem">Aktualisieren</button>
+          <button class="btn btn-ghost" onclick="adminLogout()" style="color:var(--danger);font-size:0.85rem">Abmelden</button>
+        </div>
+      </div>
+
+      <!-- Live-Besucher -->
+      <div class="admin-section">
+        <h3 class="admin-section-title">Aktuelle Besucher (letzte 15 Min.)</h3>
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card admin-stat-primary">
+            <div class="admin-stat-number">${data.online.total}</div>
+            <div class="admin-stat-label">Gesamt Online</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number" style="color:#f97316">${data.online.employer}</div>
+            <div class="admin-stat-label">Arbeitgeber</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number" style="color:#0ea5e9">${data.online.worker}</div>
+            <div class="admin-stat-label">Arbeitnehmer</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number" style="color:#8b5cf6">${data.online.guest}</div>
+            <div class="admin-stat-label">Ohne Konto</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Registrierte Benutzer -->
+      <div class="admin-section">
+        <h3 class="admin-section-title">Registrierte Benutzer</h3>
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card admin-stat-primary">
+            <div class="admin-stat-number">${data.users.total}</div>
+            <div class="admin-stat-label">Gesamt Registriert</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number" style="color:#f97316">${data.users.employers}</div>
+            <div class="admin-stat-label">Arbeitgeber</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number" style="color:#0ea5e9">${data.users.workers}</div>
+            <div class="admin-stat-label">Arbeitnehmer</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Besucher-Statistiken -->
+      <div class="admin-section">
+        <h3 class="admin-section-title">Besucher-Statistiken</h3>
+        <div class="admin-stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="admin-stat-card">
+            <div class="admin-stat-number">${data.visits.today}</div>
+            <div class="admin-stat-label">Heute</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number">${data.visits.thisWeek}</div>
+            <div class="admin-stat-label">Diese Woche</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number">${data.visits.thisMonth}</div>
+            <div class="admin-stat-label">Diesen Monat</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <div class="card-body">
+            <h4 style="margin-bottom:1rem;font-size:0.9rem;color:var(--gray-500)">Besucher letzte 7 Tage</h4>
+            <div class="admin-chart">${chartBars}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Umsatz -->
+      <div class="admin-section">
+        <h3 class="admin-section-title">Umsatz</h3>
+        <div class="admin-stats-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="admin-stat-card admin-stat-success">
+            <div class="admin-stat-number">${formatEuro(data.revenue.total)}</div>
+            <div class="admin-stat-label">Gesamt-Umsatz</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number">${formatEuro(data.revenue.today)}</div>
+            <div class="admin-stat-label">Heute</div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="admin-stat-number">${formatEuro(data.revenue.thisMonth)}</div>
+            <div class="admin-stat-label">Diesen Monat</div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:1rem">
+          <div class="card-body" style="padding:0;overflow:hidden">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="background:var(--gray-50);border-bottom:1px solid var(--gray-200)">
+                  <th style="padding:0.75rem 1rem;text-align:left;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500);font-weight:600">Produkt</th>
+                  <th style="padding:0.75rem 1rem;text-align:center;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500);font-weight:600">Anzahl</th>
+                  <th style="padding:0.75rem 1rem;text-align:right;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500);font-weight:600">Umsatz</th>
+                </tr>
+              </thead>
+              <tbody>${revenueRows}</tbody>
+              <tfoot>
+                <tr style="border-top:2px solid var(--gray-200);background:var(--gray-50)">
+                  <td style="padding:0.75rem 1rem;font-weight:700">Gesamt</td>
+                  <td style="padding:0.75rem 1rem;text-align:center;font-weight:700">${data.purchases.total}</td>
+                  <td style="padding:0.75rem 1rem;text-align:right;font-weight:700;color:var(--success)">${formatEuro(data.revenue.total)}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alle Benutzer Liste -->
+      <div class="admin-section">
+        <h3 class="admin-section-title">Registrierte Benutzer-Liste</h3>
+        <div class="card">
+          <div class="card-body" style="padding:0;overflow:auto">
+            <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+              <thead>
+                <tr style="background:var(--gray-50);border-bottom:1px solid var(--gray-200)">
+                  <th style="padding:0.75rem 1rem;text-align:left;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500)">Name</th>
+                  <th style="padding:0.75rem 1rem;text-align:left;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500)">E-Mail</th>
+                  <th style="padding:0.75rem 1rem;text-align:center;font-size:0.8rem;text-transform:uppercase;color:var(--gray-500)">Rolle</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => `
+                  <tr style="border-bottom:1px solid var(--gray-100)">
+                    <td style="padding:0.75rem 1rem;font-weight:500">${u.name || '-'}</td>
+                    <td style="padding:0.75rem 1rem;color:var(--gray-500)">${u.email}</td>
+                    <td style="padding:0.75rem 1rem;text-align:center">
+                      <span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span>
+                    </td>
+                  </tr>
+                `).join('') || '<tr><td colspan="3" style="padding:1.5rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auto-Refresh Info -->
+      <div style="text-align:center;padding:2rem 0;color:var(--gray-400);font-size:0.8rem">
+        Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull; Klicke "Aktualisieren" fuer neue Daten
+      </div>
+    </div>`;
 }
 
 // ===== EVENT LISTENERS =====

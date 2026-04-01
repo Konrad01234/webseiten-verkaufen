@@ -71,7 +71,7 @@
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 EasyJobs. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2026 EasyJobs. Alle Rechte vorbehalten. <a href="#" onclick="navigate('admin-login')" style="color:var(--gray-500);text-decoration:none;font-size:0.75rem;opacity:0.5">&bull; Admin</a></p>
       </div>
     </div>
   </footer>
@@ -156,7 +156,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-outline" onclick="closeBoostModal()">Abbrechen</button>
-        <button class="btn btn-secondary" id="boost-modal-pay-btn" disabled onclick="alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');closeBoostModal()">&#9889; Jetzt boosten</button>
+        <button class="btn btn-secondary" id="boost-modal-pay-btn" disabled onclick="handleBoostPurchase();closeBoostModal()">&#9889; Jetzt boosten</button>
       </div>
     </div>
   </div>
