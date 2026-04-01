@@ -1347,8 +1347,24 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .badge-warning { background: #fff7ed; color: #ea580c; padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; }
 .badge-info { background: #f0f9ff; color: #0284c7; padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; }
 
+/* Revenue Period Tabs */
+.admin-rev-tabs {
+  display: flex; gap: 0.25rem; background: var(--gray-100); border-radius: 8px; padding: 3px;
+}
+.admin-rev-tab {
+  padding: 0.4rem 0.85rem; border-radius: 6px; border: none; background: transparent;
+  font-size: 0.8rem; font-weight: 600; color: var(--gray-500); cursor: pointer;
+  transition: all 0.2s;
+}
+.admin-rev-tab:hover { color: var(--gray-700); }
+.admin-rev-tab.active {
+  background: #fff; color: #059669; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
 @media (max-width: 480px) {
   .admin-donut-row { flex-direction: column; gap: 1rem; }
   .admin-bar-chart { height: 140px; gap: 0.35rem; }
   .admin-kpi-value { font-size: 1.1rem; }
+  .admin-rev-tabs { flex-wrap: wrap; }
+  .admin-rev-tab { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
 }

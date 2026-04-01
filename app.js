@@ -10,7 +10,8 @@ let state = {
   wizardStep: 0,
   newJob: {},
   dropdownOpen: false,
-  adminLoggedIn: false
+  adminLoggedIn: false,
+  adminRevenuePeriod: 'daily'
 };
 
 // ===== ADMIN CONFIG =====
@@ -117,6 +118,113 @@ function getAnalyticsData() {
     revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
     purchases: { total: purchases.length, today: purchasesToday.length }
   };
+}
+
+// Umsatz-Zeitverlauf fuer verschiedene Ansichten
+function getRevenueTimeline(period) {
+  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const bars = [];
+
+  if (period === 'daily') {
+    // Letzte 14 Tage, pro Tag
+    for (let i = 13; i >= 0; i--) {
+      const day = new Date(todayStart); day.setDate(day.getDate() - i);
+      const nextDay = new Date(day); nextDay.setDate(nextDay.getDate() + 1);
+      const dayPurchases = purchases.filter(p => { const d = new Date(p.timestamp); return d >= day && d < nextDay; });
+      const total = dayPurchases.reduce((s, p) => s + p.price, 0);
+      const count = dayPurchases.length;
+      bars.push({ label: day.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), total, count });
+    }
+  } else if (period === 'monthly') {
+    // Letzte 12 Monate
+    for (let i = 11; i >= 0; i--) {
+      const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const nextM = new Date(m.getFullYear(), m.getMonth() + 1, 1);
+      const mPurchases = purchases.filter(p => { const d = new Date(p.timestamp); return d >= m && d < nextM; });
+      const total = mPurchases.reduce((s, p) => s + p.price, 0);
+      const count = mPurchases.length;
+      bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total, count });
+    }
+  } else if (period === 'yearly') {
+    // Letzte 5 Jahre
+    const currentYear = now.getFullYear();
+    for (let i = 4; i >= 0; i--) {
+      const y = currentYear - i;
+      const yStart = new Date(y, 0, 1);
+      const yEnd = new Date(y + 1, 0, 1);
+      const yPurchases = purchases.filter(p => { const d = new Date(p.timestamp); return d >= yStart && d < yEnd; });
+      const total = yPurchases.reduce((s, p) => s + p.price, 0);
+      const count = yPurchases.length;
+      bars.push({ label: '' + y, total, count });
+    }
+  } else {
+    // All-time: gruppiert nach Monat (alle vorhandenen)
+    const byMonth = {};
+    purchases.forEach(p => {
+      const d = new Date(p.timestamp);
+      const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+      if (!byMonth[key]) byMonth[key] = { total: 0, count: 0 };
+      byMonth[key].total += p.price;
+      byMonth[key].count++;
+    });
+    const sortedKeys = Object.keys(byMonth).sort();
+    if (sortedKeys.length === 0) {
+      // Zeige letzten 6 Monate leer
+      for (let i = 5; i >= 0; i--) {
+        const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: 0, count: 0 });
+      }
+    } else {
+      sortedKeys.forEach(key => {
+        const [y, m] = key.split('-');
+        const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+        bars.push({ label: d.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: byMonth[key].total, count: byMonth[key].count });
+      });
+    }
+  }
+  return bars;
+}
+
+function switchRevenueView(period) {
+  state.adminRevenuePeriod = period;
+  const container = document.getElementById('admin-revenue-timeline');
+  if (!container) return;
+
+  const bars = getRevenueTimeline(period);
+  const maxVal = Math.max(...bars.map(b => b.total), 1);
+  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
+  const periodTotal = bars.reduce((s, b) => s + b.total, 0);
+  const periodCount = bars.reduce((s, b) => s + b.count, 0);
+  const gradients = ['#10b981', '#34d399', '#6ee7b7', '#a7f3d0', '#059669', '#047857', '#065f46', '#064e3b', '#0d9488', '#14b8a6', '#2dd4bf', '#5eead4', '#99f6e4', '#0f766e'];
+
+  // Tab-Buttons updaten
+  document.querySelectorAll('.admin-rev-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.period === period);
+  });
+
+  // Summen updaten
+  const sumEl = document.getElementById('admin-revenue-period-sum');
+  if (sumEl) sumEl.textContent = formatEuro(periodTotal);
+  const countEl = document.getElementById('admin-revenue-period-count');
+  if (countEl) countEl.textContent = periodCount + ' Bestellungen';
+
+  // Balken rendern
+  const chart = document.getElementById('admin-revenue-bars');
+  if (chart) {
+    chart.innerHTML = bars.map((b, i) => {
+      const pct = Math.max((b.total / maxVal) * 100, 3);
+      const color = gradients[i % gradients.length];
+      return `<div class="admin-bar-col">
+        <div class="admin-bar-value" style="color:#059669">${b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-'}</div>
+        <div class="admin-bar-track">
+          <div class="admin-bar-fill" style="height:${pct}%;background:${color};animation-delay:${i * 0.05}s"></div>
+        </div>
+        <div class="admin-bar-label">${b.label}</div>
+      </div>`;
+    }).join('');
+  }
 }
 
 // ===== NAVIGATION =====
@@ -3682,6 +3790,40 @@ function renderAdminPanel() {
               <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
             </div>
             ${revenueChart}
+          </div>
+        </div>
+      </div>
+
+      <!-- Umsatz-Zeitverlauf -->
+      <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-bottom:1.5rem">
+        <div class="card-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
+            <h4 class="admin-chart-title" style="margin:0">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              Umsatz-Verlauf
+            </h4>
+            <div class="admin-rev-tabs">
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Taeglich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jaehrlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
+            </div>
+          </div>
+          <div style="display:flex;gap:2rem;margin-bottom:1rem">
+            <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#059669">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
+            <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
+          </div>
+          <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
+            ${(() => {
+              const bars = getRevenueTimeline(state.adminRevenuePeriod);
+              const maxVal = Math.max(...bars.map(b => b.total), 1);
+              const gradients = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#059669','#047857','#065f46','#064e3b','#0d9488','#14b8a6','#2dd4bf','#5eead4','#99f6e4','#0f766e'];
+              return bars.map((b, i) => {
+                const pct = Math.max((b.total / maxVal) * 100, 3);
+                const color = gradients[i % gradients.length];
+                return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#059669">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
+              }).join('');
+            })()}
           </div>
         </div>
       </div>
