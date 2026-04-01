@@ -1218,6 +1218,146 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   cursor: pointer; transition: all 0.15s;
 }
 .pv-missing-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
+
+/* ===== ADMIN PANEL ===== */
+.admin-panel { max-width: 1000px; margin: 0 auto; }
+
+.admin-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;
+  padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100);
+}
+.admin-header-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(99,102,241,0.3);
+}
+
+.admin-live-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+  animation: adminPulse 2s infinite; display: inline-block;
+}
+@keyframes adminPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+}
+
+/* KPI Strip */
+.admin-kpi-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem;
+}
+.admin-kpi {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 14px;
+  padding: 1.1rem 1.25rem; display: flex; align-items: center; gap: 0.85rem;
+  transition: all 0.25s; position: relative; overflow: hidden;
+}
+.admin-kpi::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--primary), transparent); opacity: 0;
+  transition: opacity 0.25s;
+}
+.admin-kpi:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); transform: translateY(-2px); }
+.admin-kpi:hover::before { opacity: 1; }
+.admin-kpi-icon {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.admin-kpi-value { font-size: 1.35rem; font-weight: 800; color: var(--gray-900); line-height: 1.2; }
+.admin-kpi-label { font-size: 0.75rem; color: var(--gray-500); font-weight: 500; margin-top: 1px; }
+@media (max-width: 768px) {
+  .admin-kpi-strip { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* Chart Cards */
+.admin-chart-card { border-radius: 14px !important; border-color: var(--gray-200) !important; overflow: hidden; }
+.admin-chart-title {
+  font-size: 0.95rem; font-weight: 700; color: var(--gray-800);
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;
+}
+
+/* 2-Column Row */
+.admin-row-2 {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;
+}
+@media (max-width: 768px) {
+  .admin-row-2 { grid-template-columns: 1fr; }
+}
+
+/* Donut Charts */
+.admin-donut-row {
+  display: flex; align-items: center; gap: 1.5rem; justify-content: center;
+}
+.admin-donut-wrap { flex-shrink: 0; }
+.admin-donut-wrap svg { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.06)); }
+.admin-donut-legend { display: flex; flex-direction: column; gap: 0.65rem; }
+.admin-legend-item {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.85rem; color: var(--gray-600);
+}
+.admin-legend-item strong { margin-left: auto; font-weight: 700; color: var(--gray-900); min-width: 24px; text-align: right; }
+.admin-legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* Bar Chart (7 Tage) */
+.admin-bar-chart {
+  display: flex; align-items: flex-end; gap: 0.65rem; justify-content: space-between;
+  height: 180px; padding: 0 0.25rem;
+}
+.admin-bar-col {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 0.3rem;
+  height: 100%;
+}
+.admin-bar-track {
+  flex: 1; width: 100%; max-width: 52px; background: var(--gray-50);
+  border-radius: 8px; display: flex; align-items: flex-end; overflow: hidden;
+  border: 1px solid var(--gray-100);
+}
+.admin-bar-fill {
+  width: 100%; border-radius: 6px 6px 0 0; min-height: 4px;
+  animation: adminBarGrow 0.6s ease-out both;
+}
+@keyframes adminBarGrow { from { height: 0 !important; } }
+.admin-bar-value { font-size: 0.8rem; font-weight: 800; color: var(--gray-700); }
+.admin-bar-label { font-size: 0.7rem; color: var(--gray-500); white-space: nowrap; font-weight: 500; }
+
+/* Horizontal Bars (Umsatz pro Produkt) */
+.admin-hbar-row { margin-bottom: 1rem; }
+.admin-hbar-info {
+  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;
+}
+.admin-hbar-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.admin-hbar-name { font-size: 0.85rem; color: var(--gray-700); font-weight: 500; }
+.admin-hbar-count { font-size: 0.75rem; color: var(--gray-400); margin-left: auto; }
+.admin-hbar-track {
+  width: 100%; height: 10px; background: var(--gray-100); border-radius: 100px; overflow: hidden;
+}
+.admin-hbar-fill {
+  height: 100%; border-radius: 100px; min-width: 4px;
+  animation: adminHBarGrow 0.8s ease-out both;
+}
+@keyframes adminHBarGrow { from { width: 0 !important; } }
+.admin-hbar-amount {
+  font-size: 0.8rem; font-weight: 700; color: var(--gray-800); margin-top: 0.2rem;
+}
+
+/* Mini-Stat inline */
+.admin-mini-stat { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
+.admin-mini-stat span { font-size: 0.7rem; }
+.admin-mini-stat strong { font-size: 0.95rem; font-weight: 800; }
+
+/* Table Rows */
+.admin-table-row { border-bottom: 1px solid var(--gray-100); transition: background 0.15s; }
+.admin-table-row:hover { background: var(--gray-50); }
+.admin-table-row:last-child { border-bottom: none; }
+
+.badge-warning { background: #fff7ed; color: #ea580c; padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; }
+.badge-info { background: #f0f9ff; color: #0284c7; padding: 0.25rem 0.65rem; border-radius: 100px; font-size: 0.78rem; font-weight: 600; }
+
+@media (max-width: 480px) {
+  .admin-donut-row { flex-direction: column; gap: 1rem; }
+  .admin-bar-chart { height: 140px; gap: 0.35rem; }
+  .admin-kpi-value { font-size: 1.1rem; }
+}
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
@@ -1285,7 +1425,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 EasyJobs. Alle Rechte vorbehalten.</p>
+        <p>&copy; 2026 EasyJobs. Alle Rechte vorbehalten. <a href="#" onclick="navigate('admin-login')" style="color:var(--gray-500);text-decoration:none;font-size:0.75rem;opacity:0.5">&bull; Admin</a></p>
       </div>
     </div>
   </footer>
@@ -1370,7 +1510,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
       </div>
       <div class="modal-footer">
         <button class="btn btn-outline" onclick="closeBoostModal()">Abbrechen</button>
-        <button class="btn btn-secondary" id="boost-modal-pay-btn" disabled onclick="alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');closeBoostModal()">&#9889; Jetzt boosten</button>
+        <button class="btn btn-secondary" id="boost-modal-pay-btn" disabled onclick="handleBoostPurchase();closeBoostModal()">&#9889; Jetzt boosten</button>
       </div>
     </div>
   </div>
@@ -1634,8 +1774,80 @@ let state = {
   activeChat: null,
   wizardStep: 0,
   newJob: {},
-  dropdownOpen: false
+  dropdownOpen: false,
+  adminLoggedIn: false
 };
+
+// ===== ADMIN CONFIG =====
+const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
+const ADMIN_PASSWORD = 'Tauranga@2025';
+
+// ===== ANALYTICS TRACKING =====
+function trackVisit() {
+  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const now = new Date().toISOString();
+  const userRole = state.user ? state.user.role : 'guest';
+  const userId = state.user ? state.user.id : 'anon_' + (sessionStorage.getItem('jj_anon_id') || (() => { const id = Date.now(); sessionStorage.setItem('jj_anon_id', id); return id; })());
+  const recent = visits.find(v => v.userId === userId && (new Date(now) - new Date(v.timestamp)) < 300000);
+  if (!recent) {
+    visits.push({ userId, role: userRole, timestamp: now, page: state.currentPage });
+    if (visits.length > 10000) visits.splice(0, visits.length - 10000);
+    localStorage.setItem('jj_analytics_visits', JSON.stringify(visits));
+  }
+}
+
+function trackPurchase(product, price) {
+  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
+  purchases.push({ product, price, timestamp: new Date().toISOString(), userId: state.user ? state.user.id : null });
+  localStorage.setItem('jj_analytics_purchases', JSON.stringify(purchases));
+}
+
+function getAnalyticsData() {
+  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
+  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  const now = new Date();
+  const onlineThreshold = 15 * 60 * 1000;
+  const recentVisits = visits.filter(v => (now - new Date(v.timestamp)) < onlineThreshold);
+  const uniqueOnline = [...new Set(recentVisits.map(v => v.userId))];
+  const onlineByRole = {
+    employer: [...new Set(recentVisits.filter(v => v.role === 'employer').map(v => v.userId))].length,
+    worker: [...new Set(recentVisits.filter(v => v.role === 'worker').map(v => v.userId))].length,
+    guest: [...new Set(recentVisits.filter(v => v.role === 'guest').map(v => v.userId))].length
+  };
+  const totalUsers = allUsers.length;
+  const employers = allUsers.filter(u => u.role === 'employer').length;
+  const workers = allUsers.filter(u => u.role === 'worker').length;
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const visitsToday = [...new Set(visits.filter(v => new Date(v.timestamp) >= todayStart).map(v => v.userId))].length;
+  const weekStart = new Date(todayStart); weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
+  const visitsThisWeek = [...new Set(visits.filter(v => new Date(v.timestamp) >= weekStart).map(v => v.userId))].length;
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const visitsThisMonth = [...new Set(visits.filter(v => new Date(v.timestamp) >= monthStart).map(v => v.userId))].length;
+  const revenue = {}; let totalRevenue = 0;
+  purchases.forEach(p => {
+    if (!revenue[p.product]) revenue[p.product] = { count: 0, total: 0 };
+    revenue[p.product].count++; revenue[p.product].total += p.price; totalRevenue += p.price;
+  });
+  const purchasesToday = purchases.filter(p => new Date(p.timestamp) >= todayStart);
+  const revenueToday = purchasesToday.reduce((sum, p) => sum + p.price, 0);
+  const purchasesThisMonth = purchases.filter(p => new Date(p.timestamp) >= monthStart);
+  const revenueThisMonth = purchasesThisMonth.reduce((sum, p) => sum + p.price, 0);
+  const last7Days = [];
+  for (let i = 6; i >= 0; i--) {
+    const day = new Date(todayStart); day.setDate(day.getDate() - i);
+    const nextDay = new Date(day); nextDay.setDate(nextDay.getDate() + 1);
+    const count = [...new Set(visits.filter(v => { const d = new Date(v.timestamp); return d >= day && d < nextDay; }).map(v => v.userId))].length;
+    last7Days.push({ date: day.toLocaleDateString('de-DE', { weekday: 'short', day: 'numeric', month: 'short' }), count });
+  }
+  return {
+    online: { total: uniqueOnline.length, ...onlineByRole },
+    users: { total: totalUsers, employers, workers },
+    visits: { today: visitsToday, thisWeek: visitsThisWeek, thisMonth: visitsThisMonth, last7Days },
+    revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
+    purchases: { total: purchases.length, today: purchasesToday.length }
+  };
+}
 
 // ===== NAVIGATION =====
 function navigate(page, data) {
@@ -1682,11 +1894,21 @@ function render() {
     'interview': renderInterview,
     'messages': renderMessages,
     'chat': renderChatDetail,
-    'reviews': renderReviews
+    'reviews': renderReviews,
+    'admin-login': renderAdminLogin,
+    'admin-panel': renderAdminPanel
   };
+
+  // Admin-Panel Zugangsschutz
+  if (state.currentPage === 'admin-panel' && !state.adminLoggedIn) {
+    state.currentPage = 'admin-login';
+  }
 
   const renderFn = pages[state.currentPage] || renderLanding;
   app.innerHTML = renderFn();
+
+  // Analytics tracking
+  trackVisit();
 
   // Auto-scroll chat to bottom
   if (state.currentPage === 'chat') {
@@ -4882,6 +5104,237 @@ function submitJobReview(jobId) {
   if (!stars) { alert('Bitte wähle eine Bewertung (1-5 Sterne).'); return; }
   if (!text) { alert('Bitte schreibe einen kurzen Text.'); return; }
   alert('Bewertung abgegeben! Sie wird nach Prüfung veröffentlicht.');
+}
+
+// ===== BOOST PURCHASE TRACKING =====
+function handleBoostPurchase() {
+  const selected = document.querySelector('#boost-modal input[type=radio]:checked');
+  if (!selected) return;
+  const labels = { standard: 'Standard Boost (7 Tage)', standard30: 'Standard Boost (30 Tage)', premium: 'Premium Boost (14 Tage)' };
+  const prices = { standard: 15, standard30: 29, premium: 35 };
+  const type = selected.value;
+  trackPurchase(labels[type] || type, prices[type] || 0);
+  alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');
+}
+
+// ===== ADMIN LOGIN =====
+function adminLogin() {
+  const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
+  const password = document.getElementById('admin-password')?.value;
+  const err = document.getElementById('admin-login-error');
+  if (!ADMIN_EMAILS.includes(email)) {
+    if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
+    return;
+  }
+  if (password !== ADMIN_PASSWORD) {
+    if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
+    return;
+  }
+  state.adminLoggedIn = true;
+  navigate('admin-panel');
+}
+
+function adminLogout() {
+  state.adminLoggedIn = false;
+  navigate('landing');
+}
+
+function renderAdminLogin() {
+  return `
+    <div class="page-narrow" style="padding-top:4rem">
+      <div class="card" style="max-width:440px;margin:0 auto">
+        <div class="card-body" style="padding:2.5rem">
+          <div style="text-align:center;margin-bottom:2rem">
+            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),#6366f1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1rem">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h2 style="font-size:1.5rem;margin-bottom:0.25rem">Admin-Kontrollpanel</h2>
+            <p style="color:var(--gray-500);font-size:0.9rem">Nur autorisierte Administratoren</p>
+          </div>
+          <div id="admin-login-error" class="form-error" style="display:none;background:#fef2f2;color:#dc2626;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem"></div>
+          <div class="form-group">
+            <label class="form-label">Admin E-Mail</label>
+            <input type="email" id="admin-email" class="form-input" placeholder="admin@email.de" onkeydown="if(event.key==='Enter')adminLogin()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zugangs-Code</label>
+            <input type="password" id="admin-password" class="form-input" placeholder="Zugangs-Code eingeben" onkeydown="if(event.key==='Enter')adminLogin()">
+          </div>
+          <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
+          <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)">
+            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurueck zur Startseite</a>
+          </p>
+        </div>
+      </div>
+    </div>`;
+}
+
+function buildDonutSVG(segments, size, strokeWidth, centerLabel, centerSub) {
+  const r = (size - strokeWidth) / 2;
+  const cx = size / 2, cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+  const total = segments.reduce((s, seg) => s + seg.value, 0) || 1;
+  let offset = 0;
+  const paths = segments.map(seg => {
+    const pct = seg.value / total;
+    const dash = pct * circumference;
+    const gap = circumference - dash;
+    const rotation = (offset * 360 / total) - 90;
+    offset += seg.value;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${strokeWidth}"
+      stroke-dasharray="${dash} ${gap}" transform="rotate(${rotation} ${cx} ${cy})"
+      style="transition:stroke-dasharray 0.8s ease"/>`;
+  });
+  if (total <= 1 && segments.every(s => s.value === 0)) {
+    paths.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="${strokeWidth}"/>`);
+  }
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    ${paths.join('')}
+    <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2937">${centerLabel}</text>
+    <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-size="10" fill="#9ca3af" font-weight="500">${centerSub}</text>
+  </svg>`;
+}
+
+function renderAdminPanel() {
+  const data = getAnalyticsData();
+  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
+  const formatEuroShort = (n) => n >= 1000 ? (n/1000).toFixed(1).replace('.',',') + 'k EUR' : n.toFixed(2).replace('.',',') + ' EUR';
+
+  const onlineDonut = buildDonutSVG([
+    { value: data.online.employer, color: '#f97316', label: 'Arbeitgeber' },
+    { value: data.online.worker, color: '#0ea5e9', label: 'Arbeitnehmer' },
+    { value: data.online.guest, color: '#8b5cf6', label: 'Gast' }
+  ], 140, 18, data.online.total, 'Online');
+
+  const usersDonut = buildDonutSVG([
+    { value: data.users.employers, color: '#f97316', label: 'Arbeitgeber' },
+    { value: data.users.workers, color: '#0ea5e9', label: 'Arbeitnehmer' }
+  ], 140, 18, data.users.total, 'Registriert');
+
+  const maxVisits = Math.max(...data.visits.last7Days.map(d => d.count), 1);
+  const barColors = ['#6366f1','#818cf8','#a78bfa','#8b5cf6','#7c3aed','#6d28d9','#5b21b6'];
+  const chartBars = data.visits.last7Days.map((d, i) => {
+    const pct = Math.max((d.count / maxVisits) * 100, 3);
+    return `<div class="admin-bar-col"><div class="admin-bar-value">${d.count}</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:${pct}%;background:${barColors[i]};animation-delay:${i * 0.08}s"></div></div><div class="admin-bar-label">${d.date.split(',')[0]}</div></div>`;
+  }).join('');
+
+  const productEntries = Object.entries(data.revenue.byProduct);
+  const maxProductRevenue = productEntries.length > 0 ? Math.max(...productEntries.map(([,i]) => i.total), 1) : 1;
+  const productColors = { 'Standard Boost (7 Tage)': '#f97316', 'Standard Boost (30 Tage)': '#0ea5e9', 'Premium Boost (14 Tage)': '#8b5cf6' };
+  const revenueChart = productEntries.length > 0
+    ? productEntries.map(([product, info]) => {
+      const pct = (info.total / maxProductRevenue) * 100;
+      const color = productColors[product] || '#6366f1';
+      return `<div class="admin-hbar-row"><div class="admin-hbar-info"><span class="admin-hbar-dot" style="background:${color}"></span><span class="admin-hbar-name">${product}</span><span class="admin-hbar-count">${info.count}x</span></div><div class="admin-hbar-track"><div class="admin-hbar-fill" style="width:${pct}%;background:${color}"></div></div><div class="admin-hbar-amount">${formatEuro(info.total)}</div></div>`;
+    }).join('')
+    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkaeufe</div>';
+
+  const revenueDonut = buildDonutSVG(
+    productEntries.map(([product, info]) => ({ value: info.total, color: productColors[product] || '#6366f1', label: product })),
+    140, 18, formatEuroShort(data.revenue.total), 'Umsatz'
+  );
+
+  return `
+    <div class="page-wide admin-panel" style="padding-top:2rem">
+      <div class="admin-header">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <div class="admin-header-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div><h1 style="font-size:1.5rem;margin:0">Admin-Kontrollpanel</h1><p style="color:var(--gray-500);font-size:0.85rem;margin:0">EasyJobs &mdash; Live-Dashboard</p></div>
+        </div>
+        <div style="display:flex;gap:0.5rem;align-items:center">
+          <span class="admin-live-dot"></span><span style="font-size:0.8rem;color:var(--success);font-weight:600">Live</span>
+          <button class="btn btn-outline" onclick="navigate('admin-panel')" style="font-size:0.85rem;margin-left:0.75rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Aktualisieren</button>
+          <button class="btn btn-ghost" onclick="adminLogout()" style="color:var(--danger);font-size:0.85rem">Abmelden</button>
+        </div>
+      </div>
+
+      <div class="admin-kpi-strip">
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
+      </div>
+
+      <div class="admin-row-2">
+        <div class="card admin-chart-card"><div class="card-body">
+          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Aktuelle Besucher</h4>
+          <div class="admin-donut-row"><div class="admin-donut-wrap">${onlineDonut}</div><div class="admin-donut-legend">
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
+          </div></div>
+        </div></div>
+        <div class="card admin-chart-card"><div class="card-body">
+          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Registrierte Benutzer</h4>
+          <div class="admin-donut-row"><div class="admin-donut-wrap">${usersDonut}</div><div class="admin-donut-legend">
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
+          </div></div>
+        </div></div>
+      </div>
+
+      <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+          <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Besucher-Verlauf (7 Tage)</h4>
+          <div style="display:flex;gap:1.25rem">
+            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong>${data.visits.today}</strong></div>
+            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Woche</span><strong>${data.visits.thisWeek}</strong></div>
+            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong>${data.visits.thisMonth}</strong></div>
+          </div>
+        </div>
+        <div class="admin-bar-chart">${chartBars}</div>
+      </div></div>
+
+      <div class="admin-row-2">
+        <div class="card admin-chart-card"><div class="card-body">
+          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
+          <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
+            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
+          </div></div>
+        </div></div>
+        <div class="card admin-chart-card"><div class="card-body">
+          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Umsatz pro Produkt</h4>
+          <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
+            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
+            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+          </div>
+          ${revenueChart}
+        </div></div>
+      </div>
+
+      <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body" style="padding:0;overflow:hidden">
+        <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Benutzer</h4>
+          <span class="badge badge-info" style="margin-left:auto">${data.users.total} gesamt</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+          <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Benutzer</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+            <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Rolle</th>
+          </tr></thead>
+          <tbody>
+            ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => {
+              const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+              const avatarColor = u.role === 'employer' ? '#f97316' : '#0ea5e9';
+              return `<tr class="admin-table-row">
+                <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${initials}</div><span style="font-weight:600">${u.name || '-'}</span></div></td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${u.email}</td>
+                <td style="padding:0.65rem 1.25rem;text-align:center"><span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span></td>
+              </tr>`;
+            }).join('') || '<tr><td colspan="3" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+          </tbody>
+        </table>
+      </div></div>
+
+      <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-400);font-size:0.8rem">
+        Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull;
+        <a href="#" onclick="navigate('admin-panel')" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
+      </div>
+    </div>`;
 }
 
 // ===== EVENT LISTENERS =====
