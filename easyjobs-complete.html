@@ -5239,7 +5239,7 @@ function renderAdminLogin() {
           </div>
           <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
           <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)">
-            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurueck zur Startseite</a>
+            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurück zur Startseite</a>
           </p>
         </div>
       </div>
@@ -5304,7 +5304,7 @@ function renderAdminPanel() {
       const color = productColors[product] || '#6366f1';
       return `<div class="admin-hbar-row"><div class="admin-hbar-info"><span class="admin-hbar-dot" style="background:${color}"></span><span class="admin-hbar-name">${product}</span><span class="admin-hbar-count">${info.count}x</span></div><div class="admin-hbar-track"><div class="admin-hbar-fill" style="width:${pct}%;background:${color}"></div></div><div class="admin-hbar-amount">${formatEuro(info.total)}</div></div>`;
     }).join('')
-    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkaeufe</div>';
+    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkäufe</div>';
 
   const revenueDonut = buildDonutSVG(
     productEntries.map(([product, info]) => ({ value: info.total, color: productColors[product] || '#6366f1', label: product })),
@@ -5385,9 +5385,9 @@ function renderAdminPanel() {
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
           <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
           <div class="admin-rev-tabs">
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Taeglich</button>
+            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
             <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jaehrlich</button>
+            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
             <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
           </div>
         </div>

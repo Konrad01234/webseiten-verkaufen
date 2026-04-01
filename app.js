@@ -120,7 +120,7 @@ function getAnalyticsData() {
   };
 }
 
-// Umsatz-Zeitverlauf fuer verschiedene Ansichten
+// Umsatz-Zeitverlauf für verschiedene Ansichten
 function getRevenueTimeline(period) {
   const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
   const now = new Date();
@@ -3542,7 +3542,7 @@ function renderAdminLogin() {
           </div>
           <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
           <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)">
-            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurueck zur Startseite</a>
+            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurück zur Startseite</a>
           </p>
         </div>
       </div>
@@ -3632,7 +3632,7 @@ function renderAdminPanel() {
         <div class="admin-hbar-amount">${formatEuro(info.total)}</div>
       </div>`;
     }).join('')
-    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkaeufe</div>';
+    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkäufe</div>';
 
   // --- Donut: Umsatz-Verteilung ---
   const revenueDonut = buildDonutSVG(
@@ -3803,9 +3803,9 @@ function renderAdminPanel() {
               Umsatz-Verlauf
             </h4>
             <div class="admin-rev-tabs">
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Taeglich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
               <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jaehrlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
               <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
             </div>
           </div>
