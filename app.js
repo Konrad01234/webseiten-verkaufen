@@ -1426,7 +1426,6 @@ function renderJobDetail() {
                   <div class="company-info-row"><span class="label">Branche:</span> <span>${job.companyInfo.industry}</span></div>
                   <div class="company-info-row"><span class="label">Mitarbeiter:</span> <span>${job.companyInfo.employees}</span></div>
                   <div class="company-info-row"><span class="label">Gegründet:</span> <span>${job.companyInfo.founded}</span></div>
-                  <div class="company-info-row"><span class="label">Instagram:</span> <span style="color:var(--primary)">${job.companyInfo.instagram}</span></div>
                   <div class="company-info-row"><span class="label">Website:</span> <span style="color:var(--primary)">${job.companyInfo.website}</span></div>
                   <div class="company-info-row"><span class="label">Adresse:</span> <span>${job.location}</span></div>
                 </div>

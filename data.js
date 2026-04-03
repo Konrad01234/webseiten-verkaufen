@@ -15,7 +15,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Flexible Arbeitszeiten</li><li>Mitarbeiterrabatte</li><li>Nettes Team und gute Einarbeitung</li></ul>`,
     images: ['Filiale Außenansicht', 'Unser Team', 'Arbeitsplatz'],
-    companyInfo: { employees: '45.000+', founded: '1979', industry: 'Elektronik-Einzelhandel', instagram: '@mediamarkt_de', website: 'mediamarkt.de',
+    companyInfo: { employees: '45.000+', founded: '1979', industry: 'Elektronik-Einzelhandel', website: 'mediamarkt.de',
       about: 'MediaMarkt ist Europas größter Elektronik-Fachhändler.' },
     reviews: [
       { author: 'Lisa M.', rating: 4, text: 'Tolles Team und flexible Zeiten!', date: '2026-02-15', active: true },
@@ -36,7 +36,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Kostenloses Essen während der Schicht</li><li>Trinkgeld</li><li>Familiäre Atmosphäre</li></ul>`,
     images: ['Unser Café', 'Terrasse'],
-    companyInfo: { employees: '12', founded: '2018', industry: 'Gastronomie', instagram: '@cafe_sonnenschein', website: 'cafe-sonnenschein.de',
+    companyInfo: { employees: '12', founded: '2018', industry: 'Gastronomie', website: 'cafe-sonnenschein.de',
       about: 'Gemütliches Café im Herzen Berlins mit hausgemachten Kuchen und Spezialitäten.' },
     reviews: [
       { author: 'Anna S.', rating: 5, text: 'Beste Chefin ever! Sehr verständnisvoll mit Schulzeiten.', date: '2026-03-01', active: true }
@@ -56,7 +56,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Überdurchschnittliche Bezahlung</li><li>Kostenloser Shuttle-Service</li><li>Verpflegung vor Ort</li></ul>`,
     images: ['Logistikzentrum', 'Arbeitsbereich'],
-    companyInfo: { employees: '1.500.000+', founded: '1994', industry: 'E-Commerce / Logistik', instagram: '@amazon', website: 'amazon.jobs',
+    companyInfo: { employees: '1.500.000+', founded: '1994', industry: 'E-Commerce / Logistik', website: 'amazon.jobs',
       about: 'Amazon ist eines der größten Unternehmen weltweit.' },
     reviews: [
       { author: 'Max B.', rating: 3, text: 'Gute Bezahlung, aber anstrengend.', date: '2026-02-10', active: true }
@@ -76,7 +76,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Kreatives Arbeitsumfeld</li><li>Homeoffice möglich</li><li>Portfolio-Aufbau</li></ul>`,
     images: ['Unser Büro', 'Team-Event'],
-    companyInfo: { employees: '15', founded: '2020', industry: 'Digitalagentur', instagram: '@creative_agency_bln', website: 'creative-agency.de',
+    companyInfo: { employees: '15', founded: '2020', industry: 'Digitalagentur', website: 'creative-agency.de',
       about: 'Junge Digitalagentur spezialisiert auf Social Media Marketing.' },
     reviews: []
   },
@@ -94,7 +94,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Überdurchschnittliche Bezahlung</li><li>Flexible Terminplanung</li><li>Fortbildungen</li></ul>`,
     images: ['Unterrichtsraum'],
-    companyInfo: { employees: '10.000+', founded: '1974', industry: 'Bildung', instagram: '@schuelerhilfe', website: 'schuelerhilfe.de',
+    companyInfo: { employees: '10.000+', founded: '1974', industry: 'Bildung', website: 'schuelerhilfe.de',
       about: 'Deutschlands größtes Nachhilfeinstitut.' },
     reviews: [
       { author: 'Sarah L.', rating: 5, text: 'Perfekt neben dem Studium!', date: '2026-03-10', active: true },
@@ -115,7 +115,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Arbeit an der frischen Luft</li><li>Flexible Einteilung</li><li>Tolle Hunde!</li></ul>`,
     images: ['Unsere Hunde', 'Im Park'],
-    companyInfo: { employees: '8', founded: '2022', industry: 'Tierbetreuung', instagram: '@pawcare_berlin', website: 'pawcare-berlin.de',
+    companyInfo: { employees: '8', founded: '2022', industry: 'Tierbetreuung', website: 'pawcare-berlin.de',
       about: 'Premium Hundebetreuung in Berlin.' },
     reviews: [
       { author: 'Emma R.', rating: 5, text: 'Traumjob für Tierliebhaber!', date: '2026-03-05', active: true }
@@ -135,7 +135,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Moderne Ausstattung</li><li>Homeoffice teilweise möglich</li><li>Weiterbildungsmöglichkeiten</li></ul>`,
     images: ['Office', 'Team'],
-    companyInfo: { employees: '35', founded: '2021', industry: 'IT-Dienstleistung', instagram: '@techstart_gmbh', website: 'techstart.de',
+    companyInfo: { employees: '35', founded: '2021', industry: 'IT-Dienstleistung', website: 'techstart.de',
       about: 'Junges IT-Startup mit Fokus auf innovative Lösungen.' },
     reviews: []
   },
@@ -153,7 +153,7 @@ const JOBS = [
       <h3>Das bieten wir</h3>
       <ul><li>Spannende Events</li><li>Nettes Team</li><li>Sofortige Auszahlung möglich</li></ul>`,
     images: ['Event-Impressionen'],
-    companyInfo: { employees: '20', founded: '2019', industry: 'Eventmanagement', instagram: '@eventpro_bln', website: 'eventpro-berlin.de',
+    companyInfo: { employees: '20', founded: '2019', industry: 'Eventmanagement', website: 'eventpro-berlin.de',
       about: 'Berlins angesagteste Eventagentur.' },
     reviews: [
       { author: 'Mia P.', rating: 4, text: 'Macht mega Spaß, lernt man viele Leute kennen!', date: '2026-02-28', active: true }
