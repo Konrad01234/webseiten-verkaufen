@@ -2681,81 +2681,68 @@ function getSelectedTemplate() {
 }
 
 function buildCVHTML(data, template) {
-  const name = `${data.vorname} ${data.nachname}`.trim() || 'Max Mustermann';
-  const photoHTML = data.photo ? `<img src="${data.photo}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)">` : `<div style="width:90px;height:90px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;color:#4f46e5;border:3px solid #fff">${(data.vorname[0]||'M')+(data.nachname[0]||'M')}</div>`;
-
-  const skillsHTML = data.skills.length > 0 ? data.skills.map(s => `<span style="display:inline-block;padding:0.2rem 0.6rem;background:rgba(255,255,255,0.2);border-radius:4px;font-size:0.8rem;margin:0.15rem">${s}</span>`).join('') : '<span style="color:rgba(255,255,255,0.6);font-size:0.85rem">Noch keine Fähigkeiten angegeben</span>';
-
-  const infoItems = [
-    data.email ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">✉ ${data.email}</div>` : '',
-    data.telefon ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">✆ ${data.telefon}</div>` : '',
-    data.adresse ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">⌂ ${data.adresse}</div>` : '',
-    data.geburtsdatum ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">★ ${data.geburtsdatum}</div>` : ''
-  ].filter(Boolean).join('');
+  const name = `${data.vorname} ${data.nachname}`.trim();
+  const kontakt = [data.adresse, data.telefon, data.email, data.geburtsdatum ? 'Geb. ' + data.geburtsdatum : ''].filter(Boolean);
+  const hasSchule = data.schule || data.schulZeitraum;
+  const hasErf = data.erfahrungen;
+  const hasSkills = data.skills.length > 0;
+  const hasHobbys = data.hobbys;
 
   if (template === 'modern') {
-    return `<div style="font-family:Inter,Arial,sans-serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;background:#fff">
-      <div style="display:flex">
-        <div style="width:220px;background:linear-gradient(180deg,#4f46e5,#6366f1);color:#fff;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem">
-          ${photoHTML}
-          <div style="text-align:center"><h2 style="margin:0;font-size:1.1rem">${name}</h2></div>
-          <div style="width:100%;border-top:1px solid rgba(255,255,255,0.2);padding-top:0.75rem;display:flex;flex-direction:column;gap:0.4rem">${infoItems}</div>
-          <div style="width:100%;border-top:1px solid rgba(255,255,255,0.2);padding-top:0.75rem">
-            <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;opacity:0.8">Fähigkeiten</h4>
-            <div style="display:flex;flex-wrap:wrap;gap:0.25rem">${skillsHTML}</div>
-          </div>
-        </div>
-        <div style="flex:1;padding:1.5rem 2rem">
-          <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Schulbildung</h3>
-            <div><strong>${data.schule || 'Schule angeben'}</strong><div style="font-size:0.85rem;color:#666">${data.schulZeitraum || 'Zeitraum'}</div></div></div>
-          <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Erfahrungen</h3>
-            <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.erfahrungen || 'Noch keine Erfahrungen angegeben'}</p></div>
-          <div><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Hobbys & Interessen</h3>
-            <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys angegeben'}</p></div>
-        </div>
+    // MODERN: Dunkelblaue Sidebar + weißer Inhalt (passend zur Preview)
+    const photoHTML = data.photo ? `<img src="${data.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.3)">` : '';
+    const skillBars = data.skills.map(s => `<div style="margin-bottom:0.5rem"><div style="font-size:0.85rem;margin-bottom:0.2rem">${s}</div><div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px"><div style="height:100%;width:${60+Math.random()*35}%;background:rgba(255,255,255,0.6);border-radius:3px"></div></div></div>`).join('');
+    return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;max-width:750px;margin:0 auto;display:flex;min-height:1000px;box-shadow:0 2px 20px rgba(0,0,0,0.08)">
+      <div style="width:240px;background:#1e3a5f;color:#fff;padding:2rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem">
+        ${data.photo ? '<div style="text-align:center">' + photoHTML + '</div>' : ''}
+        ${name ? '<div style="text-align:center"><h2 style="margin:0;font-size:1.15rem;font-weight:700">' + name + '</h2></div>' : ''}
+        ${kontakt.length ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;opacity:0.5;margin-bottom:0.5rem">Kontakt</h4>' + kontakt.map(k => '<div style="font-size:0.82rem;margin-bottom:0.3rem;opacity:0.85">' + k + '</div>').join('') + '</div>' : ''}
+        ${hasSkills ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;opacity:0.5;margin-bottom:0.5rem">Kenntnisse</h4>' + skillBars + '</div>' : ''}
+        ${hasHobbys ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;opacity:0.5;margin-bottom:0.5rem">Interessen</h4><div style="font-size:0.85rem;opacity:0.85;white-space:pre-line">' + data.hobbys + '</div></div>' : ''}
+      </div>
+      <div style="flex:1;padding:2rem 2.5rem;background:#fff">
+        ${name ? '<h1 style="margin:0 0 0.2rem;font-size:1.7rem;color:#1e3a5f;font-weight:800">' + name + '</h1><div style="height:3px;width:50px;background:#1e3a5f;margin-bottom:1.75rem"></div>' : ''}
+        ${hasSchule ? '<div style="margin-bottom:1.5rem"><h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;margin-bottom:0.6rem;font-weight:700">Ausbildung</h3><div style="padding-left:1rem;border-left:2px solid #e2e8f0"><div style="font-weight:600;font-size:0.95rem;color:#1f2937">' + data.schule + '</div>' + (data.schulZeitraum ? '<div style="font-size:0.82rem;color:#64748b;margin-top:0.15rem">' + data.schulZeitraum + '</div>' : '') + '</div></div>' : ''}
+        ${hasErf ? '<div style="margin-bottom:1.5rem"><h3 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;margin-bottom:0.6rem;font-weight:700">Berufserfahrung</h3><div style="padding-left:1rem;border-left:2px solid #e2e8f0;font-size:0.9rem;color:#374151;white-space:pre-line">' + data.erfahrungen + '</div></div>' : ''}
       </div>
     </div>`;
   } else if (template === 'classic') {
-    const photoClassic = data.photo ? `<img src="${data.photo}" style="width:80px;height:80px;border-radius:4px;object-fit:cover;border:2px solid #d1d5db">` : '';
-    return `<div style="font-family:Georgia,'Times New Roman',serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:4px;overflow:hidden;background:#fff;padding:2rem">
-      <div style="display:flex;align-items:center;gap:1.25rem;border-bottom:3px double #1f2937;padding-bottom:1rem;margin-bottom:1.25rem">
+    // KLASSISCH: Serifen, traditionell, doppelte Linie (passend zur Preview)
+    const photoClassic = data.photo ? `<img src="${data.photo}" style="width:100px;height:100px;border-radius:4px;object-fit:cover">` : '';
+    return `<div style="font-family:Georgia,'Times New Roman',serif;max-width:750px;margin:0 auto;background:#fff;padding:2.5rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);min-height:1000px">
+      <div style="display:flex;align-items:flex-start;gap:1.5rem;padding-bottom:1rem;border-bottom:2px double #111;margin-bottom:1.5rem">
         ${photoClassic}
-        <div><h1 style="margin:0;font-size:1.5rem;color:#1f2937">${name}</h1>
-          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.35rem;font-size:0.85rem;color:#666">
-            ${data.email ? `<span>✉ ${data.email}</span>` : ''}${data.telefon ? `<span>✆ ${data.telefon}</span>` : ''}${data.adresse ? `<span>⌂ ${data.adresse}</span>` : ''}${data.geburtsdatum ? `<span>★ ${data.geburtsdatum}</span>` : ''}
-          </div>
+        <div style="flex:1">
+          ${name ? '<h1 style="margin:0;font-size:1.8rem;color:#111;font-weight:400;letter-spacing:0.03em">' + name.toUpperCase() + '</h1>' : ''}
+          ${kontakt.length ? '<div style="display:flex;flex-wrap:wrap;gap:0.5rem 1.5rem;margin-top:0.4rem;font-size:0.85rem;color:#555">' + kontakt.map(k => '<span>' + k + '</span>').join('') + '</div>' : ''}
         </div>
       </div>
-      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Schulbildung</h3>
-        <div><strong>${data.schule || 'Schule angeben'}</strong> <span style="color:#666;font-size:0.85rem">— ${data.schulZeitraum || 'Zeitraum'}</span></div></div>
-      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Berufserfahrung</h3>
-        <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.erfahrungen || 'Noch keine Erfahrungen angegeben'}</p></div>
-      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Fähigkeiten</h3>
-        <p style="font-size:0.9rem;color:#444">${data.skills.join(' • ') || 'Noch keine Fähigkeiten angegeben'}</p></div>
-      <div><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Hobbys & Interessen</h3>
-        <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys angegeben'}</p></div>
+      ${hasSchule ? '<div style="margin-bottom:1.25rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.12em;color:#111;border-bottom:1px solid #ccc;padding-bottom:0.25rem;margin-bottom:0.6rem">Ausbildung</h3><div style="display:flex;gap:1.5rem"><div style="width:120px;font-size:0.82rem;color:#888;flex-shrink:0">' + (data.schulZeitraum || '') + '</div><div style="font-size:0.9rem;color:#333"><strong>' + data.schule + '</strong></div></div></div>' : ''}
+      ${hasErf ? '<div style="margin-bottom:1.25rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.12em;color:#111;border-bottom:1px solid #ccc;padding-bottom:0.25rem;margin-bottom:0.6rem">Berufserfahrung</h3><div style="font-size:0.9rem;color:#333;white-space:pre-line">' + data.erfahrungen + '</div></div>' : ''}
+      ${hasSkills ? '<div style="margin-bottom:1.25rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.12em;color:#111;border-bottom:1px solid #ccc;padding-bottom:0.25rem;margin-bottom:0.6rem">Kenntnisse & Fähigkeiten</h3><div style="font-size:0.9rem;color:#333">' + data.skills.join(' · ') + '</div></div>' : ''}
+      ${hasHobbys ? '<div><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.12em;color:#111;border-bottom:1px solid #ccc;padding-bottom:0.25rem;margin-bottom:0.6rem">Hobbys & Interessen</h3><div style="font-size:0.9rem;color:#333;white-space:pre-line">' + data.hobbys + '</div></div>' : ''}
     </div>`;
   } else {
-    const skillsCreative = data.skills.length > 0 ? data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.75rem;background:#f3e8ff;color:#7c3aed;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('') : '<span style="color:#999;font-size:0.85rem">Noch keine Fähigkeiten</span>';
-    const photoCreative = data.photo ? `<img src="${data.photo}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #7c3aed;box-shadow:0 4px 16px rgba(124,58,237,0.3)">` : `<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(124,58,237,0.3)">${(data.vorname[0]||'M')+(data.nachname[0]||'M')}</div>`;
-    return `<div style="font-family:Inter,Arial,sans-serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:12px;overflow:hidden;background:#fff">
-      <div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:2rem;text-align:center;color:#fff">
+    // KREATIV: Blauer Gradient Header + rechte Sidebar (passend zur Preview)
+    const photoCreative = data.photo ? `<img src="${data.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.4)">` : '';
+    const skillPills = data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.7rem;background:#e0f2fe;color:#0369a1;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('');
+    return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;max-width:750px;margin:0 auto;background:#fff;box-shadow:0 2px 20px rgba(0,0,0,0.08);min-height:1000px">
+      <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:2rem 2.5rem;display:flex;align-items:center;gap:1.5rem;color:#fff">
         ${photoCreative}
-        <h1 style="margin:0.75rem 0 0.25rem;font-size:1.5rem">${name}</h1>
-        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.75rem;font-size:0.85rem;opacity:0.9;margin-top:0.5rem">
-          ${data.email ? `<span>✉ ${data.email}</span>` : ''}${data.telefon ? `<span>✆ ${data.telefon}</span>` : ''}${data.geburtsdatum ? `<span>★ ${data.geburtsdatum}</span>` : ''}
+        <div style="flex:1">
+          ${name ? '<h1 style="margin:0;font-size:1.6rem;font-weight:800">' + name + '</h1>' : ''}
+          ${kontakt.length ? '<div style="display:flex;flex-wrap:wrap;gap:0.5rem 1.25rem;margin-top:0.4rem;font-size:0.82rem;opacity:0.9">' + kontakt.map(k => '<span>' + k + '</span>').join('') + '</div>' : ''}
         </div>
-        ${data.adresse ? `<div style="font-size:0.85rem;opacity:0.8;margin-top:0.25rem">⌂ ${data.adresse}</div>` : ''}
       </div>
-      <div style="padding:1.5rem 2rem">
-        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">🎓 Schulbildung</h3>
-          <div style="padding-left:0.75rem;border-left:3px solid #e9d5ff"><strong>${data.schule || 'Schule angeben'}</strong><div style="font-size:0.85rem;color:#888">${data.schulZeitraum || 'Zeitraum'}</div></div></div>
-        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">💼 Erfahrungen</h3>
-          <p style="font-size:0.9rem;color:#444;white-space:pre-line;padding-left:0.75rem;border-left:3px solid #e9d5ff">${data.erfahrungen || 'Noch keine Erfahrungen'}</p></div>
-        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">⚡ Fähigkeiten</h3>
-          <div style="display:flex;flex-wrap:wrap;gap:0.3rem">${skillsCreative}</div></div>
-        <div><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">🎯 Hobbys & Interessen</h3>
-          <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys'}</p></div>
+      <div style="display:flex">
+        <div style="flex:1;padding:2rem 2.5rem">
+          ${hasSchule ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#0ea5e9;display:inline-block"></span>Ausbildung</h3><div style="font-weight:600;font-size:0.95rem;color:#1f2937">' + data.schule + '</div>' + (data.schulZeitraum ? '<div style="font-size:0.82rem;color:#64748b;margin-top:0.15rem">' + data.schulZeitraum + '</div>' : '') + '</div>' : ''}
+          ${hasErf ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#0ea5e9;display:inline-block"></span>Berufserfahrung</h3><div style="font-size:0.9rem;color:#374151;white-space:pre-line">' + data.erfahrungen + '</div></div>' : ''}
+        </div>
+        <div style="width:220px;padding:2rem 1.5rem;background:#f8fafc;border-left:1px solid #e2e8f0">
+          ${hasSkills ? '<div style="margin-bottom:1.5rem"><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.5rem;font-weight:700">Kenntnisse</h4><div style="display:flex;flex-wrap:wrap;gap:0.3rem">' + skillPills + '</div></div>' : ''}
+          ${hasHobbys ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.5rem;font-weight:700">Interessen</h4><div style="font-size:0.85rem;color:#475569;white-space:pre-line">' + data.hobbys + '</div></div>' : ''}
+        </div>
       </div>
     </div>`;
   }
