@@ -1625,7 +1625,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 const JOBS = [
   {
     id: 1, title: 'Aushilfe im Einzelhandel', company: 'MediaMarkt', companyLogo: '🛒',
-    location: 'Hauptstraße 45, 41460 Neuss', city: 'Neuss', distance: 1.5,
+    location: 'Hauptstraße 45, 41460 Neuss', city: 'Neuss', lat: 51.1986, lng: 6.6920, distance: 0,
     type: 'Minijob', hours: '10-15 Std/Woche', salary: '12,50€/Std',
     category: 'Einzelhandel', posted: '2026-03-22', expires: '2026-04-22',
     views: 342, clicks: 89, applications: 12, promoted: true,
@@ -1646,7 +1646,7 @@ const JOBS = [
   },
   {
     id: 2, title: 'Kellner/in im Café', company: 'Café Sonnenschein', companyLogo: '☕',
-    location: 'Dorfstraße 12, 40670 Meerbusch', city: 'Meerbusch', distance: 3.2,
+    location: 'Dorfstraße 12, 40670 Meerbusch', city: 'Meerbusch', lat: 51.2583, lng: 6.6917, distance: 0,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '13€/Std + Trinkgeld',
     category: 'Gastronomie', posted: '2026-03-20', expires: '2026-04-20',
     views: 567, clicks: 134, applications: 23, promoted: false,
@@ -1666,7 +1666,7 @@ const JOBS = [
   },
   {
     id: 3, title: 'Lagerhelfer/in', company: 'Amazon Logistik', companyLogo: '📦',
-    location: 'Königsallee 80, 40212 Düsseldorf', city: 'Düsseldorf', distance: 8.5,
+    location: 'Königsallee 80, 40212 Düsseldorf', city: 'Düsseldorf', lat: 51.2277, lng: 6.7735, distance: 0,
     type: 'Ferienjob', hours: '30-40 Std/Woche', salary: '14€/Std',
     category: 'Logistik', posted: '2026-03-18', expires: '2026-05-01',
     views: 892, clicks: 256, applications: 45, promoted: true,
@@ -1686,7 +1686,7 @@ const JOBS = [
   },
   {
     id: 4, title: 'Social Media Praktikant/in', company: 'Creative Agency Düsseldorf', companyLogo: '🎨',
-    location: 'Friedrichstraße 15, 40217 Düsseldorf', city: 'Düsseldorf', distance: 7.2,
+    location: 'Friedrichstraße 15, 40217 Düsseldorf', city: 'Düsseldorf', lat: 51.2130, lng: 6.7780, distance: 0,
     type: 'Praktikum', hours: '20 Std/Woche', salary: '11€/Std',
     category: 'Marketing', posted: '2026-03-23', expires: '2026-04-30',
     views: 234, clicks: 67, applications: 8, promoted: false,
@@ -1704,7 +1704,7 @@ const JOBS = [
   },
   {
     id: 5, title: 'Nachhilfelehrer/in Mathe', company: 'Schülerhilfe', companyLogo: '📚',
-    location: 'Schulstraße 3, 41460 Neuss', city: 'Neuss', distance: 2.0,
+    location: 'Schulstraße 3, 41460 Neuss', city: 'Neuss', lat: 51.2005, lng: 6.6880, distance: 0,
     type: 'Minijob', hours: '5-10 Std/Woche', salary: '15€/Std',
     category: 'Bildung', posted: '2026-03-21', expires: '2026-05-15',
     views: 178, clicks: 45, applications: 6, promoted: false,
@@ -1725,7 +1725,7 @@ const JOBS = [
   },
   {
     id: 6, title: 'Hundesitter/in', company: 'PawCare Meerbusch', companyLogo: '🐕',
-    location: 'Am Stadtpark 8, 40670 Meerbusch', city: 'Meerbusch', distance: 4.1,
+    location: 'Am Stadtpark 8, 40670 Meerbusch', city: 'Meerbusch', lat: 51.2620, lng: 6.6850, distance: 0,
     type: 'Minijob', hours: '8-12 Std/Woche', salary: '12€/Std',
     category: 'Tierpflege', posted: '2026-03-19', expires: '2026-04-19',
     views: 445, clicks: 112, applications: 18, promoted: false,
@@ -1745,7 +1745,7 @@ const JOBS = [
   },
   {
     id: 7, title: 'IT-Support Werkstudent/in', company: 'TechStart GmbH', companyLogo: '💻',
-    location: 'Breite Straße 20, 41460 Neuss', city: 'Neuss', distance: 3.0,
+    location: 'Breite Straße 20, 41460 Neuss', city: 'Neuss', lat: 51.1970, lng: 6.6950, distance: 0,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '16€/Std',
     category: 'IT', posted: '2026-03-24', expires: '2026-05-24',
     views: 123, clicks: 34, applications: 3, promoted: false,
@@ -1763,7 +1763,7 @@ const JOBS = [
   },
   {
     id: 8, title: 'Promoter/in für Events', company: 'EventPro Düsseldorf', companyLogo: '🎉',
-    location: 'Altstadt 5, 40213 Düsseldorf', city: 'Düsseldorf', distance: 9.0,
+    location: 'Altstadt 5, 40213 Düsseldorf', city: 'Düsseldorf', lat: 51.2270, lng: 6.7750, distance: 0,
     type: 'Minijob', hours: 'Flexibel / Eventbasiert', salary: '13€/Std',
     category: 'Events', posted: '2026-03-17', expires: '2026-04-17',
     views: 678, clicks: 189, applications: 31, promoted: false,
@@ -3017,6 +3017,66 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+// Bekannte Orte mit Koordinaten
+const KNOWN_LOCATIONS = {
+  'neuss': { lat: 51.1986, lng: 6.6920 },
+  'meerbusch': { lat: 51.2583, lng: 6.6917 },
+  'düsseldorf': { lat: 51.2277, lng: 6.7735 },
+  'dormagen': { lat: 51.0970, lng: 6.8317 },
+  'kaarst': { lat: 51.2292, lng: 6.6205 },
+  'grevenbroich': { lat: 51.0883, lng: 6.5883 },
+  'korschenbroich': { lat: 51.1900, lng: 6.5167 },
+  'jüchen': { lat: 51.1017, lng: 6.5017 },
+  'willich': { lat: 51.2633, lng: 6.5467 },
+  'krefeld': { lat: 51.3388, lng: 6.5853 },
+  'köln': { lat: 50.9375, lng: 6.9603 },
+  'duisburg': { lat: 51.4344, lng: 6.7623 },
+  'essen': { lat: 51.4556, lng: 7.0116 },
+  'ratingen': { lat: 51.2970, lng: 6.8493 },
+  'hilden': { lat: 51.1693, lng: 6.9333 },
+  'langenfeld': { lat: 51.1084, lng: 6.9488 },
+  'monheim': { lat: 51.0911, lng: 6.8913 },
+  'erkrath': { lat: 51.2237, lng: 6.9107 },
+  'mettmann': { lat: 51.2510, lng: 6.9740 },
+  'haan': { lat: 51.1930, lng: 7.0130 },
+};
+
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  var R = 6371;
+  var dLat = (lat2 - lat1) * Math.PI / 180;
+  var dLng = (lng2 - lng1) * Math.PI / 180;
+  var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLng/2) * Math.sin(dLng/2);
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function updateJobDistances() {
+  var addr = (state.filters.address || '').toLowerCase().trim();
+  var coords = null;
+  // Suche nach bekanntem Ort in der eingegebenen Adresse
+  for (var ort in KNOWN_LOCATIONS) {
+    if (addr.includes(ort)) { coords = KNOWN_LOCATIONS[ort]; break; }
+  }
+  // Auch PLZ erkennen
+  if (!coords) {
+    var plzMatch = addr.match(/\b(41\d{3}|406\d{2}|402\d{2})\b/);
+    if (plzMatch) {
+      var plz = plzMatch[1];
+      if (plz.startsWith('414') || plz.startsWith('415')) coords = KNOWN_LOCATIONS['neuss'];
+      else if (plz.startsWith('406')) coords = KNOWN_LOCATIONS['meerbusch'];
+      else if (plz.startsWith('402')) coords = KNOWN_LOCATIONS['düsseldorf'];
+    }
+  }
+  JOBS.forEach(function(j) {
+    if (coords && j.lat && j.lng) {
+      j.distance = Math.round(haversineDistance(coords.lat, coords.lng, j.lat, j.lng) * 10) / 10;
+    } else {
+      j.distance = 0;
+    }
+  });
+}
+
 function toggleHoursFilter(h) {
   const idx = state.filters.hours.indexOf(h);
   if (idx > -1) state.filters.hours.splice(idx, 1);
@@ -3340,6 +3400,12 @@ function renderJobSearch() {
           <h3 style="font-size:1rem;margin-bottom:1rem">Filter</h3>
 
           <div class="filter-section">
+            <h4>Deine Adresse</h4>
+            <input type="text" class="form-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;updateJobDistances();render()">
+            <p style="font-size:0.7rem;color:var(--gray-400);margin-top:0.3rem">${state.filters.address ? 'Entfernungen werden berechnet' : 'Gib deinen Ort ein für genaue Entfernungen'}</p>
+          </div>
+
+          <div class="filter-section">
             <h4>Kategorie</h4>
             <select class="form-select" onchange="state.filters.category=this.value;render()">
               <option value="">Alle Kategorien</option>
@@ -3372,7 +3438,7 @@ function renderJobSearch() {
             </div>
           </div>
 
-          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date'};render()">Filter zurücksetzen</button>
+          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};updateJobDistances();render()">Filter zurücksetzen</button>
         </aside>
 
         <div class="jobs-grid">
@@ -3404,7 +3470,7 @@ function renderJobCard(j) {
         <div class="job-card-meta">
           <span class="job-meta-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            ${j.city} (${j.distance} km)
+            ${j.city}${j.distance > 0 ? ' (' + j.distance + ' km)' : ''}
           </span>
           <span class="job-meta-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
