@@ -1811,7 +1811,7 @@ let state = {
   currentPage: 'landing',
   user: JSON.parse(localStorage.getItem('jj_user')) || null,
   get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
-  filters: { search: '', category: '', type: '', radius: 50, hours: '', city: '', sort: 'date' },
+  filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date' },
   chatOpen: false,
   aiOpen: false,
   activeChat: null,
@@ -2619,6 +2619,13 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
+function toggleHoursFilter(h) {
+  const idx = state.filters.hours.indexOf(h);
+  if (idx > -1) state.filters.hours.splice(idx, 1);
+  else state.filters.hours.push(h);
+  render();
+}
+
 function getFilteredJobs() {
   let jobs = [...JOBS];
   const f = state.filters;
@@ -2630,6 +2637,13 @@ function getFilteredJobs() {
   if (f.type) jobs = jobs.filter(j => j.type === f.type);
   if (f.radius < 50) jobs = jobs.filter(j => j.distance <= f.radius);
   if (f.city) jobs = jobs.filter(j => j.city === f.city);
+  if (f.hours.length > 0) {
+    jobs = jobs.filter(j => {
+      const match = j.hours.match(/(\d+)/);
+      if (!match) return false;
+      return f.hours.includes(parseInt(match[0]));
+    });
+  }
   if (f.sort === 'date') jobs.sort((a, b) => new Date(b.posted) - new Date(a.posted));
   if (f.sort === 'views') jobs.sort((a, b) => b.views - a.views);
   if (f.sort === 'distance') jobs.sort((a, b) => a.distance - b.distance);
@@ -2823,6 +2837,15 @@ function renderJobSearch() {
           </div>
 
           <div class="filter-section">
+            <h4>Stunden pro Woche</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.4rem">
+              ${[6,7,8,9,10,11,12].map(h => `<label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer">
+                <input type="checkbox" ${state.filters.hours.includes(h)?'checked':''} onchange="toggleHoursFilter(${h})"> ${h}
+              </label>`).join('')}
+            </div>
+          </div>
+
+          <div class="filter-section">
             <h4>Umkreis: ${state.filters.radius >= 50 ? '50+ km' : state.filters.radius + ' km'}</h4>
             <input type="range" class="range-slider" min="5" max="50" step="5" value="${state.filters.radius}" oninput="state.filters.radius=parseInt(this.value);render()">
             <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-400)">
@@ -2830,7 +2853,7 @@ function renderJobSearch() {
             </div>
           </div>
 
-          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:'',city:'',sort:'date'};render()">Filter zurücksetzen</button>
+          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date'};render()">Filter zurücksetzen</button>
         </aside>
 
         <div class="jobs-grid">
@@ -3055,6 +3078,10 @@ function renderRegister() {
               <input type="text" name="lastName" class="form-input" placeholder="Mustermann" value="Mustermann" required>
             </div>
           </div>
+          <div class="form-group employer-field" style="display:none">
+            <label class="form-label">Firmenname</label>
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
+          </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
@@ -3063,6 +3090,7 @@ function renderRegister() {
             <label class="form-label">Passwort</label>
             <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" value="test1234" required minlength="8">
           </div>
+          <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
@@ -3074,6 +3102,11 @@ function selectRole(el, role) {
   document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
   document.querySelector('input[name="role"]').value = role;
+  const companyField = document.querySelector('.employer-field');
+  if (companyField) {
+    companyField.style.display = role === 'employer' ? 'block' : 'none';
+    companyField.querySelector('input').required = role === 'employer';
+  }
 }
 
 function submitRegister(form) {
@@ -3083,6 +3116,9 @@ function submitRegister(form) {
     email: form.email.value,
     password: form.password.value
   };
+  if (data.role === 'employer') {
+    data.company = form.company.value;
+  }
   register(data);
 }
 
@@ -3870,7 +3906,7 @@ function renderEmployerDashboard() {
           <div class="employer-dash-header">
             <div>
               <h2 class="dashboard-title" style="margin-bottom:0.15rem">Willkommen, ${state.user.name.split(' ')[0]}!</h2>
-              <p style="font-size:0.85rem;color:var(--gray-500);margin:0">Verwalte deine Stellenanzeigen und Bewerbungen</p>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin:0">${state.user.company ? state.user.company + ' – ' : ''}Verwalte deine Stellenanzeigen und Bewerbungen</p>
             </div>
             <button class="btn btn-employer" onclick="goPostJob()">+ Neue Anzeige schalten</button>
           </div>
@@ -4216,7 +4252,7 @@ function renderEmployerProfile() {
           <div class="profile-header-card" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">
             <div class="profile-avatar" style="font-size:1.5rem"></div>
             <div class="profile-info">
-              <h2>${state.user.name}'s Unternehmen</h2>
+              <h2>${state.user.company || state.user.name + '\'s Unternehmen'}</h2>
               <p>Unternehmensprofil bearbeiten</p>
             </div>
           </div>
@@ -4226,7 +4262,7 @@ function renderEmployerProfile() {
               <h3>Allgemeine Informationen</h3>
               <div class="form-group">
                 <label class="form-label">Unternehmensname</label>
-                <input type="text" class="form-input" placeholder="Name des Unternehmens">
+                <input type="text" class="form-input" placeholder="Name des Unternehmens" value="${state.user.company || ''}">
               </div>
               <div class="form-group">
                 <label class="form-label">Branche</label>
