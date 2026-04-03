@@ -3898,6 +3898,10 @@ function renderEmployerLanding() {
 
 function renderEmployerDashboard() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
+  const myJobs = (state.user.postedJobs || []);
+  const totalViews = myJobs.reduce((s, j) => s + (j.views || 0), 0);
+  const totalApps = myJobs.reduce((s, j) => s + (j.applications || 0), 0);
+  const hasJobs = myJobs.length > 0;
   return `
     <div class="page employer-page">
       <div class="dashboard-layout">
@@ -3914,90 +3918,53 @@ function renderEmployerDashboard() {
           <div class="stats-grid">
             <div class="stat-card employer-stat">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/><path d="M8 7V5a2 2 0 0 1 4 0v2"/></svg></div>
-              <div class="stat-value">3</div>
+              <div class="stat-value">${myJobs.length}</div>
               <div class="stat-label">Aktive Anzeigen</div>
-              <div class="stat-change up">↑ +1 diese Woche</div>
             </div>
             <div class="stat-card employer-stat">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div>
-              <div class="stat-value">1.847</div>
+              <div class="stat-value">${totalViews}</div>
               <div class="stat-label">Gesamte Views</div>
-              <div class="stat-change up">↑ +234 diese Woche</div>
             </div>
             <div class="stat-card employer-stat">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-              <div class="stat-value">35</div>
+              <div class="stat-value">${totalApps}</div>
               <div class="stat-label">Bewerbungen</div>
-              <div class="stat-change up">↑ +8 diese Woche</div>
             </div>
             <div class="stat-card employer-stat">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-              <div class="stat-value">12</div>
+              <div class="stat-value">0</div>
               <div class="stat-label">Neue Nachrichten</div>
-              <div class="stat-change up">↑ +3 heute</div>
             </div>
           </div>
 
-          <div class="chart-container">
-            <div class="chart-header">
-              <h3>Views & Klicks (letzte 7 Tage)</h3>
-              <select class="sort-select">
-                <option>Letzte 7 Tage</option>
-                <option>Letzte 30 Tage</option>
-                <option>Letztes Quartal</option>
-              </select>
-            </div>
-            <div class="chart-placeholder">
-              <div class="chart-bar" style="height:40%"></div>
-              <div class="chart-bar" style="height:60%"></div>
-              <div class="chart-bar" style="height:45%"></div>
-              <div class="chart-bar" style="height:80%"></div>
-              <div class="chart-bar" style="height:65%"></div>
-              <div class="chart-bar" style="height:90%"></div>
-              <div class="chart-bar" style="height:75%"></div>
-            </div>
-            <div style="display:flex;justify-content:space-around;font-size:0.75rem;color:var(--gray-400);margin-top:0.5rem">
-              <span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span>
-            </div>
-          </div>
-
+          ${hasJobs ? `
           <h3 style="font-size:1.1rem;margin-bottom:1rem">Deine Anzeigen</h3>
           <div class="jobs-grid">
-            ${JOBS.slice(0,3).map(j => `
+            ${myJobs.map(j => `
               <div class="card">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
                   <div style="display:flex;align-items:center;gap:1rem;flex:1">
-                    <div class="job-company-logo">${j.companyLogo}</div>
+                    <div class="job-company-logo">${j.companyLogo || '&#9962;'}</div>
                     <div>
                       <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${j.title}</h3>
                       <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
-                        <span>${j.views}</span>
-                        <span>${j.clicks}</span>
-                        <span>${j.applications} Bew.</span>
+                        <span>${j.views || 0} Views</span>
+                        <span>${j.applications || 0} Bew.</span>
                       </div>
                     </div>
                   </div>
-                  <div style="display:flex;align-items:center;gap:0.5rem;flex-shrink:0">
-                    ${j.promoted
-                      ? '<span class="badge badge-secondary">&#9733; Aktiv geboosted</span>'
-                      : `<button class="btn btn-sm btn-secondary" onclick="showBoostModal('${j.title}')">Boosten</button>`}
-                    <span class="badge badge-success">Aktiv</span>
-                  </div>
+                  <span class="badge badge-success">Aktiv</span>
                 </div>
               </div>
             `).join('')}
-          </div>
-
-          <div class="card" style="margin-top:1.5rem;border-color:var(--secondary)">
-            <div class="card-body" style="display:flex;align-items:center;gap:1rem;background:rgba(245,158,11,0.05)">
-              <div style="font-size:1.5rem"></div>
-              <div style="flex:1">
-                <strong>Erinnerung:</strong> Du hast eine Anzeige im Entwurf, die noch nicht veröffentlicht wurde.
-                <div style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Nur noch 2 Schritte bis zur Veröffentlichung!</div>
-              </div>
-              <button class="btn btn-secondary btn-sm" onclick="goPostJob()">Fortfahren</button>
-            </div>
-          </div>
+          </div>` : `
+          <div class="empty-state" style="margin-top:2rem">
+            <div style="font-size:3rem;margin-bottom:1rem">&#9962;</div>
+            <h3>Noch keine Anzeigen</h3>
+            <p style="color:var(--gray-500);margin-bottom:1.5rem">Schalte deine erste Stellenanzeige und finde passende Mitarbeiter.</p>
+            <button class="btn btn-employer" onclick="goPostJob()">+ Erste Anzeige erstellen</button>
+          </div>`}
         </div>
       </div>
     </div>`;
