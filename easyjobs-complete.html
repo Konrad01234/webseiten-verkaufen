@@ -3401,7 +3401,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;updateJobDistances();render()">
+            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){updateJobDistances();render();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},50);},600)">
             <p style="font-size:0.7rem;color:var(--gray-400);margin-top:0.3rem">${state.filters.address ? 'Entfernungen werden berechnet' : 'Gib deinen Ort ein für genaue Entfernungen'}</p>
           </div>
 
