@@ -790,6 +790,31 @@ function openChat(id) {
   renderChatWidget();
 }
 
+function updateApplicantStatus(applicantId, newStatus) {
+  const a = MOCK_APPLICANTS.find(x => x.id === applicantId);
+  if (!a) return;
+  const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
+  a.status = newStatus;
+  a.statusText = statusTexts[newStatus];
+  if (newStatus === 'rejected' || newStatus === 'accepted') {
+    let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
+    if (!chat) {
+      chat = { id: 100 + applicantId, partnerId: 'worker-' + applicantId, partnerName: a.name, partnerInitials: a.initials, jobTitle: a.job, lastMessage: '', time: '', unread: false, messages: [] };
+      EMPLOYER_CHAT_MESSAGES.push(chat);
+    }
+    const now = new Date();
+    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const msg = newStatus === 'rejected'
+      ? `Hallo ${a.name.split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${a.job}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
+      : `Hallo ${a.name.split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${a.job}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
+    chat.messages.push({ text: msg, sent: true, time: time });
+    chat.lastMessage = msg;
+    chat.time = time;
+    saveUserChats();
+  }
+  render();
+}
+
 function openApplicantChat(applicantId) {
   const a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) { navigate('messages'); return; }
@@ -2610,12 +2635,19 @@ function renderApplicants() {
                     </td>
                     <td>${a.job}</td>
                     <td>${a.skills.map(s => `<span class="tag">${s}</span>`).join(' ')}</td>
-                    <td><span class="badge ${a.status==='new'?'badge-primary':a.status==='reviewing'?'badge-secondary':a.status==='accepted'?'badge-success':'badge-danger'}">${a.statusText}</span></td>
+                    <td>
+                      <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" onchange="updateApplicantStatus(${a.id}, this.value)">
+                        <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
+                        <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
+                        <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
+                        <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
+                      </select>
+                    </td>
                     <td>${formatDate(a.date)}</td>
                     <td>
                       <div style="display:flex;gap:0.375rem">
                         <button class="btn btn-sm btn-outline" onclick="navigate('applicant-profile', {applicantId: ${a.id}})">Profil</button>
-                        <button class="btn btn-sm btn-primary" onclick="navigate('messages')">Nachricht</button>
+                        <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
                     </td>
                   </tr>
@@ -2659,9 +2691,14 @@ function renderApplicantProfile() {
                   <div style="font-size:0.85rem;color:var(--gray-500)">
                     ${a.age} Jahre &bull; ${a.city} &bull; max. ${a.weeklyHours} Std./Woche
                   </div>
-                  <div style="margin-top:0.5rem">
-                    <span class="badge ${statusColor[a.status] || 'badge-primary'}">${a.statusText}</span>
-                    <span style="font-size:0.8rem;color:var(--gray-400);margin-left:0.5rem">Beworben auf: <strong>${a.job}</strong></span>
+                  <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
+                    <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" onchange="updateApplicantStatus(${a.id}, this.value)">
+                      <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
+                      <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
+                      <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
+                      <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
+                    </select>
+                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${a.job}</strong></span>
                   </div>
                 </div>
                 <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
