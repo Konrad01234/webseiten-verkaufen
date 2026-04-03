@@ -931,6 +931,23 @@ function updateApplicantStatus(applicantId, newStatus) {
     chat.lastMessage = msg;
     chat.time = time;
     saveUserChats();
+    // Also save to worker's chats so they can see the message
+    if (isReal && a.userId) {
+      const workerChatKey = 'jj_chats_' + a.userId;
+      const workerChats = JSON.parse(localStorage.getItem(workerChatKey) || '[]');
+      const companyName = state.user.company || state.user.name;
+      const companyInitials = (companyName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+      let workerChat = workerChats.find(c => c.partnerId === 'employer-' + state.user.id);
+      if (!workerChat) {
+        workerChat = { id: 200 + state.user.id, partnerId: 'employer-' + state.user.id, partnerName: companyName, partnerInitials: companyInitials, jobTitle: jobTitle, lastMessage: '', time: '', unread: true, messages: [] };
+        workerChats.push(workerChat);
+      }
+      workerChat.messages.push({ text: msg, sent: false, time: time });
+      workerChat.lastMessage = msg;
+      workerChat.time = time;
+      workerChat.unread = true;
+      localStorage.setItem(workerChatKey, JSON.stringify(workerChats));
+    }
   }
   render();
 }
