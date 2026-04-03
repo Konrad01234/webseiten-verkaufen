@@ -1829,6 +1829,12 @@ if (state.user && state.user.postedJobs) {
   });
 }
 
+// Clear old broken chat data (one-time reset)
+if (!localStorage.getItem('jj_chat_reset_v2')) {
+  Object.keys(localStorage).filter(k => k.startsWith('jj_chats_')).forEach(k => localStorage.removeItem(k));
+  localStorage.setItem('jj_chat_reset_v2', '1');
+}
+
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
 const ADMIN_PASSWORD = 'Tauranga@2025';
@@ -2630,9 +2636,10 @@ function updateApplicantStatus(applicantId, newStatus) {
   if (isReal) localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
   const jobTitle = a.jobTitle || a.job;
   if (newStatus === 'rejected' || newStatus === 'accepted') {
-    let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
+    const workerUserId = a.userId || applicantId;
+    let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
     if (!chat) {
-      chat = { id: 100 + applicantId, partnerId: 'worker-' + applicantId, partnerName: a.name, partnerInitials: a.initials, jobTitle: jobTitle, lastMessage: '', time: '', unread: false, messages: [] };
+      chat = { id: 100 + workerUserId, partnerId: 'worker-' + workerUserId, partnerName: a.name, partnerInitials: a.initials, jobTitle: jobTitle, lastMessage: '', time: '', unread: false, messages: [] };
       EMPLOYER_CHAT_MESSAGES.push(chat);
     }
     const now = new Date();
@@ -2668,14 +2675,15 @@ function openApplicantChat(applicantId) {
   const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
   const a = allApplicants.find(x => x.id === applicantId);
   if (!a) { navigate('messages'); return; }
-  let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
+  const workerUserId = a.userId || applicantId;
+  let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
   if (!chat) {
     chat = {
-      id: 100 + applicantId,
-      partnerId: 'worker-' + applicantId,
+      id: 100 + workerUserId,
+      partnerId: 'worker-' + workerUserId,
       partnerName: a.name,
       partnerInitials: a.initials,
-      jobTitle: a.job,
+      jobTitle: a.jobTitle || a.job,
       lastMessage: '',
       time: '',
       unread: false,
@@ -2703,12 +2711,8 @@ function sendChatMessage() {
     input.value = '';
     if (chat.partnerId) {
       let partnerId = null;
-      if (chat.partnerId.startsWith('employer-')) partnerId = parseInt(chat.partnerId.replace('employer-', ''));
-      else if (chat.partnerId.startsWith('worker-')) {
-        const allApps = getAllApplications();
-        const app = allApps.find(a => a.name === chat.partnerName);
-        if (app) partnerId = app.userId;
-      }
+      const idPart = chat.partnerId.split('-').slice(1).join('-');
+      partnerId = parseInt(idPart) || null;
       if (partnerId) {
         const partnerChatKey = 'jj_chats_' + partnerId;
         const partnerChats = JSON.parse(localStorage.getItem(partnerChatKey) || '[]');
