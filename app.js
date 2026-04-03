@@ -14,6 +14,13 @@ let state = {
   adminRevenuePeriod: 'daily'
 };
 
+// Restore posted jobs on page load
+if (state.user && state.user.postedJobs) {
+  state.user.postedJobs.forEach(j => {
+    if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
+  });
+}
+
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
 const ADMIN_PASSWORD = 'Tauranga@2025';
@@ -353,10 +360,15 @@ function toggleMobileMenu() {
 
 // ===== AUTH =====
 function loadUserSession(user) {
-  // Load all user-specific data into state
   state.user = user;
   localStorage.setItem('jj_user', JSON.stringify(user));
   loadUserChats();
+  // Restore posted jobs into JOBS array
+  if (user.postedJobs) {
+    user.postedJobs.forEach(j => {
+      if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
+    });
+  }
 }
 
 function login(email, password) {
@@ -454,25 +466,33 @@ function saveWorkerProfile(btn) {
 
 // ===== STELLENANZEIGE VERÖFFENTLICHEN =====
 function publishJob() {
+  const wc = document.querySelector('.wizard-content') || document;
   const newJob = {
     id: Date.now(),
-    title: document.querySelector('.wizard-body input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
-    company: state.user?.name || 'Unternehmen',
+    title: wc.querySelector('input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
+    company: state.user?.company || state.user?.name || 'Unternehmen',
     companyLogo: state.user?.companyLogo || state.user?.company?.[0] || state.user?.name?.[0] || 'U',
-    location: document.querySelector('.wizard-body input[placeholder*="Straße"]')?.value || 'Berlin',
+    location: wc.querySelector('input[placeholder*="Straße"]')?.value || 'Berlin',
     city: 'Berlin', distance: 3,
-    salary: document.querySelector('.wizard-body input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
-    hours: document.querySelector('.wizard-body input[placeholder*="Std/Woche"]')?.value || 'Flexible',
-    category: 'Sonstiges', type: 'Minijob',
+    salary: wc.querySelector('input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
+    hours: wc.querySelector('input[placeholder*="Std/Woche"]')?.value || 'Flexible',
+    category: wc.querySelector('select')?.value || 'Sonstiges',
+    type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
     posted: new Date().toISOString(),
     views: 0, clicks: 0, applications: 0,
     promoted: false, tags: [],
-    description: 'Neue Stellenanzeige', requirements: '', benefits: '',
-    images: [], reviews: [],
-    companyInfo: { about: '', industry: '', employees: '', founded: '', instagram: '', website: '' }
+    description: '', requirements: '', benefits: '',
+    images: (state.selectedJobImages || []).map(i => (state.user?.companyImages || [])[i]).filter(Boolean),
+    reviews: [],
+    companyInfo: { about: state.user?.description || '', industry: state.user?.industry || '', employees: state.user?.employees || '', founded: state.user?.founded || '', website: state.user?.website || '' }
   };
   JOBS.unshift(newJob);
+  if (!state.user.postedJobs) state.user.postedJobs = [];
+  state.user.postedJobs.unshift(newJob);
+  localStorage.setItem('jj_user', JSON.stringify(state.user));
+  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
   state.wizardStep = 0;
+  state.selectedJobImages = [];
   showToast('Stellenanzeige veröffentlicht!');
   navigate('employer-dashboard');
 }
@@ -487,7 +507,7 @@ function aiGenerateJob(btn) {
   ];
   const ex = examples[Math.floor(Math.random() * examples.length)];
   setTimeout(() => {
-    const textareas = document.querySelectorAll('.wizard-body textarea');
+    const textareas = document.querySelectorAll('.wizard-content textarea');
     if (textareas[0]) textareas[0].value = ex.tasks;
     if (textareas[1]) textareas[1].value = ex.req;
     if (textareas[2]) textareas[2].value = ex.benefits;
