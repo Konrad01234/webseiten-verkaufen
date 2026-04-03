@@ -2837,25 +2837,6 @@ function renderJobDetail() {
                 <div class="review-date">${formatDate(r.date)}</div>
               </div>
             `).join('') : '<p style="font-size:0.85rem;color:var(--gray-400);margin-bottom:1rem">Noch keine Bewertungen.</p>'}
-            ${state.user ? `
-              <div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:1rem;border:1px solid var(--gray-200)">
-                <div class="review-restriction" style="margin-bottom:0.75rem">
-                  ! Bewertungen sind nur möglich, solange ein aktives Arbeitsverhältnis besteht.
-                </div>
-                <div class="form-group" style="margin-bottom:0.75rem">
-                  <label class="form-label" style="font-size:0.8rem">Deine Bewertung</label>
-                  <div class="stars" id="job-rating-stars-${job.id}" style="font-size:1.4rem">
-                    ${[1,2,3,4,5].map(i => `<span class="star" onclick="setJobRating(${job.id},${i})" data-v="${i}">&#9734;</span>`).join('')}
-                  </div>
-                </div>
-                <div class="form-group" style="margin-bottom:0.75rem">
-                  <textarea class="form-textarea" rows="2" placeholder="Deine Erfahrung beschreiben..." style="font-size:0.85rem" id="job-review-text-${job.id}"></textarea>
-                </div>
-                <button class="btn btn-primary btn-sm" onclick="submitJobReview(${job.id})">Bewertung abgeben</button>
-              </div>` : `
-              <p style="font-size:0.85rem;color:var(--gray-400)">
-                <a href="#" onclick="navigate('login')" style="color:var(--primary)">Anmelden</a>, um eine Bewertung abzugeben.
-              </p>`}
           </div>
         </div>
 
@@ -2864,9 +2845,6 @@ function renderJobDetail() {
             <div class="card-body">
               <button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${state.user && state.user.role !== 'employer' ? `submitApplication(${job.id})` : `navigate('login')`}">
                 ${state.user && state.user.role !== 'employer' ? (getUserApps().includes(job.id) ? '✓ Beworben' : 'Jetzt bewerben') : 'Anmelden zum Bewerben'}
-              </button>
-              <button class="btn btn-outline btn-block" onclick="${state.user && state.user.role !== 'employer' ? 'toggleChat()' : "navigate('register')"}">
-                ${state.user && state.user.role !== 'employer' ? 'Nachricht senden' : 'Nachricht senden'}
               </button>
 
               <div style="margin-top:1.5rem">
