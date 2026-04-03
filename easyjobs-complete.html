@@ -331,6 +331,50 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .apply-option:hover { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
 .apply-option-active { border-color: var(--primary) !important; background: rgba(14,165,233,0.03) !important; box-shadow: 0 0 0 1px var(--primary); }
 
+/* Job Ticker */
+.job-ticker-container {
+  position: relative; display: flex; gap: 1rem; height: 420px; overflow: hidden; border-radius: 16px;
+}
+.job-ticker-fade-top, .job-ticker-fade-bottom {
+  position: absolute; left: 0; right: 0; height: 60px; z-index: 2; pointer-events: none;
+}
+.job-ticker-fade-top { top: 0; background: linear-gradient(180deg, #f8fbff 0%, transparent 100%); }
+.job-ticker-fade-bottom { bottom: 0; background: linear-gradient(0deg, #f8fbff 0%, transparent 100%); }
+.job-ticker-col { flex: 1; overflow: hidden; position: relative; }
+.job-ticker-col-down .job-ticker-inner { animation: tickerDown 25s linear infinite; }
+.job-ticker-col-up .job-ticker-inner { animation: tickerUp 28s linear infinite; }
+.job-ticker-col-down.job-ticker-col-hide-mobile .job-ticker-inner { animation: tickerDown 22s linear infinite; }
+.job-ticker-inner { display: flex; flex-direction: column; gap: 0.75rem; }
+@keyframes tickerDown {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+@keyframes tickerUp {
+  0% { transform: translateY(-50%); }
+  100% { transform: translateY(0); }
+}
+.job-ticker-card {
+  background: #fff; border: 1px solid var(--gray-200); border-radius: 12px;
+  padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.85rem;
+  transition: all 0.2s; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.job-ticker-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(14,165,233,0.12); transform: scale(1.02); }
+.job-ticker-emoji { font-size: 1.6rem; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 10px; }
+.job-ticker-info { flex: 1; min-width: 0; }
+.job-ticker-title { font-weight: 700; font-size: 0.85rem; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.job-ticker-company { font-size: 0.75rem; color: var(--gray-500); margin-top: 0.1rem; }
+.job-ticker-meta { display: flex; gap: 0.5rem; margin-top: 0.35rem; }
+.job-ticker-pay { font-size: 0.75rem; font-weight: 700; color: var(--success); }
+.job-ticker-type { font-size: 0.7rem; padding: 0.1rem 0.45rem; background: var(--primary-light); color: var(--primary-dark); border-radius: 4px; font-weight: 600; }
+@media (max-width: 768px) {
+  .job-ticker-col-hide-mobile { display: none; }
+  .job-ticker-container { height: 350px; }
+}
+@media (max-width: 480px) {
+  .job-ticker-container { flex-direction: row; height: 300px; }
+  .job-ticker-col:nth-child(4) { display: none; }
+}
+
 /* ===== LANDING PAGE ===== */
 .hero {
   background: linear-gradient(135deg, #0369a1 0%, #0284c7 50%, #0ea5e9 100%);
@@ -2990,6 +3034,82 @@ function renderLanding() {
           <h3>Bewertungssystem</h3>
           <p>Transparente Bewertungen von beiden Seiten für mehr Vertrauen.</p>
         </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="section-band section-band-white">
+    <div style="max-width:1280px;margin:0 auto;padding:2rem 1.5rem">
+      <div class="section-header">
+        <h2>Aktuelle Stellenangebote</h2>
+        <p>Hunderte Jobs warten auf dich – hier ein kleiner Einblick</p>
+      </div>
+      <div class="job-ticker-container">
+        <div class="job-ticker-fade-top"></div>
+        <div class="job-ticker-fade-bottom"></div>
+        <div class="job-ticker-col job-ticker-col-down">
+          <div class="job-ticker-inner">
+            ${[
+              {emoji:'🛒',title:'Aushilfe Einzelhandel',company:'MediaMarkt',loc:'Berlin',pay:'12,50€/Std',type:'Minijob'},
+              {emoji:'💻',title:'IT-Support Werkstudent',company:'TechStart GmbH',loc:'Hamburg',pay:'16€/Std',type:'Minijob'},
+              {emoji:'📚',title:'Nachhilfelehrer Mathe',company:'Schülerhilfe',loc:'Berlin',pay:'15€/Std',type:'Minijob'},
+              {emoji:'🎉',title:'Promoter für Events',company:'EventPro',loc:'Köln',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🐕',title:'Hundesitter/in',company:'PawCare',loc:'München',pay:'12€/Std',type:'Minijob'},
+              {emoji:'📦',title:'Lagerhelfer/in',company:'Amazon Logistik',loc:'Hamburg',pay:'14€/Std',type:'Ferienjob'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+            ${[
+              {emoji:'🛒',title:'Aushilfe Einzelhandel',company:'MediaMarkt',loc:'Berlin',pay:'12,50€/Std',type:'Minijob'},
+              {emoji:'💻',title:'IT-Support Werkstudent',company:'TechStart GmbH',loc:'Hamburg',pay:'16€/Std',type:'Minijob'},
+              {emoji:'📚',title:'Nachhilfelehrer Mathe',company:'Schülerhilfe',loc:'Berlin',pay:'15€/Std',type:'Minijob'},
+              {emoji:'🎉',title:'Promoter für Events',company:'EventPro',loc:'Köln',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🐕',title:'Hundesitter/in',company:'PawCare',loc:'München',pay:'12€/Std',type:'Minijob'},
+              {emoji:'📦',title:'Lagerhelfer/in',company:'Amazon Logistik',loc:'Hamburg',pay:'14€/Std',type:'Ferienjob'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+          </div>
+        </div>
+        <div class="job-ticker-col job-ticker-col-up">
+          <div class="job-ticker-inner">
+            ${[
+              {emoji:'☕',title:'Kellner/in im Café',company:'Café Sonnenschein',loc:'München',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🎨',title:'Social Media Praktikant',company:'Creative Agency',loc:'Köln',pay:'11€/Std',type:'Praktikum'},
+              {emoji:'🏢',title:'Büroaushilfe',company:'Steuerberatung Koch',loc:'Berlin',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🔧',title:'Handwerker-Helfer',company:'Meister Bau GmbH',loc:'Stuttgart',pay:'14€/Std',type:'Ferienjob'},
+              {emoji:'🍕',title:'Pizzalieferant',company:'Pizza Express',loc:'Frankfurt',pay:'12€/Std',type:'Minijob'},
+              {emoji:'📱',title:'App-Tester',company:'AppWorks',loc:'Berlin',pay:'15€/Std',type:'Minijob'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+            ${[
+              {emoji:'☕',title:'Kellner/in im Café',company:'Café Sonnenschein',loc:'München',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🎨',title:'Social Media Praktikant',company:'Creative Agency',loc:'Köln',pay:'11€/Std',type:'Praktikum'},
+              {emoji:'🏢',title:'Büroaushilfe',company:'Steuerberatung Koch',loc:'Berlin',pay:'13€/Std',type:'Minijob'},
+              {emoji:'🔧',title:'Handwerker-Helfer',company:'Meister Bau GmbH',loc:'Stuttgart',pay:'14€/Std',type:'Ferienjob'},
+              {emoji:'🍕',title:'Pizzalieferant',company:'Pizza Express',loc:'Frankfurt',pay:'12€/Std',type:'Minijob'},
+              {emoji:'📱',title:'App-Tester',company:'AppWorks',loc:'Berlin',pay:'15€/Std',type:'Minijob'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+          </div>
+        </div>
+        <div class="job-ticker-col job-ticker-col-down job-ticker-col-hide-mobile">
+          <div class="job-ticker-inner">
+            ${[
+              {emoji:'🎭',title:'Theaterkasse Aushilfe',company:'Stadttheater',loc:'Dresden',pay:'12€/Std',type:'Minijob'},
+              {emoji:'🏋️',title:'Fitnessstudio Empfang',company:'FitX',loc:'Düsseldorf',pay:'12,50€/Std',type:'Minijob'},
+              {emoji:'📸',title:'Fotografie-Assistent',company:'Studio Licht',loc:'München',pay:'13€/Std',type:'Praktikum'},
+              {emoji:'🌿',title:'Gartenhilfe',company:'GrünWerk',loc:'Hamburg',pay:'13€/Std',type:'Ferienjob'},
+              {emoji:'🎵',title:'Musikschule Empfang',company:'Tonart',loc:'Berlin',pay:'12€/Std',type:'Minijob'},
+              {emoji:'🧪',title:'Labor-Praktikant',company:'BioTech GmbH',loc:'Heidelberg',pay:'14€/Std',type:'Praktikum'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+            ${[
+              {emoji:'🎭',title:'Theaterkasse Aushilfe',company:'Stadttheater',loc:'Dresden',pay:'12€/Std',type:'Minijob'},
+              {emoji:'🏋️',title:'Fitnessstudio Empfang',company:'FitX',loc:'Düsseldorf',pay:'12,50€/Std',type:'Minijob'},
+              {emoji:'📸',title:'Fotografie-Assistent',company:'Studio Licht',loc:'München',pay:'13€/Std',type:'Praktikum'},
+              {emoji:'🌿',title:'Gartenhilfe',company:'GrünWerk',loc:'Hamburg',pay:'13€/Std',type:'Ferienjob'},
+              {emoji:'🎵',title:'Musikschule Empfang',company:'Tonart',loc:'Berlin',pay:'12€/Std',type:'Minijob'},
+              {emoji:'🧪',title:'Labor-Praktikant',company:'BioTech GmbH',loc:'Heidelberg',pay:'14€/Std',type:'Praktikum'},
+            ].map(j => '<div class="job-ticker-card"><div class="job-ticker-emoji">' + j.emoji + '</div><div class="job-ticker-info"><div class="job-ticker-title">' + j.title + '</div><div class="job-ticker-company">' + j.company + ' · ' + j.loc + '</div><div class="job-ticker-meta"><span class="job-ticker-pay">' + j.pay + '</span><span class="job-ticker-type">' + j.type + '</span></div></div></div>').join('')}
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:1.5rem">
+        <button class="btn btn-primary btn-lg" onclick="navigate('jobs')">Alle Jobs ansehen</button>
       </div>
     </div>
     </div>
