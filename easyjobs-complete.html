@@ -352,7 +352,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   letter-spacing: -0.02em; opacity: 0.4; transition: opacity 0.3s; cursor: default;
 }
 .employer-ticker-item:hover { opacity: 0.7; }
-.employer-ticker-item img { height: 30px; width: 30px; object-fit: contain; border-radius: 6px; }
+.employer-ticker-item img { height: 30px; width: 30px; object-fit: contain; border-radius: 6px; filter: grayscale(100%) brightness(0); }
 
 /* Job Ticker */
 .job-ticker-container {
@@ -600,7 +600,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .save-btn:hover { color: var(--primary); }
 .save-btn.saved { color: var(--primary); }
-.job-stats { font-size: 0.75rem; color: var(--gray-400); text-align: right; }
+.job-stats { font-size: 0.9rem; color: var(--gray-500); text-align: right; }
 
 /* ===== JOB DETAIL PAGE ===== */
 .job-detail-layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; align-items: start; }
@@ -1050,10 +1050,10 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* ===== JOB STAT ROW ===== */
 .job-stat-row {
-  display: flex; align-items: center; gap: 0.3rem;
-  font-size: 0.75rem; color: var(--gray-400);
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.9rem; color: var(--gray-500); font-weight: 600;
 }
-.job-stat-row svg { flex-shrink: 0; }
+.job-stat-row svg { flex-shrink: 0; width: 16px; height: 16px; }
 
 /* ===== PROFIL-SCHRITTE HORIZONTAL ===== */
 .pprogress-steps-row {
@@ -3432,11 +3432,11 @@ function renderJobCard(j) {
       <div class="job-card-actions">
         <div class="job-stats">
           <div class="job-stat-row" title="Gespeichert von">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
             ${j.saves || 0}
           </div>
           <div class="job-stat-row" title="Bewerbungen">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             ${j.applications || 0}
           </div>
         </div>
