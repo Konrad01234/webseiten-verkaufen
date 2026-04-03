@@ -582,6 +582,38 @@ function handleCompanyLogo(input) {
   }
 }
 
+function handleCompanyImage(input) {
+  if (input.files && input.files[0]) {
+    if (!state.user.companyImages) state.user.companyImages = [];
+    if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      state.user.companyImages.push(e.target.result);
+      localStorage.setItem('jj_user', JSON.stringify(state.user));
+      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+      showToast('Bild hochgeladen!');
+      render();
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function removeCompanyImage(index) {
+  if (!state.user.companyImages) return;
+  state.user.companyImages.splice(index, 1);
+  localStorage.setItem('jj_user', JSON.stringify(state.user));
+  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  render();
+}
+
+function toggleJobImage(index) {
+  if (!state.selectedJobImages) state.selectedJobImages = [];
+  const idx = state.selectedJobImages.indexOf(index);
+  if (idx > -1) state.selectedJobImages.splice(idx, 1);
+  else state.selectedJobImages.push(index);
+  render();
+}
+
 function getSelectedTemplate() {
   const sel = document.querySelector('.cv-template.selected');
   return sel ? sel.dataset.template : 'modern';
@@ -2442,19 +2474,28 @@ Sauberhalten des Verkaufsbereichs</textarea>
 }
 
 function renderWizardStep3() {
+  const imgs = state.user?.companyImages || [];
+  if (!state.selectedJobImages) state.selectedJobImages = [];
   return `
-    <h3 style="margin-bottom:1.5rem">Bilder hochladen</h3>
-    <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1.5rem">Bilder machen deine Anzeige attraktiver. Sie werden angezeigt, wenn Bewerber auf deine Anzeige klicken.</p>
-    <div class="file-upload" style="margin-bottom:1rem" onclick="this.querySelector('input').click()">
-      <div class="file-upload-icon"></div>
-      <div><strong>Bilder hochladen</strong></div>
-      <div style="font-size:0.8rem;color:var(--gray-500)">JPG oder PNG, max. 5MB pro Bild, bis zu 5 Bilder</div>
-      <input type="file" accept=".jpg,.png" multiple style="display:none">
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem">
-      <div class="job-image-placeholder" style="aspect-ratio:1">Bild 1</div>
-      <div class="job-image-placeholder" style="aspect-ratio:1;border:2px dashed var(--gray-300)">+ Hinzufügen</div>
-    </div>`;
+    <h3 style="margin-bottom:1.5rem">Bilder auswählen</h3>
+    ${imgs.length > 0 ? `
+      <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1rem">Wähle Bilder aus deinem Unternehmensprofil für diese Anzeige:</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem">
+        ${imgs.map((img, i) => `
+          <div onclick="toggleJobImage(${i})" style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;background-image:url(${img});background-size:cover;background-position:center;border:3px solid ${state.selectedJobImages.includes(i) ? 'var(--primary)' : 'transparent'}">
+            ${state.selectedJobImages.includes(i) ? '<div style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem">&#10003;</div>' : ''}
+          </div>
+        `).join('')}
+      </div>
+      <p style="font-size:0.85rem;color:var(--gray-400)">${state.selectedJobImages.length} Bild${state.selectedJobImages.length !== 1 ? 'er' : ''} ausgewählt</p>
+    ` : `
+      <div class="empty-state" style="padding:2rem">
+        <div style="font-size:2rem;margin-bottom:0.75rem">&#128247;</div>
+        <h3 style="font-size:1rem">Keine Bilder vorhanden</h3>
+        <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">Lade zuerst Bilder in deinem Unternehmensprofil hoch.</p>
+        <button class="btn btn-outline btn-sm" onclick="navigate('employer-profile')">Zum Profil</button>
+      </div>
+    `}`;
 }
 
 function renderWizardStep4() {
@@ -2608,6 +2649,24 @@ function renderEmployerProfile() {
                 <label class="form-label">Website</label>
                 <input type="url" class="form-input" placeholder="https://...">
               </div>
+            </div>
+
+            <div class="profile-section">
+              <h3>Unternehmensbilder</h3>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1rem">Lade Bilder hoch, die du bei Stellenanzeigen verwenden kannst (z.B. Büro, Team, Arbeitsplatz).</p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem" id="company-images-grid">
+                ${(state.user.companyImages || []).map((img, i) => `
+                  <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;background-image:url(${img});background-size:cover;background-position:center">
+                    <button onclick="removeCompanyImage(${i})" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
+                  </div>
+                `).join('')}
+                ${(state.user.companyImages || []).length < 6 ? `
+                <div style="aspect-ratio:1;border:2px dashed var(--gray-300);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-400);font-size:0.85rem" onclick="document.getElementById('company-images-input').click()">
+                  <div style="font-size:1.5rem">+</div>
+                  Bild hinzufügen
+                </div>` : ''}
+              </div>
+              <input type="file" id="company-images-input" accept="image/*" style="display:none" onchange="handleCompanyImage(this)">
             </div>
 
             <div class="profile-section">
