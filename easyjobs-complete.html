@@ -2694,12 +2694,41 @@ function sendChatMessage() {
   const chat = findChat(state.activeChat);
   if (chat) {
     const now = new Date();
-    chat.messages.push({ text: input.value, sent: true, time: `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}` });
+    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+    const msgText = input.value;
+    chat.messages.push({ text: msgText, sent: true, time: time });
+    chat.lastMessage = msgText;
+    chat.time = time;
     saveUserChats();
     input.value = '';
+    if (chat.partnerId) {
+      let partnerId = null;
+      if (chat.partnerId.startsWith('employer-')) partnerId = parseInt(chat.partnerId.replace('employer-', ''));
+      else if (chat.partnerId.startsWith('worker-')) {
+        const allApps = getAllApplications();
+        const app = allApps.find(a => a.name === chat.partnerName);
+        if (app) partnerId = app.userId;
+      }
+      if (partnerId) {
+        const partnerChatKey = 'jj_chats_' + partnerId;
+        const partnerChats = JSON.parse(localStorage.getItem(partnerChatKey) || '[]');
+        const myName = state.user.company || state.user.name;
+        const myInitials = (myName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+        const myPartnerId = (state.user.role === 'employer' ? 'employer-' : 'worker-') + state.user.id;
+        let partnerChat = partnerChats.find(c => c.partnerId === myPartnerId);
+        if (!partnerChat) {
+          partnerChat = { id: 300 + state.user.id, partnerId: myPartnerId, partnerName: myName, partnerInitials: myInitials, jobTitle: chat.jobTitle || '', lastMessage: '', time: '', unread: true, messages: [] };
+          partnerChats.push(partnerChat);
+        }
+        partnerChat.messages.push({ text: msgText, sent: false, time: time });
+        partnerChat.lastMessage = msgText;
+        partnerChat.time = time;
+        partnerChat.unread = true;
+        localStorage.setItem(partnerChatKey, JSON.stringify(partnerChats));
+      }
+    }
     if (state.currentPage === 'chat') {
       render();
-      // Scroll to bottom after render
       setTimeout(() => {
         const el = document.getElementById('chat-messages-page');
         if (el) el.scrollTop = el.scrollHeight;
@@ -2707,19 +2736,6 @@ function sendChatMessage() {
     } else {
       renderChatWidget();
     }
-    setTimeout(() => {
-      chat.messages.push({ text: 'Danke für deine Nachricht! Ich melde mich bald.', sent: false, time: `${now.getHours()}:${String(now.getMinutes()+1).padStart(2,'0')}` });
-      saveUserChats();
-      if (state.currentPage === 'chat') {
-        render();
-        setTimeout(() => {
-          const el = document.getElementById('chat-messages-page');
-          if (el) el.scrollTop = el.scrollHeight;
-        }, 50);
-      } else {
-        renderChatWidget();
-      }
-    }, 1500);
   }
 }
 
