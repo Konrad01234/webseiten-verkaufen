@@ -2165,7 +2165,7 @@ function submitApplication(jobId) {
 function saveWorkerProfile(btn) {
   // Alle Formularfelder auslesen und in user speichern
   const page = btn.closest('.dashboard-content');
-  const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],textarea,select') : [];
+  const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
   inputs.forEach(inp => {
     if (inp.name) state.user[inp.name] = inp.value;
   });
@@ -4364,18 +4364,18 @@ function renderEmployerProfile() {
               <h3>Allgemeine Informationen</h3>
               <div class="form-group">
                 <label class="form-label">Unternehmensname</label>
-                <input type="text" class="form-input" placeholder="Name des Unternehmens" value="${state.user.company || ''}">
+                <input type="text" name="company" class="form-input" placeholder="Name des Unternehmens" value="${state.user.company || ''}">
               </div>
               <div class="form-group">
                 <label class="form-label">Branche</label>
-                <select class="form-select">
-                  <option>Branche wählen...</option>
-                  ${CATEGORIES.map(c => `<option>${c.name}</option>`).join('')}
+                <select name="industry" class="form-select">
+                  <option value="">Branche wählen...</option>
+                  ${CATEGORIES.map(c => `<option value="${c.name}" ${state.user.industry===c.name?'selected':''}>${c.name}</option>`).join('')}
                 </select>
               </div>
               <div class="form-group">
                 <label class="form-label">Beschreibung</label>
-                <textarea class="form-textarea" placeholder="Beschreibe dein Unternehmen..."></textarea>
+                <textarea name="description" class="form-textarea" placeholder="Beschreibe dein Unternehmen...">${state.user.description || ''}</textarea>
               </div>
             </div>
 
@@ -4383,15 +4383,15 @@ function renderEmployerProfile() {
               <h3>Kontakt & Standort</h3>
               <div class="form-group">
                 <label class="form-label">Adresse</label>
-                <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt">
+                <input type="text" name="address" class="form-input" placeholder="Straße, PLZ, Stadt" value="${state.user.address || ''}">
               </div>
               <div class="form-group">
                 <label class="form-label">Telefon</label>
-                <input type="tel" class="form-input" placeholder="+49 ...">
+                <input type="tel" name="phone" class="form-input" placeholder="+49 ..." value="${state.user.phone || ''}">
               </div>
               <div class="form-group">
                 <label class="form-label">Website</label>
-                <input type="url" class="form-input" placeholder="https://...">
+                <input type="url" name="website" class="form-input" placeholder="https://..." value="${state.user.website || ''}">
               </div>
             </div>
 
@@ -4418,11 +4418,11 @@ function renderEmployerProfile() {
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Gründungsjahr</label>
-                  <input type="number" class="form-input" placeholder="z.B. 2020">
+                  <input type="number" name="founded" class="form-input" placeholder="z.B. 2020" value="${state.user.founded || ''}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Mitarbeiterzahl</label>
-                  <input type="text" class="form-input" placeholder="z.B. 10-50">
+                  <input type="text" name="employees" class="form-input" placeholder="z.B. 10-50" value="${state.user.employees || ''}">
                 </div>
               </div>
             </div>
