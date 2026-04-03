@@ -2411,118 +2411,71 @@ function finalSubmitApplication() {
       about: state.user.about || '', status: 'new', statusText: 'Neu',
       date: new Date().toISOString().split('T')[0],
       motivation: state.applyMotivation || null,
-      motivationFile: state.applyMotivationFile ? state.applyMotivationFile.name : null,
+      motivationFileName: state.applyMotivationFile ? state.applyMotivationFile.name : null,
       cvMethod: state.applyCVMethod || null,
-      cvFile: state.applyCVFile ? state.applyCVFile.name : null
+      cvFileName: state.applyCVFile ? state.applyCVFile.name : null
     });
     localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
-
-    // Bewerbung als Chat-Nachricht an Arbeitgeber senden
-    sendApplicationToChat(job);
   }
   closeApplyModal();
-  showToast('Bewerbung erfolgreich gesendet! Der Arbeitgeber hat deine Unterlagen erhalten.');
+  showToast('Bewerbung erfolgreich gesendet!');
   render();
 }
 
-function sendApplicationToChat(job) {
-  if (!state.user || !job) return;
-  var now = new Date();
-  var time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
-  var companyName = job.company || 'Arbeitgeber';
-  var companyInitials = companyName.split(' ').map(function(n){return n[0];}).join('').toUpperCase();
-  var jobTitle = job.title || 'Stelle';
+function openApplicationDoc(appId, docType) {
+  var allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+  var app = allApps.find(function(a) { return a.id === appId; });
+  if (!app) { showToast('Bewerbung nicht gefunden', 'error'); return; }
 
-  // Bewerbungs-Nachricht zusammenbauen
-  var msg = '📋 BEWERBUNG — ' + jobTitle + '\n\n';
-  msg += '👤 ' + (state.user.name || '') + '\n';
-  if (state.user.email) msg += '✉ ' + state.user.email + '\n';
-  msg += '\n';
+  var win = window.open('', '_blank');
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (docType === 'motivation' ? 'Motivationsschreiben' : 'Lebenslauf') + ' - ' + app.name + '</title>';
+  html += '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">';
+  html += '<style>body{font-family:Inter,Arial,sans-serif;margin:0;padding:2rem;background:#f3f4f6;color:#1a1a2e;} .doc{max-width:700px;margin:0 auto;background:#fff;padding:3rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);border-radius:4px;min-height:800px;} h1{font-size:1.5rem;margin:0 0 0.5rem;} .meta{color:#666;font-size:0.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #eee;} .section-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;font-weight:700;margin:1.5rem 0 0.5rem;padding-bottom:0.3rem;border-bottom:1px solid #e5e7eb;} .content{font-size:0.95rem;line-height:1.7;white-space:pre-line;} .info-row{display:flex;gap:0.5rem;font-size:0.9rem;margin-bottom:0.3rem;} .info-label{color:#666;min-width:120px;} .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;} .skill-tag{padding:0.25rem 0.7rem;background:#e0f2fe;color:#0369a1;border-radius:100px;font-size:0.8rem;font-weight:600;} @media print{body{padding:0;background:#fff;} .doc{box-shadow:none;padding:2rem;}}</style></head><body>';
 
-  // Motivationsschreiben
-  if (state.applyMotivation) {
-    msg += '━━━ MOTIVATIONSSCHREIBEN ━━━\n\n';
-    msg += state.applyMotivation + '\n\n';
-  } else if (state.applyMotivationFile) {
-    msg += '📎 Motivationsschreiben: ' + state.applyMotivationFile.name + ' (als Datei angehängt)\n\n';
-  }
-
-  // Lebenslauf
-  msg += '━━━ LEBENSLAUF ━━━\n\n';
-  if (state.applyCVMethod === 'existing') {
-    msg += '✓ Lebenslauf über EasyJobs-Builder erstellt\n';
-    if (state.user.cvData) {
-      var cv = state.user.cvData;
-      if (cv.vorname || cv.nachname) msg += 'Name: ' + (cv.vorname||'') + ' ' + (cv.nachname||'') + '\n';
-      if (cv.geburtsdatum) msg += 'Geburtsdatum: ' + cv.geburtsdatum + '\n';
-      if (cv.adresse) msg += 'Adresse: ' + cv.adresse + '\n';
-      if (cv.schule) msg += 'Schule: ' + cv.schule + (cv.schulZeitraum ? ' (' + cv.schulZeitraum + ')' : '') + '\n';
-      if (cv.erfahrungen) msg += 'Erfahrungen: ' + cv.erfahrungen + '\n';
-      if (cv.skills && cv.skills.length) msg += 'Kenntnisse: ' + cv.skills.join(', ') + '\n';
-      if (cv.hobbys) msg += 'Hobbys: ' + cv.hobbys + '\n';
+  if (docType === 'motivation') {
+    html += '<div class="doc">';
+    html += '<h1>Motivationsschreiben</h1>';
+    html += '<div class="meta">' + app.name + ' — Bewerbung als ' + app.jobTitle + ' bei ' + app.jobCompany + '</div>';
+    if (app.motivation) {
+      html += '<div class="content">' + app.motivation + '</div>';
+    } else if (app.motivationFileName) {
+      html += '<div class="content" style="text-align:center;padding:3rem;color:#666"><p style="font-size:3rem;margin-bottom:1rem">📎</p><p>Hochgeladene Datei: <strong>' + app.motivationFileName + '</strong></p><p style="font-size:0.85rem;color:#999">Die Datei wurde vom Bewerber als Upload eingereicht</p></div>';
+    } else {
+      html += '<div class="content" style="color:#999;text-align:center;padding:3rem">Kein Motivationsschreiben eingereicht</div>';
     }
-  } else if (state.applyCVMethod === 'upload' && state.applyCVFile) {
-    msg += '📎 Lebenslauf: ' + state.applyCVFile.name + ' (als Datei angehängt)\n';
+    html += '</div>';
   } else {
-    msg += 'Lebenslauf wird nachgereicht\n';
+    html += '<div class="doc">';
+    html += '<h1>Lebenslauf</h1>';
+    html += '<div class="meta">' + app.name + '</div>';
+    html += '<div class="section-title">Persönliche Daten</div>';
+    html += '<div class="info-row"><span class="info-label">Name:</span><span>' + app.name + '</span></div>';
+    if (app.email) html += '<div class="info-row"><span class="info-label">E-Mail:</span><span>' + app.email + '</span></div>';
+    if (app.city) html += '<div class="info-row"><span class="info-label">Ort:</span><span>' + app.city + '</span></div>';
+    if (app.weeklyHours) html += '<div class="info-row"><span class="info-label">Verfügbar:</span><span>' + app.weeklyHours + ' Std/Woche</span></div>';
+
+    if (app.skills && app.skills.length > 0) {
+      html += '<div class="section-title">Kenntnisse & Fähigkeiten</div>';
+      html += '<div class="skills-list">' + app.skills.map(function(s){return '<span class="skill-tag">' + s + '</span>';}).join('') + '</div>';
+    }
+    if (app.refs && app.refs.length > 0) {
+      html += '<div class="section-title">Erfahrungen</div>';
+      app.refs.forEach(function(r) { html += '<div class="info-row">' + (typeof r === 'string' ? r : r.company + ' (' + r.duration + ')') + '</div>'; });
+    }
+    if (app.about) {
+      html += '<div class="section-title">Über mich</div>';
+      html += '<div class="content">' + app.about + '</div>';
+    }
+    if (app.cvFileName) {
+      html += '<div class="section-title">Zusätzliche Datei</div>';
+      html += '<div class="info-row">📎 ' + app.cvFileName + ' (vom Bewerber hochgeladen)</div>';
+    }
+    html += '</div>';
   }
 
-  // Profil-Infos hinzufügen
-  if (state.user.skills && state.user.skills.length) {
-    msg += '\n━━━ PROFIL ━━━\n';
-    msg += 'Fähigkeiten: ' + state.user.skills.join(', ') + '\n';
-  }
-  if (state.user.weeklyHours) msg += 'Verfügbar: ' + state.user.weeklyHours + ' Std/Woche\n';
-
-  // Chat für den Bewerber erstellen/updaten
-  var chatList = getChatList();
-  var existingChat = chatList.find(function(c) { return c.jobTitle === jobTitle && c.partnerName === companyName; });
-  if (!existingChat) {
-    var partnerId = 'employer-' + (job.id * 1000);
-    existingChat = {
-      id: 500 + job.id,
-      partnerId: partnerId,
-      partnerName: companyName,
-      partnerInitials: companyInitials,
-      jobTitle: jobTitle,
-      lastMessage: '',
-      time: time,
-      unread: false,
-      messages: []
-    };
-    chatList.push(existingChat);
-  }
-  existingChat.messages.push({ text: msg, sent: true, time: time });
-  existingChat.lastMessage = 'Bewerbung gesendet';
-  existingChat.time = time;
-  saveUserChats();
-
-  // Chat für den Arbeitgeber erstellen (in dessen localStorage)
-  var employerChatKey = 'jj_chats_' + (job.id * 1000);
-  var employerChats = JSON.parse(localStorage.getItem(employerChatKey) || '[]');
-  var myPartnerId = 'worker-' + state.user.id;
-  var myName = state.user.name || 'Bewerber';
-  var myInitials = myName.split(' ').map(function(n){return n[0];}).join('').toUpperCase();
-  var employerChat = employerChats.find(function(c) { return c.partnerId === myPartnerId; });
-  if (!employerChat) {
-    employerChat = {
-      id: 600 + state.user.id,
-      partnerId: myPartnerId,
-      partnerName: myName,
-      partnerInitials: myInitials,
-      jobTitle: jobTitle,
-      lastMessage: '',
-      time: time,
-      unread: true,
-      messages: []
-    };
-    employerChats.push(employerChat);
-  }
-  employerChat.messages.push({ text: msg, sent: false, time: time });
-  employerChat.lastMessage = 'Neue Bewerbung eingegangen';
-  employerChat.time = time;
-  employerChat.unread = true;
-  localStorage.setItem(employerChatKey, JSON.stringify(employerChats));
+  html += '</body></html>';
+  win.document.write(html);
+  win.document.close();
 }
 
 function getAllApplications() {
@@ -5142,8 +5095,10 @@ function renderApplicants() {
                     </td>
                     <td>${formatDate(a.date)}</td>
                     <td>
-                      <div style="display:flex;gap:0.375rem">
+                      <div style="display:flex;gap:0.375rem;flex-wrap:wrap">
                         <button class="btn btn-sm btn-outline" onclick="navigate('applicant-profile', {applicantId: ${a.id}})">Profil</button>
+                        ${a.motivation || a.motivationFileName ? '<button class="btn btn-sm btn-outline" onclick="openApplicationDoc(' + a.id + ',\'motivation\')" title="Motivationsschreiben öffnen" style="color:#0ea5e9;border-color:#0ea5e9">Anschreiben</button>' : ''}
+                        <button class="btn btn-sm btn-outline" onclick="openApplicationDoc(${a.id},'cv')" title="Lebenslauf öffnen" style="color:#6366f1;border-color:#6366f1">Lebenslauf</button>
                         <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
                     </td>
