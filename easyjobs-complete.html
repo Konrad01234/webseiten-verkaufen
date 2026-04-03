@@ -2184,7 +2184,7 @@ function publishJob() {
     id: Date.now(),
     title: document.querySelector('.wizard-body input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
     company: state.user?.name || 'Unternehmen',
-    companyLogo: state.user?.name?.[0] || 'U',
+    companyLogo: state.user?.companyLogo || state.user?.company?.[0] || state.user?.name?.[0] || 'U',
     location: document.querySelector('.wizard-body input[placeholder*="Straße"]')?.value || 'Berlin',
     city: 'Berlin', distance: 3,
     salary: document.querySelector('.wizard-body input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
@@ -2283,6 +2283,26 @@ function handleCVPhoto(input) {
         preview.style.backgroundPosition = 'center';
         preview.innerHTML = '';
       }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function handleCompanyLogo(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      state.user.companyLogo = e.target.result;
+      localStorage.setItem('jj_user', JSON.stringify(state.user));
+      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+      const preview = document.getElementById('company-logo-preview');
+      if (preview) {
+        preview.style.backgroundImage = `url(${e.target.result})`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+        preview.innerHTML = '';
+      }
+      showToast('Logo hochgeladen!');
     };
     reader.readAsDataURL(input.files[0]);
   }
@@ -2904,7 +2924,7 @@ function renderJobCard(j) {
       ${j.promoted ? '<div class="promoted-badge">&#9733; Hervorgehoben</div>' : ''}
       <div class="job-card-left">
         <div class="job-card-header">
-          <div class="job-company-logo">${j.companyLogo}</div>
+          <div class="job-company-logo" ${j.companyLogo && j.companyLogo.startsWith('data:') ? `style="background-image:url(${j.companyLogo});background-size:cover;background-position:center"` : ''}>${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : j.companyLogo}</div>
           <div class="job-card-info">
             <h3>${j.title}</h3>
             <div class="job-company-name">${j.company}</div>
@@ -2967,7 +2987,7 @@ function renderJobDetail() {
               <div>
                 <h1>${job.title}</h1>
                 <div class="job-detail-company">
-                  <span class="job-company-logo" style="width:40px;height:40px">${job.companyLogo}</span>
+                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : job.companyLogo}</span>
                   <span style="font-weight:600">${job.company}</span>
                 </div>
               </div>
@@ -4234,10 +4254,13 @@ function renderEmployerProfile() {
           <h2 class="dashboard-title">Unternehmensprofil</h2>
 
           <div class="profile-header-card" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">
-            <div class="profile-avatar" style="font-size:1.5rem"></div>
+            <div class="profile-avatar" style="font-size:1.5rem;cursor:pointer;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" onclick="document.getElementById('company-logo-input').click()" id="company-logo-preview">
+              ${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? '' : (state.user.company?.[0] || state.user.name?.[0] || '?')}
+            </div>
+            <input type="file" id="company-logo-input" accept="image/*" style="display:none" onchange="handleCompanyLogo(this)">
             <div class="profile-info">
               <h2>${state.user.company || state.user.name + '\'s Unternehmen'}</h2>
-              <p>Unternehmensprofil bearbeiten</p>
+              <p>Klicke auf das Logo um es zu ändern</p>
             </div>
           </div>
 
