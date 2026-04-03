@@ -2409,13 +2409,120 @@ function finalSubmitApplication() {
       skills: state.user.skills || [], weeklyHours: state.user.weeklyHours || 0,
       refs: state.user.refs || [], cvUploaded: !!state.user.cvUploaded, docsUploaded: !!state.user.docsUploaded,
       about: state.user.about || '', status: 'new', statusText: 'Neu',
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      motivation: state.applyMotivation || null,
+      motivationFile: state.applyMotivationFile ? state.applyMotivationFile.name : null,
+      cvMethod: state.applyCVMethod || null,
+      cvFile: state.applyCVFile ? state.applyCVFile.name : null
     });
     localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
+
+    // Bewerbung als Chat-Nachricht an Arbeitgeber senden
+    sendApplicationToChat(job);
   }
   closeApplyModal();
-  showToast('Bewerbung erfolgreich gesendet!');
+  showToast('Bewerbung erfolgreich gesendet! Der Arbeitgeber hat deine Unterlagen erhalten.');
   render();
+}
+
+function sendApplicationToChat(job) {
+  if (!state.user || !job) return;
+  var now = new Date();
+  var time = now.getHours() + ':' + String(now.getMinutes()).padStart(2, '0');
+  var companyName = job.company || 'Arbeitgeber';
+  var companyInitials = companyName.split(' ').map(function(n){return n[0];}).join('').toUpperCase();
+  var jobTitle = job.title || 'Stelle';
+
+  // Bewerbungs-Nachricht zusammenbauen
+  var msg = '📋 BEWERBUNG — ' + jobTitle + '\n\n';
+  msg += '👤 ' + (state.user.name || '') + '\n';
+  if (state.user.email) msg += '✉ ' + state.user.email + '\n';
+  msg += '\n';
+
+  // Motivationsschreiben
+  if (state.applyMotivation) {
+    msg += '━━━ MOTIVATIONSSCHREIBEN ━━━\n\n';
+    msg += state.applyMotivation + '\n\n';
+  } else if (state.applyMotivationFile) {
+    msg += '📎 Motivationsschreiben: ' + state.applyMotivationFile.name + ' (als Datei angehängt)\n\n';
+  }
+
+  // Lebenslauf
+  msg += '━━━ LEBENSLAUF ━━━\n\n';
+  if (state.applyCVMethod === 'existing') {
+    msg += '✓ Lebenslauf über EasyJobs-Builder erstellt\n';
+    if (state.user.cvData) {
+      var cv = state.user.cvData;
+      if (cv.vorname || cv.nachname) msg += 'Name: ' + (cv.vorname||'') + ' ' + (cv.nachname||'') + '\n';
+      if (cv.geburtsdatum) msg += 'Geburtsdatum: ' + cv.geburtsdatum + '\n';
+      if (cv.adresse) msg += 'Adresse: ' + cv.adresse + '\n';
+      if (cv.schule) msg += 'Schule: ' + cv.schule + (cv.schulZeitraum ? ' (' + cv.schulZeitraum + ')' : '') + '\n';
+      if (cv.erfahrungen) msg += 'Erfahrungen: ' + cv.erfahrungen + '\n';
+      if (cv.skills && cv.skills.length) msg += 'Kenntnisse: ' + cv.skills.join(', ') + '\n';
+      if (cv.hobbys) msg += 'Hobbys: ' + cv.hobbys + '\n';
+    }
+  } else if (state.applyCVMethod === 'upload' && state.applyCVFile) {
+    msg += '📎 Lebenslauf: ' + state.applyCVFile.name + ' (als Datei angehängt)\n';
+  } else {
+    msg += 'Lebenslauf wird nachgereicht\n';
+  }
+
+  // Profil-Infos hinzufügen
+  if (state.user.skills && state.user.skills.length) {
+    msg += '\n━━━ PROFIL ━━━\n';
+    msg += 'Fähigkeiten: ' + state.user.skills.join(', ') + '\n';
+  }
+  if (state.user.weeklyHours) msg += 'Verfügbar: ' + state.user.weeklyHours + ' Std/Woche\n';
+
+  // Chat für den Bewerber erstellen/updaten
+  var chatList = getChatList();
+  var existingChat = chatList.find(function(c) { return c.jobTitle === jobTitle && c.partnerName === companyName; });
+  if (!existingChat) {
+    var partnerId = 'employer-' + (job.id * 1000);
+    existingChat = {
+      id: 500 + job.id,
+      partnerId: partnerId,
+      partnerName: companyName,
+      partnerInitials: companyInitials,
+      jobTitle: jobTitle,
+      lastMessage: '',
+      time: time,
+      unread: false,
+      messages: []
+    };
+    chatList.push(existingChat);
+  }
+  existingChat.messages.push({ text: msg, sent: true, time: time });
+  existingChat.lastMessage = 'Bewerbung gesendet';
+  existingChat.time = time;
+  saveUserChats();
+
+  // Chat für den Arbeitgeber erstellen (in dessen localStorage)
+  var employerChatKey = 'jj_chats_' + (job.id * 1000);
+  var employerChats = JSON.parse(localStorage.getItem(employerChatKey) || '[]');
+  var myPartnerId = 'worker-' + state.user.id;
+  var myName = state.user.name || 'Bewerber';
+  var myInitials = myName.split(' ').map(function(n){return n[0];}).join('').toUpperCase();
+  var employerChat = employerChats.find(function(c) { return c.partnerId === myPartnerId; });
+  if (!employerChat) {
+    employerChat = {
+      id: 600 + state.user.id,
+      partnerId: myPartnerId,
+      partnerName: myName,
+      partnerInitials: myInitials,
+      jobTitle: jobTitle,
+      lastMessage: '',
+      time: time,
+      unread: true,
+      messages: []
+    };
+    employerChats.push(employerChat);
+  }
+  employerChat.messages.push({ text: msg, sent: false, time: time });
+  employerChat.lastMessage = 'Neue Bewerbung eingegangen';
+  employerChat.time = time;
+  employerChat.unread = true;
+  localStorage.setItem(employerChatKey, JSON.stringify(employerChats));
 }
 
 function getAllApplications() {
