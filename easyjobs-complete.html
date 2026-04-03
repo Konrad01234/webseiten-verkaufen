@@ -2215,19 +2215,61 @@ function renderApplyStep() {
     footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=2;renderApplyStep()">Zurück</button><button class="btn btn-primary" onclick="finalSubmitApplication()">Bewerbung absenden</button>';
   }
 }
-function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate') renderMotivationDetail(); }
+function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate' || m === 'upload') renderMotivationDetail(); }
+function generateMotivationText() {
+  var job = JOBS.find(function(j){return j.id===state.applyJobId;});
+  var name = document.getElementById('motiv-name')?.value || state.user?.name || '';
+  var alter = document.getElementById('motiv-alter')?.value || '';
+  var schule = document.getElementById('motiv-schule')?.value || '';
+  var staerken = document.getElementById('motiv-staerken')?.value || '';
+  var motivation = document.getElementById('motiv-warum')?.value || '';
+  var verfuegbar = document.getElementById('motiv-verfuegbar')?.value || '';
+  var jobTitle = job ? job.title : 'die ausgeschriebene Stelle';
+  var firma = job ? job.company : 'Ihr Unternehmen';
+
+  var text = 'Sehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Stellenanzeige als ' + jobTitle + ' bei ' + firma + ' entdeckt und möchte mich hiermit bei Ihnen bewerben.\n\n';
+  text += 'Mein Name ist ' + name;
+  if (alter) text += ', ich bin ' + alter + ' Jahre alt';
+  if (schule) text += ' und besuche derzeit ' + schule;
+  text += '.\n\n';
+  if (motivation) {
+    text += 'Ich interessiere mich besonders für diese Stelle, weil ' + motivation + '. ';
+  }
+  if (staerken) {
+    text += 'Zu meinen Stärken zählen ' + staerken + '. Diese Eigenschaften möchte ich gerne in Ihrem Team einbringen und weiterentwickeln.\n\n';
+  } else {
+    text += '\n';
+  }
+  text += 'Ich bin ' + (verfuegbar ? 'ab ' + verfuegbar + ' verfügbar' : 'zeitlich flexibel') + ' und würde mich sehr über die Möglichkeit freuen, mich in einem persönlichen Gespräch vorzustellen. Gerne überzeuge ich Sie von meiner Motivation und meinem Engagement.\n\n';
+  text += 'Über eine positive Rückmeldung würde ich mich sehr freuen.\n\n';
+  text += 'Mit freundlichen Grüßen\n' + name;
+  state.applyMotivation = text;
+  var ta = document.getElementById('motiv-result');
+  if (ta) { ta.value = text; ta.style.display = 'block'; }
+  var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = false;
+}
 function renderMotivationDetail() {
   var d = document.getElementById('motivation-detail'); if (!d) return;
   if (state.applyMotivationMethod === 'generate') {
-    var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var u = state.user || {};
-    var skills = u.skills ? u.skills.join(', ') : 'motiviert und zuverlässig';
-    var text = 'Sehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Stellenanzeige als ' + (job?job.title:'Mitarbeiter/in') + ' bei ' + (job?job.company:'Ihrem Unternehmen') + ' gesehen.\n\nIch bin ' + (u.name||'motiviert') + ' und bringe folgende Stärken mit: ' + skills + '. Ich bin zeitlich flexibel.\n\nÜber die Möglichkeit, mich bei Ihnen zu beweisen, würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\n' + (u.name||'');
-    state.applyMotivation = text;
-    d.innerHTML = '<div style="margin-top:0.75rem"><label class="form-label" style="font-size:0.8rem">Motivationsschreiben (kannst du anpassen)</label><textarea class="form-textarea" rows="10" style="font-size:0.85rem" onchange="state.applyMotivation=this.value">' + text + '</textarea></div>';
+    var job = JOBS.find(function(j){return j.id===state.applyJobId;});
+    d.innerHTML = '<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem">' +
+      '<p style="font-size:0.8rem;color:var(--gray-500);margin:0">Fülle die Felder aus und wir erstellen dein Motivationsschreiben:</p>' +
+      '<div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
+        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Name</label><input type="text" id="motiv-name" class="form-input" value="' + (state.user?.name||'') + '" placeholder="Vor- und Nachname"></div>' +
+        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Alter</label><input type="text" id="motiv-alter" class="form-input" placeholder="z.B. 16"></div>' +
+      '</div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Schule / Ausbildung</label><input type="text" id="motiv-schule" class="form-input" placeholder="z.B. Gymnasium München, 10. Klasse"></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Warum möchtest du diesen Job?</label><textarea id="motiv-warum" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. ich interessiere mich für Einzelhandel und möchte Erfahrung sammeln"></textarea></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit"></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Verfügbarkeit</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags"></div>' +
+      '<button class="btn btn-primary" onclick="generateMotivationText()" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
+      '<textarea id="motiv-result" class="form-textarea" rows="14" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" onchange="state.applyMotivation=this.value">' + (state.applyMotivation||'') + '</textarea>' +
+    '</div>';
+    var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivation;
   } else if (state.applyMotivationMethod === 'upload') {
     d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" onclick="document.getElementById(\'apply-motivation-file\').click()"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="handleApplyMotivationFile(this)">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
+    var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivationFile;
   } else { d.innerHTML = ''; }
-  var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = false;
 }
 function handleApplyMotivationFile(input) { if (input.files && input.files[0]) { state.applyMotivationFile = { name: input.files[0].name }; renderMotivationDetail(); } }
 function handleApplyCVFile(input) { if (input.files && input.files[0]) { state.applyCVFile = { name: input.files[0].name }; renderApplyStep(); } }
@@ -3938,55 +3980,76 @@ function renderCVBuilder() {
             <h3 style="font-size:1.1rem;margin-bottom:1rem">Vorlage wählen</h3>
             <div class="cv-templates">
               <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden">
+                <div class="cv-preview" style="position:relative;overflow:hidden;font-family:Inter,Arial,sans-serif">
                   <div style="display:flex;height:100%">
-                    <div style="width:35%;background:linear-gradient(180deg,#4f46e5,#6366f1);padding:0.75rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem">
-                      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.3);margin-top:0.25rem"></div>
-                      <div style="height:5px;background:rgba(255,255,255,0.4);width:80%;border-radius:2px"></div>
-                      <div style="height:4px;background:rgba(255,255,255,0.25);width:60%;border-radius:2px"></div>
-                      <div style="height:4px;background:rgba(255,255,255,0.25);width:70%;border-radius:2px"></div>
+                    <div style="width:35%;background:#1e3a5f;color:#fff;padding:0.6rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.35rem">
+                      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);margin-top:0.1rem;display:flex;align-items:center;justify-content:center;font-size:0.45rem;font-weight:700">FOTO</div>
+                      <div style="font-size:0.35rem;font-weight:700;text-align:center">Max Muster</div>
+                      <div style="width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:0.25rem">
+                        <div style="font-size:0.25rem;text-transform:uppercase;opacity:0.5;margin-bottom:0.15rem">Kontakt</div>
+                        <div style="font-size:0.22rem;opacity:0.7;line-height:1.5">✉ max@email.de<br>✆ 0170 123456<br>⌂ Berlin</div>
+                      </div>
+                      <div style="width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:0.25rem">
+                        <div style="font-size:0.25rem;text-transform:uppercase;opacity:0.5;margin-bottom:0.15rem">Kenntnisse</div>
+                        <div style="height:3px;background:rgba(255,255,255,0.15);border-radius:1px;margin-bottom:0.15rem"><div style="height:100%;width:80%;background:rgba(255,255,255,0.6);border-radius:1px"></div></div>
+                        <div style="height:3px;background:rgba(255,255,255,0.15);border-radius:1px"><div style="height:100%;width:60%;background:rgba(255,255,255,0.6);border-radius:1px"></div></div>
+                      </div>
                     </div>
-                    <div style="flex:1;padding:0.75rem;display:flex;flex-direction:column;gap:0.35rem">
-                      <div style="height:5px;background:#4f46e5;width:45%;border-radius:2px;margin-bottom:0.15rem"></div>
-                      <div style="height:4px;background:var(--gray-200);width:100%;border-radius:2px"></div>
-                      <div style="height:4px;background:var(--gray-200);width:85%;border-radius:2px"></div>
-                      <div style="height:10px"></div>
-                      <div style="height:5px;background:#4f46e5;width:35%;border-radius:2px;margin-bottom:0.15rem"></div>
-                      <div style="height:4px;background:var(--gray-200);width:90%;border-radius:2px"></div>
+                    <div style="flex:1;padding:0.6rem;background:#fff">
+                      <div style="font-size:0.45rem;font-weight:800;color:#1e3a5f;margin-bottom:0.1rem">Max Mustermann</div>
+                      <div style="height:2px;width:20px;background:#1e3a5f;margin-bottom:0.4rem"></div>
+                      <div style="font-size:0.25rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.15rem">Ausbildung</div>
+                      <div style="font-size:0.22rem;color:#666;padding-left:0.3rem;border-left:1px solid #e2e8f0;margin-bottom:0.3rem">Gymnasium Berlin<br><span style="color:#999">2020 - heute</span></div>
+                      <div style="font-size:0.25rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.15rem">Erfahrung</div>
+                      <div style="font-size:0.22rem;color:#666;padding-left:0.3rem;border-left:1px solid #e2e8f0">Praktikum Einzelhandel<br><span style="color:#999">Sommer 2025</span></div>
                     </div>
                   </div>
                 </div>
                 <div class="cv-template-name">Modern</div>
               </div>
               <div class="cv-template" data-template="classic" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden;padding:0.75rem">
-                  <div style="display:flex;align-items:center;gap:0.5rem;border-bottom:2px double #1f2937;padding-bottom:0.5rem;margin-bottom:0.5rem">
-                    <div style="width:24px;height:24px;border-radius:3px;background:var(--gray-200)"></div>
-                    <div><div style="height:6px;background:#1f2937;width:60px;border-radius:2px;margin-bottom:3px"></div><div style="height:4px;background:var(--gray-300);width:80px;border-radius:2px"></div></div>
+                <div class="cv-preview" style="position:relative;overflow:hidden;padding:0.6rem;font-family:Georgia,serif;background:#fff">
+                  <div style="display:flex;align-items:center;gap:0.4rem;border-bottom:1.5px double #111;padding-bottom:0.35rem;margin-bottom:0.35rem">
+                    <div style="width:22px;height:22px;border-radius:2px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:0.22rem;color:var(--gray-500)">FOTO</div>
+                    <div>
+                      <div style="font-size:0.4rem;font-weight:400;letter-spacing:0.05em;color:#111">MAX MUSTERMANN</div>
+                      <div style="font-size:0.22rem;color:#888">max@email.de · 0170 123456 · Berlin</div>
+                    </div>
                   </div>
-                  <div style="display:flex;flex-direction:column;gap:0.3rem">
-                    <div style="height:4px;background:#1f2937;width:40%;border-radius:2px"></div>
-                    <div style="height:3px;background:var(--gray-200);width:100%;border-radius:2px"></div>
-                    <div style="height:3px;background:var(--gray-200);width:80%;border-radius:2px"></div>
-                    <div style="height:8px"></div>
-                    <div style="height:4px;background:#1f2937;width:35%;border-radius:2px"></div>
-                    <div style="height:3px;background:var(--gray-200);width:90%;border-radius:2px"></div>
-                  </div>
+                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Ausbildung</div>
+                  <div style="display:flex;gap:0.3rem;margin-bottom:0.3rem"><div style="font-size:0.2rem;color:#999;width:25px">2020-heute</div><div style="font-size:0.22rem;color:#333"><strong>Gymnasium Berlin</strong></div></div>
+                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Erfahrung</div>
+                  <div style="display:flex;gap:0.3rem;margin-bottom:0.3rem"><div style="font-size:0.2rem;color:#999;width:25px">2025</div><div style="font-size:0.22rem;color:#333"><strong>Praktikum Einzelhandel</strong></div></div>
+                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Kenntnisse</div>
+                  <div style="font-size:0.22rem;color:#333">Teamarbeit · Kommunikation · MS Office</div>
                 </div>
                 <div class="cv-template-name">Klassisch</div>
               </div>
               <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden">
-                  <div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:0.75rem;text-align:center">
-                    <div style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.3);margin:0 auto 0.25rem;border:2px solid rgba(255,255,255,0.5)"></div>
-                    <div style="height:5px;background:rgba(255,255,255,0.5);width:50%;border-radius:2px;margin:0 auto 0.15rem"></div>
-                    <div style="height:3px;background:rgba(255,255,255,0.3);width:65%;border-radius:2px;margin:0 auto"></div>
+                <div class="cv-preview" style="position:relative;overflow:hidden;font-family:Inter,Arial,sans-serif">
+                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:0.5rem;display:flex;align-items:center;gap:0.4rem;color:#fff">
+                    <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.22rem;font-weight:700;border:1.5px solid rgba(255,255,255,0.4)">FOTO</div>
+                    <div>
+                      <div style="font-size:0.4rem;font-weight:800">Max Mustermann</div>
+                      <div style="font-size:0.2rem;opacity:0.8">max@email.de · Berlin</div>
+                    </div>
                   </div>
-                  <div style="padding:0.5rem 0.75rem;display:flex;flex-direction:column;gap:0.3rem">
-                    <div style="height:4px;background:#7c3aed;width:35%;border-radius:2px"></div>
-                    <div style="height:3px;background:var(--gray-200);width:100%;border-radius:2px;border-left:2px solid #e9d5ff"></div>
-                    <div style="height:7px"></div>
-                    <div style="display:flex;gap:0.2rem"><div style="height:12px;background:#f3e8ff;border-radius:6px;width:30px"></div><div style="height:12px;background:#f3e8ff;border-radius:6px;width:25px"></div></div>
+                  <div style="display:flex;height:calc(100% - 40px)">
+                    <div style="flex:1;padding:0.4rem 0.5rem">
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.15rem"><span style="width:6px;height:1px;background:#0ea5e9;display:inline-block"></span>Ausbildung</div>
+                      <div style="font-size:0.22rem;color:#333;margin-bottom:0.25rem"><strong>Gymnasium Berlin</strong><br><span style="color:#999">2020 - heute</span></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.15rem"><span style="width:6px;height:1px;background:#0ea5e9;display:inline-block"></span>Erfahrung</div>
+                      <div style="font-size:0.22rem;color:#333">Praktikum Einzelhandel</div>
+                    </div>
+                    <div style="width:38%;padding:0.4rem;background:#f8fafc;border-left:0.5px solid #e2e8f0">
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem">Kenntnisse</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:0.1rem">
+                        <span style="font-size:0.18rem;padding:0.08rem 0.2rem;background:#e0f2fe;color:#0369a1;border-radius:4px;font-weight:600">Teamarbeit</span>
+                        <span style="font-size:0.18rem;padding:0.08rem 0.2rem;background:#e0f2fe;color:#0369a1;border-radius:4px;font-weight:600">Office</span>
+                      </div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:0.25rem;margin-bottom:0.1rem">Interessen</div>
+                      <div style="font-size:0.2rem;color:#666">Sport, Musik</div>
+                    </div>
                   </div>
                 </div>
                 <div class="cv-template-name">Kreativ</div>
