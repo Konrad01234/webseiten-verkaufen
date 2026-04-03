@@ -443,8 +443,43 @@ function submitApplication(jobId) {
   if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
   apps.push(jobId);
   saveUserApps(apps);
+  // Save application globally so employers can see it
+  const job = JOBS.find(j => j.id === jobId);
+  const allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+  const initials = (state.user.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+  allApps.push({
+    id: Date.now(),
+    userId: state.user.id,
+    jobId: jobId,
+    jobTitle: job?.title || 'Unbekannt',
+    jobCompany: job?.company || '',
+    name: state.user.name,
+    initials: initials,
+    email: state.user.email,
+    city: state.user.address ? state.user.address.split(',').pop().trim() : '',
+    skills: state.user.skills || [],
+    weeklyHours: state.user.weeklyHours || 0,
+    refs: state.user.refs || [],
+    cvUploaded: !!state.user.cvUploaded,
+    docsUploaded: !!state.user.docsUploaded,
+    about: state.user.about || '',
+    status: 'new',
+    statusText: 'Neu',
+    date: new Date().toISOString().split('T')[0]
+  });
+  localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
   showToast('Bewerbung erfolgreich gesendet!');
   render();
+}
+
+function getAllApplications() {
+  return JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+}
+
+function getEmployerApplicants() {
+  const allApps = getAllApplications();
+  const myJobIds = (state.user?.postedJobs || []).map(j => j.id);
+  return allApps.filter(a => myJobIds.includes(a.jobId));
 }
 
 // ===== PROFIL SPEICHERN =====
@@ -870,22 +905,28 @@ function openChat(id) {
 }
 
 function updateApplicantStatus(applicantId, newStatus) {
-  const a = MOCK_APPLICANTS.find(x => x.id === applicantId);
+  // Try real applications first, then mock
+  const allApps = getAllApplications();
+  let a = allApps.find(x => x.id === applicantId);
+  let isReal = !!a;
+  if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
   const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
   a.status = newStatus;
   a.statusText = statusTexts[newStatus];
+  if (isReal) localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
+  const jobTitle = a.jobTitle || a.job;
   if (newStatus === 'rejected' || newStatus === 'accepted') {
     let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
     if (!chat) {
-      chat = { id: 100 + applicantId, partnerId: 'worker-' + applicantId, partnerName: a.name, partnerInitials: a.initials, jobTitle: a.job, lastMessage: '', time: '', unread: false, messages: [] };
+      chat = { id: 100 + applicantId, partnerId: 'worker-' + applicantId, partnerName: a.name, partnerInitials: a.initials, jobTitle: jobTitle, lastMessage: '', time: '', unread: false, messages: [] };
       EMPLOYER_CHAT_MESSAGES.push(chat);
     }
     const now = new Date();
     const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
     const msg = newStatus === 'rejected'
-      ? `Hallo ${a.name.split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${a.job}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
-      : `Hallo ${a.name.split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${a.job}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
+      ? `Hallo ${a.name.split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${jobTitle}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
+      : `Hallo ${a.name.split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${jobTitle}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
     chat.messages.push({ text: msg, sent: true, time: time });
     chat.lastMessage = msg;
     chat.time = time;
@@ -895,7 +936,8 @@ function updateApplicantStatus(applicantId, newStatus) {
 }
 
 function openApplicantChat(applicantId) {
-  const a = MOCK_APPLICANTS.find(x => x.id === applicantId);
+  const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
+  const a = allApplicants.find(x => x.id === applicantId);
   if (!a) { navigate('messages'); return; }
   let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerName === a.name);
   if (!chat) {
@@ -2025,36 +2067,45 @@ function renderSavedJobs() {
 
 function renderApplications() {
   if (!state.user) return renderLogin();
-  const apps = [
-    { job: JOBS[1], status: 'reviewing', statusText: 'In Prüfung', date: '2026-03-22' },
-    { job: JOBS[0], status: 'accepted', statusText: 'Eingeladen', date: '2026-03-20' },
-    { job: JOBS[3], status: 'new', statusText: 'Gesendet', date: '2026-03-23' }
-  ];
+  const appJobIds = getUserApps();
+  const allApps = getAllApplications();
+  const myApps = appJobIds.map(jobId => {
+    const job = JOBS.find(j => j.id === jobId);
+    const appData = allApps.find(a => a.userId === state.user.id && a.jobId === jobId);
+    return { job, status: appData?.status || 'new', statusText: appData?.statusText || 'Gesendet', date: appData?.date || new Date().toISOString().split('T')[0] };
+  }).filter(a => a.job);
   return `
     <div class="page">
       <div class="dashboard-layout">
         ${renderWorkerSidebar('applications')}
         <div class="dashboard-content">
           <h2 class="dashboard-title">Meine Bewerbungen</h2>
+          ${myApps.length > 0 ? `
           <div class="jobs-grid">
-            ${apps.map(a => `
+            ${myApps.map(a => `
               <div class="card" style="cursor:pointer" onclick="navigate('job-detail', {jobId: ${a.job.id}})">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center">
                   <div style="display:flex;align-items:center;gap:1rem">
-                    <div class="job-company-logo">${a.job.companyLogo}</div>
+                    <div class="job-company-logo" ${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? `style="background-image:url(${a.job.companyLogo});background-size:cover;background-position:center"` : ''}>${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? '' : a.job.companyLogo}</div>
                     <div>
                       <h3 style="font-size:1rem;margin-bottom:0.25rem">${a.job.title}</h3>
                       <div style="font-size:0.85rem;color:var(--gray-500)">${a.job.company}</div>
                     </div>
                   </div>
                   <div style="text-align:right">
-                    <div class="badge ${a.status==='accepted'?'badge-success':a.status==='reviewing'?'badge-secondary':'badge-primary'}">${a.statusText}</div>
+                    <div class="badge ${a.status==='accepted'?'badge-success':a.status==='reviewing'?'badge-secondary':a.status==='rejected'?'badge-danger':'badge-primary'}">${a.statusText}</div>
                     <div style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem">${formatDate(a.date)}</div>
                   </div>
                 </div>
               </div>
             `).join('')}
-          </div>
+          </div>` : `
+          <div class="empty-state" style="margin-top:2rem">
+            <div style="font-size:3rem;margin-bottom:1rem">&#128196;</div>
+            <h3>Noch keine Bewerbungen</h3>
+            <p style="color:var(--gray-500);margin-bottom:1.5rem">Finde passende Jobs und bewirb dich mit einem Klick.</p>
+            <button class="btn btn-primary" onclick="navigate('jobs')">Jobs finden</button>
+          </div>`}
         </div>
       </div>
     </div>`;
@@ -2741,7 +2792,8 @@ const MOCK_APPLICANTS = [
 
 function renderApplicants() {
   if (!state.user) return renderLogin();
-  const applicants = MOCK_APPLICANTS;
+  const realApps = getEmployerApplicants();
+  const applicants = [...realApps, ...MOCK_APPLICANTS];
 
   return `
     <div class="page">
@@ -2778,8 +2830,8 @@ function renderApplicants() {
                         <strong>${a.name}</strong>
                       </div>
                     </td>
-                    <td>${a.job}</td>
-                    <td>${a.skills.map(s => `<span class="tag">${s}</span>`).join(' ')}</td>
+                    <td>${a.jobTitle || a.job}</td>
+                    <td>${(a.skills || []).map(s => `<span class="tag">${s}</span>`).join(' ')}</td>
                     <td>
                       <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" onchange="updateApplicantStatus(${a.id}, this.value)">
                         <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
@@ -2808,7 +2860,8 @@ function renderApplicants() {
 function renderApplicantProfile() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
   const id = state.pageData?.applicantId;
-  const a = MOCK_APPLICANTS.find(x => x.id === id) || MOCK_APPLICANTS[0];
+  const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
+  const a = allApplicants.find(x => x.id === id) || allApplicants[0];
   const statusColor = { new: 'badge-primary', reviewing: 'badge-secondary', accepted: 'badge-success', rejected: 'badge-danger' };
 
   return `
@@ -2843,7 +2896,7 @@ function renderApplicantProfile() {
                       <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
                       <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
                     </select>
-                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${a.job}</strong></span>
+                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${a.jobTitle || a.job}</strong></span>
                   </div>
                 </div>
                 <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
@@ -2862,8 +2915,8 @@ function renderApplicantProfile() {
             <div class="card">
               <div class="card-body">
                 <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Stärken</h4>
-                ${a.skills.length > 0
-                  ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${a.skills.map(s => `<span class="epc-skill-tag">${s}</span>`).join('')}</div>`
+                ${(a.skills || []).length > 0
+                  ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${(a.skills || []).map(s => `<span class="epc-skill-tag">${s}</span>`).join('')}</div>`
                   : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
               </div>
             </div>
