@@ -2295,6 +2295,42 @@ function renderEmployerSidebar(active) {
     </div>`;
 }
 
+function validateWizardStep() {
+  const step = state.wizardStep;
+  const body = document.querySelector('.wizard-content');
+  if (!body) return;
+  let valid = true;
+  if (step === 0) {
+    const inputs = body.querySelectorAll('input.form-input, select.form-select');
+    inputs.forEach(inp => {
+      const label = inp.closest('.form-group')?.querySelector('.form-label');
+      if (label && label.textContent.includes('*') && !inp.value.trim()) {
+        inp.style.border = '2px solid var(--danger)';
+        valid = false;
+      } else {
+        inp.style.border = '';
+      }
+    });
+  } else if (step === 1) {
+    const textareas = body.querySelectorAll('textarea.form-textarea');
+    textareas.forEach(ta => {
+      const label = ta.closest('.form-group')?.querySelector('.form-label');
+      if (label && label.textContent.includes('*') && !ta.value.trim()) {
+        ta.style.border = '2px solid var(--danger)';
+        valid = false;
+      } else {
+        ta.style.border = '';
+      }
+    });
+  }
+  if (!valid) {
+    showToast('Bitte fülle alle Pflichtfelder (*) aus.', 'error');
+    return;
+  }
+  state.wizardStep = Math.min(3, state.wizardStep + 1);
+  render();
+}
+
 function renderPostJob() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
   const step = state.wizardStep;
@@ -2325,9 +2361,9 @@ function renderPostJob() {
           ? `<button class="btn btn-outline" onclick="navigate('employer-dashboard')">&#8592; Dashboard</button>`
           : `<button class="btn btn-outline" onclick="state.wizardStep=Math.max(0,state.wizardStep-1);render()">&#8592; Zurück</button>`}
         ${step < 3 ? `
-          <button class="btn btn-primary" onclick="state.wizardStep=Math.min(3,state.wizardStep+1);render()">Weiter &#8594;</button>
+          <button class="btn btn-primary" onclick="validateWizardStep()">Weiter &#8594;</button>
         ` : `
-          <button class="btn btn-success btn-lg" onclick="publishJob()">✓ Veröffentlichen</button>
+          <button class="btn btn-success btn-lg" onclick="publishJob()">&#10003; Veröffentlichen</button>
         `}
       </div>
     </div>`;
