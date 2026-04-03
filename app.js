@@ -361,11 +361,14 @@ function loadUserSession(user) {
 
 function login(email, password) {
   const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  // Find by email (password not enforced in prototype)
   const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (user) {
-    // Reload latest saved version of this user
     const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
+    if (latestUser.password !== password) {
+      const err = document.getElementById('login-error');
+      if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
+      return;
+    }
     loadUserSession(latestUser);
     navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } else {
