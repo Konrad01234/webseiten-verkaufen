@@ -3153,7 +3153,7 @@ function getFilteredJobs() {
   }
   if (f.category) jobs = jobs.filter(j => j.category === f.category);
   if (f.type) jobs = jobs.filter(j => j.type === f.type);
-  if (f.radius < 50) jobs = jobs.filter(j => j.distance <= f.radius);
+  if (f.radius < 50 && f.address) jobs = jobs.filter(j => j.distance > 0 && j.distance <= f.radius);
   if (f.city) jobs = jobs.filter(j => j.city === f.city);
   if (f.hours.length > 0) {
     jobs = jobs.filter(j => {
@@ -3461,7 +3461,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){updateJobDistances();render();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}},50);},600)">
+            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;var _cp=this.selectionStart;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){updateJobDistances();render();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(_cp,_cp);}},50);},800)">
             <p style="font-size:0.7rem;color:var(--gray-400);margin-top:0.3rem">${state.filters.address ? 'Entfernungen werden berechnet' : 'Gib deinen Ort ein für genaue Entfernungen'}</p>
           </div>
 
@@ -3498,7 +3498,8 @@ function renderJobSearch() {
             </div>
           </div>
 
-          <button class="btn btn-outline btn-block" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};updateJobDistances();render()">Filter zurücksetzen</button>
+          <button class="btn btn-primary btn-block" onclick="updateJobDistances();render()">Filter anwenden</button>
+          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};updateJobDistances();render()">Filter zurücksetzen</button>
         </aside>
 
         <div class="jobs-grid">
