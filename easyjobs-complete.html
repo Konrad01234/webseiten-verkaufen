@@ -895,7 +895,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 
 /* ===== CV BUILDER ===== */
-.cv-templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.cv-templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; max-width: 600px; }
 .cv-template {
   border: 2px solid var(--gray-200); border-radius: var(--radius);
   overflow: hidden; cursor: pointer; transition: all 0.2s;
@@ -4285,75 +4285,70 @@ function renderCVBuilder() {
             <h3 style="font-size:1.1rem;margin-bottom:1rem">Vorlage wählen</h3>
             <div class="cv-templates">
               <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden;font-family:Inter,Arial,sans-serif">
+                <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
                   <div style="display:flex;height:100%">
-                    <div style="width:35%;background:#1e3a5f;color:#fff;padding:0.6rem 0.5rem;display:flex;flex-direction:column;align-items:center;gap:0.35rem">
-                      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.25);margin-top:0.1rem;display:flex;align-items:center;justify-content:center;font-size:0.45rem;font-weight:700">FOTO</div>
-                      <div style="font-size:0.35rem;font-weight:700;text-align:center">Max Muster</div>
-                      <div style="width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:0.25rem">
-                        <div style="font-size:0.25rem;text-transform:uppercase;opacity:0.5;margin-bottom:0.15rem">Kontakt</div>
-                        <div style="font-size:0.22rem;opacity:0.7;line-height:1.5">✉ max@email.de<br>✆ 0170 123456<br>⌂ Berlin</div>
-                      </div>
-                      <div style="width:100%;border-top:1px solid rgba(255,255,255,0.15);padding-top:0.25rem">
-                        <div style="font-size:0.25rem;text-transform:uppercase;opacity:0.5;margin-bottom:0.15rem">Kenntnisse</div>
-                        <div style="height:3px;background:rgba(255,255,255,0.15);border-radius:1px;margin-bottom:0.15rem"><div style="height:100%;width:80%;background:rgba(255,255,255,0.6);border-radius:1px"></div></div>
-                        <div style="height:3px;background:rgba(255,255,255,0.15);border-radius:1px"><div style="height:100%;width:60%;background:rgba(255,255,255,0.6);border-radius:1px"></div></div>
-                      </div>
+                    <div style="width:35%;background:#1e3a5f;color:#fff;padding:0.5rem 0.4rem;display:flex;flex-direction:column;gap:0.3rem">
+                      <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.2);margin:0.1rem auto 0;border:1px dashed rgba(255,255,255,0.4)"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;opacity:0.5;margin-top:0.2rem">Kontakt</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.15);width:80%;border-radius:1px"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.15);width:60%;border-radius:1px"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;opacity:0.5;margin-top:0.15rem">Kenntnisse</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.15);width:70%;border-radius:1px"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.15);width:50%;border-radius:1px"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;opacity:0.5;margin-top:0.15rem">Interessen</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.15);width:65%;border-radius:1px"></div>
                     </div>
-                    <div style="flex:1;padding:0.6rem;background:#fff">
-                      <div style="font-size:0.45rem;font-weight:800;color:#1e3a5f;margin-bottom:0.1rem">Max Mustermann</div>
-                      <div style="height:2px;width:20px;background:#1e3a5f;margin-bottom:0.4rem"></div>
-                      <div style="font-size:0.25rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.15rem">Ausbildung</div>
-                      <div style="font-size:0.22rem;color:#666;padding-left:0.3rem;border-left:1px solid #e2e8f0;margin-bottom:0.3rem">Gymnasium Berlin<br><span style="color:#999">2020 - heute</span></div>
-                      <div style="font-size:0.25rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.15rem">Erfahrung</div>
-                      <div style="font-size:0.22rem;color:#666;padding-left:0.3rem;border-left:1px solid #e2e8f0">Praktikum Einzelhandel<br><span style="color:#999">Sommer 2025</span></div>
+                    <div style="flex:1;padding:0.5rem;background:#fff">
+                      <div style="height:3px;background:#1e3a5f;width:55%;border-radius:1px;margin-bottom:0.15rem"></div>
+                      <div style="height:1.5px;width:15px;background:#1e3a5f;margin-bottom:0.35rem"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.2rem">Ausbildung</div>
+                      <div style="height:2px;background:var(--gray-200);width:90%;border-radius:1px;margin-bottom:0.1rem;margin-left:0.25rem;border-left:1px solid #cbd5e1"></div>
+                      <div style="height:2px;background:var(--gray-200);width:60%;border-radius:1px;margin-bottom:0.35rem;margin-left:0.25rem"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:0.2rem">Erfahrung</div>
+                      <div style="height:2px;background:var(--gray-200);width:85%;border-radius:1px;margin-bottom:0.1rem;margin-left:0.25rem;border-left:1px solid #cbd5e1"></div>
+                      <div style="height:2px;background:var(--gray-200);width:70%;border-radius:1px;margin-left:0.25rem"></div>
                     </div>
                   </div>
                 </div>
                 <div class="cv-template-name">Modern</div>
               </div>
               <div class="cv-template" data-template="classic" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden;padding:0.6rem;font-family:Georgia,serif;background:#fff">
-                  <div style="display:flex;align-items:center;gap:0.4rem;border-bottom:1.5px double #111;padding-bottom:0.35rem;margin-bottom:0.35rem">
-                    <div style="width:22px;height:22px;border-radius:2px;background:var(--gray-200);display:flex;align-items:center;justify-content:center;font-size:0.22rem;color:var(--gray-500)">FOTO</div>
-                    <div>
-                      <div style="font-size:0.4rem;font-weight:400;letter-spacing:0.05em;color:#111">MAX MUSTERMANN</div>
-                      <div style="font-size:0.22rem;color:#888">max@email.de · 0170 123456 · Berlin</div>
-                    </div>
+                <div class="cv-preview" style="overflow:hidden;padding:0.5rem;font-family:Georgia,serif;background:#fff">
+                  <div style="display:flex;align-items:center;gap:0.3rem;border-bottom:1.5px double #111;padding-bottom:0.3rem;margin-bottom:0.3rem">
+                    <div style="width:18px;height:18px;border-radius:2px;background:var(--gray-100);border:1px dashed var(--gray-300)"></div>
+                    <div><div style="height:3px;background:#111;width:40px;border-radius:1px;margin-bottom:2px"></div><div style="height:2px;background:var(--gray-300);width:55px;border-radius:1px"></div></div>
                   </div>
-                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Ausbildung</div>
-                  <div style="display:flex;gap:0.3rem;margin-bottom:0.3rem"><div style="font-size:0.2rem;color:#999;width:25px">2020-heute</div><div style="font-size:0.22rem;color:#333"><strong>Gymnasium Berlin</strong></div></div>
-                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Erfahrung</div>
-                  <div style="display:flex;gap:0.3rem;margin-bottom:0.3rem"><div style="font-size:0.2rem;color:#999;width:25px">2025</div><div style="font-size:0.22rem;color:#333"><strong>Praktikum Einzelhandel</strong></div></div>
-                  <div style="font-size:0.25rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ccc;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Kenntnisse</div>
-                  <div style="font-size:0.22rem;color:#333">Teamarbeit · Kommunikation · MS Office</div>
+                  <div style="font-size:0.22rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.2rem;font-weight:600">Ausbildung</div>
+                  <div style="display:flex;gap:0.2rem;margin-bottom:0.3rem"><div style="height:2px;background:var(--gray-300);width:18px;border-radius:1px"></div><div style="height:2px;background:var(--gray-200);width:40px;border-radius:1px"></div></div>
+                  <div style="font-size:0.22rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.2rem;font-weight:600">Erfahrung</div>
+                  <div style="display:flex;gap:0.2rem;margin-bottom:0.3rem"><div style="height:2px;background:var(--gray-300);width:18px;border-radius:1px"></div><div style="height:2px;background:var(--gray-200);width:45px;border-radius:1px"></div></div>
+                  <div style="font-size:0.22rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.2rem;font-weight:600">Kenntnisse</div>
+                  <div style="height:2px;background:var(--gray-200);width:50px;border-radius:1px;margin-bottom:0.3rem"></div>
+                  <div style="font-size:0.22rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:0.1rem;margin-bottom:0.15rem;font-weight:600">Interessen</div>
+                  <div style="height:2px;background:var(--gray-200);width:35px;border-radius:1px"></div>
                 </div>
                 <div class="cv-template-name">Klassisch</div>
               </div>
               <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="position:relative;overflow:hidden;font-family:Inter,Arial,sans-serif">
-                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:0.5rem;display:flex;align-items:center;gap:0.4rem;color:#fff">
-                    <div style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;font-size:0.22rem;font-weight:700;border:1.5px solid rgba(255,255,255,0.4)">FOTO</div>
-                    <div>
-                      <div style="font-size:0.4rem;font-weight:800">Max Mustermann</div>
-                      <div style="font-size:0.2rem;opacity:0.8">max@email.de · Berlin</div>
-                    </div>
+                <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
+                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:0.4rem;display:flex;align-items:center;gap:0.3rem;color:#fff">
+                    <div style="width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,0.2);border:1px dashed rgba(255,255,255,0.4)"></div>
+                    <div><div style="height:3px;background:rgba(255,255,255,0.6);width:35px;border-radius:1px;margin-bottom:2px"></div><div style="height:2px;background:rgba(255,255,255,0.3);width:45px;border-radius:1px"></div></div>
                   </div>
-                  <div style="display:flex;height:calc(100% - 40px)">
-                    <div style="flex:1;padding:0.4rem 0.5rem">
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.15rem"><span style="width:6px;height:1px;background:#0ea5e9;display:inline-block"></span>Ausbildung</div>
-                      <div style="font-size:0.22rem;color:#333;margin-bottom:0.25rem"><strong>Gymnasium Berlin</strong><br><span style="color:#999">2020 - heute</span></div>
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.15rem"><span style="width:6px;height:1px;background:#0ea5e9;display:inline-block"></span>Erfahrung</div>
-                      <div style="font-size:0.22rem;color:#333">Praktikum Einzelhandel</div>
+                  <div style="display:flex;height:calc(100% - 32px)">
+                    <div style="flex:1;padding:0.35rem 0.4rem">
+                      <div style="font-size:0.2rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.1rem"><span style="width:5px;height:1px;background:#0ea5e9"></span>Ausbildung</div>
+                      <div style="height:2px;background:var(--gray-200);width:80%;border-radius:1px;margin-bottom:0.1rem"></div>
+                      <div style="height:2px;background:var(--gray-200);width:50%;border-radius:1px;margin-bottom:0.25rem"></div>
+                      <div style="font-size:0.2rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem;display:flex;align-items:center;gap:0.1rem"><span style="width:5px;height:1px;background:#0ea5e9"></span>Erfahrung</div>
+                      <div style="height:2px;background:var(--gray-200);width:85%;border-radius:1px;margin-bottom:0.1rem"></div>
+                      <div style="height:2px;background:var(--gray-200);width:60%;border-radius:1px"></div>
                     </div>
-                    <div style="width:38%;padding:0.4rem;background:#f8fafc;border-left:0.5px solid #e2e8f0">
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem">Kenntnisse</div>
-                      <div style="display:flex;flex-wrap:wrap;gap:0.1rem">
-                        <span style="font-size:0.18rem;padding:0.08rem 0.2rem;background:#e0f2fe;color:#0369a1;border-radius:4px;font-weight:600">Teamarbeit</span>
-                        <span style="font-size:0.18rem;padding:0.08rem 0.2rem;background:#e0f2fe;color:#0369a1;border-radius:4px;font-weight:600">Office</span>
-                      </div>
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:0.25rem;margin-bottom:0.1rem">Interessen</div>
-                      <div style="font-size:0.2rem;color:#666">Sport, Musik</div>
+                    <div style="width:38%;padding:0.35rem;background:#f8fafc;border-left:0.5px solid #e2e8f0">
+                      <div style="font-size:0.2rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:0.15rem">Kenntnisse</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:0.1rem"><div style="height:8px;background:#e0f2fe;border-radius:4px;width:22px"></div><div style="height:8px;background:#e0f2fe;border-radius:4px;width:18px"></div></div>
+                      <div style="font-size:0.2rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:0.25rem;margin-bottom:0.1rem">Interessen</div>
+                      <div style="height:2px;background:var(--gray-200);width:65%;border-radius:1px"></div>
                     </div>
                   </div>
                 </div>
