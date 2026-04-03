@@ -2251,20 +2251,146 @@ function addCVToProfile() {
   showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
 }
 
-function previewCV() {
-  showToast('Vorschau wird geöffnet…', 'info');
+function getCVData() {
+  return {
+    photo: state.cvPhoto || '',
+    vorname: document.getElementById('cv-vorname')?.value || '',
+    nachname: document.getElementById('cv-nachname')?.value || '',
+    email: document.getElementById('cv-email')?.value || '',
+    telefon: document.getElementById('cv-telefon')?.value || '',
+    adresse: document.getElementById('cv-adresse')?.value || '',
+    geburtsdatum: document.getElementById('cv-geburtsdatum')?.value || '',
+    schule: document.getElementById('cv-schule')?.value || '',
+    schulZeitraum: document.getElementById('cv-schul-zeitraum')?.value || '',
+    erfahrungen: document.getElementById('cv-erfahrungen')?.value || '',
+    skills: [...document.querySelectorAll('#cv-skills input:checked')].map(cb => cb.parentElement.textContent.trim()),
+    hobbys: document.getElementById('cv-hobbys')?.value || ''
+  };
 }
 
-// ===== LEBENSLAUF DOWNLOAD =====
+function handleCVPhoto(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      state.cvPhoto = e.target.result;
+      const preview = document.getElementById('cv-photo-preview');
+      if (preview) {
+        preview.style.backgroundImage = `url(${e.target.result})`;
+        preview.style.backgroundSize = 'cover';
+        preview.style.backgroundPosition = 'center';
+        preview.innerHTML = '';
+      }
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+
+function getSelectedTemplate() {
+  const sel = document.querySelector('.cv-template.selected');
+  return sel ? sel.dataset.template : 'modern';
+}
+
+function buildCVHTML(data, template) {
+  const name = `${data.vorname} ${data.nachname}`.trim() || 'Max Mustermann';
+  const photoHTML = data.photo ? `<img src="${data.photo}" style="width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.15)">` : `<div style="width:90px;height:90px;border-radius:50%;background:#e0e7ff;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:700;color:#4f46e5;border:3px solid #fff">${(data.vorname[0]||'M')+(data.nachname[0]||'M')}</div>`;
+
+  const skillsHTML = data.skills.length > 0 ? data.skills.map(s => `<span style="display:inline-block;padding:0.2rem 0.6rem;background:rgba(255,255,255,0.2);border-radius:4px;font-size:0.8rem;margin:0.15rem">${s}</span>`).join('') : '<span style="color:rgba(255,255,255,0.6);font-size:0.85rem">Noch keine Fähigkeiten angegeben</span>';
+
+  const infoItems = [
+    data.email ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">✉ ${data.email}</div>` : '',
+    data.telefon ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">✆ ${data.telefon}</div>` : '',
+    data.adresse ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">⌂ ${data.adresse}</div>` : '',
+    data.geburtsdatum ? `<div style="display:flex;align-items:center;gap:0.5rem;font-size:0.85rem">★ ${data.geburtsdatum}</div>` : ''
+  ].filter(Boolean).join('');
+
+  if (template === 'modern') {
+    return `<div style="font-family:Inter,Arial,sans-serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:8px;overflow:hidden;background:#fff">
+      <div style="display:flex">
+        <div style="width:220px;background:linear-gradient(180deg,#4f46e5,#6366f1);color:#fff;padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem">
+          ${photoHTML}
+          <div style="text-align:center"><h2 style="margin:0;font-size:1.1rem">${name}</h2></div>
+          <div style="width:100%;border-top:1px solid rgba(255,255,255,0.2);padding-top:0.75rem;display:flex;flex-direction:column;gap:0.4rem">${infoItems}</div>
+          <div style="width:100%;border-top:1px solid rgba(255,255,255,0.2);padding-top:0.75rem">
+            <h4 style="font-size:0.8rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.5rem;opacity:0.8">Fähigkeiten</h4>
+            <div style="display:flex;flex-wrap:wrap;gap:0.25rem">${skillsHTML}</div>
+          </div>
+        </div>
+        <div style="flex:1;padding:1.5rem 2rem">
+          <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Schulbildung</h3>
+            <div><strong>${data.schule || 'Schule angeben'}</strong><div style="font-size:0.85rem;color:#666">${data.schulZeitraum || 'Zeitraum'}</div></div></div>
+          <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Erfahrungen</h3>
+            <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.erfahrungen || 'Noch keine Erfahrungen angegeben'}</p></div>
+          <div><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:#4f46e5;border-bottom:2px solid #4f46e5;padding-bottom:0.3rem;margin-bottom:0.75rem">Hobbys & Interessen</h3>
+            <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys angegeben'}</p></div>
+        </div>
+      </div>
+    </div>`;
+  } else if (template === 'classic') {
+    const photoClassic = data.photo ? `<img src="${data.photo}" style="width:80px;height:80px;border-radius:4px;object-fit:cover;border:2px solid #d1d5db">` : '';
+    return `<div style="font-family:Georgia,'Times New Roman',serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:4px;overflow:hidden;background:#fff;padding:2rem">
+      <div style="display:flex;align-items:center;gap:1.25rem;border-bottom:3px double #1f2937;padding-bottom:1rem;margin-bottom:1.25rem">
+        ${photoClassic}
+        <div><h1 style="margin:0;font-size:1.5rem;color:#1f2937">${name}</h1>
+          <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:0.35rem;font-size:0.85rem;color:#666">
+            ${data.email ? `<span>✉ ${data.email}</span>` : ''}${data.telefon ? `<span>✆ ${data.telefon}</span>` : ''}${data.adresse ? `<span>⌂ ${data.adresse}</span>` : ''}${data.geburtsdatum ? `<span>★ ${data.geburtsdatum}</span>` : ''}
+          </div>
+        </div>
+      </div>
+      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Schulbildung</h3>
+        <div><strong>${data.schule || 'Schule angeben'}</strong> <span style="color:#666;font-size:0.85rem">— ${data.schulZeitraum || 'Zeitraum'}</span></div></div>
+      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Berufserfahrung</h3>
+        <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.erfahrungen || 'Noch keine Erfahrungen angegeben'}</p></div>
+      <div style="margin-bottom:1.25rem"><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Fähigkeiten</h3>
+        <p style="font-size:0.9rem;color:#444">${data.skills.join(' • ') || 'Noch keine Fähigkeiten angegeben'}</p></div>
+      <div><h3 style="font-size:1rem;color:#1f2937;border-bottom:1px solid #d1d5db;padding-bottom:0.25rem;margin-bottom:0.5rem">Hobbys & Interessen</h3>
+        <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys angegeben'}</p></div>
+    </div>`;
+  } else {
+    const skillsCreative = data.skills.length > 0 ? data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.75rem;background:#f3e8ff;color:#7c3aed;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('') : '<span style="color:#999;font-size:0.85rem">Noch keine Fähigkeiten</span>';
+    const photoCreative = data.photo ? `<img src="${data.photo}" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid #7c3aed;box-shadow:0 4px 16px rgba(124,58,237,0.3)">` : `<div style="width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#fff;border:4px solid #fff;box-shadow:0 4px 16px rgba(124,58,237,0.3)">${(data.vorname[0]||'M')+(data.nachname[0]||'M')}</div>`;
+    return `<div style="font-family:Inter,Arial,sans-serif;max-width:700px;margin:0 auto;box-shadow:0 4px 24px rgba(0,0,0,0.1);border-radius:12px;overflow:hidden;background:#fff">
+      <div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:2rem;text-align:center;color:#fff">
+        ${photoCreative}
+        <h1 style="margin:0.75rem 0 0.25rem;font-size:1.5rem">${name}</h1>
+        <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:0.75rem;font-size:0.85rem;opacity:0.9;margin-top:0.5rem">
+          ${data.email ? `<span>✉ ${data.email}</span>` : ''}${data.telefon ? `<span>✆ ${data.telefon}</span>` : ''}${data.geburtsdatum ? `<span>★ ${data.geburtsdatum}</span>` : ''}
+        </div>
+        ${data.adresse ? `<div style="font-size:0.85rem;opacity:0.8;margin-top:0.25rem">⌂ ${data.adresse}</div>` : ''}
+      </div>
+      <div style="padding:1.5rem 2rem">
+        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">🎓 Schulbildung</h3>
+          <div style="padding-left:0.75rem;border-left:3px solid #e9d5ff"><strong>${data.schule || 'Schule angeben'}</strong><div style="font-size:0.85rem;color:#888">${data.schulZeitraum || 'Zeitraum'}</div></div></div>
+        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">💼 Erfahrungen</h3>
+          <p style="font-size:0.9rem;color:#444;white-space:pre-line;padding-left:0.75rem;border-left:3px solid #e9d5ff">${data.erfahrungen || 'Noch keine Erfahrungen'}</p></div>
+        <div style="margin-bottom:1.5rem"><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">⚡ Fähigkeiten</h3>
+          <div style="display:flex;flex-wrap:wrap;gap:0.3rem">${skillsCreative}</div></div>
+        <div><h3 style="font-size:0.9rem;text-transform:uppercase;letter-spacing:0.08em;color:#7c3aed;margin-bottom:0.5rem">🎯 Hobbys & Interessen</h3>
+          <p style="font-size:0.9rem;color:#444;white-space:pre-line">${data.hobbys || 'Noch keine Hobbys'}</p></div>
+      </div>
+    </div>`;
+  }
+}
+
+function previewCV() {
+  const data = getCVData();
+  const template = getSelectedTemplate();
+  const html = buildCVHTML(data, template);
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><title>Lebenslauf - ${data.vorname} ${data.nachname}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#f3f4f6;}</style></head><body>${html}</body></html>`);
+  win.document.close();
+}
+
 function downloadCV() {
-  const u = state.user || {};
-  const content = `LEBENSLAUF\n\n${u.name || 'Name'}\n${u.email || 'E-Mail'}\n\n--- Erstellt mit EasyJobs ---`;
-  const blob = new Blob([content], { type: 'text/plain' });
+  const data = getCVData();
+  const template = getSelectedTemplate();
+  const html = buildCVHTML(data, template);
+  const fullHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lebenslauf - ${data.vorname} ${data.nachname}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#fff;}@media print{body{padding:0;}}</style></head><body>${html}</body></html>`;
+  const blob = new Blob([fullHTML], { type: 'text/html' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'lebenslauf.txt';
+  a.download = `lebenslauf-${(data.vorname||'mein').toLowerCase()}-${(data.nachname||'cv').toLowerCase()}.html`;
   a.click();
-  showToast('Lebenslauf wird heruntergeladen…');
+  showToast('Lebenslauf wird heruntergeladen! Öffne die Datei im Browser und drücke Strg+P zum Drucken als PDF.');
 }
 
 // ===== DOKUMENT GESCANNT =====
@@ -3540,105 +3666,136 @@ function renderCVBuilder() {
           <div style="margin-bottom:2rem">
             <h3 style="font-size:1.1rem;margin-bottom:1rem">Vorlage wählen</h3>
             <div class="cv-templates">
-              ${CV_TEMPLATES.map((t, i) => `
-                <div class="cv-template ${i===0?'selected':''}" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                  <div class="cv-preview" style="background:${t.preview.headerColor};opacity:0.1;position:relative">
-                    <div style="position:absolute;inset:0;display:flex;flex-direction:column;opacity:1;padding:1rem">
-                      <div style="background:${t.preview.headerColor};height:40px;border-radius:4px;margin-bottom:0.75rem"></div>
-                      <div style="display:flex;gap:0.5rem;flex:1">
-                        ${t.preview.layout === 'sidebar' ? `
-                          <div style="width:35%;display:flex;flex-direction:column;gap:0.375rem">
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:80%"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:60%"></div>
-                            <div style="height:20px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:70%"></div>
-                          </div>
-                          <div style="flex:1;display:flex;flex-direction:column;gap:0.375rem">
-                            <div style="height:8px;background:var(--gray-300);border-radius:2px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:90%"></div>
-                            <div style="height:20px"></div>
-                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:50%"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
-                          </div>
-                        ` : `
-                          <div style="flex:1;display:flex;flex-direction:column;gap:0.375rem">
-                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:40%"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:85%"></div>
-                            <div style="height:20px"></div>
-                            <div style="height:8px;background:var(--gray-300);border-radius:2px;width:35%"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:90%"></div>
-                            <div style="height:8px;background:var(--gray-200);border-radius:2px;width:75%"></div>
-                          </div>
-                        `}
-                      </div>
+              <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
+                <div class="cv-preview" style="position:relative;overflow:hidden">
+                  <div style="display:flex;height:100%">
+                    <div style="width:35%;background:linear-gradient(180deg,#4f46e5,#6366f1);padding:0.75rem;display:flex;flex-direction:column;align-items:center;gap:0.5rem">
+                      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.3);margin-top:0.25rem"></div>
+                      <div style="height:5px;background:rgba(255,255,255,0.4);width:80%;border-radius:2px"></div>
+                      <div style="height:4px;background:rgba(255,255,255,0.25);width:60%;border-radius:2px"></div>
+                      <div style="height:4px;background:rgba(255,255,255,0.25);width:70%;border-radius:2px"></div>
+                    </div>
+                    <div style="flex:1;padding:0.75rem;display:flex;flex-direction:column;gap:0.35rem">
+                      <div style="height:5px;background:#4f46e5;width:45%;border-radius:2px;margin-bottom:0.15rem"></div>
+                      <div style="height:4px;background:var(--gray-200);width:100%;border-radius:2px"></div>
+                      <div style="height:4px;background:var(--gray-200);width:85%;border-radius:2px"></div>
+                      <div style="height:10px"></div>
+                      <div style="height:5px;background:#4f46e5;width:35%;border-radius:2px;margin-bottom:0.15rem"></div>
+                      <div style="height:4px;background:var(--gray-200);width:90%;border-radius:2px"></div>
                     </div>
                   </div>
-                  <div class="cv-template-name">${t.name}</div>
                 </div>
-              `).join('')}
+                <div class="cv-template-name">Modern</div>
+              </div>
+              <div class="cv-template" data-template="classic" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
+                <div class="cv-preview" style="position:relative;overflow:hidden;padding:0.75rem">
+                  <div style="display:flex;align-items:center;gap:0.5rem;border-bottom:2px double #1f2937;padding-bottom:0.5rem;margin-bottom:0.5rem">
+                    <div style="width:24px;height:24px;border-radius:3px;background:var(--gray-200)"></div>
+                    <div><div style="height:6px;background:#1f2937;width:60px;border-radius:2px;margin-bottom:3px"></div><div style="height:4px;background:var(--gray-300);width:80px;border-radius:2px"></div></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:0.3rem">
+                    <div style="height:4px;background:#1f2937;width:40%;border-radius:2px"></div>
+                    <div style="height:3px;background:var(--gray-200);width:100%;border-radius:2px"></div>
+                    <div style="height:3px;background:var(--gray-200);width:80%;border-radius:2px"></div>
+                    <div style="height:8px"></div>
+                    <div style="height:4px;background:#1f2937;width:35%;border-radius:2px"></div>
+                    <div style="height:3px;background:var(--gray-200);width:90%;border-radius:2px"></div>
+                  </div>
+                </div>
+                <div class="cv-template-name">Klassisch</div>
+              </div>
+              <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
+                <div class="cv-preview" style="position:relative;overflow:hidden">
+                  <div style="background:linear-gradient(135deg,#7c3aed,#a78bfa);padding:0.75rem;text-align:center">
+                    <div style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,0.3);margin:0 auto 0.25rem;border:2px solid rgba(255,255,255,0.5)"></div>
+                    <div style="height:5px;background:rgba(255,255,255,0.5);width:50%;border-radius:2px;margin:0 auto 0.15rem"></div>
+                    <div style="height:3px;background:rgba(255,255,255,0.3);width:65%;border-radius:2px;margin:0 auto"></div>
+                  </div>
+                  <div style="padding:0.5rem 0.75rem;display:flex;flex-direction:column;gap:0.3rem">
+                    <div style="height:4px;background:#7c3aed;width:35%;border-radius:2px"></div>
+                    <div style="height:3px;background:var(--gray-200);width:100%;border-radius:2px;border-left:2px solid #e9d5ff"></div>
+                    <div style="height:7px"></div>
+                    <div style="display:flex;gap:0.2rem"><div style="height:12px;background:#f3e8ff;border-radius:6px;width:30px"></div><div style="height:12px;background:#f3e8ff;border-radius:6px;width:25px"></div></div>
+                  </div>
+                </div>
+                <div class="cv-template-name">Kreativ</div>
+              </div>
             </div>
           </div>
 
           <div class="card">
             <div class="card-header">Deine Daten</div>
             <div class="card-body">
+
+              <!-- Foto-Upload -->
+              <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gray-200)">
+                <div id="cv-photo-preview" onclick="document.getElementById('cv-photo-input').click()" style="width:80px;height:80px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--gray-300);overflow:hidden;flex-shrink:0;transition:all 0.2s;${state.cvPhoto ? 'background-image:url('+state.cvPhoto+');background-size:cover;background-position:center;border-style:solid;border-color:var(--primary)' : ''}" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='${state.cvPhoto ? 'var(--primary)' : 'var(--gray-300)'}'">${state.cvPhoto ? '' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'}</div>
+                <input type="file" id="cv-photo-input" accept="image/*" style="display:none" onchange="handleCVPhoto(this)">
+                <div>
+                  <div style="font-weight:600;font-size:0.95rem">Bewerbungsfoto</div>
+                  <div style="font-size:0.8rem;color:var(--gray-500)">Klicke auf den Kreis, um ein Foto hochzuladen</div>
+                </div>
+              </div>
+
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Vorname</label>
-                  <input type="text" class="form-input" value="${state.user.name.split(' ')[0]}">
+                  <input type="text" id="cv-vorname" class="form-input" value="${state.user.name.split(' ')[0]}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Nachname</label>
-                  <input type="text" class="form-input" value="${state.user.name.split(' ').slice(1).join(' ')}">
+                  <input type="text" id="cv-nachname" class="form-input" value="${state.user.name.split(' ').slice(1).join(' ')}">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">E-Mail</label>
-                  <input type="email" class="form-input" value="${state.user.email}">
+                  <input type="email" id="cv-email" class="form-input" value="${state.user.email}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Telefon</label>
-                  <input type="tel" class="form-input" placeholder="+49 ...">
+                  <input type="tel" id="cv-telefon" class="form-input" placeholder="+49 ...">
                 </div>
               </div>
-              <div class="form-group">
-                <label class="form-label">Adresse</label>
-                <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt">
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Adresse</label>
+                  <input type="text" id="cv-adresse" class="form-input" placeholder="Straße, PLZ, Stadt">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Geburtsdatum</label>
+                  <input type="text" id="cv-geburtsdatum" class="form-input" placeholder="z.B. 15.03.2008">
+                </div>
               </div>
 
               <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Schulbildung</h3>
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Schule</label>
-                  <input type="text" class="form-input" placeholder="Name der Schule">
+                  <input type="text" id="cv-schule" class="form-input" placeholder="Name der Schule">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Zeitraum</label>
-                  <input type="text" class="form-input" placeholder="z.B. 2020 - heute">
+                  <input type="text" id="cv-schul-zeitraum" class="form-input" placeholder="z.B. 2020 - heute">
                 </div>
               </div>
 
               <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Erfahrungen</h3>
               <div class="form-group">
                 <label class="form-label">Praktika / Jobs</label>
-                <textarea class="form-textarea" placeholder="Beschreibe deine bisherigen Erfahrungen..."></textarea>
+                <textarea class="form-textarea" id="cv-erfahrungen" placeholder="Beschreibe deine bisherigen Erfahrungen..."></textarea>
               </div>
 
               <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Fähigkeiten</h3>
               <div class="form-group">
-                <div class="checkbox-group">
+                <div class="checkbox-group" id="cv-skills">
                   ${SKILLS.slice(0,10).map(s => `<label class="checkbox-label"><input type="checkbox"> <span>${s}</span></label>`).join('')}
                 </div>
               </div>
 
               <h3 style="font-size:1rem;margin:1.5rem 0 1rem;padding-top:1rem;border-top:1px solid var(--gray-200)">Hobbys & Interessen</h3>
               <div class="form-group">
-                <textarea class="form-textarea" rows="3" placeholder="Deine Hobbys und Interessen..."></textarea>
+                <textarea class="form-textarea" rows="3" id="cv-hobbys" placeholder="Deine Hobbys und Interessen..."></textarea>
               </div>
             </div>
             <div class="card-footer" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem">
@@ -3656,14 +3813,6 @@ function renderCVBuilder() {
             </div>
           </div>
 
-          <div class="card" style="margin-top:1.5rem">
-            <div class="card-body" style="text-align:center;padding:2rem">
-              <div style="font-size:2rem;margin-bottom:0.5rem">KI</div>
-              <h3 style="margin-bottom:0.5rem">KI Motivationsschreiben</h3>
-              <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1rem">Lass dir von unserer KI ein individuelles Motivationsschreiben erstellen.</p>
-              <button class="btn btn-primary" onclick="toggleAI()">KI-Assistent öffnen</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>`;
