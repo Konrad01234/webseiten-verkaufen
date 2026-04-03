@@ -2262,31 +2262,81 @@ function renderApplyStep() {
 function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate' || m === 'upload') renderMotivationDetail(); }
 function generateMotivationText() {
   var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-  var name = document.getElementById('motiv-name')?.value || state.user?.name || '';
-  var alter = document.getElementById('motiv-alter')?.value || '';
-  var schule = document.getElementById('motiv-schule')?.value || '';
-  var staerken = document.getElementById('motiv-staerken')?.value || '';
-  var motivation = document.getElementById('motiv-warum')?.value || '';
-  var verfuegbar = document.getElementById('motiv-verfuegbar')?.value || '';
+  var name = document.getElementById('motiv-name')?.value?.trim() || state.user?.name || 'Max Mustermann';
+  var alter = document.getElementById('motiv-alter')?.value?.trim() || '';
+  var schule = document.getElementById('motiv-schule')?.value?.trim() || '';
+  var staerken = document.getElementById('motiv-staerken')?.value?.trim() || '';
+  var motivation = document.getElementById('motiv-warum')?.value?.trim() || '';
+  var verfuegbar = document.getElementById('motiv-verfuegbar')?.value?.trim() || '';
+  var erfahrung = document.getElementById('motiv-erfahrung')?.value?.trim() || '';
   var jobTitle = job ? job.title : 'die ausgeschriebene Stelle';
   var firma = job ? job.company : 'Ihr Unternehmen';
+  var branche = job ? (job.category || '') : '';
+  var ort = job ? (job.city || '') : '';
 
-  var text = 'Sehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Stellenanzeige als ' + jobTitle + ' bei ' + firma + ' entdeckt und möchte mich hiermit bei Ihnen bewerben.\n\n';
-  text += 'Mein Name ist ' + name;
-  if (alter) text += ', ich bin ' + alter + ' Jahre alt';
-  if (schule) text += ' und besuche derzeit ' + schule;
-  text += '.\n\n';
+  var text = name + '\n' + (ort || 'Musterstadt') + '\n\n';
+  text += 'An\n' + firma + '\n' + (ort ? ort : '') + '\n\n';
+  text += 'Bewerbung als ' + jobTitle + '\n\n';
+  text += 'Sehr geehrte Damen und Herren,\n\n';
+
+  // Einleitung - ausgeschmückt
+  text += 'mit großer Begeisterung habe ich Ihre Stellenanzeige als ' + jobTitle + ' bei ' + firma + ' gelesen. ';
+  if (branche) {
+    text += 'Der Bereich ' + branche + ' fasziniert mich schon seit längerer Zeit, und ich bin überzeugt, dass ' + firma + ' genau das richtige Unternehmen ist, um erste wertvolle Berufserfahrungen zu sammeln. ';
+  }
+  text += 'Hiermit möchte ich mich bei Ihnen um diese Stelle bewerben und Ihnen zeigen, warum ich die richtige Wahl für Ihr Team bin.\n\n';
+
+  // Persönliche Vorstellung - ausgeschmückt
+  text += 'Zu meiner Person: Mein Name ist ' + name;
+  if (alter) text += ' und ich bin ' + alter + ' Jahre alt';
+  text += '. ';
+  if (schule) {
+    text += 'Derzeit besuche ich ' + schule + ', wo ich neben meiner schulischen Ausbildung großen Wert darauf lege, praktische Erfahrungen zu sammeln und mich persönlich weiterzuentwickeln. ';
+  }
+  text += 'Ich bin eine aufgeschlossene und lernbereite Person, die sich schnell in neue Aufgabenbereiche einarbeiten kann.\n\n';
+
+  // Motivation - ausgeschmückt
   if (motivation) {
-    text += 'Ich interessiere mich besonders für diese Stelle, weil ' + motivation + '. ';
+    text += 'Was mich besonders an dieser Stelle begeistert: ' + motivation + '. ';
+    text += 'Ich sehe in dieser Tätigkeit nicht nur eine Möglichkeit, Geld zu verdienen, sondern vor allem die Chance, mich in einem professionellen Umfeld weiterzuentwickeln und einen echten Beitrag zu Ihrem Team zu leisten. ';
+    if (branche) {
+      text += 'Die Arbeit im Bereich ' + branche + ' reizt mich, weil ich hier meine Interessen mit praktischer Berufserfahrung verbinden kann.';
+    }
+    text += '\n\n';
   }
+
+  // Erfahrungen - ausgeschmückt
+  if (erfahrung) {
+    text += 'Bereits in der Vergangenheit konnte ich wertvolle Erfahrungen sammeln: ' + erfahrung + '. ';
+    text += 'Diese Erfahrungen haben mir gezeigt, wie wichtig Verantwortungsbewusstsein, Teamarbeit und eine zuverlässige Arbeitsweise sind. Ich bin sicher, dass ich diese Qualitäten auch bei Ihnen erfolgreich einbringen kann.\n\n';
+  }
+
+  // Stärken - ausgeschmückt
   if (staerken) {
-    text += 'Zu meinen Stärken zählen ' + staerken + '. Diese Eigenschaften möchte ich gerne in Ihrem Team einbringen und weiterentwickeln.\n\n';
-  } else {
-    text += '\n';
+    var staerkenArr = staerken.split(',').map(function(s){return s.trim();}).filter(Boolean);
+    text += 'Meine persönlichen Stärken liegen insbesondere in den Bereichen ';
+    if (staerkenArr.length === 1) {
+      text += staerkenArr[0];
+    } else if (staerkenArr.length === 2) {
+      text += staerkenArr[0] + ' und ' + staerkenArr[1];
+    } else {
+      text += staerkenArr.slice(0, -1).join(', ') + ' sowie ' + staerkenArr[staerkenArr.length - 1];
+    }
+    text += '. ';
+    text += 'Ich bin davon überzeugt, dass diese Eigenschaften für die Position als ' + jobTitle + ' von großem Vorteil sind. ';
+    text += 'Darüber hinaus zeichne ich mich durch eine schnelle Auffassungsgabe und die Bereitschaft aus, auch über die gewohnten Aufgaben hinaus Verantwortung zu übernehmen.\n\n';
   }
-  text += 'Ich bin ' + (verfuegbar ? 'ab ' + verfuegbar + ' verfügbar' : 'zeitlich flexibel') + ' und würde mich sehr über die Möglichkeit freuen, mich in einem persönlichen Gespräch vorzustellen. Gerne überzeuge ich Sie von meiner Motivation und meinem Engagement.\n\n';
+
+  // Verfügbarkeit und Schluss - ausgeschmückt
+  text += 'Was meine zeitliche Verfügbarkeit betrifft: Ich bin ' + (verfuegbar ? 'ab ' + verfuegbar + ' einsatzbereit' : 'zeitlich flexibel einsetzbar') + ' und kann mich gut an verschiedene Arbeitszeiten anpassen. ';
+  text += 'Zuverlässigkeit und Pünktlichkeit sind für mich selbstverständlich.\n\n';
+
+  text += 'Ich würde mich sehr freuen, wenn Sie mir die Gelegenheit geben würden, mich in einem persönlichen Gespräch bei Ihnen vorzustellen. ';
+  text += 'Gerne möchte ich Sie davon überzeugen, dass ich mit meiner Motivation, meinem Engagement und meiner Lernbereitschaft eine Bereicherung für Ihr Team sein werde.\n\n';
+
   text += 'Über eine positive Rückmeldung würde ich mich sehr freuen.\n\n';
   text += 'Mit freundlichen Grüßen\n' + name;
+
   state.applyMotivation = text;
   var ta = document.getElementById('motiv-result');
   if (ta) { ta.value = text; ta.style.display = 'block'; }
@@ -2297,17 +2347,18 @@ function renderMotivationDetail() {
   if (state.applyMotivationMethod === 'generate') {
     var job = JOBS.find(function(j){return j.id===state.applyJobId;});
     d.innerHTML = '<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem">' +
-      '<p style="font-size:0.8rem;color:var(--gray-500);margin:0">Fülle die Felder aus und wir erstellen dein Motivationsschreiben:</p>' +
+      '<p style="font-size:0.8rem;color:var(--gray-500);margin:0">Fülle die Felder aus – wir erstellen daraus ein ausführliches, professionelles Motivationsschreiben:</p>' +
       '<div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
-        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Name</label><input type="text" id="motiv-name" class="form-input" value="' + (state.user?.name||'') + '" placeholder="Vor- und Nachname"></div>' +
+        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein vollständiger Name</label><input type="text" id="motiv-name" class="form-input" value="' + (state.user?.name||'') + '" placeholder="Vor- und Nachname"></div>' +
         '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Alter</label><input type="text" id="motiv-alter" class="form-input" placeholder="z.B. 16"></div>' +
       '</div>' +
       '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Schule / Ausbildung</label><input type="text" id="motiv-schule" class="form-input" placeholder="z.B. Gymnasium München, 10. Klasse"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Warum möchtest du diesen Job?</label><textarea id="motiv-warum" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. ich interessiere mich für Einzelhandel und möchte Erfahrung sammeln"></textarea></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Verfügbarkeit</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags"></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Warum möchtest du diesen Job? Was interessiert dich daran?</label><textarea id="motiv-warum" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich finde den Kontakt mit Kunden spannend und möchte lernen, wie ein Geschäft funktioniert"></textarea></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Hast du schon Erfahrungen gesammelt? (Praktika, Jobs, Ehrenamt)</label><textarea id="motiv-erfahrung" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich habe ein Schulpraktikum bei einem Bäcker gemacht und helfe ehrenamtlich im Sportverein"></textarea></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken (mit Komma trennen)</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit, Pünktlichkeit"></div>' +
+      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Ab wann bist du verfügbar?</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags ab 14 Uhr"></div>' +
       '<button class="btn btn-primary" onclick="generateMotivationText()" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
-      '<textarea id="motiv-result" class="form-textarea" rows="14" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" onchange="state.applyMotivation=this.value">' + (state.applyMotivation||'') + '</textarea>' +
+      '<textarea id="motiv-result" class="form-textarea" rows="18" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" onchange="state.applyMotivation=this.value">' + (state.applyMotivation||'') + '</textarea>' +
     '</div>';
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivation;
   } else if (state.applyMotivationMethod === 'upload') {
