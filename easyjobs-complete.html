@@ -4347,83 +4347,107 @@ function renderCVBuilder() {
               <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
                   <div style="display:flex;height:100%">
-                    <div style="width:34%;background:#1e3a5f;color:#fff;padding:6% 5%;display:flex;flex-direction:column">
-                      <div style="width:30%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);margin:0 auto 4%;border:1px dashed rgba(255,255,255,0.3)"></div>
-                      <div style="font-size:0.32rem;font-weight:700;text-align:center;margin-bottom:5%">Vorname Name</div>
-                      <div style="font-size:0.28rem;text-transform:uppercase;opacity:0.5;margin-bottom:2%">Kontakt</div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:85%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:65%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:75%;margin-bottom:4%"></div>
-                      <div style="font-size:0.28rem;text-transform:uppercase;opacity:0.5;margin-bottom:2%">Kenntnisse</div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:80%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:55%;margin-bottom:4%"></div>
-                      <div style="font-size:0.28rem;text-transform:uppercase;opacity:0.5;margin-bottom:2%">Interessen</div>
-                      <div style="height:2px;background:rgba(255,255,255,0.12);width:70%;margin-bottom:1.5%"></div>
+                    <div style="width:34%;background:#1e3a5f;color:#fff;padding:4% 4%;display:flex;flex-direction:column">
+                      <div style="width:26%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);margin:0 auto 2%;border:1px dashed rgba(255,255,255,0.3)"></div>
+                      <div style="font-size:0.3rem;font-weight:700;text-align:center;margin-bottom:3%">Vorname Name</div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;opacity:0.5;margin-bottom:1.5%">Kontakt</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:85%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:65%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:75%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:55%;margin-bottom:2.5%"></div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;opacity:0.5;margin-bottom:1.5%">Kenntnisse</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:80%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:55%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:70%;margin-bottom:2.5%"></div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;opacity:0.5;margin-bottom:1.5%">Sprachen</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:60%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:45%;margin-bottom:2.5%"></div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;opacity:0.5;margin-bottom:1.5%">Interessen</div>
+                      <div style="height:2px;background:rgba(255,255,255,0.12);width:70%;margin-bottom:1%"></div>
                       <div style="height:2px;background:rgba(255,255,255,0.12);width:50%"></div>
                     </div>
-                    <div style="flex:1;padding:6% 6%;background:#fff">
-                      <div style="height:3px;background:#1e3a5f;width:60%;margin-bottom:1.5%"></div>
-                      <div style="height:1.5px;width:12%;background:#1e3a5f;margin-bottom:6%"></div>
-                      <div style="font-size:0.3rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:2%">Persönliche Daten</div>
-                      <div style="height:2px;background:#e5e7eb;width:90%;margin-bottom:1.5%;margin-left:3%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1.5%;margin-left:3%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:5%;margin-left:3%"></div>
-                      <div style="font-size:0.3rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:2%">Ausbildung</div>
-                      <div style="height:2px;background:#e5e7eb;width:85%;margin-bottom:1.5%;margin-left:3%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:60%;margin-bottom:5%;margin-left:3%"></div>
-                      <div style="font-size:0.3rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:2%">Berufserfahrung</div>
-                      <div style="height:2px;background:#e5e7eb;width:88%;margin-bottom:1.5%;margin-left:3%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:72%;margin-bottom:1.5%;margin-left:3%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:55%;margin-left:3%"></div>
+                    <div style="flex:1;padding:4% 5%;background:#fff">
+                      <div style="height:3px;background:#1e3a5f;width:60%;margin-bottom:1%"></div>
+                      <div style="height:1.5px;width:12%;background:#1e3a5f;margin-bottom:3%"></div>
+                      <div style="font-size:0.26rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:1.5%">Persönliche Daten</div>
+                      <div style="height:2px;background:#e5e7eb;width:90%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:60%;margin-bottom:3%"></div>
+                      <div style="font-size:0.26rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:1.5%">Ausbildung</div>
+                      <div style="height:2px;background:#e5e7eb;width:85%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:60%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:75%;margin-bottom:3%"></div>
+                      <div style="font-size:0.26rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:1.5%">Berufserfahrung</div>
+                      <div style="height:2px;background:#e5e7eb;width:88%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:72%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:3%"></div>
+                      <div style="font-size:0.26rem;text-transform:uppercase;color:#1e3a5f;font-weight:700;margin-bottom:1.5%">Hobbys & Interessen</div>
+                      <div style="height:2px;background:#e5e7eb;width:65%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:50%"></div>
                     </div>
                   </div>
                 </div>
                 <div class="cv-template-name">Modern</div>
               </div>
               <div class="cv-template" data-template="classic" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
-                <div class="cv-preview" style="overflow:hidden;padding:6%;font-family:Georgia,serif;background:#fff">
-                  <div style="display:flex;align-items:center;gap:4%;border-bottom:1.5px double #111;padding-bottom:3%;margin-bottom:4%">
-                    <div style="width:16%;aspect-ratio:1;border-radius:2px;background:var(--gray-100);border:1px dashed var(--gray-300)"></div>
-                    <div style="flex:1"><div style="height:3.5px;background:#111;width:65%;margin-bottom:2px"></div><div style="height:2px;background:var(--gray-300);width:80%"></div></div>
+                <div class="cv-preview" style="overflow:hidden;padding:4% 5%;font-family:Georgia,serif;background:#fff">
+                  <div style="display:flex;align-items:center;gap:3%;border-bottom:1.5px double #111;padding-bottom:2%;margin-bottom:2.5%">
+                    <div style="width:14%;aspect-ratio:1;border-radius:2px;background:var(--gray-100);border:1px dashed var(--gray-300)"></div>
+                    <div style="flex:1"><div style="height:3px;background:#111;width:65%;margin-bottom:2px"></div><div style="height:2px;background:var(--gray-300);width:80%"></div></div>
                   </div>
-                  <div style="font-size:0.3rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1.5%;margin-bottom:2%;font-weight:600">Persönliche Daten</div>
-                  <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1.5%"></div>
-                  <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:4%"></div>
-                  <div style="font-size:0.3rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1.5%;margin-bottom:2%;font-weight:600">Ausbildung</div>
-                  <div style="display:flex;gap:3%;margin-bottom:1.5%"><div style="height:2px;background:var(--gray-300);width:18%"></div><div style="height:2px;background:var(--gray-200);width:50%"></div></div>
-                  <div style="display:flex;gap:3%;margin-bottom:4%"><div style="height:2px;background:var(--gray-300);width:18%"></div><div style="height:2px;background:var(--gray-200);width:35%"></div></div>
-                  <div style="font-size:0.3rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1.5%;margin-bottom:2%;font-weight:600">Berufserfahrung</div>
-                  <div style="display:flex;gap:3%;margin-bottom:1.5%"><div style="height:2px;background:var(--gray-300);width:18%"></div><div style="height:2px;background:var(--gray-200);width:55%"></div></div>
-                  <div style="display:flex;gap:3%;margin-bottom:4%"><div style="height:2px;background:var(--gray-300);width:18%"></div><div style="height:2px;background:var(--gray-200);width:40%"></div></div>
-                  <div style="font-size:0.3rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1.5%;margin-bottom:2%;font-weight:600">Kenntnisse</div>
-                  <div style="height:2px;background:var(--gray-200);width:60%;margin-bottom:1.5%"></div>
-                  <div style="height:2px;background:var(--gray-200);width:45%"></div>
+                  <div style="font-size:0.26rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1%;margin-bottom:1.5%;font-weight:600">Persönliche Daten</div>
+                  <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1%"></div>
+                  <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:1%"></div>
+                  <div style="height:2px;background:#e5e7eb;width:65%;margin-bottom:2.5%"></div>
+                  <div style="font-size:0.26rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1%;margin-bottom:1.5%;font-weight:600">Ausbildung</div>
+                  <div style="display:flex;gap:2%;margin-bottom:1%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:50%"></div></div>
+                  <div style="display:flex;gap:2%;margin-bottom:1%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:35%"></div></div>
+                  <div style="display:flex;gap:2%;margin-bottom:2.5%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:45%"></div></div>
+                  <div style="font-size:0.26rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1%;margin-bottom:1.5%;font-weight:600">Berufserfahrung</div>
+                  <div style="display:flex;gap:2%;margin-bottom:1%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:55%"></div></div>
+                  <div style="display:flex;gap:2%;margin-bottom:1%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:40%"></div></div>
+                  <div style="display:flex;gap:2%;margin-bottom:2.5%"><div style="height:2px;background:var(--gray-300);width:16%"></div><div style="height:2px;background:var(--gray-200);width:50%"></div></div>
+                  <div style="font-size:0.26rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1%;margin-bottom:1.5%;font-weight:600">Kenntnisse</div>
+                  <div style="height:2px;background:var(--gray-200);width:60%;margin-bottom:1%"></div>
+                  <div style="height:2px;background:var(--gray-200);width:45%;margin-bottom:2.5%"></div>
+                  <div style="font-size:0.26rem;text-transform:uppercase;letter-spacing:0.08em;color:#111;border-bottom:0.5px solid #ddd;padding-bottom:1%;margin-bottom:1.5%;font-weight:600">Hobbys & Interessen</div>
+                  <div style="height:2px;background:var(--gray-200);width:55%;margin-bottom:1%"></div>
+                  <div style="height:2px;background:var(--gray-200);width:40%"></div>
                 </div>
                 <div class="cv-template-name">Klassisch</div>
               </div>
               <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
-                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:5% 6%;display:flex;align-items:center;gap:4%;color:#fff">
-                    <div style="width:18%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);border:1px dashed rgba(255,255,255,0.3)"></div>
+                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:3% 5%;display:flex;align-items:center;gap:3%;color:#fff">
+                    <div style="width:15%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);border:1px dashed rgba(255,255,255,0.3)"></div>
                     <div style="flex:1"><div style="height:3px;background:rgba(255,255,255,0.5);width:55%;margin-bottom:2px"></div><div style="height:2px;background:rgba(255,255,255,0.25);width:70%"></div></div>
                   </div>
                   <div style="display:flex;flex:1">
-                    <div style="flex:1;padding:5% 5%">
-                      <div style="font-size:0.28rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%;display:flex;align-items:center;gap:2%"><span style="width:8%;height:1px;background:#0ea5e9"></span>Persönliche Daten</div>
-                      <div style="height:2px;background:#e5e7eb;width:85%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:65%;margin-bottom:5%"></div>
-                      <div style="font-size:0.28rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%;display:flex;align-items:center;gap:2%"><span style="width:8%;height:1px;background:#0ea5e9"></span>Ausbildung</div>
-                      <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:5%"></div>
-                      <div style="font-size:0.28rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%;display:flex;align-items:center;gap:2%"><span style="width:8%;height:1px;background:#0ea5e9"></span>Berufserfahrung</div>
-                      <div style="height:2px;background:#e5e7eb;width:88%;margin-bottom:1.5%"></div>
-                      <div style="height:2px;background:#e5e7eb;width:68%"></div>
+                    <div style="flex:1;padding:3% 4%">
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Persönliche Daten</div>
+                      <div style="height:2px;background:#e5e7eb;width:85%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:65%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:75%;margin-bottom:2.5%"></div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Ausbildung</div>
+                      <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:2.5%"></div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Berufserfahrung</div>
+                      <div style="height:2px;background:#e5e7eb;width:88%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:68%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:78%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:55%"></div>
                     </div>
-                    <div style="width:36%;padding:5% 4%;background:#f8fafc;border-left:0.5px solid #e2e8f0">
-                      <div style="font-size:0.26rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:3%">Kenntnisse</div>
-                      <div style="display:flex;flex-wrap:wrap;gap:2%"><div style="height:9px;background:#e0f2fe;border-radius:4px;width:42%"></div><div style="height:9px;background:#e0f2fe;border-radius:4px;width:32%"></div><div style="height:9px;background:#e0f2fe;border-radius:4px;width:38%"></div></div>
-                      <div style="font-size:0.26rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:6%;margin-bottom:3%">Interessen</div>
-                      <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1.5%"></div>
+                    <div style="width:34%;padding:3% 3%;background:#f8fafc;border-left:0.5px solid #e2e8f0">
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%">Kenntnisse</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:1.5%"><div style="height:7px;background:#e0f2fe;border-radius:3px;width:40%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:30%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:36%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:28%"></div></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:4%;margin-bottom:2%">Sprachen</div>
+                      <div style="height:2px;background:#e5e7eb;width:60%;margin-bottom:1%"></div>
+                      <div style="height:2px;background:#e5e7eb;width:45%;margin-bottom:4%"></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%">Interessen</div>
+                      <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:50%"></div>
                     </div>
                   </div>
