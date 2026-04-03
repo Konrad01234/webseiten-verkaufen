@@ -327,6 +327,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--gray-200); display: flex; gap: 0.75rem; justify-content: flex-end; }
 .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-400); line-height: 1; }
 .close-btn:hover { color: var(--gray-600); }
+.apply-option { border: 1px solid var(--gray-200); }
+.apply-option:hover { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.apply-option-active { border-color: var(--primary) !important; background: rgba(14,165,233,0.03) !important; box-shadow: 0 0 0 1px var(--primary); }
 
 /* ===== LANDING PAGE ===== */
 .hero {
@@ -1475,6 +1478,21 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
     </div>
   </div>
 
+  <!-- Bewerbungs-Modal -->
+  <div class="modal-overlay" id="apply-modal" onclick="if(event.target===this)closeApplyModal()">
+    <div class="modal" style="max-width:620px">
+      <div class="modal-header">
+        <h3>Bewerbung</h3>
+        <button class="close-btn" onclick="closeApplyModal()">&times;</button>
+      </div>
+      <div style="padding:1rem 1.5rem 0.5rem">
+        <div id="apply-step-indicator" style="display:flex;align-items:center;gap:0.25rem"></div>
+      </div>
+      <div class="modal-body" id="apply-modal-body"></div>
+      <div class="modal-footer" id="apply-modal-footer"></div>
+    </div>
+  </div>
+
   <!-- Boost Modal -->
   <div class="modal-overlay" id="boost-modal" onclick="if(event.target===this)closeBoostModal()">
     <div class="modal">
@@ -2172,22 +2190,70 @@ function saveUserApps(apps) {
 function submitApplication(jobId) {
   const apps = getUserApps();
   if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
-  apps.push(jobId);
-  saveUserApps(apps);
-  const job = JOBS.find(j => j.id === jobId);
-  const allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
-  const initials = (state.user.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-  allApps.push({
-    id: Date.now(), userId: state.user.id, jobId: jobId,
-    jobTitle: job?.title || 'Unbekannt', jobCompany: job?.company || '',
-    name: state.user.name, initials: initials, email: state.user.email,
-    city: state.user.address ? state.user.address.split(',').pop().trim() : '',
-    skills: state.user.skills || [], weeklyHours: state.user.weeklyHours || 0,
-    refs: state.user.refs || [], cvUploaded: !!state.user.cvUploaded, docsUploaded: !!state.user.docsUploaded,
-    about: state.user.about || '', status: 'new', statusText: 'Neu',
-    date: new Date().toISOString().split('T')[0]
-  });
-  localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
+  state.applyJobId = jobId; state.applyStep = 1; state.applyMotivation = ''; state.applyMotivationFile = null; state.applyCVFile = null; state.applyCVMethod = null; state.applyMotivationMethod = null;
+  openApplyModal();
+}
+function openApplyModal() { var m = document.getElementById('apply-modal'); if (m) m.classList.add('open'); renderApplyStep(); }
+function closeApplyModal() { var m = document.getElementById('apply-modal'); if (m) m.classList.remove('open'); }
+function renderApplyStep() {
+  var body = document.getElementById('apply-modal-body'), footer = document.getElementById('apply-modal-footer'), si = document.getElementById('apply-step-indicator');
+  if (!body) return;
+  var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var jobTitle = job ? job.title : 'Job'; var company = job ? job.company : '';
+  if (si) { si.innerHTML = [1,2,3].map(function(s){ return '<div style="display:flex;align-items:center;gap:0.4rem"><div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;' + (s<state.applyStep?'background:#10b981;color:#fff':s===state.applyStep?'background:var(--primary);color:#fff':'background:var(--gray-200);color:var(--gray-500)') + '">' + (s<state.applyStep?'✓':s) + '</div><span style="font-size:0.75rem;color:' + (s===state.applyStep?'var(--primary)':'var(--gray-400)') + ';font-weight:' + (s===state.applyStep?'600':'400') + '">' + (s===1?'Anschreiben':s===2?'Lebenslauf':'Vorschau') + '</span></div>' + (s<3?'<div style="flex:1;height:2px;background:var(--gray-200);margin:0 0.25rem"><div style="height:100%;background:var(--primary);width:' + (s<state.applyStep?'100%':'0%') + '"></div></div>':''); }).join(''); }
+  if (state.applyStep === 1) {
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'generate\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(14,165,233,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'skip\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
+    if (state.applyMotivationMethod) renderMotivationDetail();
+    footer.innerHTML = '<button class="btn btn-outline" onclick="closeApplyModal()">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' onclick="applyNextStep()">Weiter</button>';
+  } else if (state.applyStep === 2) {
+    var hasCV = state.user && state.user.cvUploaded;
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Lebenslauf</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">Füge deinen Lebenslauf hinzu</p><div style="display:flex;flex-direction:column;gap:0.75rem">' + (hasCV ? '<div class="card apply-option ' + (state.applyCVMethod==='existing'?'apply-option-active':'') + '" onclick="selectCVMethod(\'existing\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Vorhandenen Lebenslauf verwenden</strong><div style="font-size:0.8rem;color:var(--gray-500)">' + (state.user.cvFileName||'Lebenslauf (Builder)') + '</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='existing'?'checked':'') + '></div></div>' : '') + '<div class="card apply-option ' + (state.applyCVMethod==='upload'?'apply-option-active':'') + '" onclick="selectCVMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder Bild</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyCVMethod==='create'?'apply-option-active':'') + '" onclick="selectCVMethod(\'create\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(249,115,22,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Jetzt einen erstellen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Mit unserem Lebenslauf-Builder</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='create'?'checked':'') + '></div></div></div><div id="cv-detail" style="margin-top:1rem"></div>';
+    if (state.applyCVMethod === 'upload') { document.getElementById('cv-detail').innerHTML = '<div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" onclick="document.getElementById(\'apply-cv-file\').click()"><input type="file" id="apply-cv-file" accept=".pdf,.doc,.docx,.jpg,.png" style="display:none" onchange="handleApplyCVFile(this)">' + (state.applyCVFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyCVFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um eine Datei hochzuladen</div>') + '</div>'; }
+    footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=1;renderApplyStep()">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' onclick="applyNextStep()">Weiter zur Vorschau</button>';
+  } else if (state.applyStep === 3) {
+    var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(14,165,233,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#059669;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
+    footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=2;renderApplyStep()">Zurück</button><button class="btn btn-primary" onclick="finalSubmitApplication()">Bewerbung absenden</button>';
+  }
+}
+function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate') renderMotivationDetail(); }
+function renderMotivationDetail() {
+  var d = document.getElementById('motivation-detail'); if (!d) return;
+  if (state.applyMotivationMethod === 'generate') {
+    var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var u = state.user || {};
+    var skills = u.skills ? u.skills.join(', ') : 'motiviert und zuverlässig';
+    var text = 'Sehr geehrte Damen und Herren,\n\nmit großem Interesse habe ich Ihre Stellenanzeige als ' + (job?job.title:'Mitarbeiter/in') + ' bei ' + (job?job.company:'Ihrem Unternehmen') + ' gesehen.\n\nIch bin ' + (u.name||'motiviert') + ' und bringe folgende Stärken mit: ' + skills + '. Ich bin zeitlich flexibel.\n\nÜber die Möglichkeit, mich bei Ihnen zu beweisen, würde ich mich sehr freuen.\n\nMit freundlichen Grüßen\n' + (u.name||'');
+    state.applyMotivation = text;
+    d.innerHTML = '<div style="margin-top:0.75rem"><label class="form-label" style="font-size:0.8rem">Motivationsschreiben (kannst du anpassen)</label><textarea class="form-textarea" rows="10" style="font-size:0.85rem" onchange="state.applyMotivation=this.value">' + text + '</textarea></div>';
+  } else if (state.applyMotivationMethod === 'upload') {
+    d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" onclick="document.getElementById(\'apply-motivation-file\').click()"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="handleApplyMotivationFile(this)">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
+  } else { d.innerHTML = ''; }
+  var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = false;
+}
+function handleApplyMotivationFile(input) { if (input.files && input.files[0]) { state.applyMotivationFile = { name: input.files[0].name }; renderMotivationDetail(); } }
+function handleApplyCVFile(input) { if (input.files && input.files[0]) { state.applyCVFile = { name: input.files[0].name }; renderApplyStep(); } }
+function selectCVMethod(m) { state.applyCVMethod = m; if (m === 'create') { closeApplyModal(); navigate('cv-builder'); showToast('Erstelle deinen Lebenslauf und bewirb dich danach erneut!', 'info'); return; } renderApplyStep(); }
+function applyNextStep() { state.applyStep++; renderApplyStep(); }
+function finalSubmitApplication() {
+  var apps = getUserApps();
+  if (!apps.includes(state.applyJobId)) {
+    apps.push(state.applyJobId);
+    saveUserApps(apps);
+    var job = JOBS.find(function(j){return j.id===state.applyJobId;});
+    var allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+    var initials = (state.user.name || '?').split(' ').map(function(n){return n[0];}).join('').toUpperCase();
+    allApps.push({
+      id: Date.now(), userId: state.user.id, jobId: state.applyJobId,
+      jobTitle: job?.title || 'Unbekannt', jobCompany: job?.company || '',
+      name: state.user.name, initials: initials, email: state.user.email,
+      city: state.user.address ? state.user.address.split(',').pop().trim() : '',
+      skills: state.user.skills || [], weeklyHours: state.user.weeklyHours || 0,
+      refs: state.user.refs || [], cvUploaded: !!state.user.cvUploaded, docsUploaded: !!state.user.docsUploaded,
+      about: state.user.about || '', status: 'new', statusText: 'Neu',
+      date: new Date().toISOString().split('T')[0]
+    });
+    localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
+  }
+  closeApplyModal();
   showToast('Bewerbung erfolgreich gesendet!');
   render();
 }
