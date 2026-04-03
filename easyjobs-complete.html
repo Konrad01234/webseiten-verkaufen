@@ -334,27 +334,23 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 /* Employer Ticker */
 .employer-ticker-wrap { position: relative; overflow: hidden; }
 .employer-ticker-fade-left, .employer-ticker-fade-right {
-  position: absolute; top: 0; bottom: 0; width: 80px; z-index: 2; pointer-events: none;
+  position: absolute; top: 0; bottom: 0; width: 100px; z-index: 2; pointer-events: none;
 }
 .employer-ticker-fade-left { left: 0; background: linear-gradient(90deg, #fff 0%, transparent 100%); }
 .employer-ticker-fade-right { right: 0; background: linear-gradient(270deg, #fff 0%, transparent 100%); }
 .employer-ticker { overflow: hidden; }
 .employer-ticker-track {
-  display: flex; gap: 1.5rem; animation: employerScroll 35s linear infinite; width: max-content;
+  display: flex; align-items: center; gap: 3rem; animation: employerScroll 40s linear infinite; width: max-content;
 }
 @keyframes employerScroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .employer-ticker-item {
-  display: flex; align-items: center; gap: 0.6rem;
-  background: var(--gray-50); border: 1px solid var(--gray-200); border-radius: 100px;
-  padding: 0.55rem 1.1rem 0.55rem 0.65rem; white-space: nowrap;
-  transition: all 0.2s; cursor: default; flex-shrink: 0;
+  flex-shrink: 0; white-space: nowrap; font-weight: 800; font-size: 1.4rem;
+  letter-spacing: -0.02em; opacity: 0.45; transition: opacity 0.3s; cursor: default;
 }
-.employer-ticker-item:hover { border-color: var(--primary); background: #f0f9ff; transform: scale(1.05); }
-.employer-ticker-logo { font-size: 1.3rem; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
-.employer-ticker-name { font-weight: 700; font-size: 0.88rem; color: var(--gray-800); }
+.employer-ticker-item:hover { opacity: 0.8; }
 
 /* Job Ticker */
 .job-ticker-container {
@@ -3082,39 +3078,42 @@ function renderLanding() {
         <div class="employer-ticker-fade-right"></div>
         <div class="employer-ticker">
           <div class="employer-ticker-track">
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">MediaMarkt</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">☕</span><span class="employer-ticker-name">Starbucks</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📦</span><span class="employer-ticker-name">Amazon</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍔</span><span class="employer-ticker-name">McDonald's</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛍️</span><span class="employer-ticker-name">H&M</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏪</span><span class="employer-ticker-name">REWE</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍕</span><span class="employer-ticker-name">Domino's</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">👟</span><span class="employer-ticker-name">Deichmann</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏋️</span><span class="employer-ticker-name">FitX</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">EDEKA</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📱</span><span class="employer-ticker-name">Vodafone</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🎬</span><span class="employer-ticker-name">CinemaxX</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏪</span><span class="employer-ticker-name">dm</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍦</span><span class="employer-ticker-name">Subway</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📚</span><span class="employer-ticker-name">Thalia</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">Lidl</span></div>
-            <!-- Duplikate für nahtlose Schleife -->
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">MediaMarkt</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">☕</span><span class="employer-ticker-name">Starbucks</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📦</span><span class="employer-ticker-name">Amazon</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍔</span><span class="employer-ticker-name">McDonald's</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛍️</span><span class="employer-ticker-name">H&M</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏪</span><span class="employer-ticker-name">REWE</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍕</span><span class="employer-ticker-name">Domino's</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">👟</span><span class="employer-ticker-name">Deichmann</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏋️</span><span class="employer-ticker-name">FitX</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">EDEKA</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📱</span><span class="employer-ticker-name">Vodafone</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🎬</span><span class="employer-ticker-name">CinemaxX</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🏪</span><span class="employer-ticker-name">dm</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🍦</span><span class="employer-ticker-name">Subway</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">📚</span><span class="employer-ticker-name">Thalia</span></div>
-            <div class="employer-ticker-item"><span class="employer-ticker-logo">🛒</span><span class="employer-ticker-name">Lidl</span></div>
+            <div class="employer-ticker-item" style="color:#df0000">MediaMarkt</div>
+            <div class="employer-ticker-item" style="color:#00704a">Starbucks</div>
+            <div class="employer-ticker-item" style="color:#ff9900;font-family:'Inter',sans-serif">amazon</div>
+            <div class="employer-ticker-item" style="color:#da291c">McDonald's</div>
+            <div class="employer-ticker-item" style="color:#e50010">H&amp;M</div>
+            <div class="employer-ticker-item" style="color:#cc071e">REWE</div>
+            <div class="employer-ticker-item" style="color:#006491">Domino's</div>
+            <div class="employer-ticker-item" style="color:#003d7a">Deichmann</div>
+            <div class="employer-ticker-item" style="color:#f26100;font-style:italic">FitX</div>
+            <div class="employer-ticker-item" style="color:#1a5ca3">EDEKA</div>
+            <div class="employer-ticker-item" style="color:#e60000">Vodafone</div>
+            <div class="employer-ticker-item" style="color:#e31e24">CinemaxX</div>
+            <div class="employer-ticker-item" style="color:#002d6a">dm</div>
+            <div class="employer-ticker-item" style="color:#00a650">SUBWAY</div>
+            <div class="employer-ticker-item" style="color:#009ee3">Thalia</div>
+            <div class="employer-ticker-item" style="color:#0050aa">Lidl</div>
+            <div class="employer-ticker-item" style="color:#1d1d1b">IKEA</div>
+            <div class="employer-ticker-item" style="color:#e3000b">Rossmann</div>
+            <div class="employer-ticker-item" style="color:#df0000">MediaMarkt</div>
+            <div class="employer-ticker-item" style="color:#00704a">Starbucks</div>
+            <div class="employer-ticker-item" style="color:#ff9900;font-family:'Inter',sans-serif">amazon</div>
+            <div class="employer-ticker-item" style="color:#da291c">McDonald's</div>
+            <div class="employer-ticker-item" style="color:#e50010">H&amp;M</div>
+            <div class="employer-ticker-item" style="color:#cc071e">REWE</div>
+            <div class="employer-ticker-item" style="color:#006491">Domino's</div>
+            <div class="employer-ticker-item" style="color:#003d7a">Deichmann</div>
+            <div class="employer-ticker-item" style="color:#f26100;font-style:italic">FitX</div>
+            <div class="employer-ticker-item" style="color:#1a5ca3">EDEKA</div>
+            <div class="employer-ticker-item" style="color:#e60000">Vodafone</div>
+            <div class="employer-ticker-item" style="color:#e31e24">CinemaxX</div>
+            <div class="employer-ticker-item" style="color:#002d6a">dm</div>
+            <div class="employer-ticker-item" style="color:#00a650">SUBWAY</div>
+            <div class="employer-ticker-item" style="color:#009ee3">Thalia</div>
+            <div class="employer-ticker-item" style="color:#0050aa">Lidl</div>
+            <div class="employer-ticker-item" style="color:#1d1d1b">IKEA</div>
+            <div class="employer-ticker-item" style="color:#e3000b">Rossmann</div>
           </div>
         </div>
       </div>
