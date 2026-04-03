@@ -1625,7 +1625,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 const JOBS = [
   {
     id: 1, title: 'Aushilfe im Einzelhandel', company: 'MediaMarkt', companyLogo: '🛒',
-    location: 'Musterstraße 12, 10115 Berlin', city: 'Berlin', distance: 3.2,
+    location: 'Hauptstraße 45, 41460 Neuss', city: 'Neuss', distance: 1.5,
     type: 'Minijob', hours: '10-15 Std/Woche', salary: '12,50€/Std',
     category: 'Einzelhandel', posted: '2026-03-22', expires: '2026-04-22',
     views: 342, clicks: 89, applications: 12, promoted: true,
@@ -1646,7 +1646,7 @@ const JOBS = [
   },
   {
     id: 2, title: 'Kellner/in im Café', company: 'Café Sonnenschein', companyLogo: '☕',
-    location: 'Hauptstraße 45, 10117 Berlin', city: 'München', distance: 1.8,
+    location: 'Dorfstraße 12, 40670 Meerbusch', city: 'Meerbusch', distance: 3.2,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '13€/Std + Trinkgeld',
     category: 'Gastronomie', posted: '2026-03-20', expires: '2026-04-20',
     views: 567, clicks: 134, applications: 23, promoted: false,
@@ -1659,14 +1659,14 @@ const JOBS = [
       <ul><li>Kostenloses Essen während der Schicht</li><li>Trinkgeld</li><li>Familiäre Atmosphäre</li></ul>`,
     images: ['Unser Café', 'Terrasse'],
     companyInfo: { employees: '12', founded: '2018', industry: 'Gastronomie', website: 'cafe-sonnenschein.de',
-      about: 'Gemütliches Café im Herzen Berlins mit hausgemachten Kuchen und Spezialitäten.' },
+      about: 'Gemütliches Café in Meerbusch mit hausgemachten Kuchen und Spezialitäten.' },
     reviews: [
       { author: 'Anna S.', rating: 5, text: 'Beste Chefin ever! Sehr verständnisvoll mit Schulzeiten.', date: '2026-03-01', active: true }
     ]
   },
   {
     id: 3, title: 'Lagerhelfer/in', company: 'Amazon Logistik', companyLogo: '📦',
-    location: 'Industriepark 5, 12345 Berlin', city: 'Hamburg', distance: 12.5,
+    location: 'Königsallee 80, 40212 Düsseldorf', city: 'Düsseldorf', distance: 8.5,
     type: 'Ferienjob', hours: '30-40 Std/Woche', salary: '14€/Std',
     category: 'Logistik', posted: '2026-03-18', expires: '2026-05-01',
     views: 892, clicks: 256, applications: 45, promoted: true,
@@ -1685,8 +1685,8 @@ const JOBS = [
     ]
   },
   {
-    id: 4, title: 'Social Media Praktikant/in', company: 'Creative Agency Berlin', companyLogo: '🎨',
-    location: 'Kreuzbergstraße 78, 10965 Berlin', city: 'Köln', distance: 4.1,
+    id: 4, title: 'Social Media Praktikant/in', company: 'Creative Agency Düsseldorf', companyLogo: '🎨',
+    location: 'Friedrichstraße 15, 40217 Düsseldorf', city: 'Düsseldorf', distance: 7.2,
     type: 'Praktikum', hours: '20 Std/Woche', salary: '11€/Std',
     category: 'Marketing', posted: '2026-03-23', expires: '2026-04-30',
     views: 234, clicks: 67, applications: 8, promoted: false,
@@ -1699,12 +1699,12 @@ const JOBS = [
       <ul><li>Kreatives Arbeitsumfeld</li><li>Homeoffice möglich</li><li>Portfolio-Aufbau</li></ul>`,
     images: ['Unser Büro', 'Team-Event'],
     companyInfo: { employees: '15', founded: '2020', industry: 'Digitalagentur', website: 'creative-agency.de',
-      about: 'Junge Digitalagentur spezialisiert auf Social Media Marketing.' },
+      about: 'Junge Digitalagentur in Düsseldorf spezialisiert auf Social Media Marketing.' },
     reviews: []
   },
   {
     id: 5, title: 'Nachhilfelehrer/in Mathe', company: 'Schülerhilfe', companyLogo: '📚',
-    location: 'Schulstraße 3, 10178 Berlin', city: 'Berlin', distance: 2.0,
+    location: 'Schulstraße 3, 41460 Neuss', city: 'Neuss', distance: 2.0,
     type: 'Minijob', hours: '5-10 Std/Woche', salary: '15€/Std',
     category: 'Bildung', posted: '2026-03-21', expires: '2026-05-15',
     views: 178, clicks: 45, applications: 6, promoted: false,
@@ -1724,8 +1724,8 @@ const JOBS = [
     ]
   },
   {
-    id: 6, title: 'Hundesitter/in', company: 'PawCare Berlin', companyLogo: '🐕',
-    location: 'Tiergartenstr. 22, 10785 Berlin', city: 'München', distance: 5.5,
+    id: 6, title: 'Hundesitter/in', company: 'PawCare Meerbusch', companyLogo: '🐕',
+    location: 'Am Stadtpark 8, 40670 Meerbusch', city: 'Meerbusch', distance: 4.1,
     type: 'Minijob', hours: '8-12 Std/Woche', salary: '12€/Std',
     category: 'Tierpflege', posted: '2026-03-19', expires: '2026-04-19',
     views: 445, clicks: 112, applications: 18, promoted: false,
@@ -1738,14 +1738,14 @@ const JOBS = [
       <ul><li>Arbeit an der frischen Luft</li><li>Flexible Einteilung</li><li>Tolle Hunde!</li></ul>`,
     images: ['Unsere Hunde', 'Im Park'],
     companyInfo: { employees: '8', founded: '2022', industry: 'Tierbetreuung', website: 'pawcare-berlin.de',
-      about: 'Premium Hundebetreuung in Berlin.' },
+      about: 'Premium Hundebetreuung in Meerbusch.' },
     reviews: [
       { author: 'Emma R.', rating: 5, text: 'Traumjob für Tierliebhaber!', date: '2026-03-05', active: true }
     ]
   },
   {
     id: 7, title: 'IT-Support Werkstudent/in', company: 'TechStart GmbH', companyLogo: '💻',
-    location: 'Digitale Allee 10, 10999 Berlin', city: 'Hamburg', distance: 6.3,
+    location: 'Breite Straße 20, 41460 Neuss', city: 'Neuss', distance: 3.0,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '16€/Std',
     category: 'IT', posted: '2026-03-24', expires: '2026-05-24',
     views: 123, clicks: 34, applications: 3, promoted: false,
@@ -1758,12 +1758,12 @@ const JOBS = [
       <ul><li>Moderne Ausstattung</li><li>Homeoffice teilweise möglich</li><li>Weiterbildungsmöglichkeiten</li></ul>`,
     images: ['Office', 'Team'],
     companyInfo: { employees: '35', founded: '2021', industry: 'IT-Dienstleistung', website: 'techstart.de',
-      about: 'Junges IT-Startup mit Fokus auf innovative Lösungen.' },
+      about: 'Junges IT-Startup in Neuss mit Fokus auf innovative Lösungen.' },
     reviews: []
   },
   {
-    id: 8, title: 'Promoter/in für Events', company: 'EventPro Berlin', companyLogo: '🎉',
-    location: 'Partystraße 1, 10243 Berlin', city: 'Köln', distance: 7.8,
+    id: 8, title: 'Promoter/in für Events', company: 'EventPro Düsseldorf', companyLogo: '🎉',
+    location: 'Altstadt 5, 40213 Düsseldorf', city: 'Düsseldorf', distance: 9.0,
     type: 'Minijob', hours: 'Flexibel / Eventbasiert', salary: '13€/Std',
     category: 'Events', posted: '2026-03-17', expires: '2026-04-17',
     views: 678, clicks: 189, applications: 31, promoted: false,
@@ -1776,7 +1776,7 @@ const JOBS = [
       <ul><li>Spannende Events</li><li>Nettes Team</li><li>Sofortige Auszahlung möglich</li></ul>`,
     images: ['Event-Impressionen'],
     companyInfo: { employees: '20', founded: '2019', industry: 'Eventmanagement', website: 'eventpro-berlin.de',
-      about: 'Berlins angesagteste Eventagentur.' },
+      about: 'Düsseldorfs angesagteste Eventagentur.' },
     reviews: [
       { author: 'Mia P.', rating: 4, text: 'Macht mega Spaß, lernt man viele Leute kennen!', date: '2026-02-28', active: true }
     ]
@@ -3333,11 +3333,6 @@ function renderJobSearch() {
         </div>
         <div style="display:flex;align-items:center;gap:1rem">
           <span class="search-results-count">${jobs.length} Jobs gefunden</span>
-          <select class="sort-select" onchange="state.filters.sort=this.value;render()">
-            <option value="date" ${state.filters.sort==='date'?'selected':''}>Neueste zuerst</option>
-            <option value="distance" ${state.filters.sort==='distance'?'selected':''}>Entfernung</option>
-            <option value="views" ${state.filters.sort==='views'?'selected':''}>Beliebtheit</option>
-          </select>
         </div>
       </div>
       <div class="search-layout">
