@@ -734,12 +734,15 @@ function sendAIMessage() {
   container.innerHTML += `<div class="ai-msg user">${escapeHtml(msg)}</div>`;
   input.value = '';
 
-  // Find matching response
+  // Find best matching response (most keyword hits wins)
   const lower = msg.toLowerCase();
-  let response = AI_RESPONSES['default'];
-  for (const [key, val] of Object.entries(AI_RESPONSES)) {
-    if (lower.includes(key)) { response = val; break; }
+  let bestMatch = null;
+  let bestScore = 0;
+  for (const entry of AI_RESPONSES) {
+    const score = entry.keywords.filter(kw => lower.includes(kw)).length;
+    if (score > bestScore) { bestScore = score; bestMatch = entry; }
   }
+  const response = bestMatch ? bestMatch.answer : AI_RESPONSES.defaultAnswer;
 
   setTimeout(() => {
     container.innerHTML += `<div class="ai-msg bot">${response.replace(/\n/g, '<br>')}</div>`;
