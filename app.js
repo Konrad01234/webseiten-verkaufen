@@ -1759,7 +1759,10 @@ function renderWorkerSidebar(active) {
         <a href="#" class="${active==='cv'?'active':''}" onclick="navigate('cv-builder')">Lebenslauf</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
-        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')">Support</a>
+      </nav>
+      <div class="divider" style="margin:0.25rem 0"></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')" style="font-size:0.82rem;opacity:0.6">Support</a>
       </nav>
     </div>`;
 }
@@ -2459,7 +2462,10 @@ function renderEmployerSidebar(active) {
         <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
-        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')">Support</a>
+      </nav>
+      <div class="divider" style="margin:0.25rem 0"></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')" style="font-size:0.82rem;opacity:0.6">Support</a>
       </nav>
     </div>`;
 }
