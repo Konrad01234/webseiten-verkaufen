@@ -1308,11 +1308,23 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .pv-missing-chip:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-light); }
 
 /* ===== ADMIN PANEL ===== */
-.admin-panel { max-width: 1000px; margin: 0 auto; }
+.admin-panel { max-width: 1200px; margin: 0 auto; }
+
+.admin-section {
+  margin-bottom: 2.5rem;
+}
+.admin-section-title {
+  font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--gray-400); margin-bottom: 1rem; padding-left: 0.25rem;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+.admin-section-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--gray-100);
+}
 
 .admin-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 1.75rem; flex-wrap: wrap; gap: 1rem;
+  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
   padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100);
 }
 .admin-header-icon {
@@ -1333,7 +1345,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* KPI Strip */
 .admin-kpi-strip {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.75rem;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 0;
 }
 .admin-kpi {
   background: #fff; border: 1px solid var(--gray-200); border-radius: 14px;
@@ -1366,7 +1378,14 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* 2-Column Row */
 .admin-row-2 {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 0;
+}
+/* 3-Column Row */
+.admin-row-3 {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 0;
+}
+@media (max-width: 992px) {
+  .admin-row-3 { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
   .admin-row-2 { grid-template-columns: 1fr; }
@@ -5709,63 +5728,73 @@ function renderAdminPanel() {
         </div>
       </div>
 
-      <div class="admin-kpi-strip">
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
-      </div>
-
-      <div class="admin-row-2">
-        <div class="card admin-chart-card"><div class="card-body">
-          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Aktuelle Besucher</h4>
-          <div class="admin-donut-row"><div class="admin-donut-wrap">${onlineDonut}</div><div class="admin-donut-legend">
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
-          </div></div>
-        </div></div>
-        <div class="card admin-chart-card"><div class="card-body">
-          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Registrierte Benutzer</h4>
-          <div class="admin-donut-row"><div class="admin-donut-wrap">${usersDonut}</div><div class="admin-donut-legend">
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
-          </div></div>
-        </div></div>
-      </div>
-
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
-          <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Besucher-Verlauf (7 Tage)</h4>
-          <div style="display:flex;gap:1.25rem">
-            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong>${data.visits.today}</strong></div>
-            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Woche</span><strong>${data.visits.thisWeek}</strong></div>
-            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong>${data.visits.thisMonth}</strong></div>
-          </div>
+      <!-- SEKTION: Kennzahlen -->
+      <div class="admin-section">
+        <div class="admin-section-title">Kennzahlen</div>
+        <div class="admin-kpi-strip">
+          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
+          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
+          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
+          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
         </div>
-        <div class="admin-bar-chart">${chartBars}</div>
-      </div></div>
+      </div>
 
-      <div class="admin-row-2">
-        <div class="card admin-chart-card"><div class="card-body">
-          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
-          <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
-            <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
+      <!-- SEKTION: Besucher & Benutzer -->
+      <div class="admin-section">
+        <div class="admin-section-title">Besucher & Benutzer</div>
+        <div class="admin-row-2" style="margin-bottom:1.5rem">
+          <div class="card admin-chart-card"><div class="card-body">
+            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Aktuelle Besucher</h4>
+            <div class="admin-donut-row"><div class="admin-donut-wrap">${onlineDonut}</div><div class="admin-donut-legend">
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
+            </div></div>
           </div></div>
-        </div></div>
+          <div class="card admin-chart-card"><div class="card-body">
+            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Registrierte Benutzer</h4>
+            <div class="admin-donut-row"><div class="admin-donut-wrap">${usersDonut}</div><div class="admin-donut-legend">
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
+            </div></div>
+          </div></div>
+        </div>
         <div class="card admin-chart-card"><div class="card-body">
-          <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Umsatz pro Produkt</h4>
-          <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
-            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
-            <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+            <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Besucher-Verlauf (7 Tage)</h4>
+            <div style="display:flex;gap:1.25rem">
+              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong>${data.visits.today}</strong></div>
+              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Woche</span><strong>${data.visits.thisWeek}</strong></div>
+              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong>${data.visits.thisMonth}</strong></div>
+            </div>
           </div>
-          ${revenueChart}
+          <div class="admin-bar-chart">${chartBars}</div>
         </div></div>
       </div>
 
-      <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-bottom:1.5rem"><div class="card-body">
+      <!-- SEKTION: Umsatz & Finanzen -->
+      <div class="admin-section">
+        <div class="admin-section-title">Umsatz & Finanzen</div>
+        <div class="admin-row-2" style="margin-bottom:1.5rem">
+          <div class="card admin-chart-card"><div class="card-body">
+            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
+            <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
+            </div></div>
+          </div></div>
+          <div class="card admin-chart-card"><div class="card-body">
+            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Umsatz pro Produkt</h4>
+            <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
+              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
+              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+            </div>
+            ${revenueChart}
+          </div></div>
+        </div>
+
+        <div class="card admin-chart-card" id="admin-revenue-timeline"><div class="card-body">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
           <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
           <div class="admin-rev-tabs">
@@ -5791,6 +5820,11 @@ function renderAdminPanel() {
           })()}
         </div>
       </div></div>
+      </div>
+
+      <!-- SEKTION: Verwaltung -->
+      <div class="admin-section">
+        <div class="admin-section-title">Verwaltung</div>
 
       <!-- Arbeitgeber Freischaltung -->
       ${(() => {
@@ -5877,10 +5911,12 @@ function renderAdminPanel() {
       </div></div>
 
       <!-- Support Tickets -->
-      <div class="admin-card" style="margin-bottom:2rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-          <h3 style="margin:0">Support-Tickets</h3>
-          <span style="font-size:0.8rem;color:var(--gray-500)">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
+      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
+        <div class="card-body" style="padding:0;overflow:hidden">
+        <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <h4 style="margin:0;font-size:0.95rem;font-weight:700">Support-Tickets</h4>
+          <span class="badge badge-warning" style="margin-left:auto">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
         </div>
         <div style="overflow-x:auto">
           <table style="width:100%;border-collapse:collapse">
@@ -5930,6 +5966,7 @@ function renderAdminPanel() {
             </tbody>
           </table>
         </div>
+      </div></div>
       </div>
 
       <!-- Footer -->
