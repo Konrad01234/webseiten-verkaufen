@@ -1310,21 +1310,35 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 /* ===== ADMIN PANEL ===== */
 .admin-panel { max-width: 1200px; margin: 0 auto; }
 
-.admin-section {
-  margin-bottom: 2.5rem;
+/* Admin Tab Navigation */
+.admin-tabs {
+  display: flex; gap: 0.25rem; background: var(--gray-100); border-radius: 12px; padding: 4px;
+  margin-bottom: 2rem; flex-wrap: wrap;
 }
-.admin-section-title {
-  font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
-  color: var(--gray-400); margin-bottom: 1rem; padding-left: 0.25rem;
-  display: flex; align-items: center; gap: 0.5rem;
+.admin-tab {
+  padding: 0.65rem 1.25rem; border-radius: 10px; border: none; background: transparent;
+  font-size: 0.88rem; font-weight: 600; color: var(--gray-500); cursor: pointer;
+  transition: all 0.2s; display: flex; align-items: center; gap: 0.5rem;
+  white-space: nowrap;
 }
-.admin-section-title::after {
-  content: ''; flex: 1; height: 1px; background: var(--gray-100);
+.admin-tab:hover { color: var(--gray-700); background: rgba(255,255,255,0.5); }
+.admin-tab.active {
+  background: #fff; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
+.admin-tab svg { width: 16px; height: 16px; }
+.admin-tab-badge {
+  font-size: 0.7rem; background: var(--danger); color: #fff; border-radius: 100px;
+  padding: 0.1rem 0.45rem; font-weight: 700; min-width: 18px; text-align: center;
+}
+
+/* Tab Content */
+.admin-tab-content { display: none; animation: adminFadeIn 0.3s ease; }
+.admin-tab-content.active { display: block; }
+@keyframes adminFadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .admin-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;
+  margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
   padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-100);
 }
 .admin-header-icon {
@@ -1345,7 +1359,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* KPI Strip */
 .admin-kpi-strip {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem;
 }
 .admin-kpi {
   background: #fff; border: 1px solid var(--gray-200); border-radius: 14px;
@@ -1378,7 +1392,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 /* 2-Column Row */
 .admin-row-2 {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 0;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;
 }
 /* 3-Column Row */
 .admin-row-3 {
@@ -1937,6 +1951,7 @@ let state = {
   newJob: {},
   dropdownOpen: false,
   adminLoggedIn: false,
+  adminTab: 'besucher',
   adminRevenuePeriod: 'daily'
 };
 
@@ -2058,6 +2073,15 @@ function getRevenueTimeline(period) {
     else { sortedKeys.forEach(key => { const [y, m] = key.split('-'); const d = new Date(parseInt(y), parseInt(m) - 1, 1); bars.push({ label: d.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: byMonth[key].total, count: byMonth[key].count }); }); }
   }
   return bars;
+}
+
+function switchAdminTab(tab) {
+  state.adminTab = tab;
+  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelector('.admin-tab[onclick*="' + tab + '"]').classList.add('active');
+  const content = document.getElementById('admin-tab-' + tab);
+  if (content) content.classList.add('active');
 }
 
 function switchRevenueView(period) {
@@ -5728,21 +5752,38 @@ function renderAdminPanel() {
         </div>
       </div>
 
-      <!-- SEKTION: Kennzahlen -->
-      <div class="admin-section">
-        <div class="admin-section-title">Kennzahlen</div>
-        <div class="admin-kpi-strip">
-          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
-          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
-          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
-          <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
-        </div>
+      <!-- KPI Strip - immer sichtbar -->
+      <div class="admin-kpi-strip">
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
       </div>
 
-      <!-- SEKTION: Besucher & Benutzer -->
-      <div class="admin-section">
-        <div class="admin-section-title">Besucher & Benutzer</div>
-        <div class="admin-row-2" style="margin-bottom:1.5rem">
+      <!-- Tab Navigation -->
+      <div class="admin-tabs">
+        <button class="admin-tab ${!state.adminTab || state.adminTab === 'besucher' ? 'active' : ''}" onclick="switchAdminTab('besucher')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+          Besucher
+        </button>
+        <button class="admin-tab ${state.adminTab === 'umsatz' ? 'active' : ''}" onclick="switchAdminTab('umsatz')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          Umsatz
+        </button>
+        <button class="admin-tab ${state.adminTab === 'benutzer' ? 'active' : ''}" onclick="switchAdminTab('benutzer')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Benutzer
+        </button>
+        <button class="admin-tab ${state.adminTab === 'support' ? 'active' : ''}" onclick="switchAdminTab('support')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Support
+          ${getSupportTickets().filter(t => t.status === 'open').length > 0 ? '<span class="admin-tab-badge">' + getSupportTickets().filter(t => t.status === 'open').length + '</span>' : ''}
+        </button>
+      </div>
+
+      <!-- TAB: Besucher -->
+      <div class="admin-tab-content ${!state.adminTab || state.adminTab === 'besucher' ? 'active' : ''}" id="admin-tab-besucher">
+        <div class="admin-row-2">
           <div class="card admin-chart-card"><div class="card-body">
             <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Aktuelle Besucher</h4>
             <div class="admin-donut-row"><div class="admin-donut-wrap">${onlineDonut}</div><div class="admin-donut-legend">
@@ -5759,7 +5800,7 @@ function renderAdminPanel() {
             </div></div>
           </div></div>
         </div>
-        <div class="card admin-chart-card"><div class="card-body">
+        <div class="card admin-chart-card" style="margin-top:1.5rem"><div class="card-body">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
             <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> Besucher-Verlauf (7 Tage)</h4>
             <div style="display:flex;gap:1.25rem">
@@ -5772,10 +5813,9 @@ function renderAdminPanel() {
         </div></div>
       </div>
 
-      <!-- SEKTION: Umsatz & Finanzen -->
-      <div class="admin-section">
-        <div class="admin-section-title">Umsatz & Finanzen</div>
-        <div class="admin-row-2" style="margin-bottom:1.5rem">
+      <!-- TAB: Umsatz -->
+      <div class="admin-tab-content ${state.adminTab === 'umsatz' ? 'active' : ''}" id="admin-tab-umsatz">
+        <div class="admin-row-2">
           <div class="card admin-chart-card"><div class="card-body">
             <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
             <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
@@ -5793,38 +5833,36 @@ function renderAdminPanel() {
             ${revenueChart}
           </div></div>
         </div>
-
-        <div class="card admin-chart-card" id="admin-revenue-timeline"><div class="card-body">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
-          <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
-          <div class="admin-rev-tabs">
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
-            <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
+        <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-top:1.5rem"><div class="card-body">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
+            <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
+            <div class="admin-rev-tabs">
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
+            </div>
           </div>
-        </div>
-        <div style="display:flex;gap:2rem;margin-bottom:1rem">
-          <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#059669">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
-          <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
-        </div>
-        <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
-          ${(() => {
-            const bars = getRevenueTimeline(state.adminRevenuePeriod);
-            const maxVal = Math.max(...bars.map(b => b.total), 1);
-            const gradients = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#059669','#047857','#065f46','#064e3b','#0d9488','#14b8a6','#2dd4bf','#5eead4','#99f6e4','#0f766e'];
-            return bars.map((b, i) => {
-              const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
-              return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#059669">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-            }).join('');
-          })()}
-        </div>
-      </div></div>
+          <div style="display:flex;gap:2rem;margin-bottom:1rem">
+            <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#059669">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
+            <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
+          </div>
+          <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
+            ${(() => {
+              const bars = getRevenueTimeline(state.adminRevenuePeriod);
+              const maxVal = Math.max(...bars.map(b => b.total), 1);
+              const gradients = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#059669','#047857','#065f46','#064e3b','#0d9488','#14b8a6','#2dd4bf','#5eead4','#99f6e4','#0f766e'];
+              return bars.map((b, i) => {
+                const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
+                return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#059669">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
+              }).join('');
+            })()}
+          </div>
+        </div></div>
       </div>
 
-      <!-- SEKTION: Verwaltung -->
-      <div class="admin-section">
-        <div class="admin-section-title">Verwaltung</div>
+      <!-- TAB: Benutzer -->
+      <div class="admin-tab-content ${state.adminTab === 'benutzer' ? 'active' : ''}" id="admin-tab-benutzer">
 
       <!-- Arbeitgeber Freischaltung -->
       ${(() => {
@@ -5909,8 +5947,10 @@ function renderAdminPanel() {
           </tbody>
         </table>
       </div></div>
+      </div>
 
-      <!-- Support Tickets -->
+      <!-- TAB: Support -->
+      <div class="admin-tab-content ${state.adminTab === 'support' ? 'active' : ''}" id="admin-tab-support">
       <div class="card admin-chart-card" style="margin-bottom:1.5rem">
         <div class="card-body" style="padding:0;overflow:hidden">
         <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
@@ -5967,7 +6007,7 @@ function renderAdminPanel() {
           </table>
         </div>
       </div></div>
-      </div>
+      </div><!-- /TAB: Support -->
 
       <!-- Footer -->
       <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-400);font-size:0.8rem">
