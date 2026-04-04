@@ -3451,17 +3451,17 @@ function adminLogout() {
 
 function renderAdminLogin() {
   return `
-    <div class="page-narrow" style="padding-top:4rem">
-      <div class="card" style="max-width:440px;margin:0 auto">
-        <div class="card-body" style="padding:2.5rem">
+    <div class="page-narrow admin-login-wrap">
+      <div class="card admin-login-card">
+        <div class="card-body admin-login-body">
           <div style="text-align:center;margin-bottom:2rem">
-            <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,var(--primary),#6366f1);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1rem">
+            <div class="admin-login-icon">
               <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             </div>
-            <h2 style="font-size:1.5rem;margin-bottom:0.25rem">Admin-Kontrollpanel</h2>
-            <p style="color:var(--gray-500);font-size:0.9rem">Nur autorisierte Administratoren</p>
+            <h2 class="admin-login-title">Admin-Kontrollpanel</h2>
+            <p class="admin-login-subtitle">Nur autorisierte Administratoren</p>
           </div>
-          <div id="admin-login-error" class="form-error" style="display:none;background:#fef2f2;color:#dc2626;padding:0.75rem 1rem;border-radius:8px;margin-bottom:1rem;font-size:0.85rem"></div>
+          <div id="admin-login-error" class="form-error admin-login-error"></div>
           <div class="form-group">
             <label class="form-label">Admin E-Mail</label>
             <input type="email" id="admin-email" class="form-input" placeholder="admin@email.de" onkeydown="if(event.key==='Enter')adminLogin()">
@@ -3471,8 +3471,8 @@ function renderAdminLogin() {
             <input type="password" id="admin-password" class="form-input" placeholder="Zugangs-Code eingeben" onkeydown="if(event.key==='Enter')adminLogin()">
           </div>
           <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
-          <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:var(--gray-400)">
-            <a href="#" onclick="navigate('landing')" style="color:var(--gray-400)">Zurück zur Startseite</a>
+          <p class="admin-login-back">
+            <a href="#" onclick="navigate('landing')">Zurück zur Startseite</a>
           </p>
         </div>
       </div>
@@ -3578,18 +3578,18 @@ function renderAdminPanel() {
     <div class="page-wide admin-panel" style="padding-top:2rem">
       <!-- Header -->
       <div class="admin-header">
-        <div style="display:flex;align-items:center;gap:1rem">
+        <div class="admin-header-left">
           <div class="admin-header-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <div>
-            <h1 style="font-size:1.5rem;margin:0">Admin-Kontrollpanel</h1>
-            <p style="color:var(--gray-500);font-size:0.85rem;margin:0">EasyJobs &mdash; Live-Dashboard</p>
+            <h1 class="admin-header-title">Admin-Kontrollpanel</h1>
+            <p class="admin-header-sub">EasyJobs &mdash; Live-Dashboard</p>
           </div>
         </div>
-        <div style="display:flex;gap:0.5rem;align-items:center">
+        <div class="admin-header-actions">
           <span class="admin-live-dot"></span>
-          <span style="font-size:0.8rem;color:var(--success);font-weight:600">Live</span>
+          <span class="admin-live-label">Live</span>
           <button class="btn btn-outline" onclick="navigate('admin-panel')" style="font-size:0.85rem;margin-left:0.75rem">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
             Aktualisieren
@@ -3674,17 +3674,17 @@ function renderAdminPanel() {
       </div>
 
       <!-- Besucher-Verlauf 7 Tage -->
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
+      <div class="card admin-chart-card admin-card-spaced">
         <div class="card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.5rem">
+          <div class="admin-flex-between">
             <h4 class="admin-chart-title" style="margin:0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
               Besucher-Verlauf (7 Tage)
             </h4>
-            <div style="display:flex;gap:1.25rem">
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong>${data.visits.today}</strong></div>
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Woche</span><strong>${data.visits.thisWeek}</strong></div>
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong>${data.visits.thisMonth}</strong></div>
+            <div class="admin-stat-row">
+              <div class="admin-mini-stat"><span>Heute</span><strong>${data.visits.today}</strong></div>
+              <div class="admin-mini-stat"><span>Woche</span><strong>${data.visits.thisWeek}</strong></div>
+              <div class="admin-mini-stat"><span>Monat</span><strong>${data.visits.thisMonth}</strong></div>
             </div>
           </div>
           <div class="admin-bar-chart">${chartBars}</div>
@@ -3715,9 +3715,9 @@ function renderAdminPanel() {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
               Umsatz pro Produkt
             </h4>
-            <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+            <div class="admin-stat-row" style="margin-bottom:1rem">
+              <div class="admin-mini-stat"><span>Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
+              <div class="admin-mini-stat"><span>Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
             </div>
             ${revenueChart}
           </div>
@@ -3725,9 +3725,9 @@ function renderAdminPanel() {
       </div>
 
       <!-- Umsatz-Zeitverlauf -->
-      <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-bottom:1.5rem">
+      <div class="card admin-chart-card admin-card-spaced" id="admin-revenue-timeline">
         <div class="card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
+          <div class="admin-flex-between">
             <h4 class="admin-chart-title" style="margin:0">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
               Umsatz-Verlauf
@@ -3739,9 +3739,9 @@ function renderAdminPanel() {
               <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
             </div>
           </div>
-          <div style="display:flex;gap:2rem;margin-bottom:1rem">
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#059669">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
+          <div class="admin-rev-summary">
+            <div><span class="admin-rev-sum-label">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" class="admin-rev-sum-value admin-rev-sum-green">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
+            <div><span class="admin-rev-sum-label">Bestellungen</span><div id="admin-revenue-period-count" class="admin-rev-sum-value" style="color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
           </div>
           <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
             ${(() => {
@@ -3766,43 +3766,43 @@ function renderAdminPanel() {
           return { ...u, ...full };
         });
         return pendingEmployers.length > 0 ? `
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
+      <div class="card admin-chart-card admin-card-spaced">
         <div class="card-body" style="padding:0;overflow:hidden">
-          <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+          <div class="admin-section-header">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Arbeitgeber Freischaltung</h4>
-            <span class="badge badge-warning" style="margin-left:auto">${pendingEmployers.filter(u => !u.approved).length} ausstehend</span>
+            <h4 class="admin-section-title">Arbeitgeber Freischaltung</h4>
+            <span class="badge badge-warning admin-section-badge">${pendingEmployers.filter(u => !u.approved).length} ausstehend</span>
           </div>
-          <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+          <table class="admin-table">
             <thead>
-              <tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Status</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
+              <tr>
+                <th>Unternehmen</th>
+                <th>E-Mail</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Aktion</th>
               </tr>
             </thead>
             <tbody>
               ${pendingEmployers.map(u => {
                 const freemail = isFreemailDomain(u.email);
                 return `
-                <tr class="admin-table-row" style="${freemail && !u.approved ? 'background:rgba(245,158,11,0.08)' : ''}">
-                  <td style="padding:0.65rem 1.25rem">
+                <tr class="admin-table-row${freemail && !u.approved ? ' admin-freemail-row' : ''}">
+                  <td>
                     <div>
                       <span style="font-weight:600">${u.company || u.name}</span>
                       <div style="font-size:0.75rem;color:var(--gray-500)">${u.name}</div>
                     </div>
                   </td>
-                  <td style="padding:0.65rem 1.25rem">
-                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${u.email}</span>
-                    ${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">&#9888; Freemail-Adresse</div>' : '<div style="font-size:0.7rem;color:var(--success)">&#10003; Geschäfts-E-Mail</div>'}
+                  <td>
+                    <span class="${freemail ? 'admin-freemail' : ''}" style="${!freemail ? 'color:var(--gray-500)' : ''}">${u.email}</span>
+                    ${freemail ? '<div class="admin-freemail-hint">&#9888; Freemail-Adresse</div>' : '<div class="admin-biz-email-hint">&#10003; Geschäfts-E-Mail</div>'}
                   </td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
+                  <td class="text-center">
                     ${u.approved
                       ? '<span class="badge badge-success">Freigeschaltet</span>'
                       : '<span class="badge badge-warning">Ausstehend</span>'}
                   </td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
+                  <td class="text-center">
                     ${u.approved
                       ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, false)">Sperren</button>`
                       : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, true)">Freischalten</button>`}
@@ -3816,19 +3816,19 @@ function renderAdminPanel() {
       })()}
 
       <!-- Benutzer-Liste -->
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
+      <div class="card admin-chart-card admin-card-spaced">
         <div class="card-body" style="padding:0;overflow:hidden">
-          <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+          <div class="admin-section-header">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Benutzer</h4>
-            <span class="badge badge-info" style="margin-left:auto">${data.users.total} gesamt</span>
+            <h4 class="admin-section-title">Alle Benutzer</h4>
+            <span class="badge badge-info admin-section-badge">${data.users.total} gesamt</span>
           </div>
-          <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+          <table class="admin-table">
             <thead>
-              <tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Benutzer</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Rolle</th>
+              <tr>
+                <th>Benutzer</th>
+                <th>E-Mail</th>
+                <th class="text-center">Rolle</th>
               </tr>
             </thead>
             <tbody>
@@ -3837,14 +3837,14 @@ function renderAdminPanel() {
                 const avatarColor = u.role === 'employer' ? '#f97316' : '#0ea5e9';
                 return `
                 <tr class="admin-table-row">
-                  <td style="padding:0.65rem 1.25rem">
-                    <div style="display:flex;align-items:center;gap:0.75rem">
-                      <div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${initials}</div>
+                  <td>
+                    <div class="admin-user-cell">
+                      <div class="admin-avatar" style="background:${avatarColor}">${initials}</div>
                       <span style="font-weight:600">${u.name || '-'}</span>
                     </div>
                   </td>
-                  <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${u.email}</td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
+                  <td style="color:var(--gray-500)">${u.email}</td>
+                  <td class="text-center">
                     <span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span>
                   </td>
                 </tr>`;
@@ -3855,65 +3855,68 @@ function renderAdminPanel() {
       </div>
 
       <!-- Support Tickets -->
-      <div class="admin-card" style="margin-bottom:2rem">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-          <h3 style="margin:0">Support-Tickets</h3>
-          <span style="font-size:0.8rem;color:var(--gray-500)">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
-        </div>
-        <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse">
-            <thead>
-              <tr style="background:var(--gray-50)">
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Status</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Benutzer</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Kategorie</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Betreff</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Datum</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.78rem;color:var(--gray-500);font-weight:600">Aktionen</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${getSupportTickets().slice().reverse().map(t => {
-                const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
-                const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
-                const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
-                return `
-                <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
-                  <td style="padding:0.65rem 1.25rem">
-                    <span style="font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:999px;background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
-                  </td>
-                  <td style="padding:0.65rem 1.25rem">
-                    <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
-                    <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
-                  </td>
-                  <td style="padding:0.65rem 1.25rem"><span class="badge">${catLabels[t.category] || t.category}</span></td>
-                  <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
-                  <td style="padding:0.65rem 1.25rem;font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
-                    <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
-                    <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
-                  </td>
+      <div class="card admin-chart-card" style="margin-bottom:2rem">
+        <div class="card-body" style="padding:0;overflow:hidden">
+          <div class="admin-section-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <h4 class="admin-section-title">Support-Tickets</h4>
+            <span class="badge badge-warning admin-section-badge">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Status</th>
+                  <th>Benutzer</th>
+                  <th>Kategorie</th>
+                  <th>Betreff</th>
+                  <th>Datum</th>
+                  <th class="text-center">Aktionen</th>
                 </tr>
-                <tr id="ticket-detail-${t.id}" style="display:none">
-                  <td colspan="6" style="padding:1rem 1.25rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200)">
-                    <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
-                    ${t.adminReply ? `<div style="padding:0.5rem 0.75rem;background:#fff;border-radius:6px;border-left:3px solid var(--primary);margin-bottom:0.75rem"><strong style="font-size:0.78rem;color:var(--primary)">Deine Antwort:</strong><p style="font-size:0.85rem;margin:0.25rem 0 0">${escapeHtml(t.adminReply)}</p></div>` : ''}
-                    <div style="display:flex;gap:0.5rem;align-items:flex-end">
-                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${t.adminReply || ''}</textarea>
-                      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
-                    </div>
-                  </td>
-                </tr>`;
-              }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                ${getSupportTickets().slice().reverse().map(t => {
+                  const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
+                  const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
+                  const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+                  return `
+                  <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
+                    <td>
+                      <span class="admin-ticket-status" style="background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
+                    </td>
+                    <td>
+                      <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
+                      <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                    </td>
+                    <td><span class="badge">${catLabels[t.category] || t.category}</span></td>
+                    <td style="font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
+                    <td style="font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
+                    <td class="text-center">
+                      <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
+                      <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
+                    </td>
+                  </tr>
+                  <tr id="ticket-detail-${t.id}" style="display:none">
+                    <td colspan="6" class="admin-ticket-detail">
+                      <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
+                      ${t.adminReply ? `<div class="admin-ticket-reply-box"><strong class="admin-ticket-reply-label">Deine Antwort:</strong><p class="admin-ticket-reply-text">${escapeHtml(t.adminReply)}</p></div>` : ''}
+                      <div class="admin-ticket-compose">
+                        <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben...">${t.adminReply || ''}</textarea>
+                        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
+                      </div>
+                    </td>
+                  </tr>`;
+                }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-400);font-size:0.8rem">
+      <div class="admin-footer">
         Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull;
-        <a href="#" onclick="navigate('admin-panel')" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
+        <a href="#" onclick="navigate('admin-panel')">Jetzt aktualisieren</a>
       </div>
     </div>`;
 }
