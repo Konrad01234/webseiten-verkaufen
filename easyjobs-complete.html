@@ -2111,6 +2111,7 @@ function render() {
     'messages': renderMessages,
     'chat': renderChatDetail,
     'reviews': renderReviews,
+    'support': renderSupport,
     'admin-login': renderAdminLogin,
     'admin-panel': renderAdminPanel
   };
@@ -3853,6 +3854,7 @@ function renderWorkerSidebar(active) {
         <a href="#" class="${active==='cv'?'active':''}" onclick="navigate('cv-builder')">Lebenslauf</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')">Support</a>
       </nav>
     </div>`;
 }
@@ -4608,6 +4610,7 @@ function renderEmployerSidebar(active) {
         <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')">Support</a>
       </nav>
     </div>`;
 }
@@ -5265,6 +5268,116 @@ function renderMessages() {
     </div>`;
 }
 
+// ===== SUPPORT SYSTEM =====
+function getSupportTickets() {
+  return JSON.parse(localStorage.getItem('jj_support_tickets') || '[]');
+}
+
+function saveSupportTickets(tickets) {
+  localStorage.setItem('jj_support_tickets', JSON.stringify(tickets));
+}
+
+function submitSupportTicket() {
+  const category = document.getElementById('support-category')?.value;
+  const subject = document.getElementById('support-subject')?.value?.trim();
+  const message = document.getElementById('support-message')?.value?.trim();
+  if (!category || !subject || !message) {
+    alert('Bitte fülle alle Felder aus.');
+    return;
+  }
+  const tickets = getSupportTickets();
+  const ticket = {
+    id: Date.now(),
+    userId: state.user.id,
+    userName: state.user.name || state.user.company || 'Unbekannt',
+    userEmail: state.user.email,
+    userRole: state.user.role,
+    category: category,
+    subject: subject,
+    message: message,
+    status: 'open',
+    createdAt: new Date().toISOString(),
+    adminReply: null
+  };
+  tickets.push(ticket);
+  saveSupportTickets(tickets);
+  alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
+  render();
+}
+
+function renderSupport() {
+  if (!state.user) return renderLogin();
+  const isEmployer = state.user.role === 'employer';
+  const tickets = getSupportTickets().filter(t => t.userId === state.user.id).reverse();
+
+  return `
+    <div class="page">
+      <div class="dashboard-layout">
+        ${isEmployer ? renderEmployerSidebar('support') : renderWorkerSidebar('support')}
+        <div class="dashboard-content">
+          <h2 style="margin-bottom:0.25rem">Support</h2>
+          <p style="color:var(--gray-500);margin-bottom:1.5rem">Hast du ein Problem? Schreib uns und wir kümmern uns darum.</p>
+
+          <!-- Neues Ticket -->
+          <div class="card" style="padding:1.5rem;margin-bottom:2rem">
+            <h3 style="margin-bottom:1rem">Neues Ticket erstellen</h3>
+            <div style="display:flex;flex-direction:column;gap:0.75rem">
+              <div>
+                <label class="form-label">Kategorie</label>
+                <select id="support-category" class="form-input">
+                  <option value="">Bitte wählen...</option>
+                  <option value="bug">Technisches Problem / Bug</option>
+                  <option value="account">Konto & Profil</option>
+                  <option value="payment">Zahlung & Abrechnung</option>
+                  <option value="job">Job & Bewerbung</option>
+                  <option value="user">Problem mit einem Nutzer</option>
+                  <option value="other">Sonstiges</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Betreff</label>
+                <input type="text" id="support-subject" class="form-input" placeholder="Kurze Beschreibung des Problems...">
+              </div>
+              <div>
+                <label class="form-label">Nachricht</label>
+                <textarea id="support-message" class="form-input" rows="5" placeholder="Beschreibe dein Problem so genau wie möglich..."></textarea>
+              </div>
+              <button class="btn btn-primary" onclick="submitSupportTicket()" style="align-self:flex-start">Ticket absenden</button>
+            </div>
+          </div>
+
+          <!-- Meine Tickets -->
+          <h3 style="margin-bottom:0.75rem">Meine Tickets</h3>
+          ${tickets.length === 0 ? `
+            <div class="card" style="padding:2rem;text-align:center;color:var(--gray-400)">
+              Du hast noch keine Support-Tickets erstellt.
+            </div>` : tickets.map(t => {
+            const categoryLabels = { bug: 'Technisches Problem', account: 'Konto & Profil', payment: 'Zahlung', job: 'Job & Bewerbung', user: 'Nutzer-Problem', other: 'Sonstiges' };
+            const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
+            const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+            return `
+              <div class="card" style="padding:1rem 1.25rem;margin-bottom:0.75rem">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
+                  <div>
+                    <strong style="font-size:0.95rem">${escapeHtml(t.subject)}</strong>
+                    <span style="margin-left:0.5rem;font-size:0.75rem;padding:0.15rem 0.5rem;border-radius:999px;background:var(--gray-100);color:var(--gray-500)">${categoryLabels[t.category] || t.category}</span>
+                  </div>
+                  <span style="font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:999px;background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
+                </div>
+                <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">${escapeHtml(t.message)}</p>
+                <div style="font-size:0.75rem;color:var(--gray-400)">${new Date(t.createdAt).toLocaleString('de-DE')}</div>
+                ${t.adminReply ? `
+                  <div style="margin-top:0.75rem;padding:0.75rem;background:var(--gray-50);border-radius:8px;border-left:3px solid var(--primary)">
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--primary);margin-bottom:0.25rem">Antwort vom Support</div>
+                    <p style="font-size:0.85rem;margin:0">${escapeHtml(t.adminReply)}</p>
+                  </div>` : ''}
+              </div>`;
+          }).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
 function renderReviews() {
   if (!state.user) return renderLogin();
   const isEmployer = state.user.role === 'employer';
@@ -5757,11 +5870,94 @@ function renderAdminPanel() {
         </table>
       </div></div>
 
+      <!-- Support Tickets -->
+      <div class="admin-card" style="margin-bottom:2rem">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <h3 style="margin:0">Support-Tickets</h3>
+          <span style="font-size:0.8rem;color:var(--gray-500)">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse">
+            <thead>
+              <tr style="background:var(--gray-50)">
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Status</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Benutzer</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Kategorie</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Betreff</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.78rem;color:var(--gray-500);font-weight:600">Datum</th>
+                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.78rem;color:var(--gray-500);font-weight:600">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${getSupportTickets().slice().reverse().map(t => {
+                const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
+                const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
+                const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+                return `
+                <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
+                  <td style="padding:0.65rem 1.25rem">
+                    <span style="font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:999px;background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
+                  </td>
+                  <td style="padding:0.65rem 1.25rem">
+                    <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
+                    <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                  </td>
+                  <td style="padding:0.65rem 1.25rem"><span class="badge">${catLabels[t.category] || t.category}</span></td>
+                  <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
+                  <td style="padding:0.65rem 1.25rem;font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
+                  <td style="padding:0.65rem 1.25rem;text-align:center">
+                    <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
+                    <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
+                  </td>
+                </tr>
+                <tr id="ticket-detail-${t.id}" style="display:none">
+                  <td colspan="6" style="padding:1rem 1.25rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200)">
+                    <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
+                    ${t.adminReply ? `<div style="padding:0.5rem 0.75rem;background:#fff;border-radius:6px;border-left:3px solid var(--primary);margin-bottom:0.75rem"><strong style="font-size:0.78rem;color:var(--primary)">Deine Antwort:</strong><p style="font-size:0.85rem;margin:0.25rem 0 0">${escapeHtml(t.adminReply)}</p></div>` : ''}
+                    <div style="display:flex;gap:0.5rem;align-items:flex-end">
+                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${t.adminReply || ''}</textarea>
+                      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
+                    </div>
+                  </td>
+                </tr>`;
+              }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer -->
       <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-400);font-size:0.8rem">
         Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull;
         <a href="#" onclick="navigate('admin-panel')" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
       </div>
     </div>`;
+}
+
+function adminUpdateTicketStatus(ticketId, newStatus) {
+  const tickets = getSupportTickets();
+  const ticket = tickets.find(t => t.id === ticketId);
+  if (ticket) {
+    ticket.status = newStatus;
+    saveSupportTickets(tickets);
+    render();
+  }
+}
+
+function adminReplyTicket(ticketId) {
+  const replyEl = document.getElementById('reply-' + ticketId);
+  if (!replyEl || !replyEl.value.trim()) {
+    alert('Bitte schreibe eine Antwort.');
+    return;
+  }
+  const tickets = getSupportTickets();
+  const ticket = tickets.find(t => t.id === ticketId);
+  if (ticket) {
+    ticket.adminReply = replyEl.value.trim();
+    if (ticket.status === 'open') ticket.status = 'in-progress';
+    saveSupportTickets(tickets);
+    render();
+  }
 }
 
 // ===== EVENT LISTENERS =====
