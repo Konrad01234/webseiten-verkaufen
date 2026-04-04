@@ -5896,7 +5896,7 @@ function renderAdminPanel() {
         const pendingEmployers = allUsers.filter(u => u.role === 'employer').map(u => {
           const full = JSON.parse(localStorage.getItem('jj_user_' + u.id) || '{}');
           return { ...u, ...full };
-        });
+        }).filter(u => !u.approved);
         return pendingEmployers.length > 0 ? `
       <div class="card admin-chart-card" style="margin-bottom:1.5rem">
         <div class="card-body" style="padding:0;overflow:hidden">
@@ -5997,7 +5997,7 @@ function renderAdminPanel() {
               </tr>
             </thead>
             <tbody>
-              ${getSupportTickets().slice().reverse().map(t => {
+              ${getSupportTickets().filter(t => t.status !== 'closed').slice().reverse().map(t => {
                 const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
                 const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
                 const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
