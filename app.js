@@ -11,7 +11,8 @@ let state = {
   newJob: {},
   dropdownOpen: false,
   adminLoggedIn: false,
-  adminRevenuePeriod: 'daily'
+  adminRevenuePeriod: 'daily',
+  adminTab: 'overview'
 };
 
 // Restore posted jobs on page load
@@ -3449,6 +3450,11 @@ function adminLogout() {
   navigate('landing');
 }
 
+function switchAdminTab(tab) {
+  state.adminTab = tab;
+  render();
+}
+
 function renderAdminLogin() {
   return `
     <div class="page-narrow admin-login-wrap">
@@ -3574,6 +3580,18 @@ function renderAdminPanel() {
     140, 18, formatEuroShort(data.revenue.total), 'Umsatz'
   );
 
+  // Support ticket counts for badge
+  const openTickets = getSupportTickets().filter(t => t.status === 'open').length;
+
+  // Employer data for badge
+  const allUsersForBadge = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  const pendingCount = allUsersForBadge.filter(u => u.role === 'employer').reduce((count, u) => {
+    const full = JSON.parse(localStorage.getItem('jj_user_' + u.id) || '{}');
+    return count + (!full.approved ? 1 : 0);
+  }, 0);
+
+  const activeTab = state.adminTab || 'overview';
+
   return `
     <div class="page-wide admin-panel">
       <!-- Header -->
@@ -3598,317 +3616,350 @@ function renderAdminPanel() {
         </div>
       </div>
 
-      <!-- KPI Top-Leiste -->
-      <div class="admin-kpi-strip">
-        <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(14,165,233,0.15);color:#38bdf8">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-          </div>
-          <div>
-            <div class="admin-kpi-value">${data.online.total}</div>
-            <div class="admin-kpi-label">Gerade Online</div>
-          </div>
-        </div>
-        <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
-          </div>
-          <div>
-            <div class="admin-kpi-value">${data.users.total}</div>
-            <div class="admin-kpi-label">Registriert</div>
-          </div>
-        </div>
-        <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(34,197,94,0.15);color:#4ade80">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          </div>
-          <div>
-            <div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div>
-            <div class="admin-kpi-label">Gesamt-Umsatz</div>
-          </div>
-        </div>
-        <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(249,115,22,0.15);color:#fb923c">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          </div>
-          <div>
-            <div class="admin-kpi-value">${data.purchases.total}</div>
-            <div class="admin-kpi-label">Bestellungen</div>
-          </div>
-        </div>
+      <!-- Tab-Navigation -->
+      <div class="admin-nav">
+        <button class="admin-nav-tab ${activeTab === 'overview' ? 'active' : ''}" onclick="switchAdminTab('overview')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Übersicht
+        </button>
+        <button class="admin-nav-tab ${activeTab === 'revenue' ? 'active' : ''}" onclick="switchAdminTab('revenue')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          Umsatz
+        </button>
+        <button class="admin-nav-tab ${activeTab === 'users' ? 'active' : ''}" onclick="switchAdminTab('users')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Benutzer
+          ${pendingCount > 0 ? '<span class="admin-nav-badge">' + pendingCount + '</span>' : ''}
+        </button>
+        <button class="admin-nav-tab ${activeTab === 'support' ? 'active' : ''}" onclick="switchAdminTab('support')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Support
+          ${openTickets > 0 ? '<span class="admin-nav-badge">' + openTickets + '</span>' : ''}
+        </button>
       </div>
 
-      <!-- Row: Online Besucher Donut + Registrierte Donut -->
-      <div class="admin-row-2">
-        <div class="card admin-chart-card">
-          <div class="card-body">
-            <h4 class="admin-chart-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-              Aktuelle Besucher
-            </h4>
-            <div class="admin-donut-row">
-              <div class="admin-donut-wrap">${onlineDonut}</div>
-              <div class="admin-donut-legend">
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
+      <!-- ===== TAB: Übersicht ===== -->
+      <div class="admin-tab-content ${activeTab === 'overview' ? 'active' : ''}" id="admin-tab-overview">
+        <!-- KPI Top-Leiste -->
+        <div class="admin-kpi-strip">
+          <div class="admin-kpi">
+            <div class="admin-kpi-icon" style="background:rgba(14,165,233,0.15);color:#38bdf8">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+            </div>
+            <div>
+              <div class="admin-kpi-value">${data.online.total}</div>
+              <div class="admin-kpi-label">Gerade Online</div>
+            </div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
+            </div>
+            <div>
+              <div class="admin-kpi-value">${data.users.total}</div>
+              <div class="admin-kpi-label">Registriert</div>
+            </div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-icon" style="background:rgba(34,197,94,0.15);color:#4ade80">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+            </div>
+            <div>
+              <div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div>
+              <div class="admin-kpi-label">Gesamt-Umsatz</div>
+            </div>
+          </div>
+          <div class="admin-kpi">
+            <div class="admin-kpi-icon" style="background:rgba(249,115,22,0.15);color:#fb923c">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="admin-kpi-value">${data.purchases.total}</div>
+              <div class="admin-kpi-label">Bestellungen</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row: Online Besucher Donut + Registrierte Donut -->
+        <div class="admin-row-2">
+          <div class="card admin-chart-card">
+            <div class="card-body">
+              <h4 class="admin-chart-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+                Aktuelle Besucher
+              </h4>
+              <div class="admin-donut-row">
+                <div class="admin-donut-wrap">${onlineDonut}</div>
+                <div class="admin-donut-legend">
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card admin-chart-card">
+            <div class="card-body">
+              <h4 class="admin-chart-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+                Registrierte Benutzer
+              </h4>
+              <div class="admin-donut-row">
+                <div class="admin-donut-wrap">${usersDonut}</div>
+                <div class="admin-donut-legend">
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Besucher-Verlauf 7 Tage -->
         <div class="card admin-chart-card">
           <div class="card-body">
-            <h4 class="admin-chart-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-              Registrierte Benutzer
-            </h4>
-            <div class="admin-donut-row">
-              <div class="admin-donut-wrap">${usersDonut}</div>
-              <div class="admin-donut-legend">
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
+            <div class="admin-flex-between">
+              <h4 class="admin-chart-title" style="margin:0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Besucher-Verlauf (7 Tage)
+              </h4>
+              <div class="admin-stat-row">
+                <div class="admin-mini-stat"><span>Heute</span><strong>${data.visits.today}</strong></div>
+                <div class="admin-mini-stat"><span>Woche</span><strong>${data.visits.thisWeek}</strong></div>
+                <div class="admin-mini-stat"><span>Monat</span><strong>${data.visits.thisMonth}</strong></div>
+              </div>
+            </div>
+            <div class="admin-bar-chart">${chartBars}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: Umsatz ===== -->
+      <div class="admin-tab-content ${activeTab === 'revenue' ? 'active' : ''}" id="admin-tab-revenue">
+        <!-- Row: Umsatz Donut + Umsatz-Balken -->
+        <div class="admin-row-2">
+          <div class="card admin-chart-card">
+            <div class="card-body">
+              <h4 class="admin-chart-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                Umsatz-Verteilung
+              </h4>
+              <div class="admin-donut-row">
+                <div class="admin-donut-wrap">${revenueDonut}</div>
+                <div class="admin-donut-legend">
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
+                  <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <!-- Besucher-Verlauf 7 Tage -->
-      <div class="card admin-chart-card admin-card-spaced">
-        <div class="card-body">
-          <div class="admin-flex-between">
-            <h4 class="admin-chart-title" style="margin:0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              Besucher-Verlauf (7 Tage)
-            </h4>
-            <div class="admin-stat-row">
-              <div class="admin-mini-stat"><span>Heute</span><strong>${data.visits.today}</strong></div>
-              <div class="admin-mini-stat"><span>Woche</span><strong>${data.visits.thisWeek}</strong></div>
-              <div class="admin-mini-stat"><span>Monat</span><strong>${data.visits.thisMonth}</strong></div>
+          <div class="card admin-chart-card">
+            <div class="card-body">
+              <h4 class="admin-chart-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+                Umsatz pro Produkt
+              </h4>
+              <div class="admin-stat-row" style="margin-bottom:1rem">
+                <div class="admin-mini-stat"><span>Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
+                <div class="admin-mini-stat"><span>Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+              </div>
+              ${revenueChart}
             </div>
           </div>
-          <div class="admin-bar-chart">${chartBars}</div>
         </div>
-      </div>
 
-      <!-- Row: Umsatz Donut + Umsatz-Balken -->
-      <div class="admin-row-2">
-        <div class="card admin-chart-card">
+        <!-- Umsatz-Zeitverlauf -->
+        <div class="card admin-chart-card" id="admin-revenue-timeline">
           <div class="card-body">
-            <h4 class="admin-chart-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-              Umsatz-Verteilung
-            </h4>
-            <div class="admin-donut-row">
-              <div class="admin-donut-wrap">${revenueDonut}</div>
-              <div class="admin-donut-legend">
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
-                <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
+            <div class="admin-flex-between">
+              <h4 class="admin-chart-title" style="margin:0">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                Umsatz-Verlauf
+              </h4>
+              <div class="admin-rev-tabs">
+                <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
+                <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
+                <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
+                <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="card admin-chart-card">
-          <div class="card-body">
-            <h4 class="admin-chart-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-              Umsatz pro Produkt
-            </h4>
-            <div class="admin-stat-row" style="margin-bottom:1rem">
-              <div class="admin-mini-stat"><span>Heute</span><strong style="color:#22c55e">${formatEuro(data.revenue.today)}</strong></div>
-              <div class="admin-mini-stat"><span>Monat</span><strong style="color:#22c55e">${formatEuro(data.revenue.thisMonth)}</strong></div>
+            <div class="admin-rev-summary">
+              <div><span class="admin-rev-sum-label">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" class="admin-rev-sum-value admin-rev-sum-green">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
+              <div><span class="admin-rev-sum-label">Bestellungen</span><div id="admin-revenue-period-count" class="admin-rev-sum-value" style="color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
             </div>
-            ${revenueChart}
-          </div>
-        </div>
-      </div>
-
-      <!-- Umsatz-Zeitverlauf -->
-      <div class="card admin-chart-card admin-card-spaced" id="admin-revenue-timeline">
-        <div class="card-body">
-          <div class="admin-flex-between">
-            <h4 class="admin-chart-title" style="margin:0">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-              Umsatz-Verlauf
-            </h4>
-            <div class="admin-rev-tabs">
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
+            <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
+              ${(() => {
+                const bars = getRevenueTimeline(state.adminRevenuePeriod);
+                const maxVal = Math.max(...bars.map(b => b.total), 1);
+                const gradients = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#059669','#047857','#065f46','#064e3b','#0d9488','#14b8a6','#2dd4bf','#5eead4','#99f6e4','#0f766e'];
+                return bars.map((b, i) => {
+                  const pct = Math.max((b.total / maxVal) * 100, 3);
+                  const color = gradients[i % gradients.length];
+                  return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#059669">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
+                }).join('');
+              })()}
             </div>
           </div>
-          <div class="admin-rev-summary">
-            <div><span class="admin-rev-sum-label">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" class="admin-rev-sum-value admin-rev-sum-green">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
-            <div><span class="admin-rev-sum-label">Bestellungen</span><div id="admin-revenue-period-count" class="admin-rev-sum-value" style="color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
-          </div>
-          <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
-            ${(() => {
-              const bars = getRevenueTimeline(state.adminRevenuePeriod);
-              const maxVal = Math.max(...bars.map(b => b.total), 1);
-              const gradients = ['#10b981','#34d399','#6ee7b7','#a7f3d0','#059669','#047857','#065f46','#064e3b','#0d9488','#14b8a6','#2dd4bf','#5eead4','#99f6e4','#0f766e'];
-              return bars.map((b, i) => {
-                const pct = Math.max((b.total / maxVal) * 100, 3);
-                const color = gradients[i % gradients.length];
-                return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#059669">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-              }).join('');
-            })()}
-          </div>
         </div>
       </div>
 
-      <!-- Arbeitgeber Freischaltung -->
-      ${(() => {
-        const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-        const pendingEmployers = allUsers.filter(u => u.role === 'employer').map(u => {
-          const full = JSON.parse(localStorage.getItem('jj_user_' + u.id) || '{}');
-          return { ...u, ...full };
-        });
-        return pendingEmployers.length > 0 ? `
-      <div class="card admin-chart-card admin-card-spaced">
-        <div class="card-body" style="padding:0;overflow:hidden">
-          <div class="admin-section-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-            <h4 class="admin-section-title">Arbeitgeber Freischaltung</h4>
-            <span class="badge badge-warning admin-section-badge">${pendingEmployers.filter(u => !u.approved).length} ausstehend</span>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Unternehmen</th>
-                <th>E-Mail</th>
-                <th class="text-center">Status</th>
-                <th class="text-center">Aktion</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${pendingEmployers.map(u => {
-                const freemail = isFreemailDomain(u.email);
-                return `
-                <tr class="admin-table-row${freemail && !u.approved ? ' admin-freemail-row' : ''}">
-                  <td>
-                    <div>
-                      <span style="font-weight:600">${u.company || u.name}</span>
-                      <div style="font-size:0.75rem;color:var(--gray-500)">${u.name}</div>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="${freemail ? 'admin-freemail' : ''}" style="${!freemail ? 'color:var(--gray-500)' : ''}">${u.email}</span>
-                    ${freemail ? '<div class="admin-freemail-hint">&#9888; Freemail-Adresse</div>' : '<div class="admin-biz-email-hint">&#10003; Geschäfts-E-Mail</div>'}
-                  </td>
-                  <td class="text-center">
-                    ${u.approved
-                      ? '<span class="badge badge-success">Freigeschaltet</span>'
-                      : '<span class="badge badge-warning">Ausstehend</span>'}
-                  </td>
-                  <td class="text-center">
-                    ${u.approved
-                      ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, false)">Sperren</button>`
-                      : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, true)">Freischalten</button>`}
-                  </td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>` : '';
-      })()}
-
-      <!-- Benutzer-Liste -->
-      <div class="card admin-chart-card admin-card-spaced">
-        <div class="card-body" style="padding:0;overflow:hidden">
-          <div class="admin-section-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-            <h4 class="admin-section-title">Alle Benutzer</h4>
-            <span class="badge badge-info admin-section-badge">${data.users.total} gesamt</span>
-          </div>
-          <table class="admin-table">
-            <thead>
-              <tr>
-                <th>Benutzer</th>
-                <th>E-Mail</th>
-                <th class="text-center">Rolle</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => {
-                const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-                const avatarColor = u.role === 'employer' ? '#f97316' : '#0ea5e9';
-                return `
-                <tr class="admin-table-row">
-                  <td>
-                    <div class="admin-user-cell">
-                      <div class="admin-avatar" style="background:${avatarColor}">${initials}</div>
-                      <span style="font-weight:600">${u.name || '-'}</span>
-                    </div>
-                  </td>
-                  <td style="color:var(--gray-500)">${u.email}</td>
-                  <td class="text-center">
-                    <span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span>
-                  </td>
-                </tr>`;
-              }).join('') || '<tr><td colspan="3" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Support Tickets -->
-      <div class="card admin-chart-card" style="margin-bottom:2rem">
-        <div class="card-body" style="padding:0;overflow:hidden">
-          <div class="admin-section-header">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-            <h4 class="admin-section-title">Support-Tickets</h4>
-            <span class="badge badge-warning admin-section-badge">${getSupportTickets().filter(t => t.status === 'open').length} offen</span>
-          </div>
-          <div style="overflow-x:auto">
+      <!-- ===== TAB: Benutzer ===== -->
+      <div class="admin-tab-content ${activeTab === 'users' ? 'active' : ''}" id="admin-tab-users">
+        <!-- Arbeitgeber Freischaltung -->
+        ${(() => {
+          const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+          const pendingEmployers = allUsers.filter(u => u.role === 'employer').map(u => {
+            const full = JSON.parse(localStorage.getItem('jj_user_' + u.id) || '{}');
+            return { ...u, ...full };
+          });
+          return pendingEmployers.length > 0 ? `
+        <div class="card admin-chart-card admin-card-spaced">
+          <div class="card-body" style="padding:0;overflow:hidden">
+            <div class="admin-section-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+              <h4 class="admin-section-title">Arbeitgeber Freischaltung</h4>
+              <span class="badge badge-warning admin-section-badge">${pendingEmployers.filter(u => !u.approved).length} ausstehend</span>
+            </div>
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Status</th>
-                  <th>Benutzer</th>
-                  <th>Kategorie</th>
-                  <th>Betreff</th>
-                  <th>Datum</th>
-                  <th class="text-center">Aktionen</th>
+                  <th>Unternehmen</th>
+                  <th>E-Mail</th>
+                  <th class="text-center">Status</th>
+                  <th class="text-center">Aktion</th>
                 </tr>
               </thead>
               <tbody>
-                ${getSupportTickets().slice().reverse().map(t => {
-                  const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
-                  const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
-                  const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+                ${pendingEmployers.map(u => {
+                  const freemail = isFreemailDomain(u.email);
                   return `
-                  <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
+                  <tr class="admin-table-row${freemail && !u.approved ? ' admin-freemail-row' : ''}">
                     <td>
-                      <span class="admin-ticket-status" style="background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
-                    </td>
-                    <td>
-                      <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
-                      <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
-                    </td>
-                    <td><span class="badge">${catLabels[t.category] || t.category}</span></td>
-                    <td style="font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
-                    <td style="font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
-                    <td class="text-center">
-                      <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
-                      <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
-                    </td>
-                  </tr>
-                  <tr id="ticket-detail-${t.id}" style="display:none">
-                    <td colspan="6" class="admin-ticket-detail">
-                      <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
-                      ${t.adminReply ? `<div class="admin-ticket-reply-box"><strong class="admin-ticket-reply-label">Deine Antwort:</strong><p class="admin-ticket-reply-text">${escapeHtml(t.adminReply)}</p></div>` : ''}
-                      <div class="admin-ticket-compose">
-                        <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben...">${t.adminReply || ''}</textarea>
-                        <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
+                      <div>
+                        <span style="font-weight:600">${u.company || u.name}</span>
+                        <div style="font-size:0.75rem;color:var(--gray-500)">${u.name}</div>
                       </div>
                     </td>
+                    <td>
+                      <span class="${freemail ? 'admin-freemail' : ''}" style="${!freemail ? 'color:var(--gray-500)' : ''}">${u.email}</span>
+                      ${freemail ? '<div class="admin-freemail-hint">&#9888; Freemail-Adresse</div>' : '<div class="admin-biz-email-hint">&#10003; Geschäfts-E-Mail</div>'}
+                    </td>
+                    <td class="text-center">
+                      ${u.approved
+                        ? '<span class="badge badge-success">Freigeschaltet</span>'
+                        : '<span class="badge badge-warning">Ausstehend</span>'}
+                    </td>
+                    <td class="text-center">
+                      ${u.approved
+                        ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, false)">Sperren</button>`
+                        : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, true)">Freischalten</button>`}
+                    </td>
                   </tr>`;
-                }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
+                }).join('')}
               </tbody>
             </table>
+          </div>
+        </div>` : '';
+        })()}
+
+        <!-- Benutzer-Liste -->
+        <div class="card admin-chart-card">
+          <div class="card-body" style="padding:0;overflow:hidden">
+            <div class="admin-section-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              <h4 class="admin-section-title">Alle Benutzer</h4>
+              <span class="badge badge-info admin-section-badge">${data.users.total} gesamt</span>
+            </div>
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Benutzer</th>
+                  <th>E-Mail</th>
+                  <th class="text-center">Rolle</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => {
+                  const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+                  const avatarColor = u.role === 'employer' ? '#f97316' : '#0ea5e9';
+                  return `
+                  <tr class="admin-table-row">
+                    <td>
+                      <div class="admin-user-cell">
+                        <div class="admin-avatar" style="background:${avatarColor}">${initials}</div>
+                        <span style="font-weight:600">${u.name || '-'}</span>
+                      </div>
+                    </td>
+                    <td style="color:var(--gray-500)">${u.email}</td>
+                    <td class="text-center">
+                      <span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span>
+                    </td>
+                  </tr>`;
+                }).join('') || '<tr><td colspan="3" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB: Support ===== -->
+      <div class="admin-tab-content ${activeTab === 'support' ? 'active' : ''}" id="admin-tab-support">
+        <div class="card admin-chart-card">
+          <div class="card-body" style="padding:0;overflow:hidden">
+            <div class="admin-section-header">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <h4 class="admin-section-title">Support-Tickets</h4>
+              <span class="badge badge-warning admin-section-badge">${openTickets} offen</span>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>Status</th>
+                    <th>Benutzer</th>
+                    <th>Kategorie</th>
+                    <th>Betreff</th>
+                    <th>Datum</th>
+                    <th class="text-center">Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${getSupportTickets().slice().reverse().map(t => {
+                    const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
+                    const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
+                    const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+                    return `
+                    <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
+                      <td>
+                        <span class="admin-ticket-status" style="background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
+                      </td>
+                      <td>
+                        <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
+                        <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                      </td>
+                      <td><span class="badge">${catLabels[t.category] || t.category}</span></td>
+                      <td style="font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
+                      <td style="font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
+                      <td class="text-center">
+                        <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
+                        <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
+                      </td>
+                    </tr>
+                    <tr id="ticket-detail-${t.id}" style="display:none">
+                      <td colspan="6" class="admin-ticket-detail">
+                        <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
+                        ${t.adminReply ? `<div class="admin-ticket-reply-box"><strong class="admin-ticket-reply-label">Deine Antwort:</strong><p class="admin-ticket-reply-text">${escapeHtml(t.adminReply)}</p></div>` : ''}
+                        <div class="admin-ticket-compose">
+                          <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben...">${t.adminReply || ''}</textarea>
+                          <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
+                        </div>
+                      </td>
+                    </tr>`;
+                  }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
