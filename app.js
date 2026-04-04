@@ -3498,12 +3498,12 @@ function buildDonutSVG(segments, size, strokeWidth, centerLabel, centerSub) {
   });
   // If no data, show gray ring
   if (total <= 1 && segments.every(s => s.value === 0)) {
-    paths.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#e5e7eb" stroke-width="${strokeWidth}"/>`);
+    paths.push(`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="${strokeWidth}"/>`);
   }
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
     ${paths.join('')}
-    <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2937">${centerLabel}</text>
-    <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-size="10" fill="#9ca3af" font-weight="500">${centerSub}</text>
+    <text x="${cx}" y="${cy - 6}" text-anchor="middle" font-size="22" font-weight="800" fill="#f1f5f9">${centerLabel}</text>
+    <text x="${cx}" y="${cy + 14}" text-anchor="middle" font-size="10" fill="#64748b" font-weight="500">${centerSub}</text>
   </svg>`;
 }
 
@@ -3575,7 +3575,7 @@ function renderAdminPanel() {
   );
 
   return `
-    <div class="page-wide admin-panel" style="padding-top:2rem">
+    <div class="page-wide admin-panel">
       <!-- Header -->
       <div class="admin-header">
         <div class="admin-header-left">
@@ -3601,7 +3601,7 @@ function renderAdminPanel() {
       <!-- KPI Top-Leiste -->
       <div class="admin-kpi-strip">
         <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9">
+          <div class="admin-kpi-icon" style="background:rgba(14,165,233,0.15);color:#38bdf8">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           </div>
           <div>
@@ -3610,7 +3610,7 @@ function renderAdminPanel() {
           </div>
         </div>
         <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1">
+          <div class="admin-kpi-icon" style="background:rgba(99,102,241,0.15);color:#818cf8">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg>
           </div>
           <div>
@@ -3619,7 +3619,7 @@ function renderAdminPanel() {
           </div>
         </div>
         <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e">
+          <div class="admin-kpi-icon" style="background:rgba(34,197,94,0.15);color:#4ade80">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
           </div>
           <div>
@@ -3628,7 +3628,7 @@ function renderAdminPanel() {
           </div>
         </div>
         <div class="admin-kpi">
-          <div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316">
+          <div class="admin-kpi-icon" style="background:rgba(249,115,22,0.15);color:#fb923c">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           </div>
           <div>
