@@ -2990,7 +2990,7 @@ function sendChatMessage() {
   if (chat) {
     const now = new Date();
     const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const msgText = input.value;
+    const msgText = censorContactInfo(input.value);
     chat.messages.push({ text: msgText, sent: true, time: time });
     chat.lastMessage = msgText;
     chat.time = time;
@@ -3066,6 +3066,14 @@ function escapeHtml(text) {
   const d = document.createElement('div');
   d.textContent = text;
   return d.innerHTML;
+}
+
+function censorContactInfo(text) {
+  // E-Mail-Adressen schwärzen
+  text = text.replace(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g, '●●●●●●');
+  // Telefonnummern schwärzen (verschiedene Formate: +49..., 0170..., 0170/..., 0170-..., etc.)
+  text = text.replace(/(\+?\d[\d\s\/\-\(\)]{6,}\d)/g, '●●●●●●');
+  return text;
 }
 
 function formatDate(dateStr) {
