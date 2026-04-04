@@ -121,14 +121,29 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .user-dropdown .divider { height: 1px; background: var(--gray-200); }
 
 /* ===== FOOTER ===== */
-#footer { background: var(--gray-900); color: var(--gray-400); padding: 3rem 0 1.5rem; margin-top: 4rem; }
+#footer { background: var(--gray-900); color: var(--gray-400); padding: 3.5rem 0 0; margin-top: 4rem; }
 .footer-container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 2rem; margin-bottom: 2rem; }
-.footer-col h4 { color: #fff; margin-bottom: 1rem; font-size: 0.95rem; }
-.footer-col a { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; transition: color 0.2s; }
-.footer-col a:hover { color: var(--primary-light); }
-.footer-desc { font-size: 0.875rem; line-height: 1.6; }
-.footer-bottom { border-top: 1px solid var(--gray-700); padding-top: 1.5rem; text-align: center; font-size: 0.8rem; }
+.footer-grid { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 2.5rem; margin-bottom: 2.5rem; }
+.footer-col h4 { color: #fff; margin-bottom: 1rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+.footer-col a { display: block; margin-bottom: 0.6rem; font-size: 0.85rem; transition: color 0.2s; color: var(--gray-400); text-decoration: none; }
+.footer-col a:hover { color: #fff; }
+.footer-desc { font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.25rem; }
+.footer-social { display: flex; gap: 0.75rem; }
+.footer-social a {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 8px; background: rgba(255,255,255,0.08);
+  transition: all 0.2s; margin: 0;
+}
+.footer-social a:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+.footer-social a svg { width: 16px; height: 16px; }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08); padding: 1.25rem 0;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+  font-size: 0.78rem;
+}
+.footer-bottom-links { display: flex; gap: 1.5rem; }
+.footer-bottom-links a { color: var(--gray-500); text-decoration: none; font-size: 0.78rem; transition: color 0.2s; }
+.footer-bottom-links a:hover { color: var(--gray-300); }
 
 /* ===== PAGE CONTAINER ===== */
 .page { max-width: 1280px; margin: 0 auto; padding: 2rem 1.5rem; min-height: 60vh; }
@@ -970,6 +985,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .mobile-menu-btn { display: block; }
   .mobile-nav-btns { display: flex; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
   .form-row { grid-template-columns: 1fr; }
   .wizard-steps { flex-wrap: wrap; }
   .chat-widget { width: calc(100% - 2rem); right: 1rem; }
@@ -1539,30 +1555,40 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
         <div class="footer-col">
           <div class="logo" style="margin-bottom:1rem">
             <span class="logo-icon">JJ</span>
-            <span class="logo-text">EasyJobs</span>
+            <span class="logo-text" style="color:#fff">EasyJobs</span>
           </div>
           <p class="footer-desc">Die Plattform, die junge Talente mit den besten Arbeitgebern verbindet.</p>
+          <div class="footer-social">
+            <a href="#" title="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg></a>
+            <a href="#" title="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5"/></svg></a>
+            <a href="#" title="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+          </div>
         </div>
         <div class="footer-col">
-          <h4>Für Arbeitnehmer</h4>
+          <h4>Arbeitnehmer</h4>
           <a href="#" onclick="navigate('jobs')">Jobs finden</a>
           <a href="#" onclick="navigate('register')">Profil erstellen</a>
           <a href="#" onclick="navigate('cv-builder')">Lebenslauf Builder</a>
         </div>
         <div class="footer-col">
-          <h4>Für Arbeitgeber</h4>
-          <a href="#" onclick="navigate('employer-landing')">Stellenanzeige schalten</a>
+          <h4>Arbeitgeber</h4>
+          <a href="#" onclick="navigate('employer-landing')">Anzeige schalten</a>
           <a href="#" onclick="navigate('register')">Konto erstellen</a>
         </div>
         <div class="footer-col">
-          <h4>Rechtliches</h4>
-          <a href="#">Impressum</a>
-          <a href="#">Datenschutz</a>
-          <a href="#">AGB</a>
+          <h4>Unternehmen</h4>
+          <a href="#">Kontakt</a>
+          <a href="#" onclick="navigate('support')">Hilfe & Support</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>&copy; 2026 EasyJobs. Alle Rechte vorbehalten. <a href="#" onclick="navigate('admin-login')" style="color:var(--gray-500);text-decoration:none;font-size:0.75rem;opacity:0.5">&bull; Admin</a></p>
+        <span>&copy; 2026 EasyJobs. Alle Rechte vorbehalten.</span>
+        <div class="footer-bottom-links">
+          <a href="#">Impressum</a>
+          <a href="#">Datenschutz</a>
+          <a href="#">AGB</a>
+          <a href="#" onclick="navigate('admin-login')" style="opacity:0.4">Admin</a>
+        </div>
       </div>
     </div>
   </footer>
