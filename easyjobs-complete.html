@@ -344,7 +344,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .close-btn:hover { color: var(--gray-600); }
 .apply-option { border: 1px solid var(--gray-200); }
 .apply-option:hover { border-color: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
-.apply-option-active { border-color: var(--primary) !important; background: rgba(14,165,233,0.03) !important; box-shadow: 0 0 0 1px var(--primary); }
+.apply-option-active { border-color: var(--primary) !important; background: rgba(34,197,94,0.03) !important; box-shadow: 0 0 0 1px var(--primary); }
 
 /* Employer Ticker */
 .employer-ticker-wrap { position: relative; overflow: hidden; }
@@ -395,7 +395,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.85rem;
   transition: all 0.2s; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
-.job-ticker-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(14,165,233,0.12); transform: scale(1.02); }
+.job-ticker-card:hover { border-color: var(--primary); box-shadow: 0 4px 12px rgba(34,197,94,0.12); transform: scale(1.02); }
 .job-ticker-emoji { font-size: 1.6rem; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--gray-50); border-radius: 10px; }
 .job-ticker-info { flex: 1; min-width: 0; }
 .job-ticker-title { font-weight: 700; font-size: 0.85rem; color: var(--gray-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -451,7 +451,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
 .feature-card {
   background: linear-gradient(145deg, #d1fae5, #f0fdf4); border-radius: var(--radius-lg); padding: 2rem;
-  border: 1px solid #bae6fd; transition: all 0.3s; text-align: center;
+  border: 1px solid #bbf7d0; transition: all 0.3s; text-align: center;
 }
 .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
 .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; background: var(--primary-light); border-radius: 12px; color: var(--primary); }
@@ -905,7 +905,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .review-restriction {
   background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3);
   border-radius: var(--radius-sm); padding: 0.75rem 1rem;
-  font-size: 0.85rem; color: #075985; margin-bottom: 1rem;
+  font-size: 0.85rem; color: #166534; margin-bottom: 1rem;
 }
 
 /* ===== CV BUILDER ===== */
@@ -1059,13 +1059,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .mobile-nav-btns { display: none; align-items: center; gap: 0.25rem; }
 
 /* ===== EMPLOYER DASHBOARD ===== */
-.employer-page .dashboard-sidebar { border-right-color: #e0f2fe; }
-.employer-page .sidebar-nav a.active { background: #e0f2fe; color: #075985; }
+.employer-page .dashboard-sidebar { border-right-color: #dcfce7; }
+.employer-page .sidebar-nav a.active { background: #dcfce7; color: #166534; }
 .employer-page .sidebar-nav a:hover { background: #f0f9ff; }
 .employer-dash-header {
   display: flex; justify-content: space-between; align-items: center;
   margin-bottom: 1.75rem; padding-bottom: 1.25rem;
-  border-bottom: 2px solid #bae6fd;
+  border-bottom: 2px solid #bbf7d0;
 }
 .btn-employer {
   background: var(--success); color: #fff; border: none;
@@ -1073,9 +1073,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   font-weight: 600; font-size: 0.9rem; cursor: pointer;
   transition: background 0.15s;
 }
-.btn-employer:hover { background: #075985; }
+.btn-employer:hover { background: #166534; }
 .employer-stat .stat-icon { color: var(--success); }
-.employer-stat .stat-value { color: #075985; }
+.employer-stat .stat-value { color: #166534; }
 
 /* ===== JOB STAT ROW ===== */
 .job-stat-row {
@@ -2351,7 +2351,7 @@ function renderApplyStep() {
   var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var jobTitle = job ? job.title : 'Job'; var company = job ? job.company : '';
   if (si) { si.innerHTML = [1,2,3].map(function(s){ return '<div style="display:flex;align-items:center;gap:0.4rem"><div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;' + (s<state.applyStep?'background:#10b981;color:#fff':s===state.applyStep?'background:var(--primary);color:#fff':'background:var(--gray-200);color:var(--gray-500)') + '">' + (s<state.applyStep?'✓':s) + '</div><span style="font-size:0.75rem;color:' + (s===state.applyStep?'var(--primary)':'var(--gray-400)') + ';font-weight:' + (s===state.applyStep?'600':'400') + '">' + (s===1?'Anschreiben':s===2?'Lebenslauf':'Vorschau') + '</span></div>' + (s<3?'<div style="flex:1;height:2px;background:var(--gray-200);margin:0 0.25rem"><div style="height:100%;background:var(--primary);width:' + (s<state.applyStep?'100%':'0%') + '"></div></div>':''); }).join(''); }
   if (state.applyStep === 1) {
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'generate\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(14,165,233,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'skip\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'generate\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(34,197,94,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'skip\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
     if (state.applyMotivationMethod) renderMotivationDetail();
     footer.innerHTML = '<button class="btn btn-outline" onclick="closeApplyModal()">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' onclick="applyNextStep()">Weiter</button>';
   } else if (state.applyStep === 2) {
@@ -2361,7 +2361,7 @@ function renderApplyStep() {
     footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=1;renderApplyStep()">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' onclick="applyNextStep()">Weiter zur Vorschau</button>';
   } else if (state.applyStep === 3) {
     var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(14,165,233,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#059669;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(34,197,94,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#059669;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
     footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=2;renderApplyStep()">Zurück</button><button class="btn btn-primary" onclick="finalSubmitApplication()">Bewerbung absenden</button>';
   }
 }
@@ -2513,7 +2513,7 @@ function openApplicationDoc(appId, docType) {
   var win = window.open('', '_blank');
   var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (docType === 'motivation' ? 'Motivationsschreiben' : 'Lebenslauf') + ' - ' + app.name + '</title>';
   html += '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">';
-  html += '<style>body{font-family:Inter,Arial,sans-serif;margin:0;padding:2rem;background:#f3f4f6;color:#1a1a2e;} .doc{max-width:700px;margin:0 auto;background:#fff;padding:3rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);border-radius:4px;min-height:800px;} h1{font-size:1.5rem;margin:0 0 0.5rem;} .meta{color:#666;font-size:0.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #eee;} .section-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;font-weight:700;margin:1.5rem 0 0.5rem;padding-bottom:0.3rem;border-bottom:1px solid #e5e7eb;} .content{font-size:0.95rem;line-height:1.7;white-space:pre-line;} .info-row{display:flex;gap:0.5rem;font-size:0.9rem;margin-bottom:0.3rem;} .info-label{color:#666;min-width:120px;} .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;} .skill-tag{padding:0.25rem 0.7rem;background:#e0f2fe;color:#0369a1;border-radius:100px;font-size:0.8rem;font-weight:600;} @media print{body{padding:0;background:#fff;} .doc{box-shadow:none;padding:2rem;}}</style></head><body>';
+  html += '<style>body{font-family:Inter,Arial,sans-serif;margin:0;padding:2rem;background:#f3f4f6;color:#1a1a2e;} .doc{max-width:700px;margin:0 auto;background:#fff;padding:3rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);border-radius:4px;min-height:800px;} h1{font-size:1.5rem;margin:0 0 0.5rem;} .meta{color:#666;font-size:0.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #eee;} .section-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;font-weight:700;margin:1.5rem 0 0.5rem;padding-bottom:0.3rem;border-bottom:1px solid #e5e7eb;} .content{font-size:0.95rem;line-height:1.7;white-space:pre-line;} .info-row{display:flex;gap:0.5rem;font-size:0.9rem;margin-bottom:0.3rem;} .info-label{color:#666;min-width:120px;} .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;} .skill-tag{padding:0.25rem 0.7rem;background:#dcfce7;color:#15803d;border-radius:100px;font-size:0.8rem;font-weight:600;} @media print{body{padding:0;background:#fff;} .doc{box-shadow:none;padding:2rem;}}</style></head><body>';
 
   if (docType === 'motivation') {
     html += '<div class="doc">';
@@ -2808,9 +2808,9 @@ function buildCVHTML(data, template) {
   } else {
     // KREATIV: Blauer Gradient Header + rechte Sidebar (passend zur Preview)
     const photoCreative = data.photo ? `<img src="${data.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.4)">` : '';
-    const skillPills = data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.7rem;background:#e0f2fe;color:#0369a1;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('');
+    const skillPills = data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.7rem;background:#dcfce7;color:#15803d;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('');
     return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;max-width:750px;margin:0 auto;background:#fff;box-shadow:0 2px 20px rgba(0,0,0,0.08);min-height:1000px">
-      <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:2rem 2.5rem;display:flex;align-items:center;gap:1.5rem;color:#fff">
+      <div style="background:linear-gradient(135deg,#22c55e,#4ade80);padding:2rem 2.5rem;display:flex;align-items:center;gap:1.5rem;color:#fff">
         ${photoCreative}
         <div style="flex:1">
           ${name ? '<h1 style="margin:0;font-size:1.6rem;font-weight:800">' + name + '</h1>' : ''}
@@ -2819,12 +2819,12 @@ function buildCVHTML(data, template) {
       </div>
       <div style="display:flex">
         <div style="flex:1;padding:2rem 2.5rem">
-          ${hasSchule ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#0ea5e9;display:inline-block"></span>Ausbildung</h3><div style="font-weight:600;font-size:0.95rem;color:#1f2937">' + data.schule + '</div>' + (data.schulZeitraum ? '<div style="font-size:0.82rem;color:#64748b;margin-top:0.15rem">' + data.schulZeitraum + '</div>' : '') + '</div>' : ''}
-          ${hasErf ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#0ea5e9;display:inline-block"></span>Berufserfahrung</h3><div style="font-size:0.9rem;color:#374151;white-space:pre-line">' + data.erfahrungen + '</div></div>' : ''}
+          ${hasSchule ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#22c55e;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#22c55e;display:inline-block"></span>Ausbildung</h3><div style="font-weight:600;font-size:0.95rem;color:#1f2937">' + data.schule + '</div>' + (data.schulZeitraum ? '<div style="font-size:0.82rem;color:#64748b;margin-top:0.15rem">' + data.schulZeitraum + '</div>' : '') + '</div>' : ''}
+          ${hasErf ? '<div style="margin-bottom:1.75rem"><h3 style="font-size:0.78rem;text-transform:uppercase;letter-spacing:0.1em;color:#22c55e;margin-bottom:0.6rem;font-weight:700;display:flex;align-items:center;gap:0.5rem"><span style="width:20px;height:2px;background:#22c55e;display:inline-block"></span>Berufserfahrung</h3><div style="font-size:0.9rem;color:#374151;white-space:pre-line">' + data.erfahrungen + '</div></div>' : ''}
         </div>
         <div style="width:220px;padding:2rem 1.5rem;background:#f8fafc;border-left:1px solid #e2e8f0">
-          ${hasSkills ? '<div style="margin-bottom:1.5rem"><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.5rem;font-weight:700">Kenntnisse</h4><div style="display:flex;flex-wrap:wrap;gap:0.3rem">' + skillPills + '</div></div>' : ''}
-          ${hasHobbys ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#0ea5e9;margin-bottom:0.5rem;font-weight:700">Interessen</h4><div style="font-size:0.85rem;color:#475569;white-space:pre-line">' + data.hobbys + '</div></div>' : ''}
+          ${hasSkills ? '<div style="margin-bottom:1.5rem"><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#22c55e;margin-bottom:0.5rem;font-weight:700">Kenntnisse</h4><div style="display:flex;flex-wrap:wrap;gap:0.3rem">' + skillPills + '</div></div>' : ''}
+          ${hasHobbys ? '<div><h4 style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:#22c55e;margin-bottom:0.5rem;font-weight:700">Interessen</h4><div style="font-size:0.85rem;color:#475569;white-space:pre-line">' + data.hobbys + '</div></div>' : ''}
         </div>
       </div>
     </div>`;
@@ -3310,8 +3310,8 @@ function renderLanding() {
       <!-- Schritt 1 -->
       <div class="scroll-reveal" style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:2rem">
         <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(14,165,233,0.2)">1</div>
-          <div style="width:2px;height:40px;background:linear-gradient(180deg,#0ea5e9,var(--gray-200));margin-top:0.5rem"></div>
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#4ade80);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(34,197,94,0.2)">1</div>
+          <div style="width:2px;height:40px;background:linear-gradient(180deg,#22c55e,var(--gray-200));margin-top:0.5rem"></div>
         </div>
         <div style="padding-top:0.5rem">
           <h3 style="font-size:1.15rem;margin-bottom:0.3rem;font-weight:700">Profil anlegen</h3>
@@ -3322,8 +3322,8 @@ function renderLanding() {
       <!-- Schritt 2 -->
       <div class="scroll-reveal" style="display:flex;gap:1.5rem;align-items:flex-start;margin-bottom:2rem">
         <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
-          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(14,165,233,0.2)">2</div>
-          <div style="width:2px;height:40px;background:linear-gradient(180deg,#0ea5e9,var(--gray-200));margin-top:0.5rem"></div>
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#4ade80);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(34,197,94,0.2)">2</div>
+          <div style="width:2px;height:40px;background:linear-gradient(180deg,#22c55e,var(--gray-200));margin-top:0.5rem"></div>
         </div>
         <div style="padding-top:0.5rem">
           <h3 style="font-size:1.15rem;margin-bottom:0.3rem;font-weight:700">Jobs entdecken</h3>
@@ -3334,7 +3334,7 @@ function renderLanding() {
       <!-- Schritt 3 -->
       <div class="scroll-reveal" style="display:flex;gap:1.5rem;align-items:flex-start">
         <div style="flex-shrink:0">
-          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#38bdf8);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(14,165,233,0.2)">3</div>
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#22c55e,#4ade80);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;box-shadow:0 4px 14px rgba(34,197,94,0.2)">3</div>
         </div>
         <div style="padding-top:0.5rem">
           <h3 style="font-size:1.15rem;margin-bottom:0.3rem;font-weight:700">Bewerben & starten</h3>
@@ -3406,11 +3406,11 @@ function renderLanding() {
     </div>
 
     <!-- Finaler CTA -->
-    <div style="background:linear-gradient(135deg,#0c4a6e,#0284c7);padding:4rem 1.5rem;text-align:center;color:#fff">
+    <div style="background:linear-gradient(135deg,#14532d,#16a34a);padding:4rem 1.5rem;text-align:center;color:#fff">
       <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Worauf wartest du?</h2>
       <p style="opacity:0.85;font-size:1.05rem;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto">Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-lg" style="background:#fff;color:#0284c7;font-size:1.1rem;padding:0.875rem 2.5rem" onclick="navigate('register')">Jetzt loslegen</button>
+        <button class="btn btn-lg" style="background:#fff;color:#16a34a;font-size:1.1rem;padding:0.875rem 2.5rem" onclick="navigate('register')">Jetzt loslegen</button>
         <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1.1rem;padding:0.875rem 2.5rem" onclick="navigate('jobs')">Jobs ansehen</button>
       </div>
     </div>
@@ -4401,33 +4401,33 @@ function renderCVBuilder() {
               </div>
               <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
-                  <div style="background:linear-gradient(135deg,#0ea5e9,#38bdf8);padding:3% 5%;display:flex;align-items:center;gap:3%;color:#fff">
+                  <div style="background:linear-gradient(135deg,#22c55e,#4ade80);padding:3% 5%;display:flex;align-items:center;gap:3%;color:#fff">
                     <div style="width:15%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);border:1px dashed rgba(255,255,255,0.3)"></div>
                     <div style="flex:1"><div style="height:3px;background:rgba(255,255,255,0.5);width:55%;margin-bottom:2px"></div><div style="height:2px;background:rgba(255,255,255,0.25);width:70%"></div></div>
                   </div>
                   <div style="display:flex;flex:1">
                     <div style="flex:1;padding:3% 4%">
-                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Persönliche Daten</div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#22c55e;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Persönliche Daten</div>
                       <div style="height:2px;background:#e5e7eb;width:85%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:65%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:75%;margin-bottom:2.5%"></div>
-                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Ausbildung</div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#22c55e;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Ausbildung</div>
                       <div style="height:2px;background:#e5e7eb;width:80%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:55%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:2.5%"></div>
-                      <div style="font-size:0.24rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#0ea5e9;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Berufserfahrung</div>
+                      <div style="font-size:0.24rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:1.5%"><span style="width:6%;height:1px;background:#22c55e;display:inline-block;vertical-align:middle;margin-right:1.5%"></span>Berufserfahrung</div>
                       <div style="height:2px;background:#e5e7eb;width:88%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:68%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:78%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:55%"></div>
                     </div>
                     <div style="width:34%;padding:3% 3%;background:#f8fafc;border-left:0.5px solid #e2e8f0">
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%">Kenntnisse</div>
-                      <div style="display:flex;flex-wrap:wrap;gap:1.5%"><div style="height:7px;background:#e0f2fe;border-radius:3px;width:40%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:30%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:36%"></div><div style="height:7px;background:#e0f2fe;border-radius:3px;width:28%"></div></div>
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-top:4%;margin-bottom:2%">Sprachen</div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:2%">Kenntnisse</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:1.5%"><div style="height:7px;background:#dcfce7;border-radius:3px;width:40%"></div><div style="height:7px;background:#dcfce7;border-radius:3px;width:30%"></div><div style="height:7px;background:#dcfce7;border-radius:3px;width:36%"></div><div style="height:7px;background:#dcfce7;border-radius:3px;width:28%"></div></div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-top:4%;margin-bottom:2%">Sprachen</div>
                       <div style="height:2px;background:#e5e7eb;width:60%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:45%;margin-bottom:4%"></div>
-                      <div style="font-size:0.22rem;text-transform:uppercase;color:#0ea5e9;font-weight:700;margin-bottom:2%">Interessen</div>
+                      <div style="font-size:0.22rem;text-transform:uppercase;color:#22c55e;font-weight:700;margin-bottom:2%">Interessen</div>
                       <div style="height:2px;background:#e5e7eb;width:70%;margin-bottom:1%"></div>
                       <div style="height:2px;background:#e5e7eb;width:50%"></div>
                     </div>
@@ -4541,7 +4541,7 @@ function renderEmployerLanding() {
       <div style="max-width:800px;margin:0 auto">
         <h1 style="font-family:'Playfair Display',serif">Finde junge Talente für dein Team</h1>
         <p>Schalte deine Stellenanzeige und erreiche tausende motivierte Jugendliche in deiner Region.</p>
-        <button class="btn btn-lg" style="background:#fff;color:#0284c7;font-size:1.1rem;padding:1rem 3rem" onclick="goPostJob()">Jetzt Stellenanzeige schalten</button>
+        <button class="btn btn-lg" style="background:#fff;color:#16a34a;font-size:1.1rem;padding:1rem 3rem" onclick="goPostJob()">Jetzt Stellenanzeige schalten</button>
       </div>
     </div>
 
@@ -4955,7 +4955,7 @@ function renderEmployerProfile() {
         <div class="dashboard-content">
           <h2 class="dashboard-title">Unternehmensprofil</h2>
 
-          <div class="profile-header-card" style="background:linear-gradient(135deg,#0369a1,#0ea5e9)">
+          <div class="profile-header-card" style="background:linear-gradient(135deg,#15803d,#22c55e)">
             <div class="profile-avatar" style="font-size:1.5rem;cursor:pointer;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" onclick="document.getElementById('company-logo-input').click()" id="company-logo-preview">
               ${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? '' : (state.user.company?.[0] || state.user.name?.[0] || '?')}
             </div>
@@ -5106,7 +5106,7 @@ function renderApplicants() {
                     <td>
                       <div style="display:flex;gap:0.375rem;flex-wrap:wrap">
                         <button class="btn btn-sm btn-outline" onclick="navigate('applicant-profile', {applicantId: ${a.id}})">Profil</button>
-                        ${a.motivation || a.motivationFileName ? '<button class="btn btn-sm btn-outline" onclick="openApplicationDoc(' + a.id + ',\'motivation\')" title="Motivationsschreiben öffnen" style="color:#0ea5e9;border-color:#0ea5e9">Anschreiben</button>' : ''}
+                        ${a.motivation || a.motivationFileName ? '<button class="btn btn-sm btn-outline" onclick="openApplicationDoc(' + a.id + ',\'motivation\')" title="Motivationsschreiben öffnen" style="color:#22c55e;border-color:#22c55e">Anschreiben</button>' : ''}
                         <button class="btn btn-sm btn-outline" onclick="openApplicationDoc(${a.id},'cv')" title="Lebenslauf öffnen" style="color:#6366f1;border-color:#6366f1">Lebenslauf</button>
                         <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
@@ -5720,13 +5720,13 @@ function renderAdminPanel() {
 
   const onlineDonut = buildDonutSVG([
     { value: data.online.employer, color: '#f97316', label: 'Arbeitgeber' },
-    { value: data.online.worker, color: '#0ea5e9', label: 'Arbeitnehmer' },
+    { value: data.online.worker, color: '#22c55e', label: 'Arbeitnehmer' },
     { value: data.online.guest, color: '#8b5cf6', label: 'Gast' }
   ], 140, 18, data.online.total, 'Online');
 
   const usersDonut = buildDonutSVG([
     { value: data.users.employers, color: '#f97316', label: 'Arbeitgeber' },
-    { value: data.users.workers, color: '#0ea5e9', label: 'Arbeitnehmer' }
+    { value: data.users.workers, color: '#22c55e', label: 'Arbeitnehmer' }
   ], 140, 18, data.users.total, 'Registriert');
 
   const maxVisits = Math.max(...data.visits.last7Days.map(d => d.count), 1);
@@ -5738,7 +5738,7 @@ function renderAdminPanel() {
 
   const productEntries = Object.entries(data.revenue.byProduct);
   const maxProductRevenue = productEntries.length > 0 ? Math.max(...productEntries.map(([,i]) => i.total), 1) : 1;
-  const productColors = { 'Standard Boost (7 Tage)': '#f97316', 'Standard Boost (30 Tage)': '#0ea5e9', 'Premium Boost (14 Tage)': '#8b5cf6' };
+  const productColors = { 'Standard Boost (7 Tage)': '#f97316', 'Standard Boost (30 Tage)': '#22c55e', 'Premium Boost (14 Tage)': '#8b5cf6' };
   const revenueChart = productEntries.length > 0
     ? productEntries.map(([product, info]) => {
       const pct = (info.total / maxProductRevenue) * 100;
@@ -5768,7 +5768,7 @@ function renderAdminPanel() {
 
       <!-- KPI Strip - immer sichtbar -->
       <div class="admin-kpi-strip">
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(14,165,233,0.1);color:#0ea5e9"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
+        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(34,197,94,0.1);color:#22c55e"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
@@ -5802,7 +5802,7 @@ function renderAdminPanel() {
             <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg> Aktuelle Besucher</h4>
             <div class="admin-donut-row"><div class="admin-donut-wrap">${onlineDonut}</div><div class="admin-donut-legend">
               <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.online.employer}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#22c55e"></span>Arbeitnehmer<strong>${data.online.worker}</strong></div>
               <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Ohne Konto<strong>${data.online.guest}</strong></div>
             </div></div>
           </div></div>
@@ -5810,7 +5810,7 @@ function renderAdminPanel() {
             <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> Registrierte Benutzer</h4>
             <div class="admin-donut-row"><div class="admin-donut-wrap">${usersDonut}</div><div class="admin-donut-legend">
               <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Arbeitgeber<strong>${data.users.employers}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#22c55e"></span>Arbeitnehmer<strong>${data.users.workers}</strong></div>
             </div></div>
           </div></div>
         </div>
@@ -5834,7 +5834,7 @@ function renderAdminPanel() {
             <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
             <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
               <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#0ea5e9"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
+              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#22c55e"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
               <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
             </div></div>
           </div></div>
@@ -5951,7 +5951,7 @@ function renderAdminPanel() {
           <tbody>
             ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => {
               const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-              const avatarColor = u.role === 'employer' ? '#f97316' : '#0ea5e9';
+              const avatarColor = u.role === 'employer' ? '#f97316' : '#22c55e';
               return `<tr class="admin-table-row">
                 <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${initials}</div><span style="font-weight:600">${u.name || '-'}</span></div></td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${u.email}</td>
