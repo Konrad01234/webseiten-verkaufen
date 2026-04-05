@@ -420,7 +420,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .hero::before { content: none; }
 .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
-.hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; }
+.hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2; font-family: 'Playfair Display', serif; }
 .hero p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 .hero .btn-lg { padding: 1rem 2.5rem; font-size: 1.1rem; }
@@ -446,7 +446,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 /* Features Section */
 .features-section { padding: 2rem 1.5rem; max-width: 1280px; margin: 0 auto; }
 .section-header { text-align: center; margin-bottom: 1.5rem; }
-.section-header h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; }
+.section-header h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.5rem; font-family: 'Playfair Display', serif; }
 .section-header p { color: var(--gray-500); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
 .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
 .feature-card {
@@ -486,7 +486,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   color: #fff; padding: 2.5rem 1.5rem; text-align: center;
   border-radius: var(--radius-lg); margin: 1rem auto; max-width: 1200px;
 }
-.cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; }
+.cta-section h2 { font-size: 2rem; font-weight: 800; margin-bottom: 0.75rem; font-family: 'Playfair Display', serif; }
 .cta-section p { opacity: 0.9; margin-bottom: 1.5rem; font-size: 1.05rem; }
 .cta-section .btn { background: #fff; color: #0284c7; font-size: 1.1rem; padding: 0.875rem 2.5rem; }
 .cta-section .btn:hover { background: var(--gray-100); }
@@ -873,7 +873,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
   color: #fff; padding: 4rem 1.5rem; text-align: center;
 }
-.employer-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; }
+.employer-hero h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; font-family: 'Playfair Display', serif; }
 .employer-hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
 .pricing-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1000px; margin: 3rem auto; }
 .pricing-card {
@@ -1511,7 +1511,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .admin-rev-tab { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
 }
 </style>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <nav id="navbar">
@@ -3254,7 +3254,7 @@ function renderLanding() {
   return `
     <div class="hero">
       <div class="hero-content slide-up">
-        <h1 style="font-size:3.2rem;line-height:1.15;margin-bottom:0.75rem">Dein erster Job.<br>Ohne Stress.</h1>
+        <h1 style="font-size:3.2rem;line-height:1.15;margin-bottom:0.75rem;font-family:'Playfair Display',serif">Dein erster Job.<br>Ohne Stress.</h1>
         <p style="font-size:1.15rem;max-width:520px;margin:0 auto 1.5rem;opacity:0.9">Minijobs, Ferienjobs und Praktika in deiner Nähe. Bewirb dich mit einem Klick.</p>
 
         <div class="hero-buttons">
@@ -3348,7 +3348,7 @@ function renderLanding() {
 
     <div style="background:#fff;padding:3.5rem 1.5rem">
     <div style="max-width:600px;margin:0 auto">
-      <h2 class="scroll-reveal" style="text-align:center;font-size:1.8rem;font-weight:800;margin-bottom:0.5rem">So einfach geht's</h2>
+      <h2 class="scroll-reveal" style="text-align:center;font-size:1.8rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">So einfach geht's</h2>
       <p class="scroll-reveal" style="text-align:center;color:var(--gray-500);margin-bottom:2.5rem">In 3 Schritten zum neuen Job</p>
 
       <!-- Schritt 1 -->
@@ -3428,7 +3428,7 @@ function renderLanding() {
 
     <div style="background:#fff;padding:3rem 1.5rem">
     <div style="max-width:1000px;margin:0 auto">
-      <h2 class="scroll-reveal" style="text-align:center;font-size:1.6rem;font-weight:800;margin-bottom:0.4rem"><span style="color:var(--primary)">Echte</span> Geschichten, <span style="color:var(--primary)">echte</span> Jobs</h2>
+      <h2 class="scroll-reveal" style="text-align:center;font-size:1.6rem;font-weight:800;margin-bottom:0.4rem;font-family:'Playfair Display',serif"><span style="color:var(--primary)">Echte</span> Geschichten, <span style="color:var(--primary)">echte</span> Jobs</h2>
       <p class="scroll-reveal" style="text-align:center;color:var(--gray-500);margin-bottom:1.5rem">Was Schüler über EasyJobs sagen</p>
       <div style="overflow:hidden;position:relative">
         <div style="position:absolute;left:0;top:0;bottom:0;width:60px;background:linear-gradient(90deg,#fff,transparent);z-index:2;pointer-events:none"></div>
@@ -3451,7 +3451,7 @@ function renderLanding() {
 
     <!-- Finaler CTA -->
     <div style="background:linear-gradient(135deg,#0c4a6e,#0284c7);padding:4rem 1.5rem;text-align:center;color:#fff">
-      <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem">Worauf wartest du?</h2>
+      <h2 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Worauf wartest du?</h2>
       <p style="opacity:0.85;font-size:1.05rem;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto">Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
         <button class="btn btn-lg" style="background:#fff;color:#0284c7;font-size:1.1rem;padding:0.875rem 2.5rem" onclick="navigate('register')">Jetzt loslegen</button>
@@ -4583,7 +4583,7 @@ function renderEmployerLanding() {
   return `
     <div class="employer-hero">
       <div style="max-width:800px;margin:0 auto">
-        <h1>Finde junge Talente für dein Team</h1>
+        <h1 style="font-family:'Playfair Display',serif">Finde junge Talente für dein Team</h1>
         <p>Schalte deine Stellenanzeige und erreiche tausende motivierte Jugendliche in deiner Region.</p>
         <button class="btn btn-lg" style="background:#fff;color:#0284c7;font-size:1.1rem;padding:1rem 3rem" onclick="goPostJob()">Jetzt Stellenanzeige schalten</button>
       </div>
