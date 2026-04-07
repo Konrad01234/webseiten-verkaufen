@@ -1596,9 +1596,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
       <div class="footer-bottom">
         <span>&copy; 2026 EasyJobs. Alle Rechte vorbehalten.</span>
         <div class="footer-bottom-links">
-          <a href="#">Impressum</a>
-          <a href="#">Datenschutz</a>
-          <a href="#">AGB</a>
+          <a href="#" onclick="navigate('impressum')">Impressum</a>
+          <a href="#" onclick="navigate('datenschutz')">Datenschutz</a>
+          <a href="#" onclick="navigate('agb')">AGB</a>
           <a href="#" onclick="navigate('admin-login')" style="opacity:0.4">Admin</a>
         </div>
       </div>
@@ -2194,7 +2194,10 @@ function render() {
     'reviews': renderReviews,
     'support': renderSupport,
     'admin-login': renderAdminLogin,
-    'admin-panel': renderAdminPanel
+    'admin-panel': renderAdminPanel,
+    'impressum': renderImpressum,
+    'datenschutz': renderDatenschutz,
+    'agb': renderAGB
   };
 
   // Admin-Panel Zugangsschutz
@@ -5663,6 +5666,123 @@ function adminLogin() {
 function adminLogout() {
   state.adminLoggedIn = false;
   navigate('landing');
+}
+
+// ===== LEGAL PAGES =====
+function renderImpressum() {
+  return `<div class="page page-narrow" style="padding-top:3rem">
+    <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Impressum</h1>
+    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Angaben gemäß § 5 TMG</p>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Betreiber der Website</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">
+        EasyJobs GmbH<br>
+        Musterstraße 1<br>
+        40213 Düsseldorf<br>
+        Deutschland
+      </p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Kontakt</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">
+        Telefon: +49 (0) 211 123 456 78<br>
+        E-Mail: info@easyjobs.de<br>
+        Website: www.easyjobs.de
+      </p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Vertretungsberechtigte Geschäftsführer</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Max Mustermann, Anna Musterfrau</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Registereintrag</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">
+        Registergericht: Amtsgericht Düsseldorf<br>
+        Registernummer: HRB 123456<br>
+        Umsatzsteuer-ID: DE123456789
+      </p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Max Mustermann<br>Musterstraße 1<br>40213 Düsseldorf</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Haftungsausschluss</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem"><strong>Haftung für Inhalte:</strong> Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.75rem"><strong>Haftung für Links:</strong> Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss haben. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter verantwortlich.</p>
+    </div>
+  </div>`;
+}
+
+function renderDatenschutz() {
+  return `<div class="page page-narrow" style="padding-top:3rem">
+    <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Datenschutzerklärung</h1>
+    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">1. Verantwortlicher</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br>EasyJobs GmbH, Musterstraße 1, 40213 Düsseldorf<br>E-Mail: datenschutz@easyjobs.de</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">2. Erhebung und Speicherung personenbezogener Daten</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Beim Besuch unserer Website werden automatisch Informationen an den Server übermittelt. Diese Daten werden temporär in einem Server-Logfile gespeichert: IP-Adresse, Datum und Uhrzeit des Zugriffs, aufgerufene Seite, Browsertyp und -version sowie das verwendete Betriebssystem.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.75rem">Bei der Registrierung erheben wir: Name, E-Mail-Adresse, Wohnort, Geburtsdatum (optional) und bei Arbeitgebern zusätzlich Firmenname und Branche.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">3. Zweck der Datenverarbeitung</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Ihre Daten werden verarbeitet für: Bereitstellung der Plattform und ihrer Funktionen, Vermittlung zwischen Arbeitgebern und Arbeitnehmern, Kommunikation über die Chat-Funktion, Verbesserung unseres Angebots sowie die Abwicklung von Zahlungen für kostenpflichtige Dienste.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">4. Rechtsgrundlage</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. a DSGVO (Einwilligung), Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse).</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">5. Ihre Rechte</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Sie haben das Recht auf: Auskunft über Ihre gespeicherten Daten, Berichtigung unrichtiger Daten, Löschung Ihrer Daten, Einschränkung der Verarbeitung, Datenübertragbarkeit sowie Widerspruch gegen die Verarbeitung. Kontaktieren Sie uns hierzu unter datenschutz@easyjobs.de.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">6. Cookies & lokale Speicherung</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Diese Website verwendet localStorage zur Speicherung von Nutzereinstellungen und Sitzungsdaten. Diese Daten verlassen Ihren Browser nicht und werden nicht an externe Server übertragen. Sie können die lokal gespeicherten Daten jederzeit über Ihre Browsereinstellungen löschen.</p>
+    </div>
+  </div>`;
+}
+
+function renderAGB() {
+  return `<div class="page page-narrow" style="padding-top:3rem">
+    <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Allgemeine Geschäftsbedingungen</h1>
+    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 1 Geltungsbereich</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Diese AGB gelten für die Nutzung der Plattform EasyJobs (www.easyjobs.de), betrieben von der EasyJobs GmbH. Mit der Registrierung akzeptiert der Nutzer diese Bedingungen.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 2 Leistungen der Plattform</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">EasyJobs stellt eine Online-Plattform zur Verfügung, die Arbeitgeber und Arbeitnehmer zusammenbringt. Die Plattform ermöglicht das Veröffentlichen von Stellenanzeigen, das Suchen und Bewerben auf Jobs sowie die Kommunikation zwischen den Parteien.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 3 Registrierung und Nutzerkonto</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Für die Nutzung bestimmter Funktionen ist eine kostenlose Registrierung erforderlich. Der Nutzer verpflichtet sich, wahrheitsgemäße Angaben zu machen und sein Passwort vertraulich zu behandeln. Das Mindestalter für die Registrierung beträgt 14 Jahre.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 4 Kostenpflichtige Leistungen</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Die Grundnutzung der Plattform ist für Arbeitnehmer kostenlos. Arbeitgeber können kostenpflichtige Boost-Pakete erwerben, um ihre Stellenanzeigen prominenter zu platzieren. Die jeweiligen Preise werden vor dem Kauf transparent dargestellt.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 5 Pflichten der Nutzer</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Der Nutzer verpflichtet sich: keine rechtswidrigen oder irreführenden Inhalte zu veröffentlichen, keine falschen Stellenanzeigen oder Bewerbungen zu erstellen, die Plattform nicht missbräuchlich zu nutzen und die Rechte anderer Nutzer zu respektieren.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 6 Haftung</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">EasyJobs ist ein Vermittler und übernimmt keine Haftung für die Richtigkeit der von Nutzern eingestellten Inhalte, das Zustandekommen eines Arbeitsverhältnisses oder Schäden, die aus der Nutzung der Plattform entstehen.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 7 Kündigung</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Der Nutzer kann sein Konto jederzeit kündigen. EasyJobs behält sich das Recht vor, Nutzerkonten bei Verstößen gegen diese AGB zu sperren oder zu löschen.</p>
+    </div>
+    <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 8 Schlussbestimmungen</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Es gilt deutsches Recht. Gerichtsstand ist Düsseldorf. Sollten einzelne Bestimmungen unwirksam sein, bleibt die Gültigkeit der übrigen Bestimmungen unberührt.</p>
+    </div>
+  </div>`;
 }
 
 function renderAdminLogin() {
