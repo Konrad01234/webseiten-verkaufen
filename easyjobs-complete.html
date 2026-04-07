@@ -2453,8 +2453,10 @@ function toggleMobileMenu() {
 
 // ===== AUTH =====
 function loadUserSession(user) {
-  state.user = user;
-  localStorage.setItem('jj_user', JSON.stringify(user));
+  const sessionUser = { ...user };
+  delete sessionUser.password;
+  state.user = sessionUser;
+  localStorage.setItem('jj_user', JSON.stringify(sessionUser));
   loadUserChats();
   if (user.postedJobs) {
     user.postedJobs.forEach(j => {
@@ -2500,6 +2502,7 @@ function register(data) {
 function logout() {
   state.user = null;
   state.dropdownOpen = false;
+  state.adminLoggedIn = false;
   localStorage.removeItem('jj_user');
   navigate('landing');
 }
@@ -3412,9 +3415,14 @@ function sendAIMessage() {
 
 // ===== HELPER =====
 function escapeHtml(text) {
+  if (text == null) return '';
   const d = document.createElement('div');
-  d.textContent = text;
+  d.textContent = String(text);
   return d.innerHTML;
+}
+function escapeAttr(text) {
+  if (text == null) return '';
+  return String(text).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function censorContactInfo(text) {
@@ -3963,14 +3971,14 @@ function renderJobDetail() {
               })()}
 
               <div style="margin-top:1.5rem">
-                <h3 style="font-size:1rem;margin-bottom:1rem">Über ${job.company}</h3>
-                <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:1rem">${job.companyInfo.about}</p>
+                <h3 style="font-size:1rem;margin-bottom:1rem">Über ${escapeHtml(job.company)}</h3>
+                <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:1rem">${escapeHtml(job.companyInfo.about)}</p>
                 <div style="display:flex;flex-direction:column;gap:0.5rem">
-                  <div class="company-info-row"><span class="label">Branche:</span> <span>${job.companyInfo.industry}</span></div>
-                  <div class="company-info-row"><span class="label">Mitarbeiter:</span> <span>${job.companyInfo.employees}</span></div>
-                  <div class="company-info-row"><span class="label">Gegründet:</span> <span>${job.companyInfo.founded}</span></div>
-                  <div class="company-info-row"><span class="label">Website:</span> <span style="color:var(--primary)">${job.companyInfo.website}</span></div>
-                  <div class="company-info-row"><span class="label">Adresse:</span> <span>${job.location}</span></div>
+                  <div class="company-info-row"><span class="label">Branche:</span> <span>${escapeHtml(job.companyInfo.industry)}</span></div>
+                  <div class="company-info-row"><span class="label">Mitarbeiter:</span> <span>${escapeHtml(job.companyInfo.employees)}</span></div>
+                  <div class="company-info-row"><span class="label">Gegründet:</span> <span>${escapeHtml(job.companyInfo.founded)}</span></div>
+                  <div class="company-info-row"><span class="label">Website:</span> <span style="color:var(--primary)">${escapeHtml(job.companyInfo.website)}</span></div>
+                  <div class="company-info-row"><span class="label">Adresse:</span> <span>${escapeHtml(job.location)}</span></div>
                 </div>
               </div>
 
@@ -4123,7 +4131,7 @@ function renderWorkerDashboard() {
         ${renderWorkerSidebar('dashboard')}
         <div class="dashboard-content">
 
-          <h2 class="dashboard-title">Hallo, ${state.user.name.split(' ')[0]}!</h2>
+          <h2 class="dashboard-title">Hallo, ${escapeHtml(state.user.name?.split(' ')[0])}!</h2>
 
           <!-- ── Aktiver Job Banner ── -->
           ${(() => {
@@ -4140,8 +4148,8 @@ function renderWorkerDashboard() {
                   </div>
                   <div>
                     <div style="font-size:0.75rem;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:0.05em">Aktiver Job</div>
-                    <div style="font-size:1.1rem;font-weight:700;color:var(--gray-900)">${activeJob.jobTitle}</div>
-                    <div style="font-size:0.85rem;color:var(--gray-500)">${activeJob.jobCompany} · Seit ${daysSince} ${daysSince === 1 ? 'Tag' : 'Tagen'}</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--gray-900)">${escapeHtml(activeJob.jobTitle)}</div>
+                    <div style="font-size:0.85rem;color:var(--gray-500)">${escapeHtml(activeJob.jobCompany)} · Seit ${daysSince} ${daysSince === 1 ? 'Tag' : 'Tagen'}</div>
                   </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;flex-shrink:0">
@@ -4166,8 +4174,8 @@ function renderWorkerDashboard() {
                 <div class="wdt-msg-row">
                   <div class="wdt-msg-avatar">${m.partnerInitials}</div>
                   <div class="wdt-msg-info">
-                    <div class="wdt-msg-name">${m.partnerName}</div>
-                    <div class="wdt-msg-preview">${m.messages[m.messages.length-1]?.text?.slice(0,45) || ''}…</div>
+                    <div class="wdt-msg-name">${escapeHtml(m.partnerName)}</div>
+                    <div class="wdt-msg-preview">${escapeHtml(m.messages[m.messages.length-1]?.text?.slice(0,45) || '')}…</div>
                   </div>
                 </div>`).join('') : `<p class="wdt-empty">Noch keine Nachrichten</p>`}
               <div class="wdt-link">Alle Nachrichten →</div>
@@ -4182,10 +4190,10 @@ function renderWorkerDashboard() {
               </div>
               ${saved.length > 0 ? saved.map(j => `
                 <div class="wdt-job-row" onclick="event.stopPropagation();navigate('job-detail',{jobId:${j.id}})">
-                  <div class="wdt-job-logo">${j.company[0]}</div>
+                  <div class="wdt-job-logo">${escapeHtml(j.company?.[0])}</div>
                   <div class="wdt-job-info">
-                    <div class="wdt-job-title">${j.title}</div>
-                    <div class="wdt-job-company">${j.company} · ${j.city}</div>
+                    <div class="wdt-job-title">${escapeHtml(j.title)}</div>
+                    <div class="wdt-job-company">${escapeHtml(j.company)} · ${escapeHtml(j.city)}</div>
                   </div>
                 </div>`).join('') : `<p class="wdt-empty">Noch keine Jobs gespeichert</p>`}
               <div class="wdt-link">Alle gespeicherten Jobs →</div>
@@ -4326,17 +4334,17 @@ function renderWorkerProfileView() {
 
             <!-- Kopfbereich -->
             <div class="epc-header">
-              <div class="epc-avatar">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+              <div class="epc-avatar">${escapeHtml(u.name?.split(' ').map(n=>n[0]).join(''))}</div>
               <div class="epc-info">
-                <h2 class="epc-name">${u.name}</h2>
+                <h2 class="epc-name">${escapeHtml(u.name)}</h2>
                 <div class="epc-meta-row">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-                  ${u.email}
+                  ${escapeHtml(u.email)}
                 </div>
                 ${address ? `
                 <div class="epc-meta-row">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  ${address}
+                  ${escapeHtml(address)}
                 </div>
                 <div class="epc-meta-row">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -4386,7 +4394,7 @@ function renderWorkerProfileView() {
                 ${refs.map(r => `
                   <div class="epc-ref-item">
                     <div class="epc-ref-dot"></div>
-                    <span>${r}</span>
+                    <span>${escapeHtml(r)}</span>
                   </div>`).join('')}
               </div>` : missingTag('Referenzen', 3)}
             </div>
@@ -4446,7 +4454,7 @@ function renderWorkerProfile() {
     <p class="profile-step-hint">Damit wir dir passende Jobs in deiner Nähe zeigen können.</p>
     <div class="form-group">
       <label class="form-label">Deine Adresse</label>
-      <input type="text" id="ps-address" class="form-input" placeholder="Musterstraße 1, 10115 Berlin" value="${u.address || ''}">
+      <input type="text" id="ps-address" class="form-input" placeholder="Musterstraße 1, 10115 Berlin" value="${escapeAttr(u.address || '')}">
     </div>
     <div class="form-group">
       <label class="form-label">Suchradius: <strong id="radius-label">${u.radius || 15} km</strong></label>
@@ -4531,7 +4539,7 @@ function renderWorkerProfile() {
       <div id="refs-list">
         ${(u.refs||[]).map((r,i) => `
           <div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.75rem;background:var(--gray-50);border-radius:8px;margin-bottom:0.4rem;font-size:0.88rem">
-            <span style="flex:1">${r}</span>
+            <span style="flex:1">${escapeHtml(r)}</span>
             <button class="btn btn-sm btn-ghost" onclick="removeRef(${i})">✕</button>
           </div>`).join('')}
       </div>
@@ -4659,7 +4667,7 @@ function renderApplications() {
             const pending = myApps.filter(a => a.status !== 'rejected' && a.status !== 'accepted');
             return activeJob ? `
             <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:1rem;font-size:0.85rem;color:#166534;display:flex;align-items:center;gap:0.5rem">
-              <span style="font-size:1.1rem">💼</span> Du hast einen aktiven Job: <strong>${activeJob.jobTitle}</strong> – Neue Bewerbungen sind gesperrt.
+              <span style="font-size:1.1rem">💼</span> Du hast einen aktiven Job: <strong>${escapeHtml(activeJob.jobTitle)}</strong> – Neue Bewerbungen sind gesperrt.
             </div>` : `
             <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:1rem;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem">
               <span style="font-size:1.1rem">📋</span> Offene Bewerbungen: <strong>${pending.length}/3</strong>
@@ -4673,8 +4681,8 @@ function renderApplications() {
                   <div style="display:flex;align-items:center;gap:1rem">
                     <div class="job-company-logo" ${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? `style="background-image:url(${a.job.companyLogo});background-size:cover;background-position:center"` : ''}>${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? '' : (a.job.company ? a.job.company[0] : '')}</div>
                     <div>
-                      <h3 style="font-size:1rem;margin-bottom:0.25rem">${a.job.title}</h3>
-                      <div style="font-size:0.85rem;color:var(--gray-500)">${a.job.company}</div>
+                      <h3 style="font-size:1rem;margin-bottom:0.25rem">${escapeHtml(a.job.title)}</h3>
+                      <div style="font-size:0.85rem;color:var(--gray-500)">${escapeHtml(a.job.company)}</div>
                     </div>
                   </div>
                   <div style="text-align:right">
@@ -5115,8 +5123,8 @@ function renderEmployerDashboard() {
         <div class="dashboard-content">
           <div class="employer-dash-header">
             <div>
-              <h2 class="dashboard-title" style="margin-bottom:0.15rem">Willkommen, ${state.user.name.split(' ')[0]}!</h2>
-              <p style="font-size:0.85rem;color:var(--gray-500);margin:0">${state.user.company ? state.user.company + ' – ' : ''}Verwalte deine Stellenanzeigen und Bewerbungen</p>
+              <h2 class="dashboard-title" style="margin-bottom:0.15rem">Willkommen, ${escapeHtml(state.user.name?.split(' ')[0])}!</h2>
+              <p style="font-size:0.85rem;color:var(--gray-500);margin:0">${state.user.company ? escapeHtml(state.user.company) + ' – ' : ''}Verwalte deine Stellenanzeigen und Bewerbungen</p>
             </div>
             <button class="btn btn-employer" onclick="goPostJob()" ${!state.user.approved ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>+ Neue Anzeige schalten</button>
           </div>
@@ -5164,7 +5172,7 @@ function renderEmployerDashboard() {
                   <div style="display:flex;align-items:center;gap:1rem;flex:1">
                     <div class="job-company-logo">${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
                     <div>
-                      <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${j.title}</h3>
+                      <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${escapeHtml(j.title)}</h3>
                       <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
                         <span>${j.views || 0} Views</span>
                         <span>${j.applications || 0} Bew.</span>
@@ -5489,7 +5497,7 @@ function renderEmployerProfile() {
             </div>
             <input type="file" id="company-logo-input" accept="image/*" style="display:none" onchange="handleCompanyLogo(this)">
             <div class="profile-info">
-              <h2>${state.user.company || state.user.name + '\'s Unternehmen'}</h2>
+              <h2>${escapeHtml(state.user.company || state.user.name + '\'s Unternehmen')}</h2>
               <p>Klicke auf das Logo um es zu ändern</p>
             </div>
           </div>
@@ -5499,7 +5507,7 @@ function renderEmployerProfile() {
               <h3>Allgemeine Informationen</h3>
               <div class="form-group">
                 <label class="form-label">Unternehmensname</label>
-                <input type="text" name="company" class="form-input" placeholder="Name des Unternehmens" value="${state.user.company || ''}">
+                <input type="text" name="company" class="form-input" placeholder="Name des Unternehmens" value="${escapeAttr(state.user.company || '')}">
               </div>
               <div class="form-group">
                 <label class="form-label">Branche</label>
@@ -5510,7 +5518,7 @@ function renderEmployerProfile() {
               </div>
               <div class="form-group">
                 <label class="form-label">Beschreibung</label>
-                <textarea name="description" class="form-textarea" placeholder="Beschreibe dein Unternehmen...">${state.user.description || ''}</textarea>
+                <textarea name="description" class="form-textarea" placeholder="Beschreibe dein Unternehmen...">${escapeHtml(state.user.description || '')}</textarea>
               </div>
             </div>
 
@@ -5518,15 +5526,15 @@ function renderEmployerProfile() {
               <h3>Kontakt & Standort</h3>
               <div class="form-group">
                 <label class="form-label">Adresse</label>
-                <input type="text" name="address" class="form-input" placeholder="Straße, PLZ, Stadt" value="${state.user.address || ''}">
+                <input type="text" name="address" class="form-input" placeholder="Straße, PLZ, Stadt" value="${escapeAttr(state.user.address || '')}">
               </div>
               <div class="form-group">
                 <label class="form-label">Telefon</label>
-                <input type="tel" name="phone" class="form-input" placeholder="+49 ..." value="${state.user.phone || ''}">
+                <input type="tel" name="phone" class="form-input" placeholder="+49 ..." value="${escapeAttr(state.user.phone || '')}">
               </div>
               <div class="form-group">
                 <label class="form-label">Website</label>
-                <input type="url" name="website" class="form-input" placeholder="https://..." value="${state.user.website || ''}">
+                <input type="url" name="website" class="form-input" placeholder="https://..." value="${escapeAttr(state.user.website || '')}">
               </div>
             </div>
 
@@ -5553,11 +5561,11 @@ function renderEmployerProfile() {
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Gründungsjahr</label>
-                  <input type="number" name="founded" class="form-input" placeholder="z.B. 2020" value="${state.user.founded || ''}">
+                  <input type="number" name="founded" class="form-input" placeholder="z.B. 2020" value="${escapeAttr(state.user.founded || '')}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Mitarbeiterzahl</label>
-                  <input type="text" name="employees" class="form-input" placeholder="z.B. 10-50" value="${state.user.employees || ''}">
+                  <input type="text" name="employees" class="form-input" placeholder="z.B. 10-50" value="${escapeAttr(state.user.employees || '')}">
                 </div>
               </div>
             </div>
@@ -5583,7 +5591,8 @@ const MOCK_APPLICANTS = [
 function renderApplicants() {
   if (!state.user) return renderLogin();
   const realApps = getEmployerApplicants();
-  const applicants = [...realApps, ...MOCK_APPLICANTS];
+  const allApplicants = [...realApps, ...MOCK_APPLICANTS];
+  const applicants = (!state.applicantFilter || state.applicantFilter === 'all') ? allApplicants : allApplicants.filter(a => a.status === state.applicantFilter);
 
   return `
     <div class="page">
@@ -5593,10 +5602,10 @@ function renderApplicants() {
           <h2 class="dashboard-title">Bewerber verwalten</h2>
 
           <div class="tabs">
-            <button class="tab active">Alle (${applicants.length})</button>
-            <button class="tab">Neu (${applicants.filter(a=>a.status==='new').length})</button>
-            <button class="tab">In Prüfung (${applicants.filter(a=>a.status==='reviewing').length})</button>
-            <button class="tab">Eingeladen (${applicants.filter(a=>a.status==='accepted').length})</button>
+            <button class="tab ${!state.applicantFilter || state.applicantFilter==='all' ? 'active' : ''}" onclick="state.applicantFilter='all';render()">Alle (${allApplicants.length})</button>
+            <button class="tab ${state.applicantFilter==='new' ? 'active' : ''}" onclick="state.applicantFilter='new';render()">Neu (${allApplicants.filter(a=>a.status==='new').length})</button>
+            <button class="tab ${state.applicantFilter==='reviewing' ? 'active' : ''}" onclick="state.applicantFilter='reviewing';render()">In Prüfung (${allApplicants.filter(a=>a.status==='reviewing').length})</button>
+            <button class="tab ${state.applicantFilter==='accepted' ? 'active' : ''}" onclick="state.applicantFilter='accepted';render()">Eingeladen (${allApplicants.filter(a=>a.status==='accepted').length})</button>
           </div>
 
           <div class="card">
@@ -5620,13 +5629,13 @@ function renderApplicants() {
                       <div class="applicant-row">
                         <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${a.initials}</div>
                         <div>
-                          <strong>${a.name}</strong>
+                          <strong>${escapeHtml(a.name)}</strong>
                           ${workerHasActiveJob ? '<div style="font-size:0.7rem;color:var(--danger);font-weight:600">Bereits beschäftigt</div>' : ''}
                         </div>
                       </div>
                     </td>
-                    <td>${a.jobTitle || a.job}</td>
-                    <td>${(a.skills || []).map(s => `<span class="tag">${s}</span>`).join(' ')}</td>
+                    <td>${escapeHtml(a.jobTitle || a.job)}</td>
+                    <td>${(a.skills || []).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(' ')}</td>
                     <td>
                       <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" onchange="updateApplicantStatus(${a.id}, this.value)">
                         <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
@@ -5682,9 +5691,9 @@ function renderApplicantProfile() {
             <div class="card-body">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:0.75rem">
                 <div>
-                  <h2 style="font-size:1.3rem;margin-bottom:0.25rem">${a.name}</h2>
+                  <h2 style="font-size:1.3rem;margin-bottom:0.25rem">${escapeHtml(a.name)}</h2>
                   <div style="font-size:0.85rem;color:var(--gray-500)">
-                    ${a.age} Jahre &bull; ${a.city} &bull; max. ${a.weeklyHours} Std./Woche
+                    ${a.age} Jahre &bull; ${escapeHtml(a.city)} &bull; max. ${a.weeklyHours} Std./Woche
                   </div>
                   <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
                     <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" onchange="updateApplicantStatus(${a.id}, this.value)">
@@ -5693,7 +5702,7 @@ function renderApplicantProfile() {
                       <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
                       <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
                     </select>
-                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${a.jobTitle || a.job}</strong></span>
+                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${escapeHtml(a.jobTitle || a.job)}</strong></span>
                   </div>
                 </div>
                 <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
@@ -5703,7 +5712,7 @@ function renderApplicantProfile() {
               </div>
               ${a.about ? `
                 <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100);font-size:0.88rem;color:var(--gray-600);line-height:1.5">
-                  ${a.about}
+                  ${escapeHtml(a.about)}
                 </div>` : ''}
             </div>
           </div>
@@ -5713,7 +5722,7 @@ function renderApplicantProfile() {
               <div class="card-body">
                 <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Stärken</h4>
                 ${a.skills.length > 0
-                  ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${a.skills.map(s => `<span class="epc-skill-tag">${s}</span>`).join('')}</div>`
+                  ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${a.skills.map(s => `<span class="epc-skill-tag">${escapeHtml(s)}</span>`).join('')}</div>`
                   : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
               </div>
             </div>
@@ -5722,7 +5731,7 @@ function renderApplicantProfile() {
               <div class="card-body">
                 <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Berufserfahrung</h4>
                 ${a.refs && a.refs.length > 0
-                  ? `<ul style="margin:0;padding-left:1.1rem;font-size:0.88rem;line-height:1.8">${a.refs.map(r => `<li>${r}</li>`).join('')}</ul>`
+                  ? `<ul style="margin:0;padding-left:1.1rem;font-size:0.88rem;line-height:1.8">${a.refs.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>`
                   : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
               </div>
             </div>
@@ -5791,8 +5800,8 @@ function renderChatDetail() {
             <button class="btn btn-sm btn-outline" onclick="navigate('messages')">&#8592; Zurück</button>
             <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
             <div>
-              <strong style="font-size:0.95rem">${chat.partnerName}</strong>
-              <div style="font-size:0.78rem;color:var(--gray-500)">${chat.jobTitle}</div>
+              <strong style="font-size:0.95rem">${escapeHtml(chat.partnerName)}</strong>
+              <div style="font-size:0.78rem;color:var(--gray-500)">${escapeHtml(chat.jobTitle)}</div>
             </div>
           </div>
 
@@ -5800,7 +5809,7 @@ function renderChatDetail() {
           <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
             ${chat.messages.length === 0 ? `
               <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
-                Noch keine Nachrichten. Schreib ${chat.partnerName.split(' ')[0]} eine erste Nachricht!
+                Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
             ${chat.messages.map(m => `
               <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
@@ -5845,11 +5854,11 @@ function renderMessages() {
                 <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <strong style="font-size:0.85rem">${c.partnerName}</strong>
+                    <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
                     <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
                   </div>
-                  <div style="font-size:0.75rem;color:var(--primary)">${c.jobTitle}</div>
-                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+                  <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
+                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
                 </div>
                 ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
               </div>
@@ -5989,8 +5998,8 @@ function renderReviews() {
           </div>
 
           <div class="tabs">
-            <button class="tab active">Erhaltene Bewertungen</button>
-            <button class="tab">Abgegebene Bewertungen</button>
+            <button class="tab ${!state.reviewTab || state.reviewTab==='received' ? 'active' : ''}" onclick="state.reviewTab='received';render()">Erhaltene Bewertungen</button>
+            <button class="tab ${state.reviewTab==='given' ? 'active' : ''}" onclick="state.reviewTab='given';render()">Abgegebene Bewertungen</button>
           </div>
 
           <div class="rating-display" style="margin-bottom:1.5rem;padding:1.5rem;background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200)">
@@ -6010,13 +6019,13 @@ function renderReviews() {
                 <div class="review-author">
                   <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${r.author.split(' ').map(n=>n[0]).join('')}</div>
                   <div>
-                    <strong style="font-size:0.9rem">${r.author}</strong>
+                    <strong style="font-size:0.9rem">${escapeHtml(r.author)}</strong>
                     ${r.active ? '<span class="badge badge-success" style="margin-left:0.5rem">Aktiv</span>' : ''}
                   </div>
                 </div>
                 <div class="stars">${'<span class="star filled">&#9733;</span>'.repeat(r.rating)}${'<span class="star">&#9734;</span>'.repeat(5-r.rating)}</div>
               </div>
-              <div class="review-text">${r.text}</div>
+              <div class="review-text">${escapeHtml(r.text)}</div>
               <div class="review-date">${formatDate(r.date)}</div>
             </div>
           `).join('')}
@@ -6689,12 +6698,12 @@ function renderAdminPanel() {
                 <tr class="admin-table-row" style="${freemail && !u.approved ? 'background:rgba(245,158,11,0.08)' : ''}">
                   <td style="padding:0.65rem 1.25rem">
                     <div>
-                      <span style="font-weight:600">${u.company || u.name}</span>
-                      <div style="font-size:0.75rem;color:var(--gray-500)">${u.name}</div>
+                      <span style="font-weight:600">${escapeHtml(u.company || u.name)}</span>
+                      <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name)}</div>
                     </div>
                   </td>
                   <td style="padding:0.65rem 1.25rem">
-                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${u.email}</span>
+                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email)}</span>
                     ${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">&#9888; Freemail-Adresse</div>' : '<div style="font-size:0.7rem;color:var(--success)">&#10003; Geschäfts-E-Mail</div>'}
                   </td>
                   <td style="padding:0.65rem 1.25rem;text-align:center">
@@ -6733,8 +6742,8 @@ function renderAdminPanel() {
               const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
               const avatarColor = u.role === 'employer' ? '#f97316' : '#2563eb';
               return `<tr class="admin-table-row">
-                <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${initials}</div><span style="font-weight:600">${u.name || '-'}</span></div></td>
-                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${u.email}</td>
+                <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${escapeHtml(initials)}</div><span style="font-weight:600">${escapeHtml(u.name || '-')}</span></div></td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email)}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center"><span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span></td>
               </tr>`;
             }).join('') || '<tr><td colspan="3" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
