@@ -2155,7 +2155,7 @@ let state = {
   currentPage: 'landing',
   user: JSON.parse(localStorage.getItem('jj_user')) || null,
   get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
-  filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date' },
+  filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date', address: '' },
   chatOpen: false,
   aiOpen: false,
   activeChat: null,
@@ -2411,7 +2411,7 @@ function updateNav() {
     actions.innerHTML = `
       <div class="user-menu">
 
-        <div class="user-avatar" onclick="toggleDropdown()">${state.user.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div class="user-avatar" onclick="toggleDropdown()">${(state.user.name||'').split(' ').map(n=>n[0]).join('')}</div>
         <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown">
           <a href="#" onclick="navigate('${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}'); toggleDropdown()">Dashboard</a>
           <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
@@ -2745,7 +2745,8 @@ function openApplicationDoc(appId, docType) {
   if (!app) { showToast('Bewerbung nicht gefunden', 'error'); return; }
 
   var win = window.open('', '_blank');
-  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (docType === 'motivation' ? 'Motivationsschreiben' : 'Lebenslauf') + ' - ' + app.name + '</title>';
+  if (!win) { showToast('Popup wurde blockiert. Bitte erlaube Popups für diese Seite.', 'error'); return; }
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (docType === 'motivation' ? 'Motivationsschreiben' : 'Lebenslauf') + ' - ' + escapeHtml(app.name) + '</title>';
   html += '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">';
   html += '<style>body{font-family:Inter,Arial,sans-serif;margin:0;padding:2rem;background:#f3f4f6;color:#1a1a2e;} .doc{max-width:700px;margin:0 auto;background:#fff;padding:3rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);border-radius:4px;min-height:800px;} h1{font-size:1.5rem;margin:0 0 0.5rem;} .meta{color:#666;font-size:0.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #eee;} .section-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;font-weight:700;margin:1.5rem 0 0.5rem;padding-bottom:0.3rem;border-bottom:1px solid #e5e7eb;} .content{font-size:0.95rem;line-height:1.7;white-space:pre-line;} .info-row{display:flex;gap:0.5rem;font-size:0.9rem;margin-bottom:0.3rem;} .info-label{color:#666;min-width:120px;} .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;} .skill-tag{padding:0.25rem 0.7rem;background:#eff6ff;color:#1e40af;border-radius:100px;font-size:0.8rem;font-weight:600;} @media print{body{padding:0;background:#fff;} .doc{box-shadow:none;padding:2rem;}}</style></head><body>';
 
@@ -2806,21 +2807,6 @@ function getEmployerApplicants() {
 }
 
 // ===== PROFIL SPEICHERN =====
-function saveWorkerProfile(btn) {
-  // Alle Formularfelder auslesen und in user speichern
-  const page = btn.closest('.dashboard-content');
-  const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
-  inputs.forEach(inp => {
-    if (inp.name) state.user[inp.name] = inp.value;
-  });
-  // Fortschritt berechnen
-  state.user.address = state.user.address || (page && page.querySelector('input[placeholder*="Stadt"]')?.value) || '';
-  state.user.hasSkills = true;
-  state.user.hasHours = true;
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  showToast('Profil gespeichert!');
-  render();
-}
 
 function saveEmployerProfile(btn) {
   const page = btn.closest('.dashboard-content');
@@ -3086,7 +3072,8 @@ function previewCV() {
   const template = getSelectedTemplate();
   const html = buildCVHTML(data, template);
   const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><title>Lebenslauf - ${data.vorname} ${data.nachname}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#f3f4f6;}</style></head><body>${html}</body></html>`);
+  if (!win) { showToast('Popup wurde blockiert. Bitte erlaube Popups für diese Seite.', 'error'); return; }
+  win.document.write(`<!DOCTYPE html><html><head><title>Lebenslauf - ${escapeHtml(data.vorname)} ${escapeHtml(data.nachname)}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#f3f4f6;}</style></head><body>${html}</body></html>`);
   win.document.close();
 }
 
@@ -3183,6 +3170,7 @@ function findChat(id) {
 
 function renderChatWidget() {
   const content = document.getElementById('chat-content');
+  if (!content) return;
   const chatList = getChatList();
   if (!state.activeChat) {
     content.innerHTML = `
@@ -3205,6 +3193,7 @@ function renderChatWidget() {
       </div>`;
   } else {
     const chat = findChat(state.activeChat);
+    if (!chat) { state.activeChat = null; return renderChatWidget(); }
     content.innerHTML = `
       <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
         <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
@@ -3523,9 +3512,11 @@ function getFilteredJobs() {
   if (f.city) jobs = jobs.filter(j => j.city === f.city);
   if (f.hours.length > 0) {
     jobs = jobs.filter(j => {
-      const match = j.hours.match(/(\d+)/);
-      if (!match) return false;
-      return f.hours.includes(parseInt(match[0]));
+      const nums = j.hours.match(/\d+/g);
+      if (!nums) return false;
+      const lo = parseInt(nums[0]);
+      const hi = nums[1] ? parseInt(nums[1]) : lo;
+      return f.hours.some(h => h >= lo && h <= hi);
     });
   }
   if (f.sort === 'date') jobs.sort((a, b) => new Date(b.posted) - new Date(a.posted));
@@ -4290,6 +4281,7 @@ function renderWorkerSidebar(active) {
         <a href="#" class="${active==='cv'?'active':''}" onclick="navigate('cv-builder')">Lebenslauf</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='reviews'?'active':''}" onclick="navigate('reviews')">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
       <nav class="sidebar-nav">
@@ -4560,10 +4552,10 @@ function renderWorkerProfile() {
         <div class="dashboard-content">
 
           <div class="profile-header-card">
-            <div class="profile-avatar">${u.name.split(' ').map(n=>n[0]).join('')}</div>
+            <div class="profile-avatar">${escapeHtml((u.name||'').split(' ').map(n=>n[0]).join(''))}</div>
             <div class="profile-info">
-              <h2>${u.name}</h2>
-              <p>${u.email}</p>
+              <h2>${escapeHtml(u.name)}</h2>
+              <p>${escapeHtml(u.email)}</p>
             </div>
           </div>
 
@@ -4846,17 +4838,17 @@ function renderCVBuilder() {
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">Vorname</label>
-                  <input type="text" id="cv-vorname" class="form-input" value="${state.user.name.split(' ')[0]}">
+                  <input type="text" id="cv-vorname" class="form-input" value="${escapeAttr((state.user.name||'').split(' ')[0])}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Nachname</label>
-                  <input type="text" id="cv-nachname" class="form-input" value="${state.user.name.split(' ').slice(1).join(' ')}">
+                  <input type="text" id="cv-nachname" class="form-input" value="${escapeAttr((state.user.name||'').split(' ').slice(1).join(' '))}">
                 </div>
               </div>
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label">E-Mail</label>
-                  <input type="email" id="cv-email" class="form-input" value="${state.user.email}">
+                  <input type="email" id="cv-email" class="form-input" value="${escapeAttr(state.user.email)}">
                 </div>
                 <div class="form-group">
                   <label class="form-label">Telefon</label>
@@ -5205,6 +5197,7 @@ function renderEmployerSidebar(active) {
         <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
         <div class="divider"></div>
         <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='reviews'?'active':''}" onclick="navigate('reviews')">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
       <nav class="sidebar-nav">
@@ -5483,7 +5476,7 @@ function renderWizardStep5() {
 }
 
 function renderEmployerProfile() {
-  if (!state.user) return renderLogin();
+  if (!state.user || state.user.role !== 'employer') return renderLogin();
   return `
     <div class="page">
       <div class="dashboard-layout">
@@ -5589,7 +5582,7 @@ const MOCK_APPLICANTS = [
 ];
 
 function renderApplicants() {
-  if (!state.user) return renderLogin();
+  if (!state.user || state.user.role !== 'employer') return renderLogin();
   const realApps = getEmployerApplicants();
   const allApplicants = [...realApps, ...MOCK_APPLICANTS];
   const applicants = (!state.applicantFilter || state.applicantFilter === 'all') ? allApplicants : allApplicants.filter(a => a.status === state.applicantFilter);
@@ -5681,7 +5674,7 @@ function renderApplicantProfile() {
             <h2 class="dashboard-title" style="margin:0">Bewerberprofil</h2>
           </div>
 
-          <div class="pv-banner" style="background:linear-gradient(135deg,var(--primary-light) 0%,var(--primary) 100%);height:110px;border-radius:12px 12px 0 0;position:relative">
+          <div style="background:linear-gradient(135deg,var(--primary-light) 0%,var(--primary) 100%);height:110px;border-radius:12px 12px 0 0;position:relative;display:block;border:none;padding:0;margin:0">
             <div style="position:absolute;bottom:-30px;left:1.5rem;width:64px;height:64px;font-size:1.3rem;border:3px solid #fff;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;border-radius:50%;font-weight:700">
               ${a.initials}
             </div>
@@ -5693,7 +5686,7 @@ function renderApplicantProfile() {
                 <div>
                   <h2 style="font-size:1.3rem;margin-bottom:0.25rem">${escapeHtml(a.name)}</h2>
                   <div style="font-size:0.85rem;color:var(--gray-500)">
-                    ${a.age} Jahre &bull; ${escapeHtml(a.city)} &bull; max. ${a.weeklyHours} Std./Woche
+                    ${a.age ? a.age + ' Jahre &bull; ' : ''}${escapeHtml(a.city)} &bull; max. ${a.weeklyHours || '?'} Std./Woche
                   </div>
                   <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
                     <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" onchange="updateApplicantStatus(${a.id}, this.value)">
@@ -5772,7 +5765,7 @@ function renderApplicantProfile() {
           <div style="text-align:center;margin-top:1.5rem">
             <button class="btn btn-primary btn-lg" onclick="openApplicantChat(${a.id})">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;vertical-align:-2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-              ${a.name.split(' ')[0]} anschreiben
+              ${escapeHtml((a.name||'').split(' ')[0])} anschreiben
             </button>
           </div>
 
@@ -6013,7 +6006,7 @@ function renderReviews() {
             </div>
           </div>
 
-          ${JOBS[0].reviews.concat(JOBS[1].reviews).concat(JOBS[4].reviews).map(r => `
+          ${JOBS.flatMap(j => j.reviews || []).map(r => `
             <div class="review-card">
               <div class="review-header">
                 <div class="review-author">
