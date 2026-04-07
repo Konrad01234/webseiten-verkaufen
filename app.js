@@ -446,9 +446,50 @@ function saveUserApps(apps) {
   if (!state.user) return;
   localStorage.setItem('jj_apps_' + state.user.id, JSON.stringify(apps));
 }
+
+// ===== AKTIVER JOB SYSTEM =====
+function getActiveJob() {
+  if (!state.user) return null;
+  return JSON.parse(localStorage.getItem('jj_active_job_' + state.user.id) || 'null');
+}
+function setActiveJob(jobData) {
+  if (!state.user) return;
+  localStorage.setItem('jj_active_job_' + state.user.id, JSON.stringify(jobData));
+}
+function clearActiveJob() {
+  if (!state.user) return;
+  const activeJob = getActiveJob();
+  if (activeJob) {
+    // Speichere als abgeschlossenen Job
+    const completed = JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
+    activeJob.completedAt = new Date().toISOString();
+    completed.push(activeJob);
+    localStorage.setItem('jj_completed_jobs_' + state.user.id, JSON.stringify(completed));
+  }
+  localStorage.removeItem('jj_active_job_' + state.user.id);
+}
+function getCompletedJobs() {
+  if (!state.user) return [];
+  return JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
+}
+function endActiveJob() {
+  clearActiveJob();
+  showToast('Job abgeschlossen! Du kannst jetzt eine Bewertung abgeben.');
+  render();
+}
+function getPendingAppCount() {
+  const allApps = getAllApplications();
+  return allApps.filter(a => a.userId === state.user?.id && a.status !== 'rejected' && a.status !== 'accepted').length;
+}
+
 function submitApplication(jobId) {
   const apps = getUserApps();
   if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
+  // Prüfe ob Worker bereits einen aktiven Job hat
+  if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
+  // Prüfe max 3 gleichzeitige Bewerbungen
+  const pendingCount = getPendingAppCount();
+  if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben. Warte auf eine Antwort oder ziehe eine zurück.', 'error'); return; }
   apps.push(jobId);
   saveUserApps(apps);
   // Save application globally so employers can see it
@@ -565,6 +606,10 @@ function submitReview(btn) {
   const card = btn.closest('.card-body');
   const stars = card.querySelectorAll('.star.filled').length;
   const text = card.querySelector('textarea')?.value?.trim();
+  // Prüfe ob Worker einen abgeschlossenen oder aktiven Job hat
+  const completedJobs = getCompletedJobs();
+  const hasActiveJob = !!getActiveJob();
+  if (!completedJobs.length && !hasActiveJob) { showToast('Du musst zuerst einen Job abschließen, bevor du bewerten kannst.', 'error'); return; }
   if (!stars) { showToast('Bitte wähle eine Bewertung (1-5 Sterne).', 'error'); return; }
   if (!text) { showToast('Bitte schreibe einen kurzen Text.', 'error'); return; }
   showToast('Bewertung abgegeben! Sie wird nach Prüfung sichtbar.');
@@ -919,11 +964,45 @@ function updateApplicantStatus(applicantId, newStatus) {
   let isReal = !!a;
   if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
+
+  // Prüfe ob Worker bereits einen aktiven Job hat (nur bei accepted)
+  if (newStatus === 'accepted' && isReal && a.userId) {
+    const workerActiveJob = JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null');
+    if (workerActiveJob) {
+      showToast(`${a.name} hat bereits einen aktiven Job und kann nicht angenommen werden.`, 'error');
+      render();
+      return;
+    }
+  }
+
   const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
   a.status = newStatus;
   a.statusText = statusTexts[newStatus];
   if (isReal) localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
   const jobTitle = a.jobTitle || a.job;
+
+  // Bei Annahme: aktiven Job setzen + andere Bewerbungen automatisch zurückziehen
+  if (newStatus === 'accepted' && isReal && a.userId) {
+    // Aktiven Job setzen
+    const job = JOBS.find(j => j.id === a.jobId);
+    localStorage.setItem('jj_active_job_' + a.userId, JSON.stringify({
+      jobId: a.jobId,
+      jobTitle: a.jobTitle || a.job,
+      jobCompany: a.jobCompany || job?.company || '',
+      acceptedAt: new Date().toISOString(),
+      employerId: state.user.id
+    }));
+    // Alle anderen Bewerbungen dieses Workers automatisch zurückziehen
+    const updatedApps = getAllApplications();
+    updatedApps.forEach(app => {
+      if (app.userId === a.userId && app.id !== a.id && app.status !== 'rejected') {
+        app.status = 'rejected';
+        app.statusText = 'Zurückgezogen';
+      }
+    });
+    localStorage.setItem('jj_all_applications', JSON.stringify(updatedApps));
+  }
+
   if (newStatus === 'rejected' || newStatus === 'accepted') {
     const workerUserId = a.userId || applicantId;
     let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
@@ -1463,9 +1542,16 @@ function renderJobDetail() {
         <div class="job-detail-sidebar">
           <div class="card">
             <div class="card-body">
-              <button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${state.user && state.user.role !== 'employer' ? `submitApplication(${job.id})` : `navigate('login')`}">
-                ${state.user && state.user.role !== 'employer' ? (getUserApps().includes(job.id) ? '✓ Beworben' : 'Jetzt bewerben') : 'Anmelden zum Bewerben'}
-              </button>
+              ${(() => {
+                const isWorker = state.user && state.user.role !== 'employer';
+                const alreadyApplied = isWorker && getUserApps().includes(job.id);
+                const hasActiveJob = isWorker && getActiveJob();
+                const maxApps = isWorker && !alreadyApplied && getPendingAppCount() >= 3;
+                const disabled = alreadyApplied || hasActiveJob || maxApps;
+                const label = !isWorker ? 'Anmelden zum Bewerben' : alreadyApplied ? '✓ Beworben' : hasActiveJob ? 'Du hast bereits einen aktiven Job' : maxApps ? 'Max. 3 Bewerbungen erreicht' : 'Jetzt bewerben';
+                const action = !isWorker ? `navigate('login')` : `submitApplication(${job.id})`;
+                return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${action}" ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
+              })()}
 
               <div style="margin-top:1.5rem">
                 <h3 style="font-size:1rem;margin-bottom:1rem">Über ${job.company}</h3>
@@ -1629,6 +1715,33 @@ function renderWorkerDashboard() {
         <div class="dashboard-content">
 
           <h2 class="dashboard-title">Hallo, ${state.user.name.split(' ')[0]}!</h2>
+
+          <!-- ── Aktiver Job Banner ── -->
+          ${(() => {
+            const activeJob = getActiveJob();
+            if (!activeJob) return '';
+            const job = JOBS.find(j => j.id === activeJob.jobId);
+            const daysSince = Math.floor((Date.now() - new Date(activeJob.acceptedAt).getTime()) / 86400000);
+            return `
+            <div class="card" style="margin-bottom:1.5rem;border:2px solid var(--success);background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+              <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:1rem">
+                  <div style="width:48px;height:48px;border-radius:12px;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">
+                    ${job?.companyLogo && !job.companyLogo.startsWith('data:') ? job.companyLogo : '💼'}
+                  </div>
+                  <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:0.05em">Aktiver Job</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--gray-900)">${activeJob.jobTitle}</div>
+                    <div style="font-size:0.85rem;color:var(--gray-500)">${activeJob.jobCompany} · Seit ${daysSince} ${daysSince === 1 ? 'Tag' : 'Tagen'}</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-shrink:0">
+                  ${job ? `<button class="btn btn-sm btn-outline" onclick="navigate('job-detail',{jobId:${job.id}})">Details</button>` : ''}
+                  <button class="btn btn-sm btn-primary" style="background:var(--danger);border-color:var(--danger)" onclick="if(confirm('Möchtest du diesen Job wirklich beenden?')) endActiveJob()">Job beenden</button>
+                </div>
+              </div>
+            </div>`;
+          })()}
 
           <!-- ── 3 Schnell-Kacheln ── -->
           <div class="worker-dash-grid">
@@ -2131,6 +2244,17 @@ function renderApplications() {
         ${renderWorkerSidebar('applications')}
         <div class="dashboard-content">
           <h2 class="dashboard-title">Meine Bewerbungen</h2>
+          ${(() => {
+            const activeJob = getActiveJob();
+            const pending = myApps.filter(a => a.status !== 'rejected' && a.status !== 'accepted');
+            return activeJob ? `
+            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:1rem;font-size:0.85rem;color:#166534;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.1rem">💼</span> Du hast einen aktiven Job: <strong>${activeJob.jobTitle}</strong> – Neue Bewerbungen sind gesperrt.
+            </div>` : `
+            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:1rem;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.1rem">📋</span> Offene Bewerbungen: <strong>${pending.length}/3</strong>
+            </div>`;
+          })()}
           ${myApps.length > 0 ? `
           <div class="jobs-grid">
             ${myApps.map(a => `
@@ -2877,12 +3001,17 @@ function renderApplicants() {
                 </tr>
               </thead>
               <tbody>
-                ${applicants.map(a => `
-                  <tr>
+                ${applicants.map(a => {
+                  const workerHasActiveJob = a.userId ? !!JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null') : false;
+                  return `
+                  <tr${workerHasActiveJob ? ' style="opacity:0.6"' : ''}>
                     <td>
                       <div class="applicant-row">
                         <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${a.initials}</div>
-                        <strong>${a.name}</strong>
+                        <div>
+                          <strong>${a.name}</strong>
+                          ${workerHasActiveJob ? '<div style="font-size:0.7rem;color:var(--danger);font-weight:600">Bereits beschäftigt</div>' : ''}
+                        </div>
                       </div>
                     </td>
                     <td>${a.jobTitle || a.job}</td>
@@ -2902,8 +3031,8 @@ function renderApplicants() {
                         <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
                     </td>
-                  </tr>
-                `).join('')}
+                  </tr>`;
+                }).join('')}
               </tbody>
             </table>
           </div>
@@ -3243,7 +3372,7 @@ function renderReviews() {
           <h2 class="dashboard-title">★ Bewertungen</h2>
 
           <div class="review-restriction">
-            ! Bewertungen können nur abgegeben werden, solange ein aktives Arbeitsverhältnis besteht. Dies stellt sicher, dass nur faire und aktuelle Bewertungen abgegeben werden.
+            ! Bewertungen können nur abgegeben werden, wenn du einen Job abgeschlossen hast. Dies stellt sicher, dass nur faire und aktuelle Bewertungen abgegeben werden.
           </div>
 
           <div class="tabs">
@@ -3279,22 +3408,36 @@ function renderReviews() {
             </div>
           `).join('')}
 
-          <div class="card" style="margin-top:1.5rem">
-            <div class="card-header">Bewertung abgeben</div>
-            <div class="card-body">
-              <div class="form-group">
-                <label class="form-label">Bewertung</label>
-                <div class="stars" style="font-size:1.75rem" id="rating-stars">
-                  ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
+          ${(() => {
+            const completedJobs = getCompletedJobs();
+            const hasActiveJob = !!getActiveJob();
+            const canReview = completedJobs.length > 0 || hasActiveJob;
+            if (!canReview) return `
+            <div class="card" style="margin-top:1.5rem;opacity:0.6">
+              <div class="card-header">Bewertung abgeben</div>
+              <div class="card-body" style="text-align:center;padding:2rem">
+                <div style="font-size:2rem;margin-bottom:0.5rem">🔒</div>
+                <p style="color:var(--gray-500);font-size:0.9rem">Du musst zuerst einen Job abschließen, bevor du eine Bewertung abgeben kannst.</p>
+              </div>
+            </div>`;
+            return `
+            <div class="card" style="margin-top:1.5rem">
+              <div class="card-header">Bewertung abgeben</div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Bewertung</label>
+                  <div class="stars" style="font-size:1.75rem" id="rating-stars">
+                    ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
+                  </div>
                 </div>
+                <div class="form-group">
+                  <label class="form-label">Dein Feedback</label>
+                  <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
               </div>
-              <div class="form-group">
-                <label class="form-label">Dein Feedback</label>
-                <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
-              </div>
-              <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
-            </div>
-          </div>
+            </div>`;
+          })()}
         </div>
       </div>
     </div>`;
