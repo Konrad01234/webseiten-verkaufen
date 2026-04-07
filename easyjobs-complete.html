@@ -3945,8 +3945,7 @@ function renderJobDetail() {
                 const label = !isWorker ? 'Anmelden zum Bewerben' : alreadyApplied ? '✓ Beworben' : hasActiveJob ? 'Du hast bereits einen aktiven Job' : maxApps ? 'Max. 3 Bewerbungen erreicht' : 'Jetzt bewerben';
                 const action = !isWorker ? `navigate('login')` : `submitApplication(${job.id})`;
                 return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${action}" ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
-              })()
-              </button>
+              })()}
 
               <div style="margin-top:1.5rem">
                 <h3 style="font-size:1rem;margin-bottom:1rem">Über ${job.company}</h3>
