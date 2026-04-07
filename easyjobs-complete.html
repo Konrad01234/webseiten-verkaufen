@@ -1709,7 +1709,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 const JOBS = [
   {
-    id: 1, title: 'Aushilfe im Einzelhandel', company: 'MediaMarkt', companyLogo: '🛒',
+    id: 1, title: 'Aushilfe im Einzelhandel', company: 'MediaMarkt', companyLogo: '',
     location: 'Hauptstraße 45, 41460 Neuss', city: 'Neuss', lat: 51.1986, lng: 6.6920, distance: 0,
     type: 'Minijob', hours: '10-15 Std/Woche', salary: '12,50€/Std',
     category: 'Einzelhandel', posted: '2026-03-22', expires: '2026-04-22',
@@ -1730,7 +1730,7 @@ const JOBS = [
     ]
   },
   {
-    id: 2, title: 'Kellner/in im Café', company: 'Café Sonnenschein', companyLogo: '☕',
+    id: 2, title: 'Kellner/in im Café', company: 'Café Sonnenschein', companyLogo: '',
     location: 'Dorfstraße 12, 40670 Meerbusch', city: 'Meerbusch', lat: 51.2583, lng: 6.6917, distance: 0,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '13€/Std + Trinkgeld',
     category: 'Gastronomie', posted: '2026-03-20', expires: '2026-04-20',
@@ -1750,7 +1750,7 @@ const JOBS = [
     ]
   },
   {
-    id: 3, title: 'Lagerhelfer/in', company: 'Amazon Logistik', companyLogo: '📦',
+    id: 3, title: 'Lagerhelfer/in', company: 'Amazon Logistik', companyLogo: '',
     location: 'Königsallee 80, 40212 Düsseldorf', city: 'Düsseldorf', lat: 51.2277, lng: 6.7735, distance: 0,
     type: 'Ferienjob', hours: '30-40 Std/Woche', salary: '14€/Std',
     category: 'Logistik', posted: '2026-03-18', expires: '2026-05-01',
@@ -1770,7 +1770,7 @@ const JOBS = [
     ]
   },
   {
-    id: 4, title: 'Social Media Praktikant/in', company: 'Creative Agency Düsseldorf', companyLogo: '🎨',
+    id: 4, title: 'Social Media Praktikant/in', company: 'Creative Agency Düsseldorf', companyLogo: '',
     location: 'Friedrichstraße 15, 40217 Düsseldorf', city: 'Düsseldorf', lat: 51.2130, lng: 6.7780, distance: 0,
     type: 'Praktikum', hours: '20 Std/Woche', salary: '11€/Std',
     category: 'Marketing', posted: '2026-03-23', expires: '2026-04-30',
@@ -1788,7 +1788,7 @@ const JOBS = [
     reviews: []
   },
   {
-    id: 5, title: 'Nachhilfelehrer/in Mathe', company: 'Schülerhilfe', companyLogo: '📚',
+    id: 5, title: 'Nachhilfelehrer/in Mathe', company: 'Schülerhilfe', companyLogo: '',
     location: 'Schulstraße 3, 41460 Neuss', city: 'Neuss', lat: 51.2005, lng: 6.6880, distance: 0,
     type: 'Minijob', hours: '5-10 Std/Woche', salary: '15€/Std',
     category: 'Bildung', posted: '2026-03-21', expires: '2026-05-15',
@@ -1809,7 +1809,7 @@ const JOBS = [
     ]
   },
   {
-    id: 6, title: 'Hundesitter/in', company: 'PawCare Meerbusch', companyLogo: '🐕',
+    id: 6, title: 'Hundesitter/in', company: 'PawCare Meerbusch', companyLogo: '',
     location: 'Am Stadtpark 8, 40670 Meerbusch', city: 'Meerbusch', lat: 51.2620, lng: 6.6850, distance: 0,
     type: 'Minijob', hours: '8-12 Std/Woche', salary: '12€/Std',
     category: 'Tierpflege', posted: '2026-03-19', expires: '2026-04-19',
@@ -1829,7 +1829,7 @@ const JOBS = [
     ]
   },
   {
-    id: 7, title: 'IT-Support Werkstudent/in', company: 'TechStart GmbH', companyLogo: '💻',
+    id: 7, title: 'IT-Support Werkstudent/in', company: 'TechStart GmbH', companyLogo: '',
     location: 'Breite Straße 20, 41460 Neuss', city: 'Neuss', lat: 51.1970, lng: 6.6950, distance: 0,
     type: 'Minijob', hours: '15-20 Std/Woche', salary: '16€/Std',
     category: 'IT', posted: '2026-03-24', expires: '2026-05-24',
@@ -1847,7 +1847,7 @@ const JOBS = [
     reviews: []
   },
   {
-    id: 8, title: 'Promoter/in für Events', company: 'EventPro Düsseldorf', companyLogo: '🎉',
+    id: 8, title: 'Promoter/in für Events', company: 'EventPro Düsseldorf', companyLogo: '',
     location: 'Altstadt 5, 40213 Düsseldorf', city: 'Düsseldorf', lat: 51.2270, lng: 6.7750, distance: 0,
     type: 'Minijob', hours: 'Flexibel / Eventbasiert', salary: '13€/Std',
     category: 'Events', posted: '2026-03-17', expires: '2026-04-17',
@@ -3506,7 +3506,7 @@ function renderJobCard(j) {
       ${j.promoted ? '<div class="promoted-badge">&#9733; Hervorgehoben</div>' : ''}
       <div class="job-card-left">
         <div class="job-card-header">
-          <div class="job-company-logo" ${j.companyLogo && j.companyLogo.startsWith('data:') ? `style="background-image:url(${j.companyLogo});background-size:cover;background-position:center"` : ''}>${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : j.companyLogo}</div>
+          <div class="job-company-logo" ${j.companyLogo && j.companyLogo.startsWith('data:') ? `style="background-image:url(${j.companyLogo});background-size:cover;background-position:center"` : ''}>${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
           <div class="job-card-info">
             <h3>${j.title}</h3>
             <div class="job-company-name">${j.company}</div>
@@ -3569,7 +3569,7 @@ function renderJobDetail() {
               <div>
                 <h1>${job.title}</h1>
                 <div class="job-detail-company">
-                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : job.companyLogo}</span>
+                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : (job.company ? job.company[0] : '')}</span>
                   <span style="font-weight:600">${job.company}</span>
                 </div>
               </div>
@@ -4296,7 +4296,7 @@ function renderApplications() {
               <div class="card" style="cursor:pointer" onclick="navigate('job-detail', {jobId: ${a.job.id}})">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center">
                   <div style="display:flex;align-items:center;gap:1rem">
-                    <div class="job-company-logo" ${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? `style="background-image:url(${a.job.companyLogo});background-size:cover;background-position:center"` : ''}>${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? '' : a.job.companyLogo}</div>
+                    <div class="job-company-logo" ${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? `style="background-image:url(${a.job.companyLogo});background-size:cover;background-position:center"` : ''}>${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? '' : (a.job.company ? a.job.company[0] : '')}</div>
                     <div>
                       <h3 style="font-size:1rem;margin-bottom:0.25rem">${a.job.title}</h3>
                       <div style="font-size:0.85rem;color:var(--gray-500)">${a.job.company}</div>
@@ -4643,7 +4643,7 @@ function renderEmployerDashboard() {
               <div class="card">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
                   <div style="display:flex;align-items:center;gap:1rem;flex:1">
-                    <div class="job-company-logo">${j.companyLogo || '&#9962;'}</div>
+                    <div class="job-company-logo">${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
                     <div>
                       <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${j.title}</h3>
                       <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
