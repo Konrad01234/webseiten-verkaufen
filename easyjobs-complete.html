@@ -57,13 +57,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
 .btn-secondary { background: var(--secondary); color: #fff; }
-.btn-secondary:hover { background: #e11d48; }
+.btn-secondary:hover { background: #d97706; }
 .btn-outline { background: transparent; border-color: var(--gray-300); color: var(--gray-700); }
 .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
 .btn-ghost { background: transparent; color: var(--gray-600); }
 .btn-ghost:hover { background: var(--gray-100); }
 .btn-success { background: var(--success); color: #fff; }
-.btn-success:hover { background: #1e40af; }
+.btn-success:hover { background: #059669; }
 .btn-danger { background: var(--danger); color: #fff; }
 .btn-danger:hover { background: #dc2626; }
 .btn-lg { padding: 0.875rem 2rem; font-size: 1.05rem; border-radius: var(--radius); }
@@ -298,7 +298,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .badge-primary { background: rgba(79,70,229,0.1); color: var(--primary); }
 .badge-secondary { background: rgba(37,99,235,0.12); color: #1d4ed8; }
-.badge-success { background: rgba(29,78,216,0.1); color: #1d4ed8; }
+.badge-success { background: rgba(16,185,129,0.1); color: #059669; }
 .badge-danger { background: rgba(239,68,68,0.1); color: var(--danger); }
 .badge-gray { background: var(--gray-100); color: var(--gray-600); }
 
@@ -1764,7 +1764,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
         </div>
         <div class="footer-col">
           <h4>Unternehmen</h4>
-          <a href="#">Kontakt</a>
+          <a href="#" onclick="navigate('support')">Kontakt</a>
           <a href="#" onclick="navigate('support')">Hilfe & Support</a>
         </div>
       </div>
@@ -2102,7 +2102,6 @@ const SKILLS = [
 // Diese Arrays sind nur noch Laufzeit-Cache — beim Login neu befüllt.
 let WORKER_CHAT_MESSAGES = [];
 let EMPLOYER_CHAT_MESSAGES = [];
-const CHAT_MESSAGES = WORKER_CHAT_MESSAGES;
 
 const AI_RESPONSES = [
   { keywords: ['16 jahre', 'mit 16', 'ab 16', 'welche jobs', 'alter'], answer: 'Mit 16 Jahren darfst du in vielen Bereichen arbeiten! Auf EasyJobs findest du z.B.:\n\n• Aushilfe im Einzelhandel (z.B. MediaMarkt, Supermärkte)\n• Kellner/in im Café oder Restaurant\n• Nachhilfe geben\n• Hundesitting & Tierpflege\n• Promotion & Flyerverteilen\n\nGeh einfach auf "Jobs finden" und filtere nach deiner Stadt und Kategorie. Viele Arbeitgeber suchen gezielt junge, motivierte Leute!' },
@@ -2183,7 +2182,10 @@ if (!localStorage.getItem('jj_chat_reset_v2')) {
 
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
-const ADMIN_PASSWORD = 'Tauranga@2025';
+// Password is hashed to avoid plaintext exposure in source
+const ADMIN_PASSWORD_HASH = 'c4fc7530'; // simple hash of admin password
+function simpleHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = ((h << 5) - h + str.charCodeAt(i)) | 0; } return (h >>> 0).toString(16); }
+function checkAdminPassword(pw) { return simpleHash(pw) === ADMIN_PASSWORD_HASH; }
 
 // ===== ANALYTICS TRACKING =====
 function trackVisit() {
@@ -2466,7 +2468,7 @@ function login(email, password) {
   const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
   if (user) {
     const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
-    if (latestUser.password !== password) {
+    if (latestUser.password !== simpleHash(password)) {
       const err = document.getElementById('login-error');
       if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
       return;
@@ -2486,7 +2488,7 @@ function register(data) {
     if (err) { err.textContent = 'Diese E-Mail ist bereits registriert. Bitte melde dich an.'; err.style.display='block'; }
     return;
   }
-  const user = { ...data, id: Date.now(), createdAt: new Date().toISOString(), profileComplete: 20 };
+  const user = { ...data, id: Date.now() + Math.floor(Math.random() * 10000), createdAt: new Date().toISOString(), profileComplete: 20 };
   users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
   localStorage.setItem('jj_users', JSON.stringify(users));
   // Save full user data under its own key
@@ -2817,6 +2819,18 @@ function saveWorkerProfile(btn) {
   render();
 }
 
+function saveEmployerProfile(btn) {
+  const page = btn.closest('.dashboard-content');
+  const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
+  inputs.forEach(inp => {
+    if (inp.name) state.user[inp.name] = inp.value;
+  });
+  localStorage.setItem('jj_user', JSON.stringify(state.user));
+  if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  showToast('Profil gespeichert!');
+  render();
+}
+
 // ===== STELLENANZEIGE VERÖFFENTLICHEN =====
 function publishJob() {
   const wc = document.querySelector('.wizard-content') || document;
@@ -2832,6 +2846,7 @@ function publishJob() {
     category: wc.querySelector('select')?.value || 'Sonstiges',
     type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
     posted: new Date().toISOString(),
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
     views: 0, clicks: 0, applications: 0,
     promoted: false, tags: [],
     description: '', requirements: '', benefits: '',
@@ -3173,9 +3188,9 @@ function renderChatWidget() {
           <div class="chat-list-item" onclick="openChat(${c.id})">
             <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
             <div style="flex:1;min-width:0">
-              <div style="font-weight:600;font-size:0.85rem">${c.partnerName}</div>
-              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${c.jobTitle}</div>
-              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+              <div style="font-weight:600;font-size:0.85rem">${escapeHtml(c.partnerName)}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${escapeHtml(c.jobTitle)}</div>
+              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
             </div>
             <div style="text-align:right">
               <div style="font-size:0.7rem;color:var(--gray-400)">${c.time}</div>
@@ -3190,12 +3205,12 @@ function renderChatWidget() {
     content.innerHTML = `
       <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
         <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
-        <strong style="font-size:0.85rem">${chat.partnerName}</strong>
+        <strong style="font-size:0.85rem">${escapeHtml(chat.partnerName)}</strong>
       </div>
       <div class="chat-messages" style="flex:1;overflow-y:auto;padding:0.75rem">
         ${chat.messages.map(m => `
           <div class="chat-msg ${m.sent ? 'sent' : 'received'}">
-            ${m.text}
+            ${escapeHtml(m.text)}
             <div class="msg-time">${m.time}</div>
           </div>
         `).join('')}
@@ -3822,8 +3837,8 @@ function renderJobCard(j) {
         <div class="job-card-header">
           <div class="job-company-logo" ${j.companyLogo && j.companyLogo.startsWith('data:') ? `style="background-image:url(${j.companyLogo});background-size:cover;background-position:center"` : ''}>${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
           <div class="job-card-info">
-            <h3>${j.title}</h3>
-            <div class="job-company-name">${j.company}</div>
+            <h3>${escapeHtml(j.title)}</h3>
+            <div class="job-company-name">${escapeHtml(j.company)}</div>
           </div>
         </div>
         <div class="job-card-meta">
@@ -3881,10 +3896,10 @@ function renderJobDetail() {
           <div class="job-detail-header">
             <div style="display:flex;justify-content:space-between;align-items:start">
               <div>
-                <h1>${job.title}</h1>
+                <h1>${escapeHtml(job.title)}</h1>
                 <div class="job-detail-company">
-                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : (job.company ? job.company[0] : '')}</span>
-                  <span style="font-weight:600">${job.company}</span>
+                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : (job.company ? escapeHtml(job.company[0]) : '')}</span>
+                  <span style="font-weight:600">${escapeHtml(job.company)}</span>
                 </div>
               </div>
               <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem">${saved ? '♥' : '♡'}</button>
@@ -3920,13 +3935,13 @@ function renderJobDetail() {
                   <div class="review-author">
                     <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${r.author.split(' ').map(n=>n[0]).join('')}</div>
                     <div>
-                      <strong style="font-size:0.85rem">${r.author}</strong>
+                      <strong style="font-size:0.85rem">${escapeHtml(r.author)}</strong>
                       ${r.active ? '<span class="badge badge-success" style="margin-left:0.5rem;font-size:0.7rem">Aktiv beschäftigt</span>' : ''}
                     </div>
                   </div>
                   <div class="stars">${'<span class="star filled">&#9733;</span>'.repeat(r.rating)}${'<span class="star">&#9734;</span>'.repeat(5-r.rating)}</div>
                 </div>
-                <div class="review-text">${r.text}</div>
+                <div class="review-text">${escapeHtml(r.text)}</div>
                 <div class="review-date">${formatDate(r.date)}</div>
               </div>
             `).join('') : '<p style="font-size:0.85rem;color:var(--gray-400);margin-bottom:1rem">Noch keine Bewertungen.</p>'}
@@ -3980,11 +3995,11 @@ function renderLogin() {
         <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" value="test1234" required>
+            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" required>
           </div>
           <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
@@ -4021,11 +4036,11 @@ function renderRegister() {
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname</label>
-              <input type="text" name="firstName" class="form-input" placeholder="Max" value="Max" required>
+              <input type="text" name="firstName" class="form-input" placeholder="Max" required>
             </div>
             <div class="form-group">
               <label class="form-label">Nachname</label>
-              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" value="Mustermann" required>
+              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" required>
             </div>
           </div>
           <div class="form-group employer-field" style="display:none">
@@ -4034,11 +4049,11 @@ function renderRegister() {
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" value="test1234" required minlength="8">
+            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" required minlength="8">
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
@@ -4064,7 +4079,7 @@ function submitRegister(form) {
     role: form.role.value,
     name: form.firstName.value + ' ' + form.lastName.value,
     email: form.email.value,
-    password: form.password.value
+    password: simpleHash(form.password.value)
   };
   if (data.role === 'employer') {
     data.company = form.company.value;
@@ -4166,7 +4181,7 @@ function renderWorkerDashboard() {
                 <span class="wdt-badge">${state.savedJobs.length}</span>
               </div>
               ${saved.length > 0 ? saved.map(j => `
-                <div class="wdt-job-row" onclick="event.stopPropagation();navigate('job-detail',${j.id})">
+                <div class="wdt-job-row" onclick="event.stopPropagation();navigate('job-detail',{jobId:${j.id}})">
                   <div class="wdt-job-logo">${j.company[0]}</div>
                   <div class="wdt-job-info">
                     <div class="wdt-job-title">${j.title}</div>
@@ -4597,6 +4612,7 @@ function saveProfileStep() {
     // Referenzen werden via addRef() direkt gespeichert
   }
   localStorage.setItem('jj_user', JSON.stringify(u));
+  if (u.id) localStorage.setItem('jj_user_' + u.id, JSON.stringify(u));
 }
 
 function renderSavedJobs() {
@@ -5080,6 +5096,8 @@ var empObserver = new MutationObserver(function() {
   if (document.getElementById('emp-slideshow')) {
     clearInterval(empSlideTimer);
     empSlideTimer = setInterval(nextSlide, 5000);
+  } else {
+    clearInterval(empSlideTimer);
   }
 });
 empObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
@@ -5219,14 +5237,14 @@ function validateWizardStep() {
     showToast('Bitte fülle alle Pflichtfelder (*) aus.', 'error');
     return;
   }
-  state.wizardStep = Math.min(3, state.wizardStep + 1);
+  state.wizardStep = Math.min(4, state.wizardStep + 1);
   render();
 }
 
 function renderPostJob() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
   const step = state.wizardStep;
-  const steps = ['Grundinfos', 'Details', 'Bilder', 'Vorschau'];
+  const steps = ['Grundinfos', 'Details', 'Bilder', 'Laufzeit', 'Vorschau'];
 
   return `
     <div class="page page-narrow" style="max-width:900px">
@@ -5245,14 +5263,15 @@ function renderPostJob() {
         ${step === 0 ? renderWizardStep1() : ''}
         ${step === 1 ? renderWizardStep2() : ''}
         ${step === 2 ? renderWizardStep3() : ''}
-        ${step === 3 ? renderWizardStep5() : ''}
+        ${step === 3 ? renderWizardStep4() : ''}
+        ${step === 4 ? renderWizardStep5() : ''}
       </div>
 
       <div class="wizard-footer">
         ${step === 0
           ? `<button class="btn btn-outline" onclick="navigate('employer-dashboard')">&#8592; Dashboard</button>`
           : `<button class="btn btn-outline" onclick="state.wizardStep=Math.max(0,state.wizardStep-1);render()">&#8592; Zurück</button>`}
-        ${step < 3 ? `
+        ${step < 4 ? `
           <button class="btn btn-primary" onclick="validateWizardStep()">Weiter &#8594;</button>
         ` : `
           <button class="btn btn-success btn-lg" onclick="publishJob()">✓ Veröffentlichen</button>
@@ -5545,7 +5564,7 @@ function renderEmployerProfile() {
           </div>
 
           <div style="margin-top:1.5rem;text-align:right">
-            <button class="btn btn-primary btn-lg" onclick="saveWorkerProfile(this)">✓ Profil speichern</button>
+            <button class="btn btn-primary btn-lg" onclick="saveEmployerProfile(this)">✓ Profil speichern</button>
           </div>
         </div>
       </div>
@@ -6085,12 +6104,14 @@ function showBoostModal(jobTitle) {
 }
 
 function closeBoostModal() {
-  document.getElementById('boost-modal').classList.remove('open');
+  const modal = document.getElementById('boost-modal');
+  if (modal) modal.classList.remove('open');
   // Reset
   document.querySelectorAll('#boost-modal .card').forEach(c => {
     c.style.borderColor = 'var(--gray-200)'; c.style.background = '';
   });
-  document.getElementById('boost-opt-standard').style.borderColor = 'var(--secondary)';
+  const stdOpt = document.getElementById('boost-opt-standard');
+  if (stdOpt) stdOpt.style.borderColor = 'var(--secondary)';
   document.getElementById('boost-modal-summary')?.classList.add('hidden');
   const btn = document.getElementById('boost-modal-pay-btn');
   if (btn) btn.disabled = true;
@@ -6172,7 +6193,7 @@ function adminLogin() {
     if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
     return;
   }
-  if (password !== ADMIN_PASSWORD) {
+  if (!checkAdminPassword(password)) {
     if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
     return;
   }
@@ -6817,7 +6838,10 @@ function adminReplyTicket(ticketId) {
 }
 
 // ===== EVENT LISTENERS =====
+let _listenersAttached = false;
 function attachEventListeners() {
+  if (_listenersAttached) return;
+  _listenersAttached = true;
   // Close dropdown on outside click
   document.addEventListener('click', (e) => {
     if (state.dropdownOpen && !e.target.closest('.user-menu')) {
