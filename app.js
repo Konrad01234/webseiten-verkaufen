@@ -30,7 +30,44 @@ if (!localStorage.getItem('jj_chat_reset_v2')) {
 
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
-const ADMIN_PASSWORD = 'Tauranga@2025';
+// SHA-256 hash of the admin password. The plain-text password is intentionally
+// not stored in source code so it cannot be read by anyone viewing the page source.
+// To rotate: compute a new hash via `printf '%s' 'newpass' | sha256sum` and replace below.
+const ADMIN_PASSWORD_HASH = 'cfc87cb2ec5c83c709c87b7e1ea57c07376b2cdb6f79ee14b19d23de9118e8dc';
+
+// ===== SECURITY HELPERS =====
+// SHA-256 via Web Crypto API. Returns lowercase hex string.
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Salted password hash for stored user passwords. The salt is a fixed
+// per-app constant — this prevents trivial reuse of pre-computed rainbow
+// tables but is NOT a substitute for a server-side bcrypt/argon2 hash.
+const PW_SALT = 'easyjobs::v1::';
+async function hashUserPassword(password) {
+  return sha256(PW_SALT + password);
+}
+
+// Strip control characters and HTML tags from free-text user input. Used
+// for fields like name, company, address that get rendered into templates.
+function sanitizeText(value, maxLength) {
+  if (value == null) return '';
+  let s = String(value);
+  // Remove control characters except whitespace
+  s = s.replace(/[\u0000-\u001F\u007F]/g, '');
+  // Strip angle brackets entirely to prevent any HTML injection downstream
+  s = s.replace(/[<>]/g, '');
+  s = s.trim();
+  if (typeof maxLength === 'number' && s.length > maxLength) s = s.slice(0, maxLength);
+  return s;
+}
+
+// Basic email format check.
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/.test(email);
+}
 
 // ===== ANALYTICS TRACKING =====
 function trackVisit() {
@@ -326,7 +363,7 @@ function updateNav() {
     actions.innerHTML = `
       <div class="user-menu">
 
-        <div class="user-avatar" onclick="toggleDropdown()">${state.user.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div class="user-avatar" onclick="toggleDropdown()">${escapeHtml(state.user.name.split(' ').map(n=>n[0]).join(''))}</div>
         <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown">
           <a href="#" onclick="navigate('${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}'); toggleDropdown()">Dashboard</a>
           <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
@@ -379,35 +416,72 @@ function loadUserSession(user) {
   }
 }
 
-function login(email, password) {
-  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
-    if (latestUser.password !== password) {
-      const err = document.getElementById('login-error');
-      if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
-      return;
-    }
-    loadUserSession(latestUser);
-    navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
-  } else {
-    const err = document.getElementById('login-error');
-    if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
-  }
-}
+async function login(email, password) {
+  const err = document.getElementById('login-error');
+  const showError = () => { if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; } };
 
-function register(data) {
-  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-    const err = document.getElementById('register-error');
-    if (err) { err.textContent = 'Diese E-Mail ist bereits registriert. Bitte melde dich an.'; err.style.display='block'; }
+  const cleanEmail = sanitizeText(email, 320).toLowerCase();
+  if (!isValidEmail(cleanEmail) || !password) { showError(); return; }
+
+  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  const user = allUsers.find(u => u.email.toLowerCase() === cleanEmail);
+  if (!user) { showError(); return; }
+
+  const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
+  const inputHash = await hashUserPassword(password);
+  // Backwards-compat: legacy accounts stored a plain-text `password`. If we
+  // detect one, accept it on first login and immediately upgrade to a hash.
+  if (latestUser.passwordHash) {
+    if (latestUser.passwordHash !== inputHash) { showError(); return; }
+  } else if (latestUser.password) {
+    if (latestUser.password !== password) { showError(); return; }
+    latestUser.passwordHash = inputHash;
+    delete latestUser.password;
+    localStorage.setItem('jj_user_' + latestUser.id, JSON.stringify(latestUser));
+  } else {
+    showError();
     return;
   }
-  const user = { ...data, id: Date.now(), createdAt: new Date().toISOString(), profileComplete: 20 };
+
+  loadUserSession(latestUser);
+  navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+}
+
+async function register(data) {
+  const err = document.getElementById('register-error');
+  const showError = (msg) => { if (err) { err.textContent = msg; err.style.display='block'; } };
+
+  const cleanEmail = sanitizeText(data.email, 320).toLowerCase();
+  const cleanName = sanitizeText(data.name, 80);
+  const cleanCompany = data.company ? sanitizeText(data.company, 120) : undefined;
+  const password = data.password || '';
+
+  if (!isValidEmail(cleanEmail)) { showError('Bitte gib eine gültige E-Mail-Adresse ein.'); return; }
+  if (!cleanName) { showError('Bitte gib deinen Namen ein.'); return; }
+  if (password.length < 8) { showError('Das Passwort muss mindestens 8 Zeichen lang sein.'); return; }
+  if (password.length > 200) { showError('Das Passwort ist zu lang.'); return; }
+  if (data.role === 'employer' && !cleanCompany) { showError('Bitte gib einen Firmennamen ein.'); return; }
+
+  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  if (users.find(u => u.email.toLowerCase() === cleanEmail)) {
+    showError('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
+    return;
+  }
+
+  const passwordHash = await hashUserPassword(password);
+  const user = {
+    role: data.role,
+    name: cleanName,
+    email: cleanEmail,
+    passwordHash,
+    id: Date.now(),
+    createdAt: new Date().toISOString(),
+    profileComplete: 20
+  };
+  if (cleanCompany) user.company = cleanCompany;
+
   users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
   localStorage.setItem('jj_users', JSON.stringify(users));
-  // Save full user data under its own key
   localStorage.setItem('jj_user_' + user.id, JSON.stringify(user));
   loadUserSession(user);
   navigate(user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
@@ -916,14 +990,14 @@ function renderChatWidget() {
       <div class="chat-list">
         ${chatList.map(c => `
           <div class="chat-list-item" onclick="openChat(${c.id})">
-            <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
+            <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${escapeHtml(c.partnerInitials)}</div>
             <div style="flex:1;min-width:0">
-              <div style="font-weight:600;font-size:0.85rem">${c.partnerName}</div>
-              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${c.jobTitle}</div>
-              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+              <div style="font-weight:600;font-size:0.85rem">${escapeHtml(c.partnerName)}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${escapeHtml(c.jobTitle)}</div>
+              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:0.7rem;color:var(--gray-400)">${c.time}</div>
+              <div style="font-size:0.7rem;color:var(--gray-400)">${escapeHtml(c.time)}</div>
               ${c.unread ? '<div class="unread" style="margin-left:auto;margin-top:4px"></div>' : ''}
             </div>
           </div>
@@ -935,13 +1009,13 @@ function renderChatWidget() {
     content.innerHTML = `
       <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
         <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
-        <strong style="font-size:0.85rem">${chat.partnerName}</strong>
+        <strong style="font-size:0.85rem">${escapeHtml(chat.partnerName)}</strong>
       </div>
       <div class="chat-messages" style="flex:1;overflow-y:auto;padding:0.75rem">
         ${chat.messages.map(m => `
           <div class="chat-msg ${m.sent ? 'sent' : 'received'}">
-            ${m.text}
-            <div class="msg-time">${m.time}</div>
+            ${escapeHtml(m.text)}
+            <div class="msg-time">${escapeHtml(m.time)}</div>
           </div>
         `).join('')}
       </div>
@@ -1072,7 +1146,10 @@ function sendChatMessage() {
   if (chat) {
     const now = new Date();
     const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const msgText = censorContactInfo(input.value);
+    // Cap message length and strip control chars / angle brackets so the
+    // stored value is safe even if a future renderer forgets to escape it.
+    const msgText = censorContactInfo(sanitizeText(input.value, 2000));
+    if (!msgText) return;
     chat.messages.push({ text: msgText, sent: true, time: time });
     chat.lastMessage = msgText;
     chat.time = time;
@@ -1123,9 +1200,13 @@ function toggleAI() {
 function sendAIMessage() {
   const input = document.getElementById('ai-input');
   if (!input || !input.value.trim()) return;
-  const msg = input.value.trim();
+  const msg = input.value.trim().slice(0, 2000);
   const container = document.getElementById('ai-messages');
-  container.innerHTML += `<div class="ai-msg user">${escapeHtml(msg)}</div>`;
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = msg;
+  container.appendChild(userMsg);
   input.value = '';
 
   // Find best matching response (most keyword hits wins)
@@ -1139,7 +1220,15 @@ function sendAIMessage() {
   const response = bestMatch ? bestMatch.answer : AI_RESPONSES.defaultAnswer;
 
   setTimeout(() => {
-    container.innerHTML += `<div class="ai-msg bot">${response.replace(/\n/g, '<br>')}</div>`;
+    const botMsg = document.createElement('div');
+    botMsg.className = 'ai-msg bot';
+    // Render the static AI response line by line so newlines become <br>
+    // without ever passing untrusted HTML through innerHTML.
+    String(response).split('\n').forEach((line, i) => {
+      if (i > 0) botMsg.appendChild(document.createElement('br'));
+      botMsg.appendChild(document.createTextNode(line));
+    });
+    container.appendChild(botMsg);
     container.scrollTop = container.scrollHeight;
   }, 800);
 }
@@ -1586,11 +1675,11 @@ function renderLogin() {
         <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" maxlength="320" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" value="test1234" required>
+            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" maxlength="200" autocomplete="current-password" required>
           </div>
           <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
@@ -1627,24 +1716,24 @@ function renderRegister() {
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname</label>
-              <input type="text" name="firstName" class="form-input" placeholder="Max" value="Max" required>
+              <input type="text" name="firstName" class="form-input" placeholder="Max" maxlength="40" autocomplete="given-name" required>
             </div>
             <div class="form-group">
               <label class="form-label">Nachname</label>
-              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" value="Mustermann" required>
+              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" maxlength="40" autocomplete="family-name" required>
             </div>
           </div>
           <div class="form-group employer-field" style="display:none">
             <label class="form-label">Firmenname</label>
-            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH" maxlength="120" autocomplete="organization">
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" maxlength="320" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" value="test1234" required minlength="8">
+            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" maxlength="200" autocomplete="new-password" required minlength="8">
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
@@ -3176,10 +3265,10 @@ function renderChatDetail() {
           <!-- Chat-Kopfzeile -->
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)">
             <button class="btn btn-sm btn-outline" onclick="navigate('messages')">&#8592; Zurück</button>
-            <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
+            <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${escapeHtml(chat.partnerInitials)}</div>
             <div>
-              <strong style="font-size:0.95rem">${chat.partnerName}</strong>
-              <div style="font-size:0.78rem;color:var(--gray-500)">${chat.jobTitle}</div>
+              <strong style="font-size:0.95rem">${escapeHtml(chat.partnerName)}</strong>
+              <div style="font-size:0.78rem;color:var(--gray-500)">${escapeHtml(chat.jobTitle)}</div>
             </div>
           </div>
 
@@ -3187,13 +3276,13 @@ function renderChatDetail() {
           <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
             ${chat.messages.length === 0 ? `
               <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
-                Noch keine Nachrichten. Schreib ${chat.partnerName.split(' ')[0]} eine erste Nachricht!
+                Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
             ${chat.messages.map(m => `
               <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
                 <div style="max-width:72%;padding:0.6rem 0.85rem;border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};font-size:0.88rem;line-height:1.45">
                   ${escapeHtml(m.text)}
-                  <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
+                  <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${escapeHtml(m.time)}</div>
                 </div>
               </div>
             `).join('')}
@@ -3229,14 +3318,14 @@ function renderMessages() {
           <div class="card" style="max-width:620px">
             ${chatList.map(c => `
               <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'" onclick="navigate('chat',{chatId:${c.id}})">
-                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
+                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${escapeHtml(c.partnerInitials)}</div>
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <strong style="font-size:0.85rem">${c.partnerName}</strong>
-                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                    <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
+                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${escapeHtml(c.time)}</span>
                   </div>
-                  <div style="font-size:0.75rem;color:var(--primary)">${c.jobTitle}</div>
-                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+                  <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
+                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
                 </div>
                 ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
               </div>
@@ -3262,9 +3351,10 @@ function saveSupportTickets(tickets) {
 
 function submitSupportTicket() {
   const category = document.getElementById('support-category')?.value;
-  const subject = document.getElementById('support-subject')?.value?.trim();
-  const message = document.getElementById('support-message')?.value?.trim();
-  if (!category || !subject || !message) {
+  const subject = sanitizeText(document.getElementById('support-subject')?.value, 120);
+  const message = sanitizeText(document.getElementById('support-message')?.value, 5000);
+  const allowedCategories = ['bug', 'account', 'payment', 'job', 'user', 'other'];
+  if (!allowedCategories.includes(category) || !subject || !message) {
     alert('Bitte fülle alle Felder aus.');
     return;
   }
@@ -3570,16 +3660,17 @@ function adminToggleApproval(userId, approved) {
   render();
 }
 
-function adminLogin() {
+async function adminLogin() {
   const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
-  const password = document.getElementById('admin-password')?.value;
+  const password = document.getElementById('admin-password')?.value || '';
   const err = document.getElementById('admin-login-error');
 
   if (!ADMIN_EMAILS.includes(email)) {
     if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
     return;
   }
-  if (password !== ADMIN_PASSWORD) {
+  const passwordHash = await sha256(password);
+  if (passwordHash !== ADMIN_PASSWORD_HASH) {
     if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
     return;
   }
