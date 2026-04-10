@@ -1,8 +1,9 @@
 // ===== APP STATE =====
 let state = {
   currentPage: 'landing',
-  user: JSON.parse(localStorage.getItem('jj_user')) || null,
-  get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
+  user: null, // populated asynchronously by loadUserSession() at startup
+  get savedJobs() { return state._savedJobs || []; },
+  _savedJobs: [],
   filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date' },
   chatOpen: false,
   aiOpen: false,
@@ -12,20 +13,131 @@ let state = {
   dropdownOpen: false,
   adminLoggedIn: false,
   adminRevenuePeriod: 'daily',
-  adminTab: 'overview'
+  adminTab: 'overview',
+  jobsLoaded: false
 };
 
-// Restore posted jobs on page load
-if (state.user && state.user.postedJobs) {
-  state.user.postedJobs.forEach(j => {
-    if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
-  });
-}
-
-// Clear old broken chat data (one-time reset)
+// One-time cleanup of legacy chat caches
 if (!localStorage.getItem('jj_chat_reset_v2')) {
   Object.keys(localStorage).filter(k => k.startsWith('jj_chats_')).forEach(k => localStorage.removeItem(k));
   localStorage.setItem('jj_chat_reset_v2', '1');
+}
+
+// Bootstrap: restore session, load jobs, then render. The DOM may not be
+// ready yet when this script runs at the bottom of <body>, but document
+// already exists so we can safely query for #app once render() is called.
+async function bootstrap() {
+  if (window.DB) {
+    try {
+      await loadUserSession();
+      if (state.user) {
+        await loadSavedJobsForUser();
+      }
+    } catch (e) {
+      console.error('[bootstrap] session load failed', e);
+    }
+    // React to login/logout events from other tabs or token refresh
+    DB.onAuthChange(async (event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        await loadUserSession();
+        if (state.user) await loadSavedJobsForUser();
+      } else if (event === 'SIGNED_OUT') {
+        state.user = null;
+        state._savedJobs = [];
+      }
+      try { render(); } catch (_) {}
+    });
+  }
+  try {
+    await loadJobsFromDB();
+  } catch (e) {
+    console.error('[bootstrap] jobs load failed', e);
+  }
+  // First render once we have whatever data we could fetch
+  try { render(); } catch (e) { console.error('[bootstrap] initial render failed', e); }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
+
+// Convert a `jobs` row from Supabase into the camelCase shape the
+// existing renderers expect (id, title, company, city, salary, ...).
+function dbJobToFrontend(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    employerId: row.employer_id,
+    title: row.title || '',
+    company: row.company || '',
+    city: row.city || '',
+    location: row.location || row.city || '',
+    distance: 0,
+    category: row.category || '',
+    type: row.type || '',
+    hours: row.hours || '',
+    salary: row.salary || '',
+    salaryNum: row.salary_num || 0,
+    description: row.description || '',
+    tags: row.tags || [],
+    images: row.images || [],
+    companyLogo: row.company_logo || '',
+    companyInfo: { about: '', industry: '', employees: '', founded: '', website: '' },
+    promoted: !!row.promoted,
+    views: row.views || 0,
+    clicks: row.clicks || 0,
+    applications: row.applications_count || 0,
+    saves: row.saves || 0,
+    reviews: [],
+    date: row.created_at,
+    active: row.active !== false
+  };
+}
+
+// Inverse: convert a frontend job draft into the DB row shape.
+function frontendJobToDb(j, employerId) {
+  return {
+    employer_id: employerId,
+    title: sanitizeText(j.title, 200),
+    company: sanitizeText(j.company, 200),
+    city: sanitizeText(j.city, 120),
+    location: sanitizeText(j.location || j.city, 200),
+    category: sanitizeText(j.category, 80),
+    type: sanitizeText(j.type, 80),
+    hours: sanitizeText(j.hours, 80),
+    salary: sanitizeText(j.salary, 80),
+    salary_num: typeof j.salaryNum === 'number' ? j.salaryNum : null,
+    description: sanitizeText(j.description, 5000),
+    tags: Array.isArray(j.tags) ? j.tags.slice(0, 20).map(t => sanitizeText(t, 40)) : [],
+    images: Array.isArray(j.images) ? j.images.slice(0, 6) : [],
+    company_logo: j.companyLogo || null,
+    promoted: !!j.promoted,
+    active: true
+  };
+}
+
+async function loadJobsFromDB() {
+  if (!window.DB) return;
+  try {
+    const rows = await DB.listJobs({ limit: 200 });
+    JOBS.length = 0;
+    rows.forEach(r => JOBS.push(dbJobToFrontend(r)));
+    state.jobsLoaded = true;
+  } catch (e) {
+    console.error('[loadJobsFromDB]', e);
+  }
+}
+
+async function loadSavedJobsForUser() {
+  if (!state.user || !window.DB) { state._savedJobs = []; return; }
+  try {
+    state._savedJobs = await DB.listSavedJobIds(state.user.id);
+  } catch (e) {
+    console.error('[loadSavedJobsForUser]', e);
+    state._savedJobs = [];
+  }
 }
 
 // ===== ADMIN CONFIG =====
@@ -284,6 +396,30 @@ function navigate(page, data) {
   state.pageData = data;
   render();
   window.scrollTo(0, 0);
+  // Pages that need fresh data from the DB after the initial paint
+  if (window.DB && state.user) {
+    const needsApplicants = ['employer-dashboard','applicants','applicant-profile'];
+    if (needsApplicants.includes(page)) {
+      refreshEmployerApplicants().then(() => render()).catch(() => {});
+    }
+    if (page === 'applications' && state.user.role === 'worker') {
+      refreshWorkerApplications().then(() => render()).catch(() => {});
+    }
+    if (page === 'messages' || page === 'chat') {
+      refreshChatList().then(() => {
+        if (page === 'chat' && state.activeChat != null) {
+          return refreshMessagesForChat(state.activeChat);
+        }
+      }).then(() => render()).catch(() => {});
+    }
+    if (['jobs','landing','job-detail','worker-dashboard','employer-dashboard','saved-jobs'].includes(page)) {
+      // Refresh in background so newly posted jobs appear
+      loadJobsFromDB().then(() => render()).catch(() => {});
+    }
+    if (page === 'support') {
+      refreshSupportTickets().then(() => render()).catch(() => {});
+    }
+  }
 }
 
 function navigateToSection(page, sectionId) {
@@ -403,48 +539,97 @@ function toggleMobileMenu() {
   document.getElementById('mobile-menu').classList.toggle('open');
 }
 
-// ===== AUTH =====
-function loadUserSession(user) {
-  state.user = user;
-  localStorage.setItem('jj_user', JSON.stringify(user));
-  loadUserChats();
-  // Restore posted jobs into JOBS array
-  if (user.postedJobs) {
-    user.postedJobs.forEach(j => {
-      if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
-    });
+// ===== AUTH (Supabase-backed) =====
+// Maps a Supabase profile row into the shape the rest of the app expects.
+// Old code reads fields like state.user.id, state.user.name, state.user.role,
+// state.user.company, state.user.companyLogo, state.user.cvUploaded, etc.
+function profileToStateUser(profile) {
+  if (!profile) return null;
+  return {
+    id: profile.id,
+    email: profile.email,
+    role: profile.role,
+    name: profile.name || profile.email,
+    company: profile.company || '',
+    industry: profile.industry || '',
+    description: profile.description || '',
+    address: profile.address || '',
+    city: profile.city || '',
+    phone: profile.phone || '',
+    website: profile.website || '',
+    founded: profile.founded || '',
+    employees: profile.employees || '',
+    companyLogo: profile.company_logo || '',
+    companyImages: profile.company_images || [],
+    cvData: profile.cv_data || null,
+    cvUploaded: !!profile.cv_uploaded,
+    docsUploaded: !!profile.docs_uploaded,
+    approved: profile.approved !== false,
+    profileComplete: profile.profile_complete || 20,
+    createdAt: profile.created_at
+  };
+}
+
+async function loadUserSession() {
+  if (!window.DB) return;
+  const session = await DB.getSession();
+  if (!session) { state.user = null; return; }
+  try {
+    const profile = await DB.getProfile(session.user.id);
+    state.user = profileToStateUser(profile);
+  } catch (e) {
+    console.error('[auth] failed to load profile', e);
+    state.user = null;
+  }
+}
+
+// Update local state.user AND persist a patch to the DB profile row.
+// Use this whenever a profile field changes (uploads, edits, etc.) so
+// the change is visible to other users on other devices.
+async function persistUserPatch(patch) {
+  if (!state.user) return;
+  Object.assign(state.user, patch);
+  const dbPatch = {};
+  // Map camelCase -> snake_case for the columns we know about
+  const map = {
+    name: 'name', company: 'company', industry: 'industry', description: 'description',
+    address: 'address', city: 'city', phone: 'phone', website: 'website',
+    founded: 'founded', employees: 'employees',
+    companyLogo: 'company_logo', companyImages: 'company_images',
+    cvData: 'cv_data', cvUploaded: 'cv_uploaded', docsUploaded: 'docs_uploaded',
+    profileComplete: 'profile_complete'
+  };
+  for (const k of Object.keys(patch)) {
+    if (map[k]) dbPatch[map[k]] = patch[k];
+  }
+  if (Object.keys(dbPatch).length === 0) return;
+  try {
+    await DB.updateProfile(state.user.id, dbPatch);
+  } catch (e) {
+    console.error('[persistUserPatch]', e);
   }
 }
 
 async function login(email, password) {
   const err = document.getElementById('login-error');
-  const showError = () => { if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; } };
+  const showError = (msg) => { if (err) { err.textContent = msg || 'E-Mail oder Passwort falsch.'; err.style.display='block'; } };
 
   const cleanEmail = sanitizeText(email, 320).toLowerCase();
   if (!isValidEmail(cleanEmail) || !password) { showError(); return; }
 
-  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  const user = allUsers.find(u => u.email.toLowerCase() === cleanEmail);
-  if (!user) { showError(); return; }
-
-  const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
-  const inputHash = await hashUserPassword(password);
-  // Backwards-compat: legacy accounts stored a plain-text `password`. If we
-  // detect one, accept it on first login and immediately upgrade to a hash.
-  if (latestUser.passwordHash) {
-    if (latestUser.passwordHash !== inputHash) { showError(); return; }
-  } else if (latestUser.password) {
-    if (latestUser.password !== password) { showError(); return; }
-    latestUser.passwordHash = inputHash;
-    delete latestUser.password;
-    localStorage.setItem('jj_user_' + latestUser.id, JSON.stringify(latestUser));
-  } else {
-    showError();
-    return;
+  try {
+    await DB.signIn({ email: cleanEmail, password });
+    await loadUserSession();
+    if (!state.user) { showError('Profil konnte nicht geladen werden.'); return; }
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    console.error('[login]', e);
+    if (/Email not confirmed/i.test(e.message || '')) {
+      showError('Bitte bestätige zuerst deine E-Mail-Adresse über den Link, den wir dir geschickt haben.');
+    } else {
+      showError('E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.');
+    }
   }
-
-  loadUserSession(latestUser);
-  navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
 }
 
 async function register(data) {
@@ -462,35 +647,38 @@ async function register(data) {
   if (password.length > 200) { showError('Das Passwort ist zu lang.'); return; }
   if (data.role === 'employer' && !cleanCompany) { showError('Bitte gib einen Firmennamen ein.'); return; }
 
-  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  if (users.find(u => u.email.toLowerCase() === cleanEmail)) {
-    showError('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
-    return;
+  try {
+    const result = await DB.signUp({
+      email: cleanEmail, password,
+      name: cleanName, role: data.role, company: cleanCompany
+    });
+    // If email confirmation is enabled in Supabase, there's no session yet.
+    if (!result.session) {
+      showToast('Wir haben dir eine Bestätigungs-E-Mail geschickt. Bitte bestätige sie und melde dich danach an.', 'success');
+      navigate('login');
+      return;
+    }
+    await loadUserSession();
+    if (!state.user) { showError('Konto erstellt, Profil konnte aber nicht geladen werden. Bitte melde dich an.'); navigate('login'); return; }
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    console.error('[register]', e);
+    if (/already registered|exists/i.test(e.message || '')) {
+      showError('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
+    } else if (/password/i.test(e.message || '')) {
+      showError('Passwort zu schwach. Bitte wähle ein stärkeres Passwort.');
+    } else {
+      showError('Registrierung fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'));
+    }
   }
-
-  const passwordHash = await hashUserPassword(password);
-  const user = {
-    role: data.role,
-    name: cleanName,
-    email: cleanEmail,
-    passwordHash,
-    id: Date.now(),
-    createdAt: new Date().toISOString(),
-    profileComplete: 20
-  };
-  if (cleanCompany) user.company = cleanCompany;
-
-  users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
-  localStorage.setItem('jj_users', JSON.stringify(users));
-  localStorage.setItem('jj_user_' + user.id, JSON.stringify(user));
-  loadUserSession(user);
-  navigate(user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
 }
 
-function logout() {
+async function logout() {
+  try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
   state.user = null;
   state.dropdownOpen = false;
-  localStorage.removeItem('jj_user');
+  // Wipe per-user local caches so the next user doesn't see them
+  Object.keys(localStorage).filter(k => k.startsWith('jj_')).forEach(k => localStorage.removeItem(k));
   navigate('landing');
 }
 
@@ -510,15 +698,31 @@ function showToast(msg, type='success') {
 }
 
 // ===== BEWERBUNG =====
-// applications loaded per-user via getUserApps()
+// Local cache of the current worker's applications, kept in sync with the DB
+// via refreshWorkerApplications().
+let _workerApplicationsCache = [];
 
 function getUserApps() {
-  if (!state.user) return [];
-  return JSON.parse(localStorage.getItem('jj_apps_' + state.user.id) || '[]');
+  // Returns array of jobIds the current worker has applied to.
+  return _workerApplicationsCache.map(a => a.job_id);
 }
-function saveUserApps(apps) {
-  if (!state.user) return;
-  localStorage.setItem('jj_apps_' + state.user.id, JSON.stringify(apps));
+function saveUserApps(_apps) {
+  // No-op kept for backwards-compat with old call sites — the DB is the
+  // source of truth now and refreshWorkerApplications() repopulates.
+}
+
+async function refreshWorkerApplications() {
+  if (!state.user || state.user.role !== 'worker') { _workerApplicationsCache = []; return; }
+  try {
+    _workerApplicationsCache = await DB.getApplicationsForWorker(state.user.id);
+  } catch (e) {
+    console.error('[refreshWorkerApplications]', e);
+    _workerApplicationsCache = [];
+  }
+}
+
+function getPendingAppCount() {
+  return _workerApplicationsCache.filter(a => a.status === 'pending' || a.status === 'invited').length;
 }
 
 // ===== AKTIVER JOB SYSTEM =====
@@ -551,108 +755,140 @@ function endActiveJob() {
   showToast('Job abgeschlossen! Du kannst jetzt eine Bewertung abgeben.');
   render();
 }
-function getPendingAppCount() {
-  const allApps = getAllApplications();
-  return allApps.filter(a => a.userId === state.user?.id && a.status !== 'rejected' && a.status !== 'accepted').length;
-}
+async function submitApplication(jobId) {
+  if (!state.user) { navigate('login'); return; }
+  if (state.user.role !== 'worker') { showToast('Nur Arbeitnehmer können sich bewerben.', 'error'); return; }
 
-function submitApplication(jobId) {
+  // Already-applied check via local cache (then server enforces UNIQUE anyway)
   const apps = getUserApps();
   if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
-  // Prüfe ob Worker bereits einen aktiven Job hat
   if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
-  // Prüfe max 3 gleichzeitige Bewerbungen
   const pendingCount = getPendingAppCount();
-  if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben. Warte auf eine Antwort oder ziehe eine zurück.', 'error'); return; }
-  apps.push(jobId);
-  saveUserApps(apps);
-  // Save application globally so employers can see it
-  const job = JOBS.find(j => j.id === jobId);
-  const allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
-  const initials = (state.user.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-  allApps.push({
-    id: Date.now(),
-    userId: state.user.id,
-    jobId: jobId,
-    jobTitle: job?.title || 'Unbekannt',
-    jobCompany: job?.company || '',
-    name: state.user.name,
-    initials: initials,
-    email: state.user.email,
-    city: state.user.address ? state.user.address.split(',').pop().trim() : '',
-    skills: state.user.skills || [],
-    weeklyHours: state.user.weeklyHours || 0,
-    refs: state.user.refs || [],
-    cvUploaded: !!state.user.cvUploaded,
-    docsUploaded: !!state.user.docsUploaded,
-    about: state.user.about || '',
-    status: 'new',
-    statusText: 'Neu',
-    date: new Date().toISOString().split('T')[0]
-  });
-  localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
-  showToast('Bewerbung erfolgreich gesendet!');
-  render();
+  if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben.', 'error'); return; }
+
+  try {
+    await DB.applyToJob(jobId, state.user.id, null);
+    apps.push(jobId);
+    saveUserApps(apps);
+    showToast('Bewerbung erfolgreich gesendet!');
+    // Refresh job list so the application count updates
+    await loadJobsFromDB();
+    render();
+  } catch (e) {
+    console.error('[submitApplication]', e);
+    if (/duplicate|unique/i.test(e.message || '')) {
+      showToast('Du hast dich bereits beworben!', 'info');
+    } else {
+      showToast('Bewerbung fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
+    }
+  }
 }
 
-function getAllApplications() {
-  return JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+// Cached applicant list for the currently logged-in employer.
+let _employerApplicantsCache = [];
+async function refreshEmployerApplicants() {
+  if (!state.user || state.user.role !== 'employer') { _employerApplicantsCache = []; return; }
+  try {
+    const rows = await DB.getApplicationsForEmployer(state.user.id);
+    _employerApplicantsCache = rows.map(r => {
+      const p = r.profiles || {};
+      const j = r.jobs || {};
+      const fullName = p.name || p.email || 'Unbekannt';
+      return {
+        id: r.id,
+        userId: p.id,
+        jobId: r.job_id,
+        jobTitle: j.title || 'Unbekannt',
+        jobCompany: j.company || '',
+        name: fullName,
+        initials: fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+        email: p.email,
+        city: p.city || '',
+        skills: [],
+        weeklyHours: 0,
+        refs: [],
+        cvUploaded: !!p.cv_uploaded,
+        docsUploaded: !!p.docs_uploaded,
+        about: p.description || '',
+        status: r.status,
+        statusText: r.status === 'pending' ? 'Neu' : (r.status === 'accepted' ? 'Angenommen' : (r.status === 'rejected' ? 'Abgelehnt' : r.status)),
+        date: (r.created_at || '').split('T')[0]
+      };
+    });
+  } catch (e) {
+    console.error('[refreshEmployerApplicants]', e);
+    _employerApplicantsCache = [];
+  }
 }
 
 function getEmployerApplicants() {
-  const allApps = getAllApplications();
-  const myJobIds = (state.user?.postedJobs || []).map(j => j.id);
-  return allApps.filter(a => myJobIds.includes(a.jobId));
+  return _employerApplicantsCache;
+}
+
+function getAllApplications() {
+  return _employerApplicantsCache;
 }
 
 // ===== PROFIL SPEICHERN =====
-function saveWorkerProfile(btn) {
-  // Alle Formularfelder auslesen und in user speichern
+async function saveWorkerProfile(btn) {
+  if (!state.user) return;
   const page = btn.closest('.dashboard-content');
   const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
+  // Whitelist of fields we accept from forms; also defines max lengths.
+  const limits = {
+    name: 80, company: 120, industry: 80, description: 2000,
+    address: 200, city: 120, phone: 40, website: 200,
+    founded: 4, employees: 40
+  };
+  const patch = {};
   inputs.forEach(inp => {
-    if (inp.name) state.user[inp.name] = inp.value;
+    const k = inp.name;
+    if (!k || !(k in limits)) return;
+    patch[k] = sanitizeText(inp.value, limits[k]);
   });
-  // Fortschritt berechnen
-  state.user.address = state.user.address || (page && page.querySelector('input[placeholder*="Stadt"]')?.value) || '';
-  state.user.hasSkills = true;
-  state.user.hasHours = true;
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  showToast('Profil gespeichert!');
+  try {
+    await persistUserPatch(patch);
+    showToast('Profil gespeichert!');
+  } catch (e) {
+    console.error('[saveWorkerProfile]', e);
+    showToast('Profil konnte nicht gespeichert werden: ' + (e.message || ''), 'error');
+  }
   render();
 }
 
 // ===== STELLENANZEIGE VERÖFFENTLICHEN =====
-function publishJob() {
+async function publishJob() {
+  if (!state.user || state.user.role !== 'employer') {
+    showToast('Nur Arbeitgeber können Anzeigen schalten.', 'error');
+    return;
+  }
   const wc = document.querySelector('.wizard-content') || document;
-  const newJob = {
-    id: Date.now(),
+  const draft = {
     title: wc.querySelector('input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
-    company: state.user?.company || state.user?.name || 'Unternehmen',
-    companyLogo: state.user?.companyLogo || state.user?.company?.[0] || state.user?.name?.[0] || 'U',
-    location: wc.querySelector('input[placeholder*="Straße"]')?.value || 'Berlin',
-    city: 'Berlin', distance: 3,
+    company: state.user.company || state.user.name || 'Unternehmen',
+    companyLogo: state.user.companyLogo || '',
+    location: wc.querySelector('input[placeholder*="Straße"]')?.value || state.user.city || 'Berlin',
+    city: state.user.city || 'Berlin',
     salary: wc.querySelector('input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
     hours: wc.querySelector('input[placeholder*="Std/Woche"]')?.value || 'Flexible',
     category: wc.querySelector('select')?.value || 'Sonstiges',
     type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
-    posted: new Date().toISOString(),
-    views: 0, clicks: 0, applications: 0,
-    promoted: false, tags: [],
-    description: '', requirements: '', benefits: '',
+    description: '',
+    tags: [],
     images: (state.selectedJobImages || []).map(i => (state.user?.companyImages || [])[i]).filter(Boolean),
-    reviews: [],
-    companyInfo: { about: state.user?.description || '', industry: state.user?.industry || '', employees: state.user?.employees || '', founded: state.user?.founded || '', website: state.user?.website || '' }
+    promoted: false
   };
-  JOBS.unshift(newJob);
-  if (!state.user.postedJobs) state.user.postedJobs = [];
-  state.user.postedJobs.unshift(newJob);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  state.wizardStep = 0;
-  state.selectedJobImages = [];
-  showToast('Stellenanzeige veröffentlicht!');
-  navigate('employer-dashboard');
+  try {
+    const inserted = await DB.createJob(frontendJobToDb(draft, state.user.id));
+    JOBS.unshift(dbJobToFrontend(inserted));
+    state.wizardStep = 0;
+    state.selectedJobImages = [];
+    showToast('Stellenanzeige veröffentlicht!');
+    navigate('employer-dashboard');
+  } catch (e) {
+    console.error('[publishJob]', e);
+    showToast('Veröffentlichen fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
+  }
 }
 
 // ===== KI GENERIEREN =====
@@ -746,11 +982,12 @@ function handleCVPhoto(input) {
 
 function handleCompanyLogo(input) {
   if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) { showToast('Logo zu groß (max 2 MB).', 'error'); return; }
+    if (!/^image\/(png|jpe?g|webp|gif)$/i.test(file.type)) { showToast('Nur Bild-Dateien erlaubt.', 'error'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyLogo = e.target.result;
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    reader.onload = async function(e) {
+      await persistUserPatch({ companyLogo: e.target.result });
       const preview = document.getElementById('company-logo-preview');
       if (preview) {
         preview.style.backgroundImage = `url(${e.target.result})`;
@@ -760,31 +997,33 @@ function handleCompanyLogo(input) {
       }
       showToast('Logo hochgeladen!');
     };
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 
 function handleCompanyImage(input) {
   if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) { showToast('Bild zu groß (max 2 MB).', 'error'); return; }
+    if (!/^image\/(png|jpe?g|webp|gif)$/i.test(file.type)) { showToast('Nur Bild-Dateien erlaubt.', 'error'); return; }
     if (!state.user.companyImages) state.user.companyImages = [];
     if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyImages.push(e.target.result);
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    reader.onload = async function(e) {
+      const next = [...state.user.companyImages, e.target.result];
+      await persistUserPatch({ companyImages: next });
       showToast('Bild hochgeladen!');
       render();
     };
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 
-function removeCompanyImage(index) {
+async function removeCompanyImage(index) {
   if (!state.user.companyImages) return;
-  state.user.companyImages.splice(index, 1);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  const next = [...state.user.companyImages];
+  next.splice(index, 1);
+  await persistUserPatch({ companyImages: next });
   render();
 }
 
@@ -915,15 +1154,21 @@ function docScanned(input) {
 }
 
 // ===== SAVE JOB =====
-function toggleSaveJob(jobId, e) {
+async function toggleSaveJob(jobId, e) {
   if (e) e.stopPropagation();
   if (!state.user) { navigate('register'); return; }
-  const key = 'jj_saved_' + state.user.id;
-  const saved = JSON.parse(localStorage.getItem(key) || '[]');
-  const idx = saved.indexOf(jobId);
-  if (idx > -1) saved.splice(idx, 1);
-  else saved.push(jobId);
-  localStorage.setItem(key, JSON.stringify(saved));
+  const idx = state._savedJobs.indexOf(jobId);
+  try {
+    if (idx > -1) {
+      state._savedJobs.splice(idx, 1);
+      await DB.unsaveJob(state.user.id, jobId);
+    } else {
+      state._savedJobs.push(jobId);
+      await DB.saveJob(state.user.id, jobId);
+    }
+  } catch (err) {
+    console.error('[toggleSaveJob]', err);
+  }
   render();
 }
 
@@ -952,35 +1197,90 @@ function toggleChat() {
   navigate('messages');
 }
 
-function chatKey() {
-  return state.user ? 'jj_chats_' + state.user.id : null;
-}
-function loadUserChats() {
-  if (!state.user) return;
-  const key = chatKey();
-  const chats = JSON.parse(localStorage.getItem(key) || '[]');
-  if (state.user.role === 'employer') {
-    EMPLOYER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => EMPLOYER_CHAT_MESSAGES.push(c));
-  } else {
-    WORKER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => WORKER_CHAT_MESSAGES.push(c));
-  }
-}
-function saveUserChats() {
-  const key = chatKey();
-  if (!key) return;
-  const chats = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
-  localStorage.setItem(key, JSON.stringify(chats));
-}
-function getChatList() {
-  if (!state.user) return [];
-  return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+// ===== CHAT (Supabase-backed) =====
+let _chatListCache = [];           // [{ id, partnerName, ..., messages: [...] }]
+let _messagesCache = {};           // { [chatId]: [{ text, sent, time }, ...] }
+let _chatRealtimeSub = null;
+let _chatListRealtimeSub = null;
+
+function _formatHM(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-function findChat(id) {
-  return [...WORKER_CHAT_MESSAGES, ...EMPLOYER_CHAT_MESSAGES].find(c => c.id === id);
+function _dbMessageToFrontend(msg) {
+  return {
+    id: msg.id,
+    text: msg.text,
+    sent: msg.sender_id === state.user?.id,
+    time: _formatHM(msg.created_at),
+    createdAt: msg.created_at
+  };
 }
+
+function _dbChatToFrontend(row) {
+  const isWorker = row.worker_id === state.user?.id;
+  const partner = isWorker ? row.employer : row.worker;
+  const partnerName = (partner?.company || partner?.name || 'Unbekannt');
+  return {
+    id: row.id,
+    partnerId: isWorker ? row.employer_id : row.worker_id,
+    partnerName,
+    partnerInitials: partnerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+    jobTitle: row.job_title || '',
+    lastMessage: row.last_message || '',
+    time: _formatHM(row.last_message_at),
+    unread: false,
+    messages: _messagesCache[row.id] || []
+  };
+}
+
+async function refreshChatList() {
+  if (!state.user || !window.DB) { _chatListCache = []; return; }
+  try {
+    const rows = await DB.listChatsForUser(state.user.id);
+    _chatListCache = rows.map(_dbChatToFrontend);
+  } catch (e) {
+    console.error('[refreshChatList]', e);
+    _chatListCache = [];
+  }
+}
+
+async function refreshMessagesForChat(chatId) {
+  if (!state.user || !window.DB || chatId == null) return;
+  try {
+    const rows = await DB.getMessages(chatId);
+    _messagesCache[chatId] = rows.map(_dbMessageToFrontend);
+    const c = _chatListCache.find(x => x.id === chatId);
+    if (c) c.messages = _messagesCache[chatId];
+    // Subscribe to realtime updates for this chat
+    if (_chatRealtimeSub) { try { DB.sb.removeChannel(_chatRealtimeSub); } catch (_) {} _chatRealtimeSub = null; }
+    _chatRealtimeSub = DB.subscribeToMessages(chatId, (newMsg) => {
+      const arr = _messagesCache[chatId] || (_messagesCache[chatId] = []);
+      if (!arr.find(m => m.id === newMsg.id)) {
+        arr.push(_dbMessageToFrontend(newMsg));
+        const cc = _chatListCache.find(x => x.id === chatId);
+        if (cc) {
+          cc.messages = arr;
+          cc.lastMessage = newMsg.text;
+          cc.time = _formatHM(newMsg.created_at);
+        }
+        if (state.currentPage === 'chat' && state.activeChat === chatId) render();
+        else if (state.currentPage === 'messages') render();
+      }
+    });
+  } catch (e) {
+    console.error('[refreshMessagesForChat]', e);
+  }
+}
+
+// Backwards-compat shims so existing call sites still work.
+function loadUserChats() { /* loaded async via refreshChatList */ }
+function saveUserChats() { /* persistence handled by DB */ }
+function getChatList() { return _chatListCache; }
+function findChat(id) { return _chatListCache.find(c => c.id === id); }
 
 function renderChatWidget() {
   const content = document.getElementById('chat-content');
@@ -1031,13 +1331,20 @@ function openChat(id) {
   renderChatWidget();
 }
 
-function updateApplicantStatus(applicantId, newStatus) {
+async function updateApplicantStatus(applicantId, newStatus) {
   // Try real applications first, then mock
   const allApps = getAllApplications();
   let a = allApps.find(x => x.id === applicantId);
   let isReal = !!a;
   if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
+
+  // Persist the new status to the DB for real applications.
+  if (isReal && window.DB) {
+    const dbStatus = newStatus === 'accepted' ? 'accepted' : (newStatus === 'rejected' ? 'rejected' : (newStatus === 'reviewing' ? 'pending' : 'pending'));
+    try { await DB.updateApplicationStatus(applicantId, dbStatus); }
+    catch (e) { console.error('[updateApplicantStatus DB]', e); }
+  }
 
   // Prüfe ob Worker bereits einen aktiven Job hat (nur bei accepted)
   if (newStatus === 'accepted' && isReal && a.userId) {
@@ -1114,70 +1421,62 @@ function updateApplicantStatus(applicantId, newStatus) {
   render();
 }
 
-function openApplicantChat(applicantId) {
-  const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
-  const a = allApplicants.find(x => x.id === applicantId);
-  if (!a) { navigate('messages'); return; }
-  const workerUserId = a.userId || applicantId;
-  let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
-  if (!chat) {
-    chat = {
-      id: 100 + workerUserId,
-      partnerId: 'worker-' + workerUserId,
-      partnerName: a.name,
-      partnerInitials: a.initials,
-      jobTitle: a.jobTitle || a.job,
-      lastMessage: '',
-      time: '',
-      unread: false,
-      messages: []
-    };
-    EMPLOYER_CHAT_MESSAGES.push(chat);
-  saveUserChats();
+async function openApplicantChat(applicantId) {
+  if (!state.user || state.user.role !== 'employer') return;
+  // Find the applicant's profile id and the job they applied to.
+  const a = _employerApplicantsCache.find(x => x.id === applicantId);
+  if (!a || !a.userId) { showToast('Bewerber nicht gefunden.', 'error'); return; }
+  try {
+    const chatRow = await DB.getOrCreateChat({
+      workerId: a.userId,
+      employerId: state.user.id,
+      jobId: a.jobId,
+      jobTitle: a.jobTitle
+    });
+    state.activeChat = chatRow.id;
+    await refreshChatList();
+    await refreshMessagesForChat(chatRow.id);
+    navigate('chat', { chatId: chatRow.id });
+  } catch (e) {
+    console.error('[openApplicantChat]', e);
+    showToast('Chat konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
   }
-  state.activeChat = chat.id;
-  navigate('chat', { chatId: chat.id });
 }
 
-function sendChatMessage() {
+// Worker opens a chat with the employer of a given job.
+async function openJobChat(jobId) {
+  if (!state.user || state.user.role !== 'worker') { navigate('login'); return; }
+  const job = JOBS.find(j => j.id === jobId);
+  if (!job || !job.employerId) { showToast('Job nicht gefunden.', 'error'); return; }
+  try {
+    const chatRow = await DB.getOrCreateChat({
+      workerId: state.user.id,
+      employerId: job.employerId,
+      jobId: job.id,
+      jobTitle: job.title
+    });
+    state.activeChat = chatRow.id;
+    await refreshChatList();
+    await refreshMessagesForChat(chatRow.id);
+    navigate('chat', { chatId: chatRow.id });
+  } catch (e) {
+    console.error('[openJobChat]', e);
+    showToast('Chat konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
+  }
+}
+
+async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   if (!input || !input.value.trim()) return;
-  const chat = findChat(state.activeChat);
-  if (chat) {
-    const now = new Date();
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-    // Cap message length and strip control chars / angle brackets so the
-    // stored value is safe even if a future renderer forgets to escape it.
-    const msgText = censorContactInfo(sanitizeText(input.value, 2000));
-    if (!msgText) return;
-    chat.messages.push({ text: msgText, sent: true, time: time });
-    chat.lastMessage = msgText;
-    chat.time = time;
-    saveUserChats();
-    input.value = '';
-    // Deliver message to the partner's chats
-    if (chat.partnerId) {
-      let partnerId = null;
-      const idPart = chat.partnerId.split('-').slice(1).join('-');
-      partnerId = parseInt(idPart) || null;
-      if (partnerId) {
-        const partnerChatKey = 'jj_chats_' + partnerId;
-        const partnerChats = JSON.parse(localStorage.getItem(partnerChatKey) || '[]');
-        const myName = state.user.company || state.user.name;
-        const myInitials = (myName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-        const myPartnerId = (state.user.role === 'employer' ? 'employer-' : 'worker-') + state.user.id;
-        let partnerChat = partnerChats.find(c => c.partnerId === myPartnerId);
-        if (!partnerChat) {
-          partnerChat = { id: 300 + state.user.id, partnerId: myPartnerId, partnerName: myName, partnerInitials: myInitials, jobTitle: chat.jobTitle || '', lastMessage: '', time: '', unread: true, messages: [] };
-          partnerChats.push(partnerChat);
-        }
-        partnerChat.messages.push({ text: msgText, sent: false, time: time });
-        partnerChat.lastMessage = msgText;
-        partnerChat.time = time;
-        partnerChat.unread = true;
-        localStorage.setItem(partnerChatKey, JSON.stringify(partnerChats));
-      }
-    }
+  if (!state.user || state.activeChat == null) return;
+  const msgText = censorContactInfo(sanitizeText(input.value, 2000));
+  if (!msgText) return;
+  input.value = '';
+  try {
+    await DB.sendMessage(state.activeChat, state.user.id, msgText);
+    // The realtime subscription will pick it up and re-render. As a fallback
+    // (e.g. if realtime is slow), refresh manually.
+    await refreshMessagesForChat(state.activeChat);
     if (state.currentPage === 'chat') {
       render();
       setTimeout(() => {
@@ -1187,6 +1486,9 @@ function sendChatMessage() {
     } else {
       renderChatWidget();
     }
+  } catch (e) {
+    console.error('[sendChatMessage]', e);
+    showToast('Nachricht konnte nicht gesendet werden: ' + (e.message || ''), 'error');
   }
 }
 
@@ -1922,11 +2224,12 @@ function renderWorkerDashboard() {
     </div>`;
 }
 
-function uploadCV(input) {
+async function uploadCV(input) {
   if (input.files.length) {
-    state.user.cvUploaded = true;
-    state.user.cvFileName = input.files[0].name;
-    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    const file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) { showToast('Datei zu groß (max 5 MB).', 'error'); return; }
+    state.user.cvFileName = sanitizeText(file.name, 200);
+    await persistUserPatch({ cvUploaded: true });
     showToast('Lebenslauf erfolgreich hochgeladen!');
     render();
   }
@@ -2274,24 +2577,24 @@ function renderWorkerProfile() {
     </div>`;
 }
 
-function saveProfileStep() {
-  const u = state.user;
+async function saveProfileStep() {
+  if (!state.user) return;
   const step = state.profileStep;
+  const patch = {};
   if (step === 0) {
     const addr   = document.getElementById('ps-address');
     const radius = document.querySelector('.range-slider');
-    if (addr   && addr.value.trim())  u.address = addr.value.trim();
-    if (radius) u.radius = parseInt(radius.value);
+    if (addr   && addr.value.trim())  patch.address = sanitizeText(addr.value, 200);
+    if (radius) state.user.radius = parseInt(radius.value);
   }
   if (step === 3) {
     const hours   = document.getElementById('ps-hours');
-    if (hours) u.weeklyHours = hours.value;
+    if (hours) state.user.weeklyHours = hours.value;
     const checked = [...document.querySelectorAll('.checkbox-group input:checked')]
       .map(c => c.nextElementSibling.textContent.trim());
-    if (checked.length) u.skills = checked;
-    // Referenzen werden via addRef() direkt gespeichert
+    if (checked.length) state.user.skills = checked;
   }
-  localStorage.setItem('jj_user', JSON.stringify(u));
+  if (Object.keys(patch).length) await persistUserPatch(patch);
 }
 
 function renderSavedJobs() {
@@ -2320,12 +2623,17 @@ function renderSavedJobs() {
 
 function renderApplications() {
   if (!state.user) return renderLogin();
-  const appJobIds = getUserApps();
-  const allApps = getAllApplications();
-  const myApps = appJobIds.map(jobId => {
-    const job = JOBS.find(j => j.id === jobId);
-    const appData = allApps.find(a => a.userId === state.user.id && a.jobId === jobId);
-    return { job, status: appData?.status || 'new', statusText: appData?.statusText || 'Gesendet', date: appData?.date || new Date().toISOString().split('T')[0] };
+  // Build the worker's application list directly from the cached DB rows.
+  // refreshWorkerApplications() is triggered by navigate() so this is fresh.
+  const statusTexts = { pending: 'Gesendet', accepted: 'Angenommen', rejected: 'Abgelehnt', invited: 'Eingeladen', withdrawn: 'Zurückgezogen' };
+  const myApps = _workerApplicationsCache.map(row => {
+    const job = (row.jobs && dbJobToFrontend(row.jobs)) || JOBS.find(j => j.id === row.job_id);
+    return {
+      job,
+      status: row.status,
+      statusText: statusTexts[row.status] || row.status,
+      date: (row.created_at || '').split('T')[0]
+    };
   }).filter(a => a.job);
   return `
     <div class="page">
@@ -3341,15 +3649,36 @@ function renderMessages() {
 }
 
 // ===== SUPPORT SYSTEM =====
+let _supportTicketsCache = [];
+async function refreshSupportTickets() {
+  if (!state.user || !window.DB) { _supportTicketsCache = []; return; }
+  try {
+    const rows = await DB.listSupportTickets(state.user.id);
+    _supportTicketsCache = rows.map(r => ({
+      id: r.id,
+      userId: r.user_id,
+      userName: state.user.name || state.user.company || 'Unbekannt',
+      userEmail: state.user.email,
+      userRole: state.user.role,
+      category: r.category,
+      subject: r.subject,
+      message: r.message,
+      status: r.status,
+      createdAt: r.created_at,
+      adminReply: r.admin_reply
+    }));
+  } catch (e) {
+    console.error('[refreshSupportTickets]', e);
+    _supportTicketsCache = [];
+  }
+}
 function getSupportTickets() {
-  return JSON.parse(localStorage.getItem('jj_support_tickets') || '[]');
+  return _supportTicketsCache;
 }
+function saveSupportTickets(_tickets) { /* no-op, DB is the source of truth */ }
 
-function saveSupportTickets(tickets) {
-  localStorage.setItem('jj_support_tickets', JSON.stringify(tickets));
-}
-
-function submitSupportTicket() {
+async function submitSupportTicket() {
+  if (!state.user) { navigate('login'); return; }
   const category = document.getElementById('support-category')?.value;
   const subject = sanitizeText(document.getElementById('support-subject')?.value, 120);
   const message = sanitizeText(document.getElementById('support-message')?.value, 5000);
@@ -3358,24 +3687,15 @@ function submitSupportTicket() {
     alert('Bitte fülle alle Felder aus.');
     return;
   }
-  const tickets = getSupportTickets();
-  const ticket = {
-    id: Date.now(),
-    userId: state.user.id,
-    userName: state.user.name || state.user.company || 'Unbekannt',
-    userEmail: state.user.email,
-    userRole: state.user.role,
-    category: category,
-    subject: subject,
-    message: message,
-    status: 'open',
-    createdAt: new Date().toISOString(),
-    adminReply: null
-  };
-  tickets.push(ticket);
-  saveSupportTickets(tickets);
-  alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
-  render();
+  try {
+    await DB.createSupportTicket({ userId: state.user.id, category, subject, message });
+    await refreshSupportTickets();
+    alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
+    render();
+  } catch (e) {
+    console.error('[submitSupportTicket]', e);
+    showToast('Ticket konnte nicht erstellt werden: ' + (e.message || ''), 'error');
+  }
 }
 
 function renderSupport() {
