@@ -2426,6 +2426,10 @@ async function loadUserSession() {
         name: profile.name,
         role: profile.role,
         company: profile.company || null,
+        // Auto-approve every account for now: the legacy approval
+        // workflow lived in localStorage and isn't part of the
+        // Supabase profiles schema yet.
+        approved: true,
         profileComplete: profile.profile_complete || 20,
         about: profile.about || '',
         address: profile.address || '',
@@ -2443,6 +2447,7 @@ async function loadUserSession() {
         name: md.name || '',
         role: md.role || 'worker',
         company: md.company || null,
+        approved: true,
         profileComplete: 20
       };
     }
@@ -2539,6 +2544,30 @@ function dbChatToFrontend(row) {
     unread: false,
     messages: []  // lazily filled by openChat
   };
+}
+
+// Admin: load every profile in the database into a cache so the
+// admin panel's user list + employer-approval table can show real
+// users instead of the legacy localStorage 'jj_users' array.
+async function loadAllProfilesForAdmin() {
+  if (!window.DB || !DB.sb) { state._allProfilesCache = []; return; }
+  try {
+    const res = await DB.sb.from('profiles').select('*').order('created_at', { ascending: false });
+    if (res.error) throw res.error;
+    state._allProfilesCache = (res.data || []).map(p => ({
+      id: p.id,
+      email: p.email,
+      name: p.name || '',
+      role: p.role || 'worker',
+      company: p.company || null,
+      // Auto-approved (see loadUserSession for the rationale)
+      approved: true,
+      createdAt: p.created_at
+    }));
+  } catch (e) {
+    console.error('[loadAllProfilesForAdmin]', e);
+    state._allProfilesCache = [];
+  }
 }
 
 async function loadChatsForUser() {
@@ -2648,7 +2677,10 @@ function trackPurchase(product, price) {
 function getAnalyticsData() {
   const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
   const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
+  // User counts come from the Supabase profiles cache loaded by
+  // loadAllProfilesForAdmin() (the legacy 'jj_users' localStorage key
+  // is empty after the Supabase migration).
+  const allUsers = state._allProfilesCache || [];
   const now = new Date();
   const onlineThreshold = 15 * 60 * 1000;
   const recentVisits = visits.filter(v => (now - new Date(v.timestamp)) < onlineThreshold);
@@ -6718,7 +6750,7 @@ function adminToggleApproval(userId, approved) {
   render();
 }
 
-function adminLogin() {
+async function adminLogin() {
   const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
   const password = document.getElementById('admin-password')?.value;
   const err = document.getElementById('admin-login-error');
@@ -6731,7 +6763,19 @@ function adminLogin() {
     return;
   }
   state.adminLoggedIn = true;
+  // Pull every profile from Supabase so the admin user list shows
+  // real registrations (not the legacy localStorage 'jj_users' array).
+  try { await loadAllProfilesForAdmin(); } catch (e) { console.error('[adminLogin] profiles', e); }
   navigate('admin-panel');
+}
+
+// Refresh the admin profile list on demand (used by the
+// "Aktualisieren" button on the admin panel).
+async function adminRefreshProfiles() {
+  try {
+    await loadAllProfilesForAdmin();
+    render();
+  } catch (e) { console.error('[adminRefreshProfiles]', e); }
 }
 
 function adminLogout() {
@@ -7191,86 +7235,35 @@ function renderAdminPanel() {
       <!-- TAB: Benutzer -->
       <div class="admin-tab-content ${state.adminTab === 'benutzer' ? 'active' : ''}" id="admin-tab-benutzer">
 
-      <!-- Arbeitgeber Freischaltung -->
-      ${(() => {
-        const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-        const pendingEmployers = allUsers.filter(u => u.role === 'employer').map(u => {
-          const full = JSON.parse(localStorage.getItem('jj_user_' + u.id) || '{}');
-          return { ...u, ...full };
-        }).filter(u => !u.approved);
-        return pendingEmployers.length > 0 ? `
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
-        <div class="card-body" style="padding:0;overflow:hidden">
-          <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Arbeitgeber Freischaltung</h4>
-            <span class="badge badge-warning" style="margin-left:auto">${pendingEmployers.filter(u => !u.approved).length} ausstehend</span>
-          </div>
-          <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
-            <thead>
-              <tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Status</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${pendingEmployers.map(u => {
-                const freemail = isFreemailDomain(u.email);
-                return `
-                <tr class="admin-table-row" style="${freemail && !u.approved ? 'background:rgba(245,158,11,0.08)' : ''}">
-                  <td style="padding:0.65rem 1.25rem">
-                    <div>
-                      <span style="font-weight:600">${escapeHtml(u.company || u.name)}</span>
-                      <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name)}</div>
-                    </div>
-                  </td>
-                  <td style="padding:0.65rem 1.25rem">
-                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email)}</span>
-                    ${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">&#9888; Freemail-Adresse</div>' : '<div style="font-size:0.7rem;color:var(--success)">&#10003; Geschäfts-E-Mail</div>'}
-                  </td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
-                    ${u.approved
-                      ? '<span class="badge badge-success">Freigeschaltet</span>'
-                      : '<span class="badge badge-warning">Ausstehend</span>'}
-                  </td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
-                    ${u.approved
-                      ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, false)">Sperren</button>`
-                      : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval(${u.id}, true)">Freischalten</button>`}
-                  </td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>` : '';
-      })()}
-
       <!-- Benutzer-Liste -->
       <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body" style="padding:0;overflow:hidden">
         <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Benutzer</h4>
-          <span class="badge badge-info" style="margin-left:auto">${data.users.total} gesamt</span>
+          <span class="badge badge-info" style="margin-left:auto">${(state._allProfilesCache || []).length} gesamt</span>
+          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" onclick="adminRefreshProfiles()">Neu laden</button>
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
           <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
             <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Benutzer</th>
             <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Firma</th>
             <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Rolle</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
           </tr></thead>
           <tbody>
-            ${JSON.parse(localStorage.getItem('jj_users') || '[]').map(u => {
+            ${(state._allProfilesCache || []).map(u => {
               const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
               const avatarColor = u.role === 'employer' ? '#f97316' : '#2563eb';
+              const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
               return `<tr class="admin-table-row">
                 <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${escapeHtml(initials)}</div><span style="font-weight:600">${escapeHtml(u.name || '-')}</span></div></td>
-                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email)}</td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '-')}</td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.company || '-')}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center"><span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span></td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
               </tr>`;
-            }).join('') || '<tr><td colspan="3" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+            }).join('') || '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
           </tbody>
         </table>
       </div></div>
