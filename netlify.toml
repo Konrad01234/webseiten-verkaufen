@@ -11,6 +11,20 @@
   command = ""
 
 # ---------------------------------------------------------------------
+# Entry point rewrite
+# ---------------------------------------------------------------------
+# The actual homepage lives in easyjobs-complete.html (kept under that
+# name so it's easy to find in the repo). Netlify's default is to serve
+# /index.html for "/", so we add a rewrite that makes Netlify serve
+# easyjobs-complete.html instead. status = 200 keeps the URL at "/"
+# (rewrite), as opposed to 301/302 which would be a visible redirect.
+# ---------------------------------------------------------------------
+[[redirects]]
+  from = "/"
+  to = "/easyjobs-complete.html"
+  status = 200
+
+# ---------------------------------------------------------------------
 # Real HTTP security headers
 # ---------------------------------------------------------------------
 # These are stronger than the <meta http-equiv> tags in index.html
@@ -49,7 +63,7 @@
 
 # Never cache the HTML entry point so users always get the newest deploy.
 [[headers]]
-  for = "/index.html"
+  for = "/easyjobs-complete.html"
   [headers.values]
     Cache-Control = "no-cache, no-store, must-revalidate"
 
