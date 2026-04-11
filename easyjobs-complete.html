@@ -2462,21 +2462,152 @@ async function loadSavedJobsForUser() {
   }
 }
 
+// ===== PHASE 2: APPLICATIONS + CHATS CACHE =====
+// Supabase application row -> legacy frontend shape that the renderers
+// already know how to draw. Fills in sensible defaults for the fields
+// that don't exist in the DB schema yet (skills, weeklyHours, refs...).
+function dbAppToFrontend(row) {
+  if (!row) return null;
+  const p = row.profiles || {};
+  const j = row.jobs || {};
+  const name = p.name || '';
+  const initials = (name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+  const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
+  return {
+    id: row.id,
+    userId: row.worker_id,
+    jobId: row.job_id,
+    jobTitle: j.title || '',
+    jobCompany: j.company || '',
+    name: name,
+    initials: initials,
+    email: p.email || '',
+    city: '',
+    skills: [],
+    weeklyHours: 0,
+    refs: [],
+    cvUploaded: false,
+    docsUploaded: false,
+    about: '',
+    status: row.status || 'new',
+    statusText: statusTexts[row.status] || 'Neu',
+    date: (row.created_at || '').slice(0, 10),
+    motivation: row.message || null,
+    motivationFileName: null,
+    cvMethod: null,
+    cvFileName: null
+  };
+}
+
+// Load all applications the current user cares about (their own as
+// a worker, or the ones for their jobs as an employer) into a local
+// cache so the synchronous renderers can keep working.
+async function loadApplicationsForUser() {
+  if (!state.user || !window.DB) { state._appsCache = []; return; }
+  try {
+    const rows = state.user.role === 'employer'
+      ? await DB.getApplicationsForEmployer(state.user.id)
+      : await DB.getApplicationsForWorker(state.user.id);
+    state._appsCache = (rows || []).map(dbAppToFrontend).filter(Boolean);
+  } catch (e) {
+    console.error('[loadApplicationsForUser]', e);
+    state._appsCache = [];
+  }
+}
+
+// Convert a Supabase chats row into the legacy shape used by the
+// WORKER_CHAT_MESSAGES / EMPLOYER_CHAT_MESSAGES renderers.
+function dbChatToFrontend(row) {
+  if (!row || !state.user) return null;
+  const isEmployer = row.employer_id === state.user.id;
+  const partnerProfile = isEmployer ? row.worker : row.employer;
+  const partnerName = (partnerProfile && (partnerProfile.company || partnerProfile.name)) || '';
+  const partnerInitials = (partnerName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
+  const partnerId = partnerProfile ? partnerProfile.id : '';
+  return {
+    id: row.id,
+    partnerId: (isEmployer ? 'worker-' : 'employer-') + partnerId,
+    partnerUserId: partnerId,
+    partnerName: partnerName,
+    partnerInitials: partnerInitials,
+    jobTitle: row.job_title || '',
+    jobId: row.job_id || null,
+    lastMessage: row.last_message || '',
+    time: row.last_message_at
+      ? new Date(row.last_message_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+      : '',
+    unread: false,
+    messages: []  // lazily filled by openChat
+  };
+}
+
+async function loadChatsForUser() {
+  if (!state.user || !window.DB) return;
+  try {
+    const rows = await DB.listChatsForUser(state.user.id);
+    const list = (rows || []).map(dbChatToFrontend).filter(Boolean);
+    const container = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+    // Preserve any `.messages` arrays that were already loaded via
+    // openChatById() so a reload triggered by the chat-list realtime
+    // subscription doesn't wipe the currently open conversation.
+    const existing = new Map(container.map(c => [c.id, c]));
+    container.length = 0;
+    list.forEach(c => {
+      const old = existing.get(c.id);
+      if (old && Array.isArray(old.messages) && old.messages.length > 0) {
+        c.messages = old.messages;
+      }
+      container.push(c);
+    });
+  } catch (e) {
+    console.error('[loadChatsForUser]', e);
+  }
+}
+
+// Subscribe to INSERTs on the chats table for this user so new chats
+// and new messages show up in the chat list without a manual refresh.
+function subscribeToChatList() {
+  if (!state.user || !window.DB || !DB.subscribeToChatList) return;
+  if (state._chatListSub) {
+    try { DB.sb.removeChannel(state._chatListSub); } catch (_) {}
+    state._chatListSub = null;
+  }
+  state._chatListSub = DB.subscribeToChatList(state.user.id, async () => {
+    await loadChatsForUser();
+    try { render(); } catch (_) {}
+  });
+}
+
 // Bootstrap: restore session + jobs, then render. Runs once on page
 // load and again whenever Supabase fires SIGNED_IN / SIGNED_OUT.
 async function bootstrap() {
   if (window.DB) {
     try {
       await loadUserSession();
-      if (state.user) await loadSavedJobsForUser();
+      if (state.user) {
+        await loadSavedJobsForUser();
+        await loadApplicationsForUser();
+        await loadChatsForUser();
+        subscribeToChatList();
+      }
     } catch (e) { console.error('[bootstrap] session', e); }
     DB.onAuthChange(async (event) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         await loadUserSession();
-        if (state.user) await loadSavedJobsForUser();
+        if (state.user) {
+          await loadSavedJobsForUser();
+          await loadApplicationsForUser();
+          await loadChatsForUser();
+          subscribeToChatList();
+        }
       } else if (event === 'SIGNED_OUT') {
         state.user = null;
         state._savedJobs = [];
+        state._appsCache = [];
+        WORKER_CHAT_MESSAGES.length = 0;
+        EMPLOYER_CHAT_MESSAGES.length = 0;
+        if (state._chatListSub) { try { DB.sb.removeChannel(state._chatListSub); } catch (_) {} state._chatListSub = null; }
+        if (state._chatSub)     { try { DB.sb.removeChannel(state._chatSub); }     catch (_) {} state._chatSub = null; }
       }
       try { render(); } catch (_) {}
     });
@@ -2773,7 +2904,12 @@ async function login(email, password) {
   try {
     await DB.signIn({ email: cleanEmail, password });
     await loadUserSession();
-    if (state.user) await loadSavedJobsForUser();
+    if (state.user) {
+      await loadSavedJobsForUser();
+      await loadApplicationsForUser();
+      await loadChatsForUser();
+      subscribeToChatList();
+    }
     navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } catch (e) {
     const msg = (e && e.message) || '';
@@ -2802,7 +2938,12 @@ async function register(data) {
     });
     // signUp also signs in immediately (when email confirmation is off).
     await loadUserSession();
-    if (state.user) await loadSavedJobsForUser();
+    if (state.user) {
+      await loadSavedJobsForUser();
+      await loadApplicationsForUser();
+      await loadChatsForUser();
+      subscribeToChatList();
+    }
     navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } catch (e) {
     const msg = (e && e.message) || '';
@@ -2840,14 +2981,19 @@ function showToast(msg, type='success') {
 // ===== BEWERBUNG =====
 // applications loaded per-user via getUserApps()
 
+// Returns the list of job IDs the current worker has applied to.
+// Reads from the Supabase-backed cache filled by loadApplicationsForUser().
 function getUserApps() {
   if (!state.user) return [];
-  return JSON.parse(localStorage.getItem('jj_apps_' + state.user.id) || '[]');
+  const cache = state._appsCache || [];
+  return cache
+    .filter(a => a.userId === state.user.id)
+    .map(a => a.jobId);
 }
-function saveUserApps(apps) {
-  if (!state.user) return;
-  localStorage.setItem('jj_apps_' + state.user.id, JSON.stringify(apps));
-}
+// Legacy no-op: applications are now persisted via DB.applyToJob and
+// refreshed via loadApplicationsForUser(). Kept so older call sites don't
+// crash if they still reference it.
+function saveUserApps(_apps) { /* no-op */ }
 
 // ===== AKTIVER JOB SYSTEM =====
 function getActiveJob() {
@@ -3025,33 +3171,38 @@ function handleApplyMotivationFile(input) { if (input.files && input.files[0]) {
 function handleApplyCVFile(input) { if (input.files && input.files[0]) { state.applyCVFile = { name: input.files[0].name }; renderApplyStep(); } }
 function selectCVMethod(m) { state.applyCVMethod = m; if (m === 'create') { closeApplyModal(); navigate('cv-builder'); showToast('Erstelle deinen Lebenslauf und bewirb dich danach erneut!', 'info'); return; } renderApplyStep(); }
 function applyNextStep() { state.applyStep++; renderApplyStep(); }
-function finalSubmitApplication() {
-  var apps = getUserApps();
-  if (!apps.includes(state.applyJobId)) {
-    apps.push(state.applyJobId);
-    saveUserApps(apps);
-    var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-    var allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
-    var initials = (state.user.name || '?').split(' ').map(function(n){return n[0];}).join('').toUpperCase();
-    allApps.push({
-      id: Date.now(), userId: state.user.id, jobId: state.applyJobId,
-      jobTitle: job?.title || 'Unbekannt', jobCompany: job?.company || '',
-      name: state.user.name, initials: initials, email: state.user.email,
-      city: state.user.address ? state.user.address.split(',').pop().trim() : '',
-      skills: state.user.skills || [], weeklyHours: state.user.weeklyHours || 0,
-      refs: state.user.refs || [], cvUploaded: !!state.user.cvUploaded, docsUploaded: !!state.user.docsUploaded,
-      about: state.user.about || '', status: 'new', statusText: 'Neu',
-      date: new Date().toISOString().split('T')[0],
-      motivation: state.applyMotivation || null,
-      motivationFileName: state.applyMotivationFile ? state.applyMotivationFile.name : null,
-      cvMethod: state.applyCVMethod || null,
-      cvFileName: state.applyCVFile ? state.applyCVFile.name : null
-    });
-    localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
+async function finalSubmitApplication() {
+  if (!state.user) { showToast('Bitte erst einloggen.', 'error'); return; }
+  if (!window.DB)  { showToast('Backend nicht geladen.', 'error'); return; }
+  const jobId = state.applyJobId;
+  if (!jobId)      { showToast('Kein Job ausgewählt.', 'error'); return; }
+
+  // Prevent double-submit: if already applied, just close the modal.
+  if (getUserApps().includes(jobId)) {
+    closeApplyModal();
+    showToast('Du hast dich bereits beworben.', 'info');
+    return;
   }
-  closeApplyModal();
-  showToast('Bewerbung erfolgreich gesendet!');
-  render();
+
+  try {
+    await DB.applyToJob(jobId, state.user.id, state.applyMotivation || null);
+    // Refresh the cache so the worker dashboard / getUserApps pick it up
+    await loadApplicationsForUser();
+    closeApplyModal();
+    showToast('Bewerbung erfolgreich gesendet!');
+    render();
+  } catch (e) {
+    console.error('[finalSubmitApplication]', e);
+    const msg = (e && e.message) || '';
+    if (/duplicate/i.test(msg)) {
+      showToast('Du hast dich bereits für diesen Job beworben.', 'info');
+      await loadApplicationsForUser();
+      closeApplyModal();
+      render();
+    } else {
+      showToast('Bewerbung konnte nicht gesendet werden: ' + msg, 'error');
+    }
+  }
 }
 
 function openApplicationDoc(appId, docType) {
@@ -3111,14 +3262,19 @@ function openApplicationDoc(appId, docType) {
   win.document.close();
 }
 
+// Returns all applications known to the current user (from the
+// Supabase-backed cache). For a worker this is their own applications;
+// for an employer it's every applicant on any of their jobs.
 function getAllApplications() {
-  return JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+  return state._appsCache || [];
 }
 
+// For employers: the applicants on the jobs this employer owns. Since
+// the cache is already scoped server-side (RLS + getApplicationsForEmployer),
+// we can just return it as-is.
 function getEmployerApplicants() {
-  const allApps = getAllApplications();
-  const myJobIds = (state.user?.postedJobs || []).map(j => j.id);
-  return allApps.filter(a => myJobIds.includes(a.jobId));
+  if (!state.user) return [];
+  return state._appsCache || [];
 }
 
 // ===== PROFIL SPEICHERN =====
@@ -3452,27 +3608,17 @@ function toggleChat() {
   navigate('messages');
 }
 
-function chatKey() {
-  return state.user ? 'jj_chats_' + state.user.id : null;
-}
+// Legacy helpers kept as thin wrappers. The real chat data now comes
+// from Supabase via loadChatsForUser() and is pushed into the existing
+// WORKER_CHAT_MESSAGES / EMPLOYER_CHAT_MESSAGES arrays so the existing
+// renderers don't have to change.
+function chatKey() { return state.user ? 'jj_chats_' + state.user.id : null; }
 function loadUserChats() {
-  if (!state.user) return;
-  const key = chatKey();
-  const chats = JSON.parse(localStorage.getItem(key) || '[]');
-  if (state.user.role === 'employer') {
-    EMPLOYER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => EMPLOYER_CHAT_MESSAGES.push(c));
-  } else {
-    WORKER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => WORKER_CHAT_MESSAGES.push(c));
-  }
+  // Kick off an async reload but don't await — callers expect this
+  // to be synchronous. Results land when render() is called again.
+  if (window.DB) { loadChatsForUser(); }
 }
-function saveUserChats() {
-  const key = chatKey();
-  if (!key) return;
-  const chats = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
-  localStorage.setItem(key, JSON.stringify(chats));
-}
+function saveUserChats() { /* no-op: chats are persisted server-side */ }
 function getChatList() {
   if (!state.user) return [];
   return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
@@ -3528,95 +3674,107 @@ function renderChatWidget() {
   }
 }
 
-function openChat(id) {
+async function openChat(id) {
   state.activeChat = id;
+  // If this chat is backed by Supabase, load its messages + subscribe
+  if (window.DB && state.user) {
+    await openChatById(id);
+  }
   renderChatWidget();
 }
 
-function updateApplicantStatus(applicantId, newStatus) {
-  const allApps = getAllApplications();
-  let a = allApps.find(x => x.id === applicantId);
-  let isReal = !!a;
+async function updateApplicantStatus(applicantId, newStatus) {
+  // Check the real cache first, fall back to the mock fixtures
+  const realApps = getAllApplications();
+  let a = realApps.find(x => x.id === applicantId);
+  const isReal = !!a;
   if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
 
-  // Prüfe ob Worker bereits einen aktiven Job hat (nur bei accepted)
-  if (newStatus === 'accepted' && isReal && a.userId) {
-    const workerActiveJob = JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null');
-    if (workerActiveJob) {
-      showToast(`${a.name} hat bereits einen aktiven Job und kann nicht angenommen werden.`, 'error');
-      render();
-      return;
-    }
-  }
-
   const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
-  a.status = newStatus;
-  a.statusText = statusTexts[newStatus];
-  if (isReal) localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
   const jobTitle = a.jobTitle || a.job;
 
-  // Bei Annahme: aktiven Job setzen + andere Bewerbungen automatisch zurückziehen
-  if (newStatus === 'accepted' && isReal && a.userId) {
-    const job = JOBS.find(j => j.id === a.jobId);
-    localStorage.setItem('jj_active_job_' + a.userId, JSON.stringify({
-      jobId: a.jobId,
-      jobTitle: a.jobTitle || a.job,
-      jobCompany: a.jobCompany || job?.company || '',
-      acceptedAt: new Date().toISOString(),
-      employerId: state.user.id
-    }));
-    // Alle anderen Bewerbungen dieses Workers automatisch zurückziehen
-    const updatedApps = getAllApplications();
-    updatedApps.forEach(app => {
-      if (app.userId === a.userId && app.id !== a.id && app.status !== 'rejected') {
-        app.status = 'rejected';
-        app.statusText = 'Zurückgezogen';
-      }
-    });
-    localStorage.setItem('jj_all_applications', JSON.stringify(updatedApps));
+  if (isReal && window.DB) {
+    try {
+      await DB.updateApplicationStatus(applicantId, newStatus);
+      await loadApplicationsForUser();
+    } catch (e) {
+      console.error('[updateApplicantStatus]', e);
+      showToast('Status konnte nicht aktualisiert werden: ' + (e.message || ''), 'error');
+      return;
+    }
+  } else {
+    // Mock-only code path: mutate in place so the dashboard updates
+    a.status = newStatus;
+    a.statusText = statusTexts[newStatus];
   }
 
+  // On accept or reject, send an automated chat message to the worker
+  // via the real DB so they see the decision in their inbox across
+  // browsers. For mock applicants (fake seed data), fall back to the
+  // legacy in-memory push.
   if (newStatus === 'rejected' || newStatus === 'accepted') {
-    const workerUserId = a.userId || applicantId;
-    let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
-    if (!chat) {
-      chat = { id: 100 + workerUserId, partnerId: 'worker-' + workerUserId, partnerName: a.name, partnerInitials: a.initials, jobTitle: jobTitle, lastMessage: '', time: '', unread: false, messages: [] };
-      EMPLOYER_CHAT_MESSAGES.push(chat);
-    }
-    const now = new Date();
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
     const msg = newStatus === 'rejected'
-      ? `Hallo ${a.name.split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${jobTitle}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
-      : `Hallo ${a.name.split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${jobTitle}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
-    chat.messages.push({ text: msg, sent: true, time: time });
-    chat.lastMessage = msg;
-    chat.time = time;
-    saveUserChats();
-    if (isReal && a.userId) {
-      const workerChatKey = 'jj_chats_' + a.userId;
-      const workerChats = JSON.parse(localStorage.getItem(workerChatKey) || '[]');
-      const companyName = state.user.company || state.user.name;
-      const companyInitials = (companyName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-      let workerChat = workerChats.find(c => c.partnerId === 'employer-' + state.user.id);
-      if (!workerChat) {
-        workerChat = { id: 200 + state.user.id, partnerId: 'employer-' + state.user.id, partnerName: companyName, partnerInitials: companyInitials, jobTitle: jobTitle, lastMessage: '', time: '', unread: true, messages: [] };
-        workerChats.push(workerChat);
+      ? `Hallo ${(a.name || '').split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${jobTitle}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
+      : `Hallo ${(a.name || '').split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${jobTitle}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
+
+    if (isReal && a.userId && window.DB) {
+      try {
+        const chat = await DB.getOrCreateChat({
+          workerId: a.userId,
+          employerId: state.user.id,
+          jobId: a.jobId,
+          jobTitle: jobTitle
+        });
+        await DB.sendMessage(chat.id, state.user.id, msg);
+        await loadChatsForUser();
+      } catch (e) {
+        console.error('[updateApplicantStatus] chat', e);
       }
-      workerChat.messages.push({ text: msg, sent: false, time: time });
-      workerChat.lastMessage = msg;
-      workerChat.time = time;
-      workerChat.unread = true;
-      localStorage.setItem(workerChatKey, JSON.stringify(workerChats));
+    } else {
+      // Mock fallback: keep old local push so the seed demo still works
+      const workerUserId = a.userId || applicantId;
+      let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
+      if (!chat) {
+        chat = { id: 100 + workerUserId, partnerId: 'worker-' + workerUserId, partnerName: a.name, partnerInitials: a.initials, jobTitle: jobTitle, lastMessage: '', time: '', unread: false, messages: [] };
+        EMPLOYER_CHAT_MESSAGES.push(chat);
+      }
+      const now = new Date();
+      const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+      chat.messages.push({ text: msg, sent: true, time: time });
+      chat.lastMessage = msg;
+      chat.time = time;
     }
   }
   render();
 }
 
-function openApplicantChat(applicantId) {
+async function openApplicantChat(applicantId) {
   const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
   const a = allApplicants.find(x => x.id === applicantId);
   if (!a) { navigate('messages'); return; }
+
+  // Real applicant + we have a backend -> create/find the DB chat row
+  if (a.userId && window.DB) {
+    try {
+      const row = await DB.getOrCreateChat({
+        workerId: a.userId,
+        employerId: state.user.id,
+        jobId: a.jobId || null,
+        jobTitle: a.jobTitle || a.job || ''
+      });
+      await loadChatsForUser();
+      await openChatById(row.id);
+      navigate('chat', { chatId: row.id });
+      return;
+    } catch (e) {
+      console.error('[openApplicantChat]', e);
+      showToast('Chat konnte nicht geöffnet werden.', 'error');
+      return;
+    }
+  }
+
+  // Mock applicant fallback (kept for the seed demo)
   const workerUserId = a.userId || applicantId;
   let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
   if (!chat) {
@@ -3632,46 +3790,88 @@ function openApplicantChat(applicantId) {
       messages: []
     };
     EMPLOYER_CHAT_MESSAGES.push(chat);
-  saveUserChats();
   }
   state.activeChat = chat.id;
   navigate('chat', { chatId: chat.id });
 }
 
-function sendChatMessage() {
+// Loads messages for a DB-backed chat, hydrates the in-memory chat
+// object with them and installs a Realtime subscription so new
+// messages push in live.
+async function openChatById(chatId) {
+  if (!window.DB || !state.user) return;
+  const list = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+  const chat = list.find(c => c.id === chatId);
+  if (!chat) return;
+  try {
+    const msgs = await DB.getMessages(chatId);
+    chat.messages = (msgs || []).map(m => ({
+      id: m.id,
+      text: m.text || '',
+      sent: m.sender_id === state.user.id,
+      time: m.created_at
+        ? new Date(m.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+        : ''
+    }));
+    chat.unread = false;
+    state.activeChat = chatId;
+
+    // Swap the live subscription to this chat
+    if (state._chatSub) {
+      try { DB.sb.removeChannel(state._chatSub); } catch (_) {}
+      state._chatSub = null;
+    }
+    state._chatSub = DB.subscribeToMessages(chatId, (newMsg) => {
+      const now = chat.messages.find(m => m.id === newMsg.id);
+      if (now) return;
+      chat.messages.push({
+        id: newMsg.id,
+        text: newMsg.text || '',
+        sent: newMsg.sender_id === state.user.id,
+        time: newMsg.created_at
+          ? new Date(newMsg.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
+          : ''
+      });
+      chat.lastMessage = newMsg.text || '';
+      chat.time = chat.messages[chat.messages.length - 1].time;
+      try { render(); } catch (_) {}
+      setTimeout(() => {
+        const el = document.getElementById('chat-messages-page');
+        if (el) el.scrollTop = el.scrollHeight;
+      }, 50);
+    });
+  } catch (e) {
+    console.error('[openChatById]', e);
+  }
+}
+
+async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   if (!input || !input.value.trim()) return;
   const chat = findChat(state.activeChat);
-  if (chat) {
-    const now = new Date();
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const msgText = censorContactInfo(input.value);
-    chat.messages.push({ text: msgText, sent: true, time: time });
-    chat.lastMessage = msgText;
-    chat.time = time;
-    saveUserChats();
-    input.value = '';
-    if (chat.partnerId) {
-      let partnerId = null;
-      const idPart = chat.partnerId.split('-').slice(1).join('-');
-      partnerId = parseInt(idPart) || null;
-      if (partnerId) {
-        const partnerChatKey = 'jj_chats_' + partnerId;
-        const partnerChats = JSON.parse(localStorage.getItem(partnerChatKey) || '[]');
-        const myName = state.user.company || state.user.name;
-        const myInitials = (myName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-        const myPartnerId = (state.user.role === 'employer' ? 'employer-' : 'worker-') + state.user.id;
-        let partnerChat = partnerChats.find(c => c.partnerId === myPartnerId);
-        if (!partnerChat) {
-          partnerChat = { id: 300 + state.user.id, partnerId: myPartnerId, partnerName: myName, partnerInitials: myInitials, jobTitle: chat.jobTitle || '', lastMessage: '', time: '', unread: true, messages: [] };
-          partnerChats.push(partnerChat);
-        }
-        partnerChat.messages.push({ text: msgText, sent: false, time: time });
-        partnerChat.lastMessage = msgText;
-        partnerChat.time = time;
-        partnerChat.unread = true;
-        localStorage.setItem(partnerChatKey, JSON.stringify(partnerChats));
+  if (!chat) return;
+
+  const msgText = censorContactInfo(input.value);
+  input.value = '';
+
+  // Real DB-backed chat: just hand it off to Supabase. The realtime
+  // subscription installed by openChatById() will append the message
+  // to chat.messages and re-render automatically.
+  if (window.DB && state.user && chat.id) {
+    try {
+      await DB.sendMessage(chat.id, state.user.id, msgText);
+      // Optimistic local update in case the realtime event is slow
+      const now = new Date();
+      const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+      if (!chat.messages.some(m => m.text === msgText && m.time === time)) {
+        chat.messages.push({ text: msgText, sent: true, time: time });
+        chat.lastMessage = msgText;
+        chat.time = time;
       }
+    } catch (e) {
+      console.error('[sendChatMessage]', e);
+      showToast('Nachricht konnte nicht gesendet werden.', 'error');
+      return;
     }
     if (state.currentPage === 'chat') {
       render();
@@ -3682,6 +3882,23 @@ function sendChatMessage() {
     } else {
       renderChatWidget();
     }
+    return;
+  }
+
+  // Mock fallback (seed demo, no DB): local push only
+  const now = new Date();
+  const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
+  chat.messages.push({ text: msgText, sent: true, time: time });
+  chat.lastMessage = msgText;
+  chat.time = time;
+  if (state.currentPage === 'chat') {
+    render();
+    setTimeout(() => {
+      const el = document.getElementById('chat-messages-page');
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 50);
+  } else {
+    renderChatWidget();
   }
 }
 
