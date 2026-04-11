@@ -3,9 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Security headers (meta-equivalent). For full protection also serve these
+       as real HTTP response headers from your web server / CDN.
+       Note: 'unsafe-inline' for script/style is required because the existing
+       templates rely on inline onclick handlers and inline style attributes.
+       Removing it requires refactoring to addEventListener / external CSS. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex">
   <title>EasyJobs - Deine Jobvermittlung</title>
   <link rel="stylesheet" href="style.css?v=1774483115">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
 <body>
   <nav id="navbar">
@@ -161,6 +172,10 @@
     </div>
   </div>
 
+  <!-- Supabase backend (auth, database, realtime) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js?v=1"></script>
+  <script src="db.js?v=1"></script>
   <script src="data.js?v=1774590000"></script>
   <script src="app.js?v=1774590000"></script>
 </body>

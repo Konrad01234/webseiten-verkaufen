@@ -1,8 +1,9 @@
 // ===== APP STATE =====
 let state = {
   currentPage: 'landing',
-  user: JSON.parse(localStorage.getItem('jj_user')) || null,
-  get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
+  user: null, // populated asynchronously by loadUserSession() at startup
+  get savedJobs() { return state._savedJobs || []; },
+  _savedJobs: [],
   filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date' },
   chatOpen: false,
   aiOpen: false,
@@ -12,25 +13,173 @@ let state = {
   dropdownOpen: false,
   adminLoggedIn: false,
   adminRevenuePeriod: 'daily',
-  adminTab: 'overview'
+  adminTab: 'overview',
+  jobsLoaded: false
 };
 
-// Restore posted jobs on page load
-if (state.user && state.user.postedJobs) {
-  state.user.postedJobs.forEach(j => {
-    if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
-  });
-}
-
-// Clear old broken chat data (one-time reset)
+// One-time cleanup of legacy chat caches
 if (!localStorage.getItem('jj_chat_reset_v2')) {
   Object.keys(localStorage).filter(k => k.startsWith('jj_chats_')).forEach(k => localStorage.removeItem(k));
   localStorage.setItem('jj_chat_reset_v2', '1');
 }
 
+// Bootstrap: restore session, load jobs, then render. The DOM may not be
+// ready yet when this script runs at the bottom of <body>, but document
+// already exists so we can safely query for #app once render() is called.
+async function bootstrap() {
+  if (window.DB) {
+    try {
+      await loadUserSession();
+      if (state.user) {
+        await loadSavedJobsForUser();
+      }
+    } catch (e) {
+      console.error('[bootstrap] session load failed', e);
+    }
+    // React to login/logout events from other tabs or token refresh
+    DB.onAuthChange(async (event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        await loadUserSession();
+        if (state.user) await loadSavedJobsForUser();
+      } else if (event === 'SIGNED_OUT') {
+        state.user = null;
+        state._savedJobs = [];
+      }
+      try { render(); } catch (_) {}
+    });
+  }
+  try {
+    await loadJobsFromDB();
+  } catch (e) {
+    console.error('[bootstrap] jobs load failed', e);
+  }
+  // First render once we have whatever data we could fetch
+  try { render(); } catch (e) { console.error('[bootstrap] initial render failed', e); }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
+
+// Convert a `jobs` row from Supabase into the camelCase shape the
+// existing renderers expect (id, title, company, city, salary, ...).
+function dbJobToFrontend(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    employerId: row.employer_id,
+    title: row.title || '',
+    company: row.company || '',
+    city: row.city || '',
+    location: row.location || row.city || '',
+    distance: 0,
+    category: row.category || '',
+    type: row.type || '',
+    hours: row.hours || '',
+    salary: row.salary || '',
+    salaryNum: row.salary_num || 0,
+    description: row.description || '',
+    tags: row.tags || [],
+    images: row.images || [],
+    companyLogo: row.company_logo || '',
+    companyInfo: { about: '', industry: '', employees: '', founded: '', website: '' },
+    promoted: !!row.promoted,
+    views: row.views || 0,
+    clicks: row.clicks || 0,
+    applications: row.applications_count || 0,
+    saves: row.saves || 0,
+    reviews: [],
+    date: row.created_at,
+    active: row.active !== false
+  };
+}
+
+// Inverse: convert a frontend job draft into the DB row shape.
+function frontendJobToDb(j, employerId) {
+  return {
+    employer_id: employerId,
+    title: sanitizeText(j.title, 200),
+    company: sanitizeText(j.company, 200),
+    city: sanitizeText(j.city, 120),
+    location: sanitizeText(j.location || j.city, 200),
+    category: sanitizeText(j.category, 80),
+    type: sanitizeText(j.type, 80),
+    hours: sanitizeText(j.hours, 80),
+    salary: sanitizeText(j.salary, 80),
+    salary_num: typeof j.salaryNum === 'number' ? j.salaryNum : null,
+    description: sanitizeText(j.description, 5000),
+    tags: Array.isArray(j.tags) ? j.tags.slice(0, 20).map(t => sanitizeText(t, 40)) : [],
+    images: Array.isArray(j.images) ? j.images.slice(0, 6) : [],
+    company_logo: j.companyLogo || null,
+    promoted: !!j.promoted,
+    active: true
+  };
+}
+
+async function loadJobsFromDB() {
+  if (!window.DB) return;
+  try {
+    const rows = await DB.listJobs({ limit: 200 });
+    JOBS.length = 0;
+    rows.forEach(r => JOBS.push(dbJobToFrontend(r)));
+    state.jobsLoaded = true;
+  } catch (e) {
+    console.error('[loadJobsFromDB]', e);
+  }
+}
+
+async function loadSavedJobsForUser() {
+  if (!state.user || !window.DB) { state._savedJobs = []; return; }
+  try {
+    state._savedJobs = await DB.listSavedJobIds(state.user.id);
+  } catch (e) {
+    console.error('[loadSavedJobsForUser]', e);
+    state._savedJobs = [];
+  }
+}
+
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
-const ADMIN_PASSWORD = 'Tauranga@2025';
+// SHA-256 hash of the admin password. The plain-text password is intentionally
+// not stored in source code so it cannot be read by anyone viewing the page source.
+// To rotate: compute a new hash via `printf '%s' 'newpass' | sha256sum` and replace below.
+const ADMIN_PASSWORD_HASH = 'cfc87cb2ec5c83c709c87b7e1ea57c07376b2cdb6f79ee14b19d23de9118e8dc';
+
+// ===== SECURITY HELPERS =====
+// SHA-256 via Web Crypto API. Returns lowercase hex string.
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Salted password hash for stored user passwords. The salt is a fixed
+// per-app constant — this prevents trivial reuse of pre-computed rainbow
+// tables but is NOT a substitute for a server-side bcrypt/argon2 hash.
+const PW_SALT = 'easyjobs::v1::';
+async function hashUserPassword(password) {
+  return sha256(PW_SALT + password);
+}
+
+// Strip control characters and HTML tags from free-text user input. Used
+// for fields like name, company, address that get rendered into templates.
+function sanitizeText(value, maxLength) {
+  if (value == null) return '';
+  let s = String(value);
+  // Remove control characters except whitespace
+  s = s.replace(/[\u0000-\u001F\u007F]/g, '');
+  // Strip angle brackets entirely to prevent any HTML injection downstream
+  s = s.replace(/[<>]/g, '');
+  s = s.trim();
+  if (typeof maxLength === 'number' && s.length > maxLength) s = s.slice(0, maxLength);
+  return s;
+}
+
+// Basic email format check.
+function isValidEmail(email) {
+  return typeof email === 'string' && /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/.test(email);
+}
 
 // ===== ANALYTICS TRACKING =====
 function trackVisit() {
@@ -247,6 +396,30 @@ function navigate(page, data) {
   state.pageData = data;
   render();
   window.scrollTo(0, 0);
+  // Pages that need fresh data from the DB after the initial paint
+  if (window.DB && state.user) {
+    const needsApplicants = ['employer-dashboard','applicants','applicant-profile'];
+    if (needsApplicants.includes(page)) {
+      refreshEmployerApplicants().then(() => render()).catch(() => {});
+    }
+    if (page === 'applications' && state.user.role === 'worker') {
+      refreshWorkerApplications().then(() => render()).catch(() => {});
+    }
+    if (page === 'messages' || page === 'chat') {
+      refreshChatList().then(() => {
+        if (page === 'chat' && state.activeChat != null) {
+          return refreshMessagesForChat(state.activeChat);
+        }
+      }).then(() => render()).catch(() => {});
+    }
+    if (['jobs','landing','job-detail','worker-dashboard','employer-dashboard','saved-jobs'].includes(page)) {
+      // Refresh in background so newly posted jobs appear
+      loadJobsFromDB().then(() => render()).catch(() => {});
+    }
+    if (page === 'support') {
+      refreshSupportTickets().then(() => render()).catch(() => {});
+    }
+  }
 }
 
 function navigateToSection(page, sectionId) {
@@ -326,7 +499,7 @@ function updateNav() {
     actions.innerHTML = `
       <div class="user-menu">
 
-        <div class="user-avatar" onclick="toggleDropdown()">${state.user.name.split(' ').map(n=>n[0]).join('')}</div>
+        <div class="user-avatar" onclick="toggleDropdown()">${escapeHtml(state.user.name.split(' ').map(n=>n[0]).join(''))}</div>
         <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown">
           <a href="#" onclick="navigate('${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}'); toggleDropdown()">Dashboard</a>
           <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
@@ -366,57 +539,146 @@ function toggleMobileMenu() {
   document.getElementById('mobile-menu').classList.toggle('open');
 }
 
-// ===== AUTH =====
-function loadUserSession(user) {
-  state.user = user;
-  localStorage.setItem('jj_user', JSON.stringify(user));
-  loadUserChats();
-  // Restore posted jobs into JOBS array
-  if (user.postedJobs) {
-    user.postedJobs.forEach(j => {
-      if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
-    });
+// ===== AUTH (Supabase-backed) =====
+// Maps a Supabase profile row into the shape the rest of the app expects.
+// Old code reads fields like state.user.id, state.user.name, state.user.role,
+// state.user.company, state.user.companyLogo, state.user.cvUploaded, etc.
+function profileToStateUser(profile) {
+  if (!profile) return null;
+  return {
+    id: profile.id,
+    email: profile.email,
+    role: profile.role,
+    name: profile.name || profile.email,
+    company: profile.company || '',
+    industry: profile.industry || '',
+    description: profile.description || '',
+    address: profile.address || '',
+    city: profile.city || '',
+    phone: profile.phone || '',
+    website: profile.website || '',
+    founded: profile.founded || '',
+    employees: profile.employees || '',
+    companyLogo: profile.company_logo || '',
+    companyImages: profile.company_images || [],
+    cvData: profile.cv_data || null,
+    cvUploaded: !!profile.cv_uploaded,
+    docsUploaded: !!profile.docs_uploaded,
+    approved: profile.approved !== false,
+    profileComplete: profile.profile_complete || 20,
+    createdAt: profile.created_at
+  };
+}
+
+async function loadUserSession() {
+  if (!window.DB) return;
+  const session = await DB.getSession();
+  if (!session) { state.user = null; return; }
+  try {
+    const profile = await DB.getProfile(session.user.id);
+    state.user = profileToStateUser(profile);
+  } catch (e) {
+    console.error('[auth] failed to load profile', e);
+    state.user = null;
   }
 }
 
-function login(email, password) {
-  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
-    if (latestUser.password !== password) {
-      const err = document.getElementById('login-error');
-      if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
+// Update local state.user AND persist a patch to the DB profile row.
+// Use this whenever a profile field changes (uploads, edits, etc.) so
+// the change is visible to other users on other devices.
+async function persistUserPatch(patch) {
+  if (!state.user) return;
+  Object.assign(state.user, patch);
+  const dbPatch = {};
+  // Map camelCase -> snake_case for the columns we know about
+  const map = {
+    name: 'name', company: 'company', industry: 'industry', description: 'description',
+    address: 'address', city: 'city', phone: 'phone', website: 'website',
+    founded: 'founded', employees: 'employees',
+    companyLogo: 'company_logo', companyImages: 'company_images',
+    cvData: 'cv_data', cvUploaded: 'cv_uploaded', docsUploaded: 'docs_uploaded',
+    profileComplete: 'profile_complete'
+  };
+  for (const k of Object.keys(patch)) {
+    if (map[k]) dbPatch[map[k]] = patch[k];
+  }
+  if (Object.keys(dbPatch).length === 0) return;
+  try {
+    await DB.updateProfile(state.user.id, dbPatch);
+  } catch (e) {
+    console.error('[persistUserPatch]', e);
+  }
+}
+
+async function login(email, password) {
+  const err = document.getElementById('login-error');
+  const showError = (msg) => { if (err) { err.textContent = msg || 'E-Mail oder Passwort falsch.'; err.style.display='block'; } };
+
+  const cleanEmail = sanitizeText(email, 320).toLowerCase();
+  if (!isValidEmail(cleanEmail) || !password) { showError(); return; }
+
+  try {
+    await DB.signIn({ email: cleanEmail, password });
+    await loadUserSession();
+    if (!state.user) { showError('Profil konnte nicht geladen werden.'); return; }
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    console.error('[login]', e);
+    if (/Email not confirmed/i.test(e.message || '')) {
+      showError('Bitte bestätige zuerst deine E-Mail-Adresse über den Link, den wir dir geschickt haben.');
+    } else {
+      showError('E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.');
+    }
+  }
+}
+
+async function register(data) {
+  const err = document.getElementById('register-error');
+  const showError = (msg) => { if (err) { err.textContent = msg; err.style.display='block'; } };
+
+  const cleanEmail = sanitizeText(data.email, 320).toLowerCase();
+  const cleanName = sanitizeText(data.name, 80);
+  const cleanCompany = data.company ? sanitizeText(data.company, 120) : undefined;
+  const password = data.password || '';
+
+  if (!isValidEmail(cleanEmail)) { showError('Bitte gib eine gültige E-Mail-Adresse ein.'); return; }
+  if (!cleanName) { showError('Bitte gib deinen Namen ein.'); return; }
+  if (password.length < 8) { showError('Das Passwort muss mindestens 8 Zeichen lang sein.'); return; }
+  if (password.length > 200) { showError('Das Passwort ist zu lang.'); return; }
+  if (data.role === 'employer' && !cleanCompany) { showError('Bitte gib einen Firmennamen ein.'); return; }
+
+  try {
+    const result = await DB.signUp({
+      email: cleanEmail, password,
+      name: cleanName, role: data.role, company: cleanCompany
+    });
+    // If email confirmation is enabled in Supabase, there's no session yet.
+    if (!result.session) {
+      showToast('Wir haben dir eine Bestätigungs-E-Mail geschickt. Bitte bestätige sie und melde dich danach an.', 'success');
+      navigate('login');
       return;
     }
-    loadUserSession(latestUser);
-    navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
-  } else {
-    const err = document.getElementById('login-error');
-    if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
+    await loadUserSession();
+    if (!state.user) { showError('Konto erstellt, Profil konnte aber nicht geladen werden. Bitte melde dich an.'); navigate('login'); return; }
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    console.error('[register]', e);
+    if (/already registered|exists/i.test(e.message || '')) {
+      showError('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
+    } else if (/password/i.test(e.message || '')) {
+      showError('Passwort zu schwach. Bitte wähle ein stärkeres Passwort.');
+    } else {
+      showError('Registrierung fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'));
+    }
   }
 }
 
-function register(data) {
-  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-    const err = document.getElementById('register-error');
-    if (err) { err.textContent = 'Diese E-Mail ist bereits registriert. Bitte melde dich an.'; err.style.display='block'; }
-    return;
-  }
-  const user = { ...data, id: Date.now(), createdAt: new Date().toISOString(), profileComplete: 20 };
-  users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
-  localStorage.setItem('jj_users', JSON.stringify(users));
-  // Save full user data under its own key
-  localStorage.setItem('jj_user_' + user.id, JSON.stringify(user));
-  loadUserSession(user);
-  navigate(user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
-}
-
-function logout() {
+async function logout() {
+  try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
   state.user = null;
   state.dropdownOpen = false;
-  localStorage.removeItem('jj_user');
+  // Wipe per-user local caches so the next user doesn't see them
+  Object.keys(localStorage).filter(k => k.startsWith('jj_')).forEach(k => localStorage.removeItem(k));
   navigate('landing');
 }
 
@@ -436,108 +698,197 @@ function showToast(msg, type='success') {
 }
 
 // ===== BEWERBUNG =====
-// applications loaded per-user via getUserApps()
+// Local cache of the current worker's applications, kept in sync with the DB
+// via refreshWorkerApplications().
+let _workerApplicationsCache = [];
 
 function getUserApps() {
-  if (!state.user) return [];
-  return JSON.parse(localStorage.getItem('jj_apps_' + state.user.id) || '[]');
+  // Returns array of jobIds the current worker has applied to.
+  return _workerApplicationsCache.map(a => a.job_id);
 }
-function saveUserApps(apps) {
-  if (!state.user) return;
-  localStorage.setItem('jj_apps_' + state.user.id, JSON.stringify(apps));
-}
-function submitApplication(jobId) {
-  const apps = getUserApps();
-  if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
-  apps.push(jobId);
-  saveUserApps(apps);
-  // Save application globally so employers can see it
-  const job = JOBS.find(j => j.id === jobId);
-  const allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
-  const initials = (state.user.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-  allApps.push({
-    id: Date.now(),
-    userId: state.user.id,
-    jobId: jobId,
-    jobTitle: job?.title || 'Unbekannt',
-    jobCompany: job?.company || '',
-    name: state.user.name,
-    initials: initials,
-    email: state.user.email,
-    city: state.user.address ? state.user.address.split(',').pop().trim() : '',
-    skills: state.user.skills || [],
-    weeklyHours: state.user.weeklyHours || 0,
-    refs: state.user.refs || [],
-    cvUploaded: !!state.user.cvUploaded,
-    docsUploaded: !!state.user.docsUploaded,
-    about: state.user.about || '',
-    status: 'new',
-    statusText: 'Neu',
-    date: new Date().toISOString().split('T')[0]
-  });
-  localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
-  showToast('Bewerbung erfolgreich gesendet!');
-  render();
+function saveUserApps(_apps) {
+  // No-op kept for backwards-compat with old call sites — the DB is the
+  // source of truth now and refreshWorkerApplications() repopulates.
 }
 
-function getAllApplications() {
-  return JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
+async function refreshWorkerApplications() {
+  if (!state.user || state.user.role !== 'worker') { _workerApplicationsCache = []; return; }
+  try {
+    _workerApplicationsCache = await DB.getApplicationsForWorker(state.user.id);
+  } catch (e) {
+    console.error('[refreshWorkerApplications]', e);
+    _workerApplicationsCache = [];
+  }
+}
+
+function getPendingAppCount() {
+  return _workerApplicationsCache.filter(a => a.status === 'pending' || a.status === 'invited').length;
+}
+
+// ===== AKTIVER JOB SYSTEM =====
+function getActiveJob() {
+  if (!state.user) return null;
+  return JSON.parse(localStorage.getItem('jj_active_job_' + state.user.id) || 'null');
+}
+function setActiveJob(jobData) {
+  if (!state.user) return;
+  localStorage.setItem('jj_active_job_' + state.user.id, JSON.stringify(jobData));
+}
+function clearActiveJob() {
+  if (!state.user) return;
+  const activeJob = getActiveJob();
+  if (activeJob) {
+    // Speichere als abgeschlossenen Job
+    const completed = JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
+    activeJob.completedAt = new Date().toISOString();
+    completed.push(activeJob);
+    localStorage.setItem('jj_completed_jobs_' + state.user.id, JSON.stringify(completed));
+  }
+  localStorage.removeItem('jj_active_job_' + state.user.id);
+}
+function getCompletedJobs() {
+  if (!state.user) return [];
+  return JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
+}
+function endActiveJob() {
+  clearActiveJob();
+  showToast('Job abgeschlossen! Du kannst jetzt eine Bewertung abgeben.');
+  render();
+}
+async function submitApplication(jobId) {
+  if (!state.user) { navigate('login'); return; }
+  if (state.user.role !== 'worker') { showToast('Nur Arbeitnehmer können sich bewerben.', 'error'); return; }
+
+  // Already-applied check via local cache (then server enforces UNIQUE anyway)
+  const apps = getUserApps();
+  if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
+  if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
+  const pendingCount = getPendingAppCount();
+  if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben.', 'error'); return; }
+
+  try {
+    await DB.applyToJob(jobId, state.user.id, null);
+    apps.push(jobId);
+    saveUserApps(apps);
+    showToast('Bewerbung erfolgreich gesendet!');
+    // Refresh job list so the application count updates
+    await loadJobsFromDB();
+    render();
+  } catch (e) {
+    console.error('[submitApplication]', e);
+    if (/duplicate|unique/i.test(e.message || '')) {
+      showToast('Du hast dich bereits beworben!', 'info');
+    } else {
+      showToast('Bewerbung fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
+    }
+  }
+}
+
+// Cached applicant list for the currently logged-in employer.
+let _employerApplicantsCache = [];
+async function refreshEmployerApplicants() {
+  if (!state.user || state.user.role !== 'employer') { _employerApplicantsCache = []; return; }
+  try {
+    const rows = await DB.getApplicationsForEmployer(state.user.id);
+    _employerApplicantsCache = rows.map(r => {
+      const p = r.profiles || {};
+      const j = r.jobs || {};
+      const fullName = p.name || p.email || 'Unbekannt';
+      return {
+        id: r.id,
+        userId: p.id,
+        jobId: r.job_id,
+        jobTitle: j.title || 'Unbekannt',
+        jobCompany: j.company || '',
+        name: fullName,
+        initials: fullName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+        email: p.email,
+        city: p.city || '',
+        skills: [],
+        weeklyHours: 0,
+        refs: [],
+        cvUploaded: !!p.cv_uploaded,
+        docsUploaded: !!p.docs_uploaded,
+        about: p.description || '',
+        status: r.status,
+        statusText: r.status === 'pending' ? 'Neu' : (r.status === 'accepted' ? 'Angenommen' : (r.status === 'rejected' ? 'Abgelehnt' : r.status)),
+        date: (r.created_at || '').split('T')[0]
+      };
+    });
+  } catch (e) {
+    console.error('[refreshEmployerApplicants]', e);
+    _employerApplicantsCache = [];
+  }
 }
 
 function getEmployerApplicants() {
-  const allApps = getAllApplications();
-  const myJobIds = (state.user?.postedJobs || []).map(j => j.id);
-  return allApps.filter(a => myJobIds.includes(a.jobId));
+  return _employerApplicantsCache;
+}
+
+function getAllApplications() {
+  return _employerApplicantsCache;
 }
 
 // ===== PROFIL SPEICHERN =====
-function saveWorkerProfile(btn) {
-  // Alle Formularfelder auslesen und in user speichern
+async function saveWorkerProfile(btn) {
+  if (!state.user) return;
   const page = btn.closest('.dashboard-content');
   const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
+  // Whitelist of fields we accept from forms; also defines max lengths.
+  const limits = {
+    name: 80, company: 120, industry: 80, description: 2000,
+    address: 200, city: 120, phone: 40, website: 200,
+    founded: 4, employees: 40
+  };
+  const patch = {};
   inputs.forEach(inp => {
-    if (inp.name) state.user[inp.name] = inp.value;
+    const k = inp.name;
+    if (!k || !(k in limits)) return;
+    patch[k] = sanitizeText(inp.value, limits[k]);
   });
-  // Fortschritt berechnen
-  state.user.address = state.user.address || (page && page.querySelector('input[placeholder*="Stadt"]')?.value) || '';
-  state.user.hasSkills = true;
-  state.user.hasHours = true;
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  showToast('Profil gespeichert!');
+  try {
+    await persistUserPatch(patch);
+    showToast('Profil gespeichert!');
+  } catch (e) {
+    console.error('[saveWorkerProfile]', e);
+    showToast('Profil konnte nicht gespeichert werden: ' + (e.message || ''), 'error');
+  }
   render();
 }
 
 // ===== STELLENANZEIGE VERÖFFENTLICHEN =====
-function publishJob() {
+async function publishJob() {
+  if (!state.user || state.user.role !== 'employer') {
+    showToast('Nur Arbeitgeber können Anzeigen schalten.', 'error');
+    return;
+  }
   const wc = document.querySelector('.wizard-content') || document;
-  const newJob = {
-    id: Date.now(),
+  const draft = {
     title: wc.querySelector('input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
-    company: state.user?.company || state.user?.name || 'Unternehmen',
-    companyLogo: state.user?.companyLogo || state.user?.company?.[0] || state.user?.name?.[0] || 'U',
-    location: wc.querySelector('input[placeholder*="Straße"]')?.value || 'Berlin',
-    city: 'Berlin', distance: 3,
+    company: state.user.company || state.user.name || 'Unternehmen',
+    companyLogo: state.user.companyLogo || '',
+    location: wc.querySelector('input[placeholder*="Straße"]')?.value || state.user.city || 'Berlin',
+    city: state.user.city || 'Berlin',
     salary: wc.querySelector('input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
     hours: wc.querySelector('input[placeholder*="Std/Woche"]')?.value || 'Flexible',
     category: wc.querySelector('select')?.value || 'Sonstiges',
     type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
-    posted: new Date().toISOString(),
-    views: 0, clicks: 0, applications: 0,
-    promoted: false, tags: [],
-    description: '', requirements: '', benefits: '',
+    description: '',
+    tags: [],
     images: (state.selectedJobImages || []).map(i => (state.user?.companyImages || [])[i]).filter(Boolean),
-    reviews: [],
-    companyInfo: { about: state.user?.description || '', industry: state.user?.industry || '', employees: state.user?.employees || '', founded: state.user?.founded || '', website: state.user?.website || '' }
+    promoted: false
   };
-  JOBS.unshift(newJob);
-  if (!state.user.postedJobs) state.user.postedJobs = [];
-  state.user.postedJobs.unshift(newJob);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  state.wizardStep = 0;
-  state.selectedJobImages = [];
-  showToast('Stellenanzeige veröffentlicht!');
-  navigate('employer-dashboard');
+  try {
+    const inserted = await DB.createJob(frontendJobToDb(draft, state.user.id));
+    JOBS.unshift(dbJobToFrontend(inserted));
+    state.wizardStep = 0;
+    state.selectedJobImages = [];
+    showToast('Stellenanzeige veröffentlicht!');
+    navigate('employer-dashboard');
+  } catch (e) {
+    console.error('[publishJob]', e);
+    showToast('Veröffentlichen fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
+  }
 }
 
 // ===== KI GENERIEREN =====
@@ -565,6 +916,10 @@ function submitReview(btn) {
   const card = btn.closest('.card-body');
   const stars = card.querySelectorAll('.star.filled').length;
   const text = card.querySelector('textarea')?.value?.trim();
+  // Prüfe ob Worker einen abgeschlossenen oder aktiven Job hat
+  const completedJobs = getCompletedJobs();
+  const hasActiveJob = !!getActiveJob();
+  if (!completedJobs.length && !hasActiveJob) { showToast('Du musst zuerst einen Job abschließen, bevor du bewerten kannst.', 'error'); return; }
   if (!stars) { showToast('Bitte wähle eine Bewertung (1-5 Sterne).', 'error'); return; }
   if (!text) { showToast('Bitte schreibe einen kurzen Text.', 'error'); return; }
   showToast('Bewertung abgegeben! Sie wird nach Prüfung sichtbar.');
@@ -627,11 +982,12 @@ function handleCVPhoto(input) {
 
 function handleCompanyLogo(input) {
   if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) { showToast('Logo zu groß (max 2 MB).', 'error'); return; }
+    if (!/^image\/(png|jpe?g|webp|gif)$/i.test(file.type)) { showToast('Nur Bild-Dateien erlaubt.', 'error'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyLogo = e.target.result;
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    reader.onload = async function(e) {
+      await persistUserPatch({ companyLogo: e.target.result });
       const preview = document.getElementById('company-logo-preview');
       if (preview) {
         preview.style.backgroundImage = `url(${e.target.result})`;
@@ -641,31 +997,33 @@ function handleCompanyLogo(input) {
       }
       showToast('Logo hochgeladen!');
     };
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 
 function handleCompanyImage(input) {
   if (input.files && input.files[0]) {
+    const file = input.files[0];
+    if (file.size > 2 * 1024 * 1024) { showToast('Bild zu groß (max 2 MB).', 'error'); return; }
+    if (!/^image\/(png|jpe?g|webp|gif)$/i.test(file.type)) { showToast('Nur Bild-Dateien erlaubt.', 'error'); return; }
     if (!state.user.companyImages) state.user.companyImages = [];
     if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
     const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyImages.push(e.target.result);
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    reader.onload = async function(e) {
+      const next = [...state.user.companyImages, e.target.result];
+      await persistUserPatch({ companyImages: next });
       showToast('Bild hochgeladen!');
       render();
     };
-    reader.readAsDataURL(input.files[0]);
+    reader.readAsDataURL(file);
   }
 }
 
-function removeCompanyImage(index) {
+async function removeCompanyImage(index) {
   if (!state.user.companyImages) return;
-  state.user.companyImages.splice(index, 1);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+  const next = [...state.user.companyImages];
+  next.splice(index, 1);
+  await persistUserPatch({ companyImages: next });
   render();
 }
 
@@ -796,15 +1154,21 @@ function docScanned(input) {
 }
 
 // ===== SAVE JOB =====
-function toggleSaveJob(jobId, e) {
+async function toggleSaveJob(jobId, e) {
   if (e) e.stopPropagation();
   if (!state.user) { navigate('register'); return; }
-  const key = 'jj_saved_' + state.user.id;
-  const saved = JSON.parse(localStorage.getItem(key) || '[]');
-  const idx = saved.indexOf(jobId);
-  if (idx > -1) saved.splice(idx, 1);
-  else saved.push(jobId);
-  localStorage.setItem(key, JSON.stringify(saved));
+  const idx = state._savedJobs.indexOf(jobId);
+  try {
+    if (idx > -1) {
+      state._savedJobs.splice(idx, 1);
+      await DB.unsaveJob(state.user.id, jobId);
+    } else {
+      state._savedJobs.push(jobId);
+      await DB.saveJob(state.user.id, jobId);
+    }
+  } catch (err) {
+    console.error('[toggleSaveJob]', err);
+  }
   render();
 }
 
@@ -833,35 +1197,90 @@ function toggleChat() {
   navigate('messages');
 }
 
-function chatKey() {
-  return state.user ? 'jj_chats_' + state.user.id : null;
-}
-function loadUserChats() {
-  if (!state.user) return;
-  const key = chatKey();
-  const chats = JSON.parse(localStorage.getItem(key) || '[]');
-  if (state.user.role === 'employer') {
-    EMPLOYER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => EMPLOYER_CHAT_MESSAGES.push(c));
-  } else {
-    WORKER_CHAT_MESSAGES.length = 0;
-    chats.forEach(c => WORKER_CHAT_MESSAGES.push(c));
-  }
-}
-function saveUserChats() {
-  const key = chatKey();
-  if (!key) return;
-  const chats = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
-  localStorage.setItem(key, JSON.stringify(chats));
-}
-function getChatList() {
-  if (!state.user) return [];
-  return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+// ===== CHAT (Supabase-backed) =====
+let _chatListCache = [];           // [{ id, partnerName, ..., messages: [...] }]
+let _messagesCache = {};           // { [chatId]: [{ text, sent, time }, ...] }
+let _chatRealtimeSub = null;
+let _chatListRealtimeSub = null;
+
+function _formatHM(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  return `${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
 }
 
-function findChat(id) {
-  return [...WORKER_CHAT_MESSAGES, ...EMPLOYER_CHAT_MESSAGES].find(c => c.id === id);
+function _dbMessageToFrontend(msg) {
+  return {
+    id: msg.id,
+    text: msg.text,
+    sent: msg.sender_id === state.user?.id,
+    time: _formatHM(msg.created_at),
+    createdAt: msg.created_at
+  };
 }
+
+function _dbChatToFrontend(row) {
+  const isWorker = row.worker_id === state.user?.id;
+  const partner = isWorker ? row.employer : row.worker;
+  const partnerName = (partner?.company || partner?.name || 'Unbekannt');
+  return {
+    id: row.id,
+    partnerId: isWorker ? row.employer_id : row.worker_id,
+    partnerName,
+    partnerInitials: partnerName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2),
+    jobTitle: row.job_title || '',
+    lastMessage: row.last_message || '',
+    time: _formatHM(row.last_message_at),
+    unread: false,
+    messages: _messagesCache[row.id] || []
+  };
+}
+
+async function refreshChatList() {
+  if (!state.user || !window.DB) { _chatListCache = []; return; }
+  try {
+    const rows = await DB.listChatsForUser(state.user.id);
+    _chatListCache = rows.map(_dbChatToFrontend);
+  } catch (e) {
+    console.error('[refreshChatList]', e);
+    _chatListCache = [];
+  }
+}
+
+async function refreshMessagesForChat(chatId) {
+  if (!state.user || !window.DB || chatId == null) return;
+  try {
+    const rows = await DB.getMessages(chatId);
+    _messagesCache[chatId] = rows.map(_dbMessageToFrontend);
+    const c = _chatListCache.find(x => x.id === chatId);
+    if (c) c.messages = _messagesCache[chatId];
+    // Subscribe to realtime updates for this chat
+    if (_chatRealtimeSub) { try { DB.sb.removeChannel(_chatRealtimeSub); } catch (_) {} _chatRealtimeSub = null; }
+    _chatRealtimeSub = DB.subscribeToMessages(chatId, (newMsg) => {
+      const arr = _messagesCache[chatId] || (_messagesCache[chatId] = []);
+      if (!arr.find(m => m.id === newMsg.id)) {
+        arr.push(_dbMessageToFrontend(newMsg));
+        const cc = _chatListCache.find(x => x.id === chatId);
+        if (cc) {
+          cc.messages = arr;
+          cc.lastMessage = newMsg.text;
+          cc.time = _formatHM(newMsg.created_at);
+        }
+        if (state.currentPage === 'chat' && state.activeChat === chatId) render();
+        else if (state.currentPage === 'messages') render();
+      }
+    });
+  } catch (e) {
+    console.error('[refreshMessagesForChat]', e);
+  }
+}
+
+// Backwards-compat shims so existing call sites still work.
+function loadUserChats() { /* loaded async via refreshChatList */ }
+function saveUserChats() { /* persistence handled by DB */ }
+function getChatList() { return _chatListCache; }
+function findChat(id) { return _chatListCache.find(c => c.id === id); }
 
 function renderChatWidget() {
   const content = document.getElementById('chat-content');
@@ -871,14 +1290,14 @@ function renderChatWidget() {
       <div class="chat-list">
         ${chatList.map(c => `
           <div class="chat-list-item" onclick="openChat(${c.id})">
-            <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
+            <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${escapeHtml(c.partnerInitials)}</div>
             <div style="flex:1;min-width:0">
-              <div style="font-weight:600;font-size:0.85rem">${c.partnerName}</div>
-              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${c.jobTitle}</div>
-              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+              <div style="font-weight:600;font-size:0.85rem">${escapeHtml(c.partnerName)}</div>
+              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${escapeHtml(c.jobTitle)}</div>
+              <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:0.7rem;color:var(--gray-400)">${c.time}</div>
+              <div style="font-size:0.7rem;color:var(--gray-400)">${escapeHtml(c.time)}</div>
               ${c.unread ? '<div class="unread" style="margin-left:auto;margin-top:4px"></div>' : ''}
             </div>
           </div>
@@ -890,13 +1309,13 @@ function renderChatWidget() {
     content.innerHTML = `
       <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
         <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
-        <strong style="font-size:0.85rem">${chat.partnerName}</strong>
+        <strong style="font-size:0.85rem">${escapeHtml(chat.partnerName)}</strong>
       </div>
       <div class="chat-messages" style="flex:1;overflow-y:auto;padding:0.75rem">
         ${chat.messages.map(m => `
           <div class="chat-msg ${m.sent ? 'sent' : 'received'}">
-            ${m.text}
-            <div class="msg-time">${m.time}</div>
+            ${escapeHtml(m.text)}
+            <div class="msg-time">${escapeHtml(m.time)}</div>
           </div>
         `).join('')}
       </div>
@@ -912,18 +1331,59 @@ function openChat(id) {
   renderChatWidget();
 }
 
-function updateApplicantStatus(applicantId, newStatus) {
+async function updateApplicantStatus(applicantId, newStatus) {
   // Try real applications first, then mock
   const allApps = getAllApplications();
   let a = allApps.find(x => x.id === applicantId);
   let isReal = !!a;
   if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
+
+  // Persist the new status to the DB for real applications.
+  if (isReal && window.DB) {
+    const dbStatus = newStatus === 'accepted' ? 'accepted' : (newStatus === 'rejected' ? 'rejected' : (newStatus === 'reviewing' ? 'pending' : 'pending'));
+    try { await DB.updateApplicationStatus(applicantId, dbStatus); }
+    catch (e) { console.error('[updateApplicantStatus DB]', e); }
+  }
+
+  // Prüfe ob Worker bereits einen aktiven Job hat (nur bei accepted)
+  if (newStatus === 'accepted' && isReal && a.userId) {
+    const workerActiveJob = JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null');
+    if (workerActiveJob) {
+      showToast(`${a.name} hat bereits einen aktiven Job und kann nicht angenommen werden.`, 'error');
+      render();
+      return;
+    }
+  }
+
   const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
   a.status = newStatus;
   a.statusText = statusTexts[newStatus];
   if (isReal) localStorage.setItem('jj_all_applications', JSON.stringify(allApps));
   const jobTitle = a.jobTitle || a.job;
+
+  // Bei Annahme: aktiven Job setzen + andere Bewerbungen automatisch zurückziehen
+  if (newStatus === 'accepted' && isReal && a.userId) {
+    // Aktiven Job setzen
+    const job = JOBS.find(j => j.id === a.jobId);
+    localStorage.setItem('jj_active_job_' + a.userId, JSON.stringify({
+      jobId: a.jobId,
+      jobTitle: a.jobTitle || a.job,
+      jobCompany: a.jobCompany || job?.company || '',
+      acceptedAt: new Date().toISOString(),
+      employerId: state.user.id
+    }));
+    // Alle anderen Bewerbungen dieses Workers automatisch zurückziehen
+    const updatedApps = getAllApplications();
+    updatedApps.forEach(app => {
+      if (app.userId === a.userId && app.id !== a.id && app.status !== 'rejected') {
+        app.status = 'rejected';
+        app.statusText = 'Zurückgezogen';
+      }
+    });
+    localStorage.setItem('jj_all_applications', JSON.stringify(updatedApps));
+  }
+
   if (newStatus === 'rejected' || newStatus === 'accepted') {
     const workerUserId = a.userId || applicantId;
     let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
@@ -961,67 +1421,62 @@ function updateApplicantStatus(applicantId, newStatus) {
   render();
 }
 
-function openApplicantChat(applicantId) {
-  const allApplicants = [...getEmployerApplicants(), ...MOCK_APPLICANTS];
-  const a = allApplicants.find(x => x.id === applicantId);
-  if (!a) { navigate('messages'); return; }
-  const workerUserId = a.userId || applicantId;
-  let chat = EMPLOYER_CHAT_MESSAGES.find(c => c.partnerId === 'worker-' + workerUserId);
-  if (!chat) {
-    chat = {
-      id: 100 + workerUserId,
-      partnerId: 'worker-' + workerUserId,
-      partnerName: a.name,
-      partnerInitials: a.initials,
-      jobTitle: a.jobTitle || a.job,
-      lastMessage: '',
-      time: '',
-      unread: false,
-      messages: []
-    };
-    EMPLOYER_CHAT_MESSAGES.push(chat);
-  saveUserChats();
+async function openApplicantChat(applicantId) {
+  if (!state.user || state.user.role !== 'employer') return;
+  // Find the applicant's profile id and the job they applied to.
+  const a = _employerApplicantsCache.find(x => x.id === applicantId);
+  if (!a || !a.userId) { showToast('Bewerber nicht gefunden.', 'error'); return; }
+  try {
+    const chatRow = await DB.getOrCreateChat({
+      workerId: a.userId,
+      employerId: state.user.id,
+      jobId: a.jobId,
+      jobTitle: a.jobTitle
+    });
+    state.activeChat = chatRow.id;
+    await refreshChatList();
+    await refreshMessagesForChat(chatRow.id);
+    navigate('chat', { chatId: chatRow.id });
+  } catch (e) {
+    console.error('[openApplicantChat]', e);
+    showToast('Chat konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
   }
-  state.activeChat = chat.id;
-  navigate('chat', { chatId: chat.id });
 }
 
-function sendChatMessage() {
+// Worker opens a chat with the employer of a given job.
+async function openJobChat(jobId) {
+  if (!state.user || state.user.role !== 'worker') { navigate('login'); return; }
+  const job = JOBS.find(j => j.id === jobId);
+  if (!job || !job.employerId) { showToast('Job nicht gefunden.', 'error'); return; }
+  try {
+    const chatRow = await DB.getOrCreateChat({
+      workerId: state.user.id,
+      employerId: job.employerId,
+      jobId: job.id,
+      jobTitle: job.title
+    });
+    state.activeChat = chatRow.id;
+    await refreshChatList();
+    await refreshMessagesForChat(chatRow.id);
+    navigate('chat', { chatId: chatRow.id });
+  } catch (e) {
+    console.error('[openJobChat]', e);
+    showToast('Chat konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
+  }
+}
+
+async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   if (!input || !input.value.trim()) return;
-  const chat = findChat(state.activeChat);
-  if (chat) {
-    const now = new Date();
-    const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-    const msgText = censorContactInfo(input.value);
-    chat.messages.push({ text: msgText, sent: true, time: time });
-    chat.lastMessage = msgText;
-    chat.time = time;
-    saveUserChats();
-    input.value = '';
-    // Deliver message to the partner's chats
-    if (chat.partnerId) {
-      let partnerId = null;
-      const idPart = chat.partnerId.split('-').slice(1).join('-');
-      partnerId = parseInt(idPart) || null;
-      if (partnerId) {
-        const partnerChatKey = 'jj_chats_' + partnerId;
-        const partnerChats = JSON.parse(localStorage.getItem(partnerChatKey) || '[]');
-        const myName = state.user.company || state.user.name;
-        const myInitials = (myName || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-        const myPartnerId = (state.user.role === 'employer' ? 'employer-' : 'worker-') + state.user.id;
-        let partnerChat = partnerChats.find(c => c.partnerId === myPartnerId);
-        if (!partnerChat) {
-          partnerChat = { id: 300 + state.user.id, partnerId: myPartnerId, partnerName: myName, partnerInitials: myInitials, jobTitle: chat.jobTitle || '', lastMessage: '', time: '', unread: true, messages: [] };
-          partnerChats.push(partnerChat);
-        }
-        partnerChat.messages.push({ text: msgText, sent: false, time: time });
-        partnerChat.lastMessage = msgText;
-        partnerChat.time = time;
-        partnerChat.unread = true;
-        localStorage.setItem(partnerChatKey, JSON.stringify(partnerChats));
-      }
-    }
+  if (!state.user || state.activeChat == null) return;
+  const msgText = censorContactInfo(sanitizeText(input.value, 2000));
+  if (!msgText) return;
+  input.value = '';
+  try {
+    await DB.sendMessage(state.activeChat, state.user.id, msgText);
+    // The realtime subscription will pick it up and re-render. As a fallback
+    // (e.g. if realtime is slow), refresh manually.
+    await refreshMessagesForChat(state.activeChat);
     if (state.currentPage === 'chat') {
       render();
       setTimeout(() => {
@@ -1031,6 +1486,9 @@ function sendChatMessage() {
     } else {
       renderChatWidget();
     }
+  } catch (e) {
+    console.error('[sendChatMessage]', e);
+    showToast('Nachricht konnte nicht gesendet werden: ' + (e.message || ''), 'error');
   }
 }
 
@@ -1044,9 +1502,13 @@ function toggleAI() {
 function sendAIMessage() {
   const input = document.getElementById('ai-input');
   if (!input || !input.value.trim()) return;
-  const msg = input.value.trim();
+  const msg = input.value.trim().slice(0, 2000);
   const container = document.getElementById('ai-messages');
-  container.innerHTML += `<div class="ai-msg user">${escapeHtml(msg)}</div>`;
+
+  const userMsg = document.createElement('div');
+  userMsg.className = 'ai-msg user';
+  userMsg.textContent = msg;
+  container.appendChild(userMsg);
   input.value = '';
 
   // Find best matching response (most keyword hits wins)
@@ -1060,7 +1522,15 @@ function sendAIMessage() {
   const response = bestMatch ? bestMatch.answer : AI_RESPONSES.defaultAnswer;
 
   setTimeout(() => {
-    container.innerHTML += `<div class="ai-msg bot">${response.replace(/\n/g, '<br>')}</div>`;
+    const botMsg = document.createElement('div');
+    botMsg.className = 'ai-msg bot';
+    // Render the static AI response line by line so newlines become <br>
+    // without ever passing untrusted HTML through innerHTML.
+    String(response).split('\n').forEach((line, i) => {
+      if (i > 0) botMsg.appendChild(document.createElement('br'));
+      botMsg.appendChild(document.createTextNode(line));
+    });
+    container.appendChild(botMsg);
     container.scrollTop = container.scrollHeight;
   }, 800);
 }
@@ -1463,9 +1933,16 @@ function renderJobDetail() {
         <div class="job-detail-sidebar">
           <div class="card">
             <div class="card-body">
-              <button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${state.user && state.user.role !== 'employer' ? `submitApplication(${job.id})` : `navigate('login')`}">
-                ${state.user && state.user.role !== 'employer' ? (getUserApps().includes(job.id) ? '✓ Beworben' : 'Jetzt bewerben') : 'Anmelden zum Bewerben'}
-              </button>
+              ${(() => {
+                const isWorker = state.user && state.user.role !== 'employer';
+                const alreadyApplied = isWorker && getUserApps().includes(job.id);
+                const hasActiveJob = isWorker && getActiveJob();
+                const maxApps = isWorker && !alreadyApplied && getPendingAppCount() >= 3;
+                const disabled = alreadyApplied || hasActiveJob || maxApps;
+                const label = !isWorker ? 'Anmelden zum Bewerben' : alreadyApplied ? '✓ Beworben' : hasActiveJob ? 'Du hast bereits einen aktiven Job' : maxApps ? 'Max. 3 Bewerbungen erreicht' : 'Jetzt bewerben';
+                const action = !isWorker ? `navigate('login')` : `submitApplication(${job.id})`;
+                return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${action}" ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
+              })()}
 
               <div style="margin-top:1.5rem">
                 <h3 style="font-size:1rem;margin-bottom:1rem">Über ${job.company}</h3>
@@ -1500,11 +1977,11 @@ function renderLogin() {
         <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" maxlength="320" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" value="test1234" required>
+            <input type="password" name="password" class="form-input" placeholder="Dein Passwort" maxlength="200" autocomplete="current-password" required>
           </div>
           <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
@@ -1541,24 +2018,24 @@ function renderRegister() {
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Vorname</label>
-              <input type="text" name="firstName" class="form-input" placeholder="Max" value="Max" required>
+              <input type="text" name="firstName" class="form-input" placeholder="Max" maxlength="40" autocomplete="given-name" required>
             </div>
             <div class="form-group">
               <label class="form-label">Nachname</label>
-              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" value="Mustermann" required>
+              <input type="text" name="lastName" class="form-input" placeholder="Mustermann" maxlength="40" autocomplete="family-name" required>
             </div>
           </div>
           <div class="form-group employer-field" style="display:none">
             <label class="form-label">Firmenname</label>
-            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH" maxlength="120" autocomplete="organization">
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
-            <input type="email" name="email" class="form-input" placeholder="deine@email.de" value="test@test.de" required>
+            <input type="email" name="email" class="form-input" placeholder="deine@email.de" maxlength="320" autocomplete="email" required>
           </div>
           <div class="form-group">
             <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" value="test1234" required minlength="8">
+            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" maxlength="200" autocomplete="new-password" required minlength="8">
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
@@ -1629,6 +2106,33 @@ function renderWorkerDashboard() {
         <div class="dashboard-content">
 
           <h2 class="dashboard-title">Hallo, ${state.user.name.split(' ')[0]}!</h2>
+
+          <!-- ── Aktiver Job Banner ── -->
+          ${(() => {
+            const activeJob = getActiveJob();
+            if (!activeJob) return '';
+            const job = JOBS.find(j => j.id === activeJob.jobId);
+            const daysSince = Math.floor((Date.now() - new Date(activeJob.acceptedAt).getTime()) / 86400000);
+            return `
+            <div class="card" style="margin-bottom:1.5rem;border:2px solid var(--success);background:linear-gradient(135deg,#f0fdf4,#dcfce7)">
+              <div class="card-body" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                <div style="display:flex;align-items:center;gap:1rem">
+                  <div style="width:48px;height:48px;border-radius:12px;background:var(--success);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0">
+                    ${job?.companyLogo && !job.companyLogo.startsWith('data:') ? job.companyLogo : '💼'}
+                  </div>
+                  <div>
+                    <div style="font-size:0.75rem;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:0.05em">Aktiver Job</div>
+                    <div style="font-size:1.1rem;font-weight:700;color:var(--gray-900)">${activeJob.jobTitle}</div>
+                    <div style="font-size:0.85rem;color:var(--gray-500)">${activeJob.jobCompany} · Seit ${daysSince} ${daysSince === 1 ? 'Tag' : 'Tagen'}</div>
+                  </div>
+                </div>
+                <div style="display:flex;gap:0.5rem;flex-shrink:0">
+                  ${job ? `<button class="btn btn-sm btn-outline" onclick="navigate('job-detail',{jobId:${job.id}})">Details</button>` : ''}
+                  <button class="btn btn-sm btn-primary" style="background:var(--danger);border-color:var(--danger)" onclick="if(confirm('Möchtest du diesen Job wirklich beenden?')) endActiveJob()">Job beenden</button>
+                </div>
+              </div>
+            </div>`;
+          })()}
 
           <!-- ── 3 Schnell-Kacheln ── -->
           <div class="worker-dash-grid">
@@ -1720,11 +2224,12 @@ function renderWorkerDashboard() {
     </div>`;
 }
 
-function uploadCV(input) {
+async function uploadCV(input) {
   if (input.files.length) {
-    state.user.cvUploaded = true;
-    state.user.cvFileName = input.files[0].name;
-    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
+    const file = input.files[0];
+    if (file.size > 5 * 1024 * 1024) { showToast('Datei zu groß (max 5 MB).', 'error'); return; }
+    state.user.cvFileName = sanitizeText(file.name, 200);
+    await persistUserPatch({ cvUploaded: true });
     showToast('Lebenslauf erfolgreich hochgeladen!');
     render();
   }
@@ -2072,24 +2577,24 @@ function renderWorkerProfile() {
     </div>`;
 }
 
-function saveProfileStep() {
-  const u = state.user;
+async function saveProfileStep() {
+  if (!state.user) return;
   const step = state.profileStep;
+  const patch = {};
   if (step === 0) {
     const addr   = document.getElementById('ps-address');
     const radius = document.querySelector('.range-slider');
-    if (addr   && addr.value.trim())  u.address = addr.value.trim();
-    if (radius) u.radius = parseInt(radius.value);
+    if (addr   && addr.value.trim())  patch.address = sanitizeText(addr.value, 200);
+    if (radius) state.user.radius = parseInt(radius.value);
   }
   if (step === 3) {
     const hours   = document.getElementById('ps-hours');
-    if (hours) u.weeklyHours = hours.value;
+    if (hours) state.user.weeklyHours = hours.value;
     const checked = [...document.querySelectorAll('.checkbox-group input:checked')]
       .map(c => c.nextElementSibling.textContent.trim());
-    if (checked.length) u.skills = checked;
-    // Referenzen werden via addRef() direkt gespeichert
+    if (checked.length) state.user.skills = checked;
   }
-  localStorage.setItem('jj_user', JSON.stringify(u));
+  if (Object.keys(patch).length) await persistUserPatch(patch);
 }
 
 function renderSavedJobs() {
@@ -2118,12 +2623,17 @@ function renderSavedJobs() {
 
 function renderApplications() {
   if (!state.user) return renderLogin();
-  const appJobIds = getUserApps();
-  const allApps = getAllApplications();
-  const myApps = appJobIds.map(jobId => {
-    const job = JOBS.find(j => j.id === jobId);
-    const appData = allApps.find(a => a.userId === state.user.id && a.jobId === jobId);
-    return { job, status: appData?.status || 'new', statusText: appData?.statusText || 'Gesendet', date: appData?.date || new Date().toISOString().split('T')[0] };
+  // Build the worker's application list directly from the cached DB rows.
+  // refreshWorkerApplications() is triggered by navigate() so this is fresh.
+  const statusTexts = { pending: 'Gesendet', accepted: 'Angenommen', rejected: 'Abgelehnt', invited: 'Eingeladen', withdrawn: 'Zurückgezogen' };
+  const myApps = _workerApplicationsCache.map(row => {
+    const job = (row.jobs && dbJobToFrontend(row.jobs)) || JOBS.find(j => j.id === row.job_id);
+    return {
+      job,
+      status: row.status,
+      statusText: statusTexts[row.status] || row.status,
+      date: (row.created_at || '').split('T')[0]
+    };
   }).filter(a => a.job);
   return `
     <div class="page">
@@ -2131,6 +2641,17 @@ function renderApplications() {
         ${renderWorkerSidebar('applications')}
         <div class="dashboard-content">
           <h2 class="dashboard-title">Meine Bewerbungen</h2>
+          ${(() => {
+            const activeJob = getActiveJob();
+            const pending = myApps.filter(a => a.status !== 'rejected' && a.status !== 'accepted');
+            return activeJob ? `
+            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:1rem;font-size:0.85rem;color:#166534;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.1rem">💼</span> Du hast einen aktiven Job: <strong>${activeJob.jobTitle}</strong> – Neue Bewerbungen sind gesperrt.
+            </div>` : `
+            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:1rem;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem">
+              <span style="font-size:1.1rem">📋</span> Offene Bewerbungen: <strong>${pending.length}/3</strong>
+            </div>`;
+          })()}
           ${myApps.length > 0 ? `
           <div class="jobs-grid">
             ${myApps.map(a => `
@@ -2877,12 +3398,17 @@ function renderApplicants() {
                 </tr>
               </thead>
               <tbody>
-                ${applicants.map(a => `
-                  <tr>
+                ${applicants.map(a => {
+                  const workerHasActiveJob = a.userId ? !!JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null') : false;
+                  return `
+                  <tr${workerHasActiveJob ? ' style="opacity:0.6"' : ''}>
                     <td>
                       <div class="applicant-row">
                         <div class="user-avatar" style="width:32px;height:32px;font-size:0.7rem">${a.initials}</div>
-                        <strong>${a.name}</strong>
+                        <div>
+                          <strong>${a.name}</strong>
+                          ${workerHasActiveJob ? '<div style="font-size:0.7rem;color:var(--danger);font-weight:600">Bereits beschäftigt</div>' : ''}
+                        </div>
                       </div>
                     </td>
                     <td>${a.jobTitle || a.job}</td>
@@ -2902,8 +3428,8 @@ function renderApplicants() {
                         <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
                     </td>
-                  </tr>
-                `).join('')}
+                  </tr>`;
+                }).join('')}
               </tbody>
             </table>
           </div>
@@ -3047,10 +3573,10 @@ function renderChatDetail() {
           <!-- Chat-Kopfzeile -->
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)">
             <button class="btn btn-sm btn-outline" onclick="navigate('messages')">&#8592; Zurück</button>
-            <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
+            <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${escapeHtml(chat.partnerInitials)}</div>
             <div>
-              <strong style="font-size:0.95rem">${chat.partnerName}</strong>
-              <div style="font-size:0.78rem;color:var(--gray-500)">${chat.jobTitle}</div>
+              <strong style="font-size:0.95rem">${escapeHtml(chat.partnerName)}</strong>
+              <div style="font-size:0.78rem;color:var(--gray-500)">${escapeHtml(chat.jobTitle)}</div>
             </div>
           </div>
 
@@ -3058,13 +3584,13 @@ function renderChatDetail() {
           <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
             ${chat.messages.length === 0 ? `
               <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
-                Noch keine Nachrichten. Schreib ${chat.partnerName.split(' ')[0]} eine erste Nachricht!
+                Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
             ${chat.messages.map(m => `
               <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
                 <div style="max-width:72%;padding:0.6rem 0.85rem;border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};font-size:0.88rem;line-height:1.45">
                   ${escapeHtml(m.text)}
-                  <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
+                  <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${escapeHtml(m.time)}</div>
                 </div>
               </div>
             `).join('')}
@@ -3100,14 +3626,14 @@ function renderMessages() {
           <div class="card" style="max-width:620px">
             ${chatList.map(c => `
               <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'" onclick="navigate('chat',{chatId:${c.id}})">
-                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
+                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${escapeHtml(c.partnerInitials)}</div>
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <strong style="font-size:0.85rem">${c.partnerName}</strong>
-                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                    <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
+                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${escapeHtml(c.time)}</span>
                   </div>
-                  <div style="font-size:0.75rem;color:var(--primary)">${c.jobTitle}</div>
-                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${c.lastMessage}</div>
+                  <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
+                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
                 </div>
                 ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
               </div>
@@ -3123,40 +3649,53 @@ function renderMessages() {
 }
 
 // ===== SUPPORT SYSTEM =====
+let _supportTicketsCache = [];
+async function refreshSupportTickets() {
+  if (!state.user || !window.DB) { _supportTicketsCache = []; return; }
+  try {
+    const rows = await DB.listSupportTickets(state.user.id);
+    _supportTicketsCache = rows.map(r => ({
+      id: r.id,
+      userId: r.user_id,
+      userName: state.user.name || state.user.company || 'Unbekannt',
+      userEmail: state.user.email,
+      userRole: state.user.role,
+      category: r.category,
+      subject: r.subject,
+      message: r.message,
+      status: r.status,
+      createdAt: r.created_at,
+      adminReply: r.admin_reply
+    }));
+  } catch (e) {
+    console.error('[refreshSupportTickets]', e);
+    _supportTicketsCache = [];
+  }
+}
 function getSupportTickets() {
-  return JSON.parse(localStorage.getItem('jj_support_tickets') || '[]');
+  return _supportTicketsCache;
 }
+function saveSupportTickets(_tickets) { /* no-op, DB is the source of truth */ }
 
-function saveSupportTickets(tickets) {
-  localStorage.setItem('jj_support_tickets', JSON.stringify(tickets));
-}
-
-function submitSupportTicket() {
+async function submitSupportTicket() {
+  if (!state.user) { navigate('login'); return; }
   const category = document.getElementById('support-category')?.value;
-  const subject = document.getElementById('support-subject')?.value?.trim();
-  const message = document.getElementById('support-message')?.value?.trim();
-  if (!category || !subject || !message) {
+  const subject = sanitizeText(document.getElementById('support-subject')?.value, 120);
+  const message = sanitizeText(document.getElementById('support-message')?.value, 5000);
+  const allowedCategories = ['bug', 'account', 'payment', 'job', 'user', 'other'];
+  if (!allowedCategories.includes(category) || !subject || !message) {
     alert('Bitte fülle alle Felder aus.');
     return;
   }
-  const tickets = getSupportTickets();
-  const ticket = {
-    id: Date.now(),
-    userId: state.user.id,
-    userName: state.user.name || state.user.company || 'Unbekannt',
-    userEmail: state.user.email,
-    userRole: state.user.role,
-    category: category,
-    subject: subject,
-    message: message,
-    status: 'open',
-    createdAt: new Date().toISOString(),
-    adminReply: null
-  };
-  tickets.push(ticket);
-  saveSupportTickets(tickets);
-  alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
-  render();
+  try {
+    await DB.createSupportTicket({ userId: state.user.id, category, subject, message });
+    await refreshSupportTickets();
+    alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
+    render();
+  } catch (e) {
+    console.error('[submitSupportTicket]', e);
+    showToast('Ticket konnte nicht erstellt werden: ' + (e.message || ''), 'error');
+  }
 }
 
 function renderSupport() {
@@ -3243,7 +3782,7 @@ function renderReviews() {
           <h2 class="dashboard-title">★ Bewertungen</h2>
 
           <div class="review-restriction">
-            ! Bewertungen können nur abgegeben werden, solange ein aktives Arbeitsverhältnis besteht. Dies stellt sicher, dass nur faire und aktuelle Bewertungen abgegeben werden.
+            ! Bewertungen können nur abgegeben werden, wenn du einen Job abgeschlossen hast. Dies stellt sicher, dass nur faire und aktuelle Bewertungen abgegeben werden.
           </div>
 
           <div class="tabs">
@@ -3279,22 +3818,36 @@ function renderReviews() {
             </div>
           `).join('')}
 
-          <div class="card" style="margin-top:1.5rem">
-            <div class="card-header">Bewertung abgeben</div>
-            <div class="card-body">
-              <div class="form-group">
-                <label class="form-label">Bewertung</label>
-                <div class="stars" style="font-size:1.75rem" id="rating-stars">
-                  ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
+          ${(() => {
+            const completedJobs = getCompletedJobs();
+            const hasActiveJob = !!getActiveJob();
+            const canReview = completedJobs.length > 0 || hasActiveJob;
+            if (!canReview) return `
+            <div class="card" style="margin-top:1.5rem;opacity:0.6">
+              <div class="card-header">Bewertung abgeben</div>
+              <div class="card-body" style="text-align:center;padding:2rem">
+                <div style="font-size:2rem;margin-bottom:0.5rem">🔒</div>
+                <p style="color:var(--gray-500);font-size:0.9rem">Du musst zuerst einen Job abschließen, bevor du eine Bewertung abgeben kannst.</p>
+              </div>
+            </div>`;
+            return `
+            <div class="card" style="margin-top:1.5rem">
+              <div class="card-header">Bewertung abgeben</div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Bewertung</label>
+                  <div class="stars" style="font-size:1.75rem" id="rating-stars">
+                    ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
+                  </div>
                 </div>
+                <div class="form-group">
+                  <label class="form-label">Dein Feedback</label>
+                  <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
+                </div>
+                <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
               </div>
-              <div class="form-group">
-                <label class="form-label">Dein Feedback</label>
-                <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
-              </div>
-              <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
-            </div>
-          </div>
+            </div>`;
+          })()}
         </div>
       </div>
     </div>`;
@@ -3427,16 +3980,17 @@ function adminToggleApproval(userId, approved) {
   render();
 }
 
-function adminLogin() {
+async function adminLogin() {
   const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
-  const password = document.getElementById('admin-password')?.value;
+  const password = document.getElementById('admin-password')?.value || '';
   const err = document.getElementById('admin-login-error');
 
   if (!ADMIN_EMAILS.includes(email)) {
     if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
     return;
   }
-  if (password !== ADMIN_PASSWORD) {
+  const passwordHash = await sha256(password);
+  if (passwordHash !== ADMIN_PASSWORD_HASH) {
     if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
     return;
   }
