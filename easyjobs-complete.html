@@ -502,10 +502,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   display: flex; flex-direction: column; gap: 0;
 }
 .step-nav-item {
-  padding: 1.5rem 2rem; cursor: pointer; border-left: 3px solid var(--gray-200);
+  padding: 1.5rem 2rem; border-left: 3px solid var(--gray-200);
   transition: all 0.3s; position: relative;
 }
-.step-nav-item:hover { background: var(--gray-50); }
 .step-nav-item.active {
   border-left-color: var(--primary); background: #fff;
 }
@@ -3446,7 +3445,7 @@ function renderLanding() {
     <!-- Hero -->
     <div class="employer-hero" style="min-height:560px">
       <div class="employer-hero-bg">
-        <img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?w=1400&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80" alt="">
       </div>
       <div class="employer-hero-content slide-up" style="max-width:700px;padding:4rem 2rem">
         <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">DEIN WEG ZUM ERSTEN JOB</div>
@@ -3512,17 +3511,17 @@ function renderLanding() {
       </div>
       <div class="steps-showcase" id="steps-showcase">
         <div class="steps-nav">
-          <div class="step-nav-item active" onclick="switchStep(0)">
+          <div class="step-nav-item active">
             <div class="step-nav-number">1</div>
             <div class="step-nav-title">Profil anlegen</div>
             <div class="step-nav-desc">Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</div>
           </div>
-          <div class="step-nav-item" onclick="switchStep(1)">
+          <div class="step-nav-item">
             <div class="step-nav-number">2</div>
             <div class="step-nav-title">Jobs entdecken</div>
             <div class="step-nav-desc">Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Zeiten.</div>
           </div>
-          <div class="step-nav-item" onclick="switchStep(2)">
+          <div class="step-nav-item">
             <div class="step-nav-number">3</div>
             <div class="step-nav-title">Bewerben & starten</div>
             <div class="step-nav-desc">Ein Klick, fertig. Dein Anschreiben wird automatisch erstellt. Der Rest läuft per Chat.</div>
