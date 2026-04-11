@@ -2426,10 +2426,10 @@ async function loadUserSession() {
         name: profile.name,
         role: profile.role,
         company: profile.company || null,
-        // Auto-approve every account for now: the legacy approval
-        // workflow lived in localStorage and isn't part of the
-        // Supabase profiles schema yet.
-        approved: true,
+        // Real `approved` flag from supabase-add-approval.sql.
+        // Workers are auto-approved by a DB trigger, employers
+        // default to false until an admin flips the switch.
+        approved: profile.approved === true,
         profileComplete: profile.profile_complete || 20,
         about: profile.about || '',
         address: profile.address || '',
@@ -2440,6 +2440,8 @@ async function loadUserSession() {
       };
     } else {
       // Fallback: profile row missing, build minimum from auth user_metadata.
+      // Workers are safe to auto-approve here too, employers stay false
+      // until they have a real profile row + manual approval.
       const md = session.user.user_metadata || {};
       state.user = {
         id: session.user.id,
@@ -2447,7 +2449,7 @@ async function loadUserSession() {
         name: md.name || '',
         role: md.role || 'worker',
         company: md.company || null,
-        approved: true,
+        approved: (md.role || 'worker') === 'worker',
         profileComplete: 20
       };
     }
@@ -2560,8 +2562,7 @@ async function loadAllProfilesForAdmin() {
       name: p.name || '',
       role: p.role || 'worker',
       company: p.company || null,
-      // Auto-approved (see loadUserSession for the rationale)
-      approved: true,
+      approved: p.approved === true,
       createdAt: p.created_at
     }));
   } catch (e) {
@@ -6778,6 +6779,23 @@ async function adminRefreshProfiles() {
   } catch (e) { console.error('[adminRefreshProfiles]', e); }
 }
 
+// Flip the `approved` flag on an employer profile. Backed by the
+// profiles_admin_update_approval RLS policy from supabase-add-approval.sql,
+// which only lets the hard-coded admin emails write to other people's rows.
+async function adminToggleApproval(userId, newApproved) {
+  if (!window.DB || !DB.sb) return;
+  try {
+    const res = await DB.sb.from('profiles').update({ approved: !!newApproved }).eq('id', userId);
+    if (res.error) throw res.error;
+    showToast(newApproved ? 'Arbeitgeber freigeschaltet.' : 'Arbeitgeber gesperrt.');
+    await loadAllProfilesForAdmin();
+    render();
+  } catch (e) {
+    console.error('[adminToggleApproval]', e);
+    showToast('Konnte Status nicht ändern: ' + (e.message || ''), 'error');
+  }
+}
+
 function adminLogout() {
   state.adminLoggedIn = false;
   navigate('landing');
@@ -7235,6 +7253,54 @@ function renderAdminPanel() {
       <!-- TAB: Benutzer -->
       <div class="admin-tab-content ${state.adminTab === 'benutzer' ? 'active' : ''}" id="admin-tab-benutzer">
 
+      <!-- Arbeitgeber Freischaltung -->
+      ${(() => {
+        const pendingEmployers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && !u.approved);
+        return pendingEmployers.length > 0 ? `
+      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
+        <div class="card-body" style="padding:0;overflow:hidden">
+          <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
+            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Arbeitgeber Freischaltung</h4>
+            <span class="badge badge-warning" style="margin-left:auto">${pendingEmployers.length} ausstehend</span>
+          </div>
+          <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+            <thead>
+              <tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
+                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pendingEmployers.map(u => {
+                const freemail = isFreemailDomain(u.email);
+                const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+                return `
+                <tr class="admin-table-row" style="${freemail ? 'background:rgba(245,158,11,0.08)' : ''}">
+                  <td style="padding:0.65rem 1.25rem">
+                    <div>
+                      <span style="font-weight:600">${escapeHtml(u.company || u.name || '-')}</span>
+                      <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name || '')}</div>
+                    </div>
+                  </td>
+                  <td style="padding:0.65rem 1.25rem">
+                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email || '')}</span>
+                    ${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">&#9888; Freemail-Adresse</div>' : '<div style="font-size:0.7rem;color:var(--success)">&#10003; Geschäfts-E-Mail</div>'}
+                  </td>
+                  <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
+                  <td style="padding:0.65rem 1.25rem;text-align:center">
+                    <button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>` : '';
+      })()}
+
       <!-- Benutzer-Liste -->
       <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body" style="padding:0;overflow:hidden">
         <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
@@ -7249,21 +7315,35 @@ function renderAdminPanel() {
             <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
             <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Firma</th>
             <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Rolle</th>
+            <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Status</th>
             <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
+            <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
           </tr></thead>
           <tbody>
             ${(state._allProfilesCache || []).map(u => {
               const initials = (u.name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
               const avatarColor = u.role === 'employer' ? '#f97316' : '#2563eb';
               const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+              const statusBadge = u.role === 'worker'
+                ? '<span class="badge badge-info">Aktiv</span>'
+                : (u.approved
+                    ? '<span class="badge badge-success">Freigeschaltet</span>'
+                    : '<span class="badge badge-warning">Ausstehend</span>');
+              const actionBtn = u.role === 'employer'
+                ? (u.approved
+                    ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
+                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>`)
+                : '';
               return `<tr class="admin-table-row">
                 <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${escapeHtml(initials)}</div><span style="font-weight:600">${escapeHtml(u.name || '-')}</span></div></td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '-')}</td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.company || '-')}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center"><span class="badge ${u.role === 'employer' ? 'badge-warning' : 'badge-info'}">${u.role === 'employer' ? 'Arbeitgeber' : 'Arbeitnehmer'}</span></td>
+                <td style="padding:0.65rem 1.25rem;text-align:center">${statusBadge}</td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
+                <td style="padding:0.65rem 1.25rem;text-align:center">${actionBtn}</td>
               </tr>`;
-            }).join('') || '<tr><td colspan="5" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+            }).join('') || '<tr><td colspan="7" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
           </tbody>
         </table>
       </div></div>
