@@ -1853,6 +1853,12 @@ body:has(.admin-login-wrap) {
 }
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Supabase backend: must load before the app script so window.DB is
+       available during bootstrap. config.js holds the project URL +
+       anon key, db.js wraps the SDK into a DB.* helper module. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js?v=1"></script>
+  <script src="db.js?v=1"></script>
 </head>
 <body>
   <nav id="navbar">
@@ -2306,8 +2312,9 @@ const CV_TEMPLATES = [
   <script>// ===== APP STATE =====
 let state = {
   currentPage: 'landing',
-  user: JSON.parse(localStorage.getItem('jj_user')) || null,
-  get savedJobs() { const u = this.user; return JSON.parse(localStorage.getItem(u ? 'jj_saved_'+u.id : 'jj_saved_guest') || '[]'); },
+  user: null, // populated asynchronously by bootstrap() at startup
+  _savedJobs: [],
+  get savedJobs() { return this._savedJobs || []; },
   filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date', address: '' },
   chatOpen: false,
   aiOpen: false,
@@ -2317,20 +2324,167 @@ let state = {
   dropdownOpen: false,
   adminLoggedIn: false,
   adminTab: 'besucher',
-  adminRevenuePeriod: 'daily'
+  adminRevenuePeriod: 'daily',
+  jobsLoaded: false
 };
-
-// Restore posted jobs on page load
-if (state.user && state.user.postedJobs) {
-  state.user.postedJobs.forEach(j => {
-    if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
-  });
-}
 
 // Clear old broken chat data (one-time reset)
 if (!localStorage.getItem('jj_chat_reset_v2')) {
   Object.keys(localStorage).filter(k => k.startsWith('jj_chats_')).forEach(k => localStorage.removeItem(k));
   localStorage.setItem('jj_chat_reset_v2', '1');
+}
+
+// ===== SUPABASE BOOTSTRAP =====
+// Convert a Supabase `jobs` row into the camelCase shape the existing
+// renderers expect.
+function dbJobToFrontend(row) {
+  if (!row) return null;
+  return {
+    id: row.id,
+    employerId: row.employer_id,
+    title: row.title || '',
+    company: row.company || '',
+    city: row.city || '',
+    location: row.location || row.city || '',
+    distance: 0,
+    category: row.category || '',
+    type: row.type || '',
+    hours: row.hours || '',
+    salary: row.salary || '',
+    salaryNum: row.salary_num || 0,
+    description: row.description || '',
+    tags: row.tags || [],
+    images: row.images || [],
+    companyLogo: row.company_logo || '',
+    companyInfo: { about: '', industry: '', employees: '', founded: '', website: '' },
+    promoted: !!row.promoted,
+    views: row.views || 0,
+    clicks: row.clicks || 0,
+    applications: row.applications_count || 0,
+    saves: row.saves || 0,
+    reviews: [],
+    date: row.created_at,
+    active: row.active !== false
+  };
+}
+
+// Convert a frontend job draft into a DB row. Strips control characters
+// and caps lengths to prevent abuse.
+function dbSanitizeText(v, max) {
+  if (v == null) return '';
+  let s = String(v).replace(/[\u0000-\u001F\u007F]/g, '').replace(/[<>]/g, '').trim();
+  if (typeof max === 'number' && s.length > max) s = s.slice(0, max);
+  return s;
+}
+function frontendJobToDb(j, employerId) {
+  return {
+    employer_id: employerId,
+    title: dbSanitizeText(j.title, 200),
+    company: dbSanitizeText(j.company, 200),
+    city: dbSanitizeText(j.city, 120),
+    location: dbSanitizeText(j.location || j.city, 200),
+    category: dbSanitizeText(j.category, 80),
+    type: dbSanitizeText(j.type, 80),
+    hours: dbSanitizeText(j.hours, 80),
+    salary: dbSanitizeText(j.salary, 80),
+    salary_num: typeof j.salaryNum === 'number' ? j.salaryNum : null,
+    description: dbSanitizeText(j.description, 5000),
+    tags: Array.isArray(j.tags) ? j.tags.slice(0, 20).map(t => dbSanitizeText(t, 40)) : [],
+    images: Array.isArray(j.images) ? j.images.slice(0, 6) : [],
+    company_logo: j.companyLogo || null,
+    promoted: !!j.promoted,
+    active: true
+  };
+}
+
+// Replace the in-memory JOBS array with fresh rows from Supabase.
+async function loadJobsFromDB() {
+  if (!window.DB) return;
+  try {
+    const rows = await DB.listJobs({ limit: 200 });
+    JOBS.length = 0;
+    rows.forEach(r => JOBS.push(dbJobToFrontend(r)));
+    state.jobsLoaded = true;
+  } catch (e) {
+    console.error('[loadJobsFromDB]', e);
+  }
+}
+
+// Read the current session from Supabase (if any) and hydrate state.user
+// into the shape the rest of the app expects (id, email, name, role,
+// company). Called on bootstrap and after login/register.
+async function loadUserSession() {
+  if (!window.DB) return;
+  const session = await DB.getSession();
+  if (!session || !session.user) { state.user = null; return; }
+  try {
+    const profile = await DB.getProfile(session.user.id);
+    if (profile) {
+      state.user = {
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        role: profile.role,
+        company: profile.company || null,
+        profileComplete: profile.profile_complete || 20,
+        about: profile.about || '',
+        address: profile.address || '',
+        phone: profile.phone || '',
+        logo: profile.logo || null,
+        images: profile.images || [],
+        createdAt: profile.created_at
+      };
+    } else {
+      // Fallback: profile row missing, build minimum from auth user_metadata.
+      const md = session.user.user_metadata || {};
+      state.user = {
+        id: session.user.id,
+        email: session.user.email,
+        name: md.name || '',
+        role: md.role || 'worker',
+        company: md.company || null,
+        profileComplete: 20
+      };
+    }
+  } catch (e) {
+    console.error('[loadUserSession]', e);
+    state.user = null;
+  }
+}
+
+async function loadSavedJobsForUser() {
+  if (!state.user || !window.DB) { state._savedJobs = []; return; }
+  try {
+    state._savedJobs = await DB.listSavedJobIds(state.user.id);
+  } catch (e) {
+    console.error('[loadSavedJobsForUser]', e);
+    state._savedJobs = [];
+  }
+}
+
+// Bootstrap: restore session + jobs, then render. Runs once on page
+// load and again whenever Supabase fires SIGNED_IN / SIGNED_OUT.
+async function bootstrap() {
+  if (window.DB) {
+    try {
+      await loadUserSession();
+      if (state.user) await loadSavedJobsForUser();
+    } catch (e) { console.error('[bootstrap] session', e); }
+    DB.onAuthChange(async (event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        await loadUserSession();
+        if (state.user) await loadSavedJobsForUser();
+      } else if (event === 'SIGNED_OUT') {
+        state.user = null;
+        state._savedJobs = [];
+      }
+      try { render(); } catch (_) {}
+    });
+  } else {
+    console.warn('[bootstrap] window.DB not loaded - running in offline mode');
+  }
+  try { await loadJobsFromDB(); } catch (e) { console.error('[bootstrap] jobs', e); }
+  try { render(); } catch (e) { console.error('[bootstrap] render', e); }
 }
 
 // ===== ADMIN CONFIG =====
@@ -2605,58 +2759,66 @@ function toggleMobileMenu() {
 }
 
 // ===== AUTH =====
-function loadUserSession(user) {
-  const sessionUser = { ...user };
-  delete sessionUser.password;
-  state.user = sessionUser;
-  localStorage.setItem('jj_user', JSON.stringify(sessionUser));
-  loadUserChats();
-  if (user.postedJobs) {
-    user.postedJobs.forEach(j => {
-      if (!JOBS.find(x => x.id === j.id)) JOBS.unshift(j);
+// Note: the older sync `loadUserSession(user)` helper was removed when
+// the app was migrated to Supabase. The async version defined further
+// up reads the session from Supabase instead of localStorage.
+
+async function login(email, password) {
+  const errEl = document.getElementById('login-error');
+  const showErr = (msg) => { if (errEl) { errEl.textContent = msg; errEl.style.display='block'; } };
+  if (errEl) errEl.style.display = 'none';
+  if (!window.DB) { showErr('Backend nicht geladen - bitte Seite neu laden.'); return; }
+  const cleanEmail = (email || '').trim().toLowerCase();
+  if (!cleanEmail || !password) { showErr('Bitte E-Mail und Passwort eingeben.'); return; }
+  try {
+    await DB.signIn({ email: cleanEmail, password });
+    await loadUserSession();
+    if (state.user) await loadSavedJobsForUser();
+    navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    const msg = (e && e.message) || '';
+    if (/email not confirmed/i.test(msg)) showErr('E-Mail noch nicht bestätigt. Bitte Link in der Mail klicken.');
+    else if (/invalid login/i.test(msg) || /invalid/i.test(msg)) showErr('E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.');
+    else showErr('Login fehlgeschlagen: ' + msg);
+    console.error('[login]', e);
+  }
+}
+
+async function register(data) {
+  const errEl = document.getElementById('register-error');
+  const showErr = (msg) => { if (errEl) { errEl.textContent = msg; errEl.style.display='block'; } };
+  if (errEl) errEl.style.display = 'none';
+  if (!window.DB) { showErr('Backend nicht geladen - bitte Seite neu laden.'); return; }
+  const cleanEmail = (data.email || '').trim().toLowerCase();
+  if (!cleanEmail || !data.password) { showErr('E-Mail und Passwort sind erforderlich.'); return; }
+  if (data.password.length < 6) { showErr('Passwort muss mindestens 6 Zeichen lang sein.'); return; }
+  try {
+    await DB.signUp({
+      email: cleanEmail,
+      password: data.password,
+      name: data.name || '',
+      role: data.role || 'worker',
+      company: data.company || null
     });
+    // signUp also signs in immediately (when email confirmation is off).
+    await loadUserSession();
+    if (state.user) await loadSavedJobsForUser();
+    navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } catch (e) {
+    const msg = (e && e.message) || '';
+    if (/already registered|already exists|duplicate/i.test(msg)) showErr('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
+    else if (/password/i.test(msg)) showErr('Passwort ungültig: ' + msg);
+    else showErr('Registrierung fehlgeschlagen: ' + msg);
+    console.error('[register]', e);
   }
 }
 
-function login(email, password) {
-  const allUsers = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  const user = allUsers.find(u => u.email.toLowerCase() === email.toLowerCase());
-  if (user) {
-    const latestUser = JSON.parse(localStorage.getItem('jj_user_' + user.id) || JSON.stringify(user));
-    if (latestUser.password !== simpleHash(password)) {
-      const err = document.getElementById('login-error');
-      if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
-      return;
-    }
-    loadUserSession(latestUser);
-    navigate(latestUser.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
-  } else {
-    const err = document.getElementById('login-error');
-    if (err) { err.textContent = 'E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.'; err.style.display='block'; }
-  }
-}
-
-function register(data) {
-  const users = JSON.parse(localStorage.getItem('jj_users') || '[]');
-  if (users.find(u => u.email.toLowerCase() === data.email.toLowerCase())) {
-    const err = document.getElementById('register-error');
-    if (err) { err.textContent = 'Diese E-Mail ist bereits registriert. Bitte melde dich an.'; err.style.display='block'; }
-    return;
-  }
-  const user = { ...data, id: Date.now() + Math.floor(Math.random() * 10000), createdAt: new Date().toISOString(), profileComplete: 20 };
-  users.push({ email: user.email, id: user.id, role: user.role, name: user.name });
-  localStorage.setItem('jj_users', JSON.stringify(users));
-  // Save full user data under its own key
-  localStorage.setItem('jj_user_' + user.id, JSON.stringify(user));
-  loadUserSession(user);
-  navigate(user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
-}
-
-function logout() {
-  state.user = null;
+async function logout() {
   state.dropdownOpen = false;
   state.adminLoggedIn = false;
-  localStorage.removeItem('jj_user');
+  try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
+  state.user = null;
+  state._savedJobs = [];
   navigate('landing');
 }
 
@@ -2974,37 +3136,36 @@ function saveEmployerProfile(btn) {
 }
 
 // ===== STELLENANZEIGE VERÖFFENTLICHEN =====
-function publishJob() {
+async function publishJob() {
+  if (!state.user) { showToast('Bitte erst einloggen.', 'error'); return; }
+  if (!window.DB) { showToast('Backend nicht geladen.', 'error'); return; }
   const wc = document.querySelector('.wizard-content') || document;
-  const newJob = {
-    id: Date.now(),
+  const draft = {
     title: wc.querySelector('input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
-    company: state.user?.company || state.user?.name || 'Unternehmen',
-    companyLogo: state.user?.companyLogo || state.user?.company?.[0] || state.user?.name?.[0] || 'U',
+    company: state.user.company || state.user.name || 'Unternehmen',
+    companyLogo: state.user.companyLogo || null,
     location: wc.querySelector('input[placeholder*="Straße"]')?.value || 'Berlin',
-    city: 'Berlin', distance: 3,
+    city: 'Berlin',
     salary: wc.querySelector('input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
     hours: wc.querySelector('input[placeholder*="Std/Woche"]')?.value || 'Flexible',
     category: wc.querySelector('select')?.value || 'Sonstiges',
     type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
-    posted: new Date().toISOString(),
-    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-    views: 0, clicks: 0, applications: 0,
-    promoted: false, tags: [],
-    description: '', requirements: '', benefits: '',
-    images: (state.selectedJobImages || []).map(i => (state.user?.companyImages || [])[i]).filter(Boolean),
-    reviews: [],
-    companyInfo: { about: state.user?.description || '', industry: state.user?.industry || '', employees: state.user?.employees || '', founded: state.user?.founded || '', website: state.user?.website || '' }
+    description: '',
+    tags: [],
+    images: (state.selectedJobImages || []).map(i => (state.user.companyImages || [])[i]).filter(Boolean),
+    promoted: false
   };
-  JOBS.unshift(newJob);
-  if (!state.user.postedJobs) state.user.postedJobs = [];
-  state.user.postedJobs.unshift(newJob);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  state.wizardStep = 0;
-  state.selectedJobImages = [];
-  showToast('Stellenanzeige veröffentlicht!');
-  navigate('employer-dashboard');
+  try {
+    const inserted = await DB.createJob(frontendJobToDb(draft, state.user.id));
+    JOBS.unshift(dbJobToFrontend(inserted));
+    state.wizardStep = 0;
+    state.selectedJobImages = [];
+    showToast('Stellenanzeige veröffentlicht!');
+    navigate('employer-dashboard');
+  } catch (e) {
+    console.error('[publishJob]', e);
+    showToast('Veröffentlichen fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
+  }
 }
 
 // ===== KI GENERIEREN =====
@@ -7050,13 +7211,22 @@ function animateCounters() {
 }
 
 // ===== INIT =====
-document.addEventListener('DOMContentLoaded', () => {
-  render();
-  setTimeout(initScrollAnimations, 200);
-});
-
+// Wrap render so every call also schedules scroll animations.
 var _origRender = render;
 render = function() { _origRender(); setTimeout(initScrollAnimations, 100); };
+
+// Bootstrap reads the Supabase session + jobs, then renders. If the DB
+// module failed to load (offline / script blocked), fall back to a
+// plain render so the landing page still shows something.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof bootstrap === 'function') { bootstrap(); }
+    else { render(); setTimeout(initScrollAnimations, 200); }
+  });
+} else {
+  if (typeof bootstrap === 'function') { bootstrap(); }
+  else { render(); setTimeout(initScrollAnimations, 200); }
+}
 
 // Close mobile menu on nav
 document.addEventListener('click', (e) => {
