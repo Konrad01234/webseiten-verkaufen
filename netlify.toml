@@ -47,8 +47,9 @@
     Cross-Origin-Opener-Policy = "same-origin"
     # Mirror the meta CSP so it's also a real HTTP header. Inline
     # script/style is required for the existing onclick handlers; the
-    # Supabase + jsdelivr origins are explicitly whitelisted.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'"
+    # Supabase + jsdelivr origins are explicitly whitelisted. Wikipedia
+    # and Unsplash are whitelisted for brand logos / hero photos.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https://*.supabase.co https://upload.wikimedia.org https://images.unsplash.com https://*.clearbit.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; frame-ancestors 'none'; form-action 'self'; base-uri 'self'; object-src 'none'"
 
 # Long-cache for static asset files (we use ?v= query strings for cache-busting)
 [[headers]]
