@@ -2691,6 +2691,12 @@ function navigate(page, data) {
     if (page === 'messages' || page === 'chat') {
       loadChatsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] chats refresh', e));
     }
+    // Reload the user profile on dashboard/post pages so changes
+    // made by the admin (e.g. employer approval) take effect
+    // without a full page reload.
+    if (page === 'employer-dashboard' || page === 'worker-dashboard' || page === 'post-job') {
+      loadUserSession().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] session refresh', e));
+    }
   }
 }
 
