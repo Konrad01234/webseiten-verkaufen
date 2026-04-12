@@ -1933,7 +1933,7 @@ body:has(.admin-login-wrap) {
           <a href="#" onclick="navigate('impressum')">Impressum</a>
           <a href="#" onclick="navigate('datenschutz')">Datenschutz</a>
           <a href="#" onclick="navigate('agb')">AGB</a>
-          <a href="#" onclick="navigate('admin-login')" style="opacity:0.4">Admin</a>
+          <a href="#" onclick="openAdminPanel()" style="opacity:0.4">Admin</a>
         </div>
       </div>
     </div>
@@ -2168,7 +2168,6 @@ let state = {
   wizardStep: 0,
   newJob: {},
   dropdownOpen: false,
-  adminLoggedIn: false,
   adminTab: 'besucher',
   adminRevenuePeriod: 'daily',
   jobsLoaded: false
@@ -2546,10 +2545,15 @@ async function bootstrap() {
 
 // ===== ADMIN CONFIG =====
 const ADMIN_EMAILS = ['kwg.range@web.de', 'jojo102009@icloud.com'];
-// Password is hashed to avoid plaintext exposure in source
-const ADMIN_PASSWORD_HASH = 'c4fc7530'; // simple hash of admin password
-function simpleHash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = ((h << 5) - h + str.charCodeAt(i)) | 0; } return (h >>> 0).toString(16); }
-function checkAdminPassword(pw) { return simpleHash(pw) === ADMIN_PASSWORD_HASH; }
+// Admin access is granted by Supabase Auth — only users logged in
+// with one of the ADMIN_EMAILS can access the admin panel. The server
+// enforces this through the profiles_admin_update_approval RLS policy
+// from supabase-add-approval.sql, so a client-side bypass is useless:
+// even if someone flips state.adminLoggedIn manually, the DB will
+// reject their writes.
+function isCurrentUserAdmin() {
+  return !!(state.user && state.user.email && ADMIN_EMAILS.includes(state.user.email.toLowerCase()));
+}
 
 // ===== ANALYTICS TRACKING =====
 function trackVisit() {
@@ -2761,16 +2765,16 @@ function render() {
     'chat': renderChatDetail,
     'reviews': renderReviews,
     'support': renderSupport,
-    'admin-login': renderAdminLogin,
     'admin-panel': renderAdminPanel,
     'impressum': renderImpressum,
     'datenschutz': renderDatenschutz,
     'agb': renderAGB
   };
 
-  // Admin-Panel Zugangsschutz
-  if (state.currentPage === 'admin-panel' && !state.adminLoggedIn) {
-    state.currentPage = 'admin-login';
+  // Admin-Panel Zugangsschutz: nur Admin-E-Mails dürfen rein.
+  // Server-side RLS erzwingt das zusätzlich — Client-Bypass ist sinnlos.
+  if (state.currentPage === 'admin-panel' && !isCurrentUserAdmin()) {
+    state.currentPage = state.user ? 'landing' : 'login';
   }
 
   const renderFn = pages[state.currentPage] || renderLanding;
@@ -2928,7 +2932,6 @@ async function register(data) {
 
 async function logout() {
   state.dropdownOpen = false;
-  state.adminLoggedIn = false;
   try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
   state.user = null;
   state._savedJobs = [];
@@ -3251,15 +3254,28 @@ function getEmployerApplicants() {
 
 // ===== PROFIL SPEICHERN =====
 
-function saveEmployerProfile(btn) {
+async function saveEmployerProfile(btn) {
+  if (!state.user || !window.DB) return;
   const page = btn.closest('.dashboard-content');
   const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
+  // Only these fields exist in the profiles table; anything else goes
+  // into state.user for this session but isn't persisted yet.
+  const dbFields = new Set(['name', 'company', 'about', 'phone', 'address', 'logo']);
+  const dbPatch = {};
   inputs.forEach(inp => {
-    if (inp.name) state.user[inp.name] = inp.value;
+    if (!inp.name) return;
+    state.user[inp.name] = inp.value;
+    if (dbFields.has(inp.name)) dbPatch[inp.name] = inp.value;
   });
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
-  showToast('Profil gespeichert!');
+  try {
+    if (Object.keys(dbPatch).length) {
+      await DB.updateProfile(state.user.id, dbPatch);
+    }
+    showToast('Profil gespeichert!');
+  } catch (e) {
+    console.error('[saveEmployerProfile]', e);
+    showToast('Konnte Profil nicht speichern: ' + (e.message || ''), 'error');
+  }
   render();
 }
 
@@ -3546,16 +3562,28 @@ function docScanned(input) {
 }
 
 // ===== SAVE JOB =====
-function toggleSaveJob(jobId, e) {
+async function toggleSaveJob(jobId, e) {
   if (e) e.stopPropagation();
   if (!state.user) { navigate('register'); return; }
-  const key = 'jj_saved_' + state.user.id;
-  const saved = JSON.parse(localStorage.getItem(key) || '[]');
+  if (!window.DB) return;
+  // Optimistic UI: update the cache first, then write to DB.
+  const saved = state._savedJobs || [];
   const idx = saved.indexOf(jobId);
-  if (idx > -1) saved.splice(idx, 1);
-  else saved.push(jobId);
-  localStorage.setItem(key, JSON.stringify(saved));
+  const wasSaved = idx > -1;
+  if (wasSaved) saved.splice(idx, 1); else saved.push(jobId);
+  state._savedJobs = saved;
   render();
+  try {
+    if (wasSaved) await DB.unsaveJob(state.user.id, jobId);
+    else await DB.saveJob(state.user.id, jobId);
+  } catch (err) {
+    console.error('[toggleSaveJob]', err);
+    // Revert the optimistic update on failure
+    if (wasSaved) saved.push(jobId); else { const i = saved.indexOf(jobId); if (i > -1) saved.splice(i, 1); }
+    state._savedJobs = saved;
+    showToast('Konnte nicht gespeichert werden.', 'error');
+    render();
+  }
 }
 
 // ===== GUARDS =====
@@ -6691,22 +6719,19 @@ function adminToggleApproval(userId, approved) {
   render();
 }
 
-async function adminLogin() {
-  const email = document.getElementById('admin-email')?.value?.trim().toLowerCase();
-  const password = document.getElementById('admin-password')?.value;
-  const err = document.getElementById('admin-login-error');
-  if (!ADMIN_EMAILS.includes(email)) {
-    if (err) { err.textContent = 'Zugriff verweigert. Diese E-Mail hat keine Admin-Berechtigung.'; err.style.display = 'block'; }
+// Navigate to the admin panel. No separate admin password anymore —
+// just check whether the currently logged-in user is an admin.
+async function openAdminPanel() {
+  if (!state.user) {
+    showToast('Bitte erst mit deiner Admin-E-Mail einloggen.', 'info');
+    navigate('login');
     return;
   }
-  if (!checkAdminPassword(password)) {
-    if (err) { err.textContent = 'Falsches Passwort.'; err.style.display = 'block'; }
+  if (!isCurrentUserAdmin()) {
+    showToast('Dein Konto hat keine Admin-Berechtigung.', 'error');
     return;
   }
-  state.adminLoggedIn = true;
-  // Pull every profile from Supabase so the admin user list shows
-  // real registrations (not the legacy localStorage 'jj_users' array).
-  try { await loadAllProfilesForAdmin(); } catch (e) { console.error('[adminLogin] profiles', e); }
+  try { await loadAllProfilesForAdmin(); } catch (e) { console.error('[openAdminPanel] profiles', e); }
   navigate('admin-panel');
 }
 
@@ -6767,9 +6792,11 @@ async function adminRemoveEmployer(userId) {
   }
 }
 
-function adminLogout() {
-  state.adminLoggedIn = false;
-  navigate('landing');
+// Admin-Logout loggt den User komplett aus (es gibt keinen separaten
+// Admin-Session mehr — die Admin-Rechte kommen aus der normalen
+// Supabase-Auth-Session).
+async function adminLogout() {
+  await logout();
 }
 
 // ===== LEGAL PAGES =====
@@ -7003,35 +7030,8 @@ function renderAGB() {
   </div>`;
 }
 
-function renderAdminLogin() {
-  return `
-    <div class="page-narrow admin-login-wrap" style="padding-top:4rem">
-      <div class="card" style="max-width:440px;margin:0 auto">
-        <div class="card-body" style="padding:2.5rem">
-          <div style="text-align:center;margin-bottom:2rem">
-            <div style="width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:inline-flex;align-items:center;justify-content:center;margin-bottom:1.25rem;box-shadow:0 8px 30px rgba(99,102,241,0.4)">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            </div>
-            <h2 style="font-size:1.6rem;margin-bottom:0.25rem">Admin-Kontrollpanel</h2>
-            <p style="font-size:0.9rem">Nur autorisierte Administratoren</p>
-          </div>
-          <div id="admin-login-error" class="form-error" style="display:none;background:rgba(239,68,68,0.12);color:#f87171;padding:0.75rem 1rem;border-radius:10px;margin-bottom:1rem;font-size:0.85rem;border:1px solid rgba(239,68,68,0.2)"></div>
-          <div class="form-group">
-            <label class="form-label">Admin E-Mail</label>
-            <input type="email" id="admin-email" class="form-input" placeholder="admin@email.de" onkeydown="if(event.key==='Enter')adminLogin()">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Zugangs-Code</label>
-            <input type="password" id="admin-password" class="form-input" placeholder="Zugangs-Code eingeben" onkeydown="if(event.key==='Enter')adminLogin()">
-          </div>
-          <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="adminLogin()">Anmelden</button>
-          <p style="text-align:center;margin-top:1.5rem;font-size:0.8rem;color:#64748b">
-            <a href="#" onclick="navigate('landing')" style="color:#64748b">Zurück zur Startseite</a>
-          </p>
-        </div>
-      </div>
-    </div>`;
-}
+// renderAdminLogin / adminLogin removed — admin access now goes
+// through the normal Supabase login flow (see openAdminPanel).
 
 function buildDonutSVG(segments, size, strokeWidth, centerLabel, centerSub) {
   const r = (size - strokeWidth) / 2;
