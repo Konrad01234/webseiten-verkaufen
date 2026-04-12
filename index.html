@@ -3365,7 +3365,6 @@ function addCVToProfile() {
   if (!state.user) { navigate('login'); return; }
   state.user.cvUploaded = true;
   state.user.cvFileName = 'Lebenslauf (Builder)';
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
   showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
 }
 
@@ -3408,8 +3407,6 @@ function handleCompanyLogo(input) {
     const reader = new FileReader();
     reader.onload = function(e) {
       state.user.companyLogo = e.target.result;
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
       const preview = document.getElementById('company-logo-preview');
       if (preview) {
         preview.style.backgroundImage = `url(${e.target.result})`;
@@ -3430,8 +3427,6 @@ function handleCompanyImage(input) {
     const reader = new FileReader();
     reader.onload = function(e) {
       state.user.companyImages.push(e.target.result);
-      localStorage.setItem('jj_user', JSON.stringify(state.user));
-      localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
       showToast('Bild hochgeladen!');
       render();
     };
@@ -3442,8 +3437,6 @@ function handleCompanyImage(input) {
 function removeCompanyImage(index) {
   if (!state.user.companyImages) return;
   state.user.companyImages.splice(index, 1);
-  localStorage.setItem('jj_user', JSON.stringify(state.user));
-  localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
   render();
 }
 
@@ -3555,7 +3548,6 @@ function downloadCV() {
 function docScanned(input) {
   if (input.files.length) {
     state.user.docsUploaded = true;
-    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
     showToast('Dokument erfolgreich hochgeladen!');
     render();
   }
@@ -4785,7 +4777,6 @@ function uploadCV(input) {
   if (input.files.length) {
     state.user.cvUploaded = true;
     state.user.cvFileName = input.files[0].name;
-    localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
     showToast('Lebenslauf erfolgreich hochgeladen!');
     render();
   }
@@ -4797,7 +4788,6 @@ function addRef() {
   if (!state.user.refs) state.user.refs = [];
   state.user.refs.push(name.trim());
   state.user.hasRefs = true;
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
   render();
   setTimeout(() => navigateToSection('worker-profile', 'section-skills'), 10);
 }
@@ -4805,7 +4795,6 @@ function addRef() {
 function removeRef(i) {
   state.user.refs.splice(i, 1);
   if (!state.user.refs.length) state.user.hasRefs = false;
-  localStorage.setItem('jj_user', JSON.stringify(state.user)); if (state.user?.id) localStorage.setItem('jj_user_' + state.user.id, JSON.stringify(state.user));
   render();
   setTimeout(() => navigateToSection('worker-profile', 'section-skills'), 10);
 }
@@ -4943,7 +4932,7 @@ function renderWorkerProfileView() {
                 <div class="epc-doc-row ${u.cvUploaded ? 'ok' : 'missing'}">
                   ${u.cvUploaded
                     ? `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                       <span>${u.cvFileName || 'Lebenslauf'}</span>`
+                       <span>${escapeHtml(u.cvFileName || 'Lebenslauf')}</span>`
                     : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                        <span>Kein Lebenslauf</span>
                        <button class="pv-edit-btn" onclick="state.profileStep=1;navigate('worker-profile')">Hochladen</button>`}
@@ -5003,8 +4992,8 @@ function renderWorkerProfile() {
     ${u.cvUploaded ? `
       <div class="upload-success-bar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        <span>${u.cvFileName || 'Lebenslauf hochgeladen'}</span>
-        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.cvUploaded=false;localStorage.setItem('jj_user',JSON.stringify(state.user));render()">Entfernen</button>
+        <span>${escapeHtml(u.cvFileName || 'Lebenslauf hochgeladen')}</span>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.cvUploaded=false;render()">Entfernen</button>
       </div>
       <p style="margin-top:1rem;font-size:0.85rem;color:var(--gray-500);text-align:center">
         <a href="#" onclick="navigate('cv-builder')" style="color:var(--primary);font-weight:600">Mit dem Builder bearbeiten</a>
@@ -5035,7 +5024,7 @@ function renderWorkerProfile() {
       <div class="upload-success-bar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         <span>Dokument hochgeladen</span>
-        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.docsUploaded=false;localStorage.setItem('jj_user',JSON.stringify(state.user));render()">Entfernen</button>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.docsUploaded=false;render()">Entfernen</button>
       </div>` : `
       <div class="cv-upload-area">
         <div class="cv-upload-option">
@@ -5151,8 +5140,9 @@ function saveProfileStep() {
     if (checked.length) u.skills = checked;
     // Referenzen werden via addRef() direkt gespeichert
   }
-  localStorage.setItem('jj_user', JSON.stringify(u));
-  if (u.id) localStorage.setItem('jj_user_' + u.id, JSON.stringify(u));
+  // Legacy localStorage persist removed — CV builder / worker profile
+  // updates currently stay in-memory only. TODO: wire to Supabase
+  // profiles table when the schema is extended with those columns.
 }
 
 function renderSavedJobs() {
@@ -6693,18 +6683,10 @@ function handleBoostPurchase() {
   alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');
 }
 
-// ===== ADMIN LOGIN =====
-function adminToggleApproval(userId, approved) {
-  const userData = JSON.parse(localStorage.getItem('jj_user_' + userId) || '{}');
-  userData.approved = approved;
-  localStorage.setItem('jj_user_' + userId, JSON.stringify(userData));
-  if (state.user && state.user.id === userId) {
-    state.user.approved = approved;
-    localStorage.setItem('jj_user', JSON.stringify(state.user));
-  }
-  showToast(approved ? 'Arbeitgeber freigeschaltet!' : 'Arbeitgeber gesperrt.', approved ? 'success' : 'error');
-  render();
-}
+// ===== ADMIN HELPERS =====
+// The real adminToggleApproval lives further up in the file (DB-backed).
+// The old localStorage version here has been removed — it was dead
+// code that got overwritten by the DB version at load time anyway.
 
 // Navigate to the admin panel. No separate admin password anymore —
 // just check whether the currently logged-in user is an admin.
