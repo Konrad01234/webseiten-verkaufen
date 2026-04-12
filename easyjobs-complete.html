@@ -1979,8 +1979,8 @@ body:has(.admin-login-wrap) {
     </div>
   </div>
 
-  <!-- Boost Modal -->
-  <div class="modal-overlay" id="boost-modal" onclick="if(event.target===this)closeBoostModal()">
+  <!-- Boost Modal (hidden — no paid features yet) -->
+  <div class="modal-overlay" id="boost-modal" style="display:none!important" onclick="if(event.target===this)closeBoostModal()">
     <div class="modal">
       <div class="modal-header">
         <h3>&#9889; <span id="boost-modal-title">Anzeige boosten</span></h3>
@@ -2285,7 +2285,7 @@ const AI_RESPONSES = [
   { keywords: ['passende bewerber', 'bewerber finden', 'matching', 'vorgeschlagen'], answer: 'EasyJobs hilft Ihnen, passende Bewerber zu finden:\n\n• Bewerber werden nach Standort, Verfügbarkeit und Fähigkeiten gematcht\n• Sie sehen das vollständige Profil jedes Bewerbers\n• Fähigkeiten, Lebenslauf und Verfügbarkeit auf einen Blick\n• Direkter Chat für schnelle Kommunikation\n\nTipp: Je detaillierter Ihre Jobbeschreibung, desto passendere Bewerbungen erhalten Sie!' },
   { keywords: ['zuverlässig', 'zuverlässige bewerber', 'bewerber einschätzen', 'vergleichen'], answer: 'So erkennen Sie zuverlässige Bewerber auf EasyJobs:\n\n• Vollständiges Profil (100% ausgefüllt)\n• Lebenslauf hochgeladen\n• Positive Bewertungen von früheren Arbeitgebern\n• Schnelle Antwortzeit im Chat\n• Fähigkeiten passen zur Stelle\n\nUnter "Bewerber" in Ihrem Dashboard können Sie alle Bewerbungen vergleichen und Profile nebeneinander ansehen.' },
   { keywords: ['nicht erscheint', 'nicht gekommen', 'absage', 'abgesagt', 'kurzfristig'], answer: 'Wenn ein Schüler nicht erscheint oder kurzfristig absagt:\n\n1. Kontaktieren Sie den Schüler über den EasyJobs-Chat\n2. Geben Sie eine Bewertung ab – das hilft anderen Arbeitgebern\n3. Suchen Sie über Ihre aktive Anzeige schnell Ersatz\n\nTipp: Stellen Sie mehrere Kandidaten ein oder halten Sie eine Warteliste.' },
-  { keywords: ['wie schnell einstellen', 'schnell jemanden', 'dringend', 'sofort'], answer: 'Auf EasyJobs können Sie sehr schnell einstellen:\n\n• Anzeige erstellen: Ca. 5 Minuten\n• Erste Bewerbungen: Oft innerhalb von Stunden\n• Chat & Kennenlernen: Direkt über die Plattform\n• Einstellung: Teilweise am selben Tag möglich\n\nTipp: Nutzen Sie den Boost für Ihre Anzeige, um noch schneller mehr Bewerber zu erreichen!' },
+  { keywords: ['wie schnell einstellen', 'schnell jemanden', 'dringend', 'sofort'], answer: 'Auf EasyJobs können Sie sehr schnell einstellen:\n\n• Anzeige erstellen: Ca. 5 Minuten\n• Erste Bewerbungen: Oft innerhalb von Stunden\n• Chat & Kennenlernen: Direkt über die Plattform\n• Einstellung: Teilweise am selben Tag möglich\n\nTipp: Beschreiben Sie die Stelle möglichst genau, um passende Bewerber zu erreichen!' },
   { keywords: ['wie funktioniert', 'plattform', 'easyjobs'], answer: 'So funktioniert EasyJobs:\n\nFür Arbeitnehmer (Schüler):\n1. Kostenlos registrieren\n2. Profil ausfüllen (Fähigkeiten, Verfügbarkeit)\n3. Jobs in deiner Nähe finden und bewerben\n4. Per Chat mit Arbeitgebern kommunizieren\n\nFür Arbeitgeber:\n1. Kostenlos registrieren\n2. Stellenanzeige erstellen\n3. Bewerbungen erhalten und vergleichen\n4. Direkt über die Plattform einstellen\n\nAlles an einem Ort – einfach, schnell und sicher!' },
   { keywords: ['zusage', 'zugesagt', 'job bekommen', 'eingestellt'], answer: 'Glückwunsch zur Zusage! So geht es weiter:\n\n1. Kläre im Chat die Details (Startdatum, Arbeitszeiten, Treffpunkt)\n2. Frage nach, ob du etwas mitbringen musst (Ausweis, Kleidung etc.)\n3. Sei am ersten Tag pünktlich und freundlich\n4. Nach dem Job: Gib eine Bewertung ab!' },
   { keywords: ['problem', 'probleme', 'konflikt', 'ärger', 'beschwerde', 'hilfe'], answer: 'Bei Problemen im Job oder auf der Plattform:\n\n1. Sprich das Problem zuerst direkt mit dem Arbeitgeber/Arbeitnehmer an (per Chat)\n2. Versucht eine gemeinsame Lösung zu finden\n3. Wenn das nicht hilft: Kontaktiere unser Support-Team\n4. Du kannst den Vorfall auch über die Bewertungsfunktion melden\n\nDeine Sicherheit ist uns wichtig – bei ernsten Problemen melde dich sofort bei uns!' },
@@ -5586,12 +5586,12 @@ function renderEmployerLanding() {
           <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="Analytics">
         </div>
         <div class="emp-split-text">
-          <h2>Reichweite mit Boost erhöhen</h2>
-          <p>Bringen Sie Ihre Anzeige ganz nach oben und erreichen Sie mehr Kandidaten.</p>
+          <h2>Komplett kostenlos starten</h2>
+          <p>Alle Funktionen sind derzeit kostenlos verfügbar — ohne versteckte Kosten oder Abo.</p>
           <ul class="emp-split-list">
-            <li>Standard und Premium Boost-Pakete</li>
+            <li>Unbegrenzt Stellenanzeigen schalten</li>
             <li>Echtzeit-Analytics zu Views und Klicks</li>
-            <li>Bis zu 5x mehr Bewerbungen mit Boost</li>
+            <li>Direkter Chat mit Bewerbern</li>
           </ul>
         </div>
       </div>
@@ -5622,7 +5622,7 @@ function renderEmployerLanding() {
         </div>
         <div class="emp-testimonial">
           <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Der Boost hat unsere Anzeige auf Platz 1 gebracht. Wir haben innerhalb einer Woche alle Stellen besetzt."</p>
+          <p>„Wir hatten innerhalb einer Woche alle Stellen besetzt. Die Plattform ist super einfach zu bedienen."</p>
           <div class="emp-testimonial-author">
             <div class="emp-testimonial-avatar">MH</div>
             <div><div class="emp-testimonial-name">Markus H.</div><div class="emp-testimonial-role">HR Manager, TechStart GmbH</div></div>
@@ -5973,67 +5973,21 @@ function renderWizardStep3() {
 
 function renderWizardStep4() {
   return `
-    <h3 style="margin-bottom:1.5rem">Laufzeit & Bezahlung</h3>
+    <h3 style="margin-bottom:1.5rem">Laufzeit</h3>
     <div class="form-group">
       <label class="form-label">Laufzeit der Anzeige</label>
       <div class="radio-group" style="flex-direction:column">
-        <label class="radio-label"><input type="radio" name="duration" value="30" checked> <span>30 Tage &mdash; 29€</span></label>
-        <label class="radio-label"><input type="radio" name="duration" value="60"> <span>60 Tage &mdash; 49€ <span class="badge badge-success" style="margin-left:0.5rem">Beliebt</span></span></label>
-        <label class="radio-label"><input type="radio" name="duration" value="90"> <span>90 Tage &mdash; 69€</span></label>
+        <label class="radio-label"><input type="radio" name="duration" value="30" checked> <span>30 Tage</span></label>
+        <label class="radio-label"><input type="radio" name="duration" value="60"> <span>60 Tage <span class="badge badge-success" style="margin-left:0.5rem">Empfohlen</span></span></label>
+        <label class="radio-label"><input type="radio" name="duration" value="90"> <span>90 Tage</span></label>
       </div>
     </div>
 
-    <div class="form-group">
-      <label class="form-label">Anzeige boosten?</label>
-      <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:0.75rem">
-        Hebe deine Anzeige hervor und erscheine ganz oben in den Suchergebnissen. Du kannst deinen Boost auch jederzeit nach der Veröffentlichung aktivieren.
-      </p>
-      <div style="display:flex;flex-direction:column;gap:0.75rem">
-        <div class="card" style="border-color:var(--gray-200);cursor:pointer" onclick="selectBoost(this,'none')">
-          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-            <input type="radio" name="boost" value="none" checked>
-            <div style="flex:1">
-              <strong>Kein Boost</strong>
-              <div style="font-size:0.85rem;color:var(--gray-500)">Standard-Platzierung in den Suchergebnissen.</div>
-            </div>
-            <div style="font-weight:700;color:var(--gray-500)">+0€</div>
-          </div>
-        </div>
-        <div class="card" style="border-color:var(--secondary);background:rgba(249,115,22,0.03);cursor:pointer" onclick="selectBoost(this,'standard')">
-          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-            <input type="radio" name="boost" value="standard">
-            <div style="flex:1">
-              <strong>↑ Standard Boost</strong>
-              <div style="font-size:0.85rem;color:var(--gray-500)">Hervorgehoben auf der Suchergebnisseite. 2&times; mehr Sichtbarkeit.</div>
-            </div>
-            <div style="font-weight:800;font-size:1.1rem;color:var(--secondary)">+15€</div>
-          </div>
-        </div>
-        <div class="card" style="border-color:var(--primary);background:rgba(29,78,216,0.03);cursor:pointer" onclick="selectBoost(this,'premium')">
-          <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-            <input type="radio" name="boost" value="premium">
-            <div style="flex:1">
-              <strong>&#9733; Premium Boost</strong>
-              <div style="font-size:0.85rem;color:var(--gray-500)">Ganz oben + farblich hervorgehoben + E-Mail-Newsletter an passende Bewerber. 5&times; mehr Sichtbarkeit.</div>
-            </div>
-            <div style="font-weight:800;font-size:1.1rem;color:var(--primary)">+35€</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="price-summary" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:1.25rem;margin-top:1rem">
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem">
-        <span>Anzeige (30 Tage)</span><span>29,00€</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem" id="boost-line" class="hidden">
-        <span id="boost-label">Standard Boost</span><span id="boost-price">15,00€</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)" id="tax-line">
-        <span>MwSt. (19%)</span><span id="tax-amount">5,51€</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1.1rem">
-        <span>Gesamt</span><span id="total-price">34,51€</span>
+    <div style="background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.15);border-radius:var(--radius);padding:1.25rem;margin-top:1rem;display:flex;align-items:center;gap:1rem">
+      <div style="font-size:1.5rem">&#127881;</div>
+      <div>
+        <strong style="color:var(--primary)">Aktuell komplett kostenlos!</strong>
+        <div style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Alle Stellenanzeigen auf EasyJobs sind derzeit kostenfrei. Keine versteckten Kosten, kein Abo.</div>
       </div>
     </div>`;
 }
