@@ -2272,10 +2272,10 @@ async function loadUserSession() {
         name: profile.name,
         role: profile.role,
         company: profile.company || null,
-        // Real `approved` flag from supabase-add-approval.sql.
-        // Workers are auto-approved by a DB trigger, employers
-        // default to false until an admin flips the switch.
-        approved: profile.approved === true,
+        // Everyone is approved by default. The admin can BLOCK an
+        // employer by setting approved=false — only then is the
+        // account restricted.
+        approved: profile.approved !== false,
         profileComplete: profile.profile_complete || 20,
         about: profile.about || '',
         address: profile.address || '',
@@ -2286,8 +2286,6 @@ async function loadUserSession() {
       };
     } else {
       // Fallback: profile row missing, build minimum from auth user_metadata.
-      // Workers are safe to auto-approve here too, employers stay false
-      // until they have a real profile row + manual approval.
       const md = session.user.user_metadata || {};
       state.user = {
         id: session.user.id,
@@ -2295,7 +2293,7 @@ async function loadUserSession() {
         name: md.name || '',
         role: md.role || 'worker',
         company: md.company || null,
-        approved: (md.role || 'worker') === 'worker',
+        approved: true,
         profileComplete: 20
       };
     }
@@ -7189,41 +7187,6 @@ function renderAdminPanel() {
       <!-- TAB: Benutzer -->
       <div class="admin-tab-content ${state.adminTab === 'benutzer' ? 'active' : ''}" id="admin-tab-benutzer">
 
-      <!-- Arbeitgeber Freischaltung (nur wenn pending vorhanden) -->
-      ${(() => {
-        const pendingEmployers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && !u.approved && u.name !== '[Entfernt]');
-        return pendingEmployers.length > 0 ? `
-      <div class="card admin-chart-card" style="margin-bottom:1.5rem">
-        <div class="card-body" style="padding:0;overflow:hidden">
-          <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Neue Arbeitgeber freischalten</h4>
-            <span class="badge badge-warning" style="margin-left:auto">${pendingEmployers.length} ausstehend</span>
-          </div>
-          <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
-            <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
-              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
-              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
-              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
-              <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
-            </tr></thead>
-            <tbody>
-              ${pendingEmployers.map(u => {
-                const freemail = isFreemailDomain(u.email);
-                const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
-                return `<tr class="admin-table-row" style="${freemail ? 'background:rgba(245,158,11,0.08)' : ''}">
-                  <td style="padding:0.65rem 1.25rem"><div><span style="font-weight:600">${escapeHtml(u.company || u.name || '-')}</span><div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name || '')}</div></div></td>
-                  <td style="padding:0.65rem 1.25rem"><span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email || '')}</span>${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">Freemail</div>' : ''}</td>
-                  <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center"><button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button></td>
-                </tr>`;
-              }).join('')}
-            </tbody>
-          </table>
-        </div>
-      </div>` : '';
-      })()}
-
       <!-- Alle Arbeitgeber -->
       ${(() => {
         const employers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && u.name !== '[Entfernt]');
@@ -7251,12 +7214,12 @@ function renderAdminPanel() {
                 <td style="padding:0.65rem 1.25rem;font-weight:600">${escapeHtml(u.company || '-')}</td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.name || '-')}</td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '-')}</td>
-                <td style="padding:0.65rem 1.25rem;text-align:center">${u.approved ? '<span class="badge badge-success">Aktiv</span>' : '<span class="badge badge-warning">Ausstehend</span>'}</td>
+                <td style="padding:0.65rem 1.25rem;text-align:center">${u.approved !== false ? '<span class="badge badge-success">Aktiv</span>' : '<span class="badge badge-danger" style="background:rgba(239,68,68,0.15);color:#ef4444">Gesperrt</span>'}</td>
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center;white-space:nowrap">
-                  ${u.approved
-                    ? `<button class="btn btn-sm btn-outline" style="font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
-                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>`}
+                  ${u.approved !== false
+                    ? `<button class="btn btn-sm" style="background:#f97316;color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
+                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', true)">Entsperren</button>`}
                   <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminRemoveEmployer('${u.id}')">Entfernen</button>
                 </td>
               </tr>`;

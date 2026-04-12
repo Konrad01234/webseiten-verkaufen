@@ -43,7 +43,8 @@
       await sb.from('profiles').upsert({
         id: res.data.user.id,
         email, name, role,
-        company: company || null
+        company: company || null,
+        approved: true
       }, { onConflict: 'id' });
     }
     return res.data;
