@@ -2888,7 +2888,7 @@ function updateNav() {
           <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
           ${!isEmployer ? '<a href="#" onclick="navigate(\'saved-jobs\'); toggleDropdown()">Gespeicherte Jobs</a>' : ''}
           ${!isEmployer ? '<a href="#" onclick="navigate(\'cv-builder\'); toggleDropdown()">Lebenslauf</a>' : ''}
-          ${isEmployer ? '<a href="#" onclick="navigate(\'post-job\'); toggleDropdown()">Anzeige schalten</a>' : ''}
+          ${isEmployer ? '<a href="#" onclick="goPostJob(); toggleDropdown()">Anzeige schalten</a>' : ''}
           <a href="#" onclick="navigate('messages'); toggleDropdown()">Nachrichten</a>
           <div class="divider"></div>
           <button onclick="logout()">Abmelden</button>
@@ -3328,18 +3328,21 @@ function saveEmployerProfile(btn) {
 async function publishJob() {
   if (!state.user) { showToast('Bitte erst einloggen.', 'error'); return; }
   if (!window.DB) { showToast('Backend nicht geladen.', 'error'); return; }
-  const wc = document.querySelector('.wizard-content') || document;
+  // Read from state.newJob (persisted by validateWizardStep) instead
+  // of querying the DOM, because by the time publishJob runs on Step 4
+  // the Step-0 input elements are gone.
+  const nj = state.newJob || {};
   const draft = {
-    title: wc.querySelector('input[placeholder*="Aushilfe"]')?.value || 'Neue Stelle',
+    title: nj.title || 'Neue Stelle',
     company: state.user.company || state.user.name || 'Unternehmen',
     companyLogo: state.user.companyLogo || null,
-    location: wc.querySelector('input[placeholder*="Straße"]')?.value || 'Berlin',
-    city: 'Berlin',
-    salary: wc.querySelector('input[placeholder*="12,50"]')?.value || 'Nach Vereinbarung',
-    hours: wc.querySelector('input[placeholder*="Std/Woche"]')?.value || 'Flexible',
-    category: wc.querySelector('select')?.value || 'Sonstiges',
-    type: wc.querySelectorAll('select')?.[1]?.value || 'Minijob',
-    description: '',
+    location: nj.location || 'Berlin',
+    city: (nj.location || 'Berlin').split(',').pop().trim(),
+    salary: nj.salary || 'Nach Vereinbarung',
+    hours: nj.hours || 'Flexible',
+    category: nj.category || 'Sonstiges',
+    type: nj.type || 'Minijob',
+    description: nj.description || '',
     tags: [],
     images: (state.selectedJobImages || []).map(i => (state.user.companyImages || [])[i]).filter(Boolean),
     promoted: false
@@ -5756,7 +5759,7 @@ function renderEmployerSidebar(active) {
     <div class="dashboard-sidebar">
       <nav class="sidebar-nav">
         <a href="#" class="${active==='dashboard'?'active':''}" onclick="navigate('employer-dashboard')">Dashboard</a>
-        <a href="#" class="${active==='post'?'active':''}" onclick="navigate('post-job')">Anzeige schalten</a>
+        <a href="#" class="${active==='post'?'active':''}" onclick="goPostJob()">Anzeige schalten</a>
         <a href="#" class="${active==='applicants'?'active':''}" onclick="navigate('applicants')">Bewerber</a>
         <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
         <div class="divider"></div>
@@ -5802,12 +5805,38 @@ function validateWizardStep() {
     showToast('Bitte fülle alle Pflichtfelder (*) aus.', 'error');
     return;
   }
+  // Persist wizard inputs into state.newJob so publishJob() can read
+  // them on Step 4 even though the Step 0/1 DOM inputs are gone.
+  if (body && step === 0) {
+    state.newJob.title = body.querySelector('input[placeholder*="Aushilfe"]')?.value || '';
+    const selects = body.querySelectorAll('select.form-select');
+    if (selects[0]) state.newJob.category = selects[0].value;
+    if (selects[1]) state.newJob.type = selects[1].value;
+    state.newJob.location = body.querySelector('input[placeholder*="Stra"]')?.value || '';
+    state.newJob.salary = body.querySelector('input[placeholder*="12,50"]')?.value || '';
+    state.newJob.hours = body.querySelector('input[placeholder*="Std/Woche"]')?.value || '';
+  }
+  if (body && step === 1) {
+    const textareas = body.querySelectorAll('textarea.form-textarea');
+    if (textareas[0]) state.newJob.description = textareas[0].value;
+    if (textareas[1]) state.newJob.requirements = textareas[1].value;
+    if (textareas[2]) state.newJob.benefits = textareas[2].value;
+  }
   state.wizardStep = Math.min(4, state.wizardStep + 1);
   render();
 }
 
 function renderPostJob() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
+  if (!state.user.approved) {
+    return `<div class="page page-narrow" style="text-align:center;padding-top:4rem">
+      <div style="font-size:3rem;margin-bottom:1rem">&#128274;</div>
+      <h2 style="margin-bottom:0.5rem">Account noch nicht freigeschaltet</h2>
+      <p style="color:var(--gray-500);margin-bottom:1.5rem">Dein Arbeitgeber-Account muss zuerst von einem Administrator freigeschaltet werden, bevor du Stellenanzeigen veröffentlichen kannst.</p>
+      <p style="color:var(--gray-400);font-size:0.85rem">Du wirst benachrichtigt, sobald dein Account freigegeben wurde.</p>
+      <button class="btn btn-primary" style="margin-top:1.5rem" onclick="navigate('employer-dashboard')">Zurück zum Dashboard</button>
+    </div>`;
+  }
   const step = state.wizardStep;
   const steps = ['Grundinfos', 'Details', 'Bilder', 'Laufzeit', 'Vorschau'];
 
