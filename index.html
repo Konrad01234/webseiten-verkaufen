@@ -2278,9 +2278,27 @@ async function loadUserSession() {
         profileComplete: profile.profile_complete || 20,
         about: profile.about || '',
         address: profile.address || '',
+        city: profile.city || '',
         phone: profile.phone || '',
-        logo: profile.logo || null,
+        logo: profile.logo || profile.company_logo || null,
+        companyLogo: profile.company_logo || null,
+        companyImages: profile.company_images || [],
         images: profile.images || [],
+        industry: profile.industry || '',
+        website: profile.website || '',
+        founded: profile.founded || '',
+        employees: profile.employees || '',
+        description: profile.description || '',
+        // Worker-specific fields (require supabase-add-worker-fields.sql)
+        skills: profile.skills || [],
+        weeklyHours: profile.weekly_hours || 0,
+        refs: profile.refs || [],
+        cvUploaded: !!profile.cv_uploaded,
+        cvFileName: profile.cv_file_name || '',
+        cvData: profile.cv_data || null,
+        docsUploaded: !!profile.docs_uploaded,
+        activeJob: profile.active_job || null,
+        completedJobs: profile.completed_jobs || [],
         createdAt: profile.created_at
       };
     } else {
@@ -2971,28 +2989,40 @@ function getUserApps() {
 function saveUserApps(_apps) { /* no-op */ }
 
 // ===== AKTIVER JOB SYSTEM =====
+// Derived from the worker's accepted applications so no extra DB writes
+// are needed — when the employer accepts a worker, the application row
+// flips to status='accepted' and getActiveJob() picks that up.
 function getActiveJob() {
-  if (!state.user) return null;
-  return JSON.parse(localStorage.getItem('jj_active_job_' + state.user.id) || 'null');
+  if (!state.user || state.user.role !== 'worker') return null;
+  const accepted = (state._appsCache || []).find(
+    a => a.userId === state.user.id && a.status === 'accepted'
+  );
+  if (!accepted) return null;
+  return {
+    jobId:      accepted.jobId,
+    jobTitle:   accepted.jobTitle,
+    jobCompany: accepted.jobCompany,
+    acceptedAt: accepted.date
+  };
 }
-function setActiveJob(jobData) {
-  if (!state.user) return;
-  localStorage.setItem('jj_active_job_' + state.user.id, JSON.stringify(jobData));
-}
-function clearActiveJob() {
-  if (!state.user) return;
+// clearActiveJob + completed_jobs are stored in profiles so a worker can
+// finish a job and rate the employer even after the application is gone.
+async function clearActiveJob() {
+  if (!state.user || !window.DB) return;
   const activeJob = getActiveJob();
+  const completed = Array.isArray(state.user.completedJobs) ? state.user.completedJobs.slice() : [];
   if (activeJob) {
-    const completed = JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
     activeJob.completedAt = new Date().toISOString();
     completed.push(activeJob);
-    localStorage.setItem('jj_completed_jobs_' + state.user.id, JSON.stringify(completed));
   }
-  localStorage.removeItem('jj_active_job_' + state.user.id);
+  state.user.completedJobs = completed;
+  try {
+    await DB.updateProfile(state.user.id, { completed_jobs: completed });
+  } catch (e) { console.error('[clearActiveJob]', e); }
 }
 function getCompletedJobs() {
   if (!state.user) return [];
-  return JSON.parse(localStorage.getItem('jj_completed_jobs_' + state.user.id) || '[]');
+  return Array.isArray(state.user.completedJobs) ? state.user.completedJobs : [];
 }
 function endActiveJob() {
   clearActiveJob();
@@ -3336,16 +3366,38 @@ function aiGenerateJob(btn) {
 }
 
 // ===== BEWERTUNG ABSENDEN =====
-function submitReview(btn) {
+async function submitReview(btn) {
+  if (!state.user || !window.DB) { showToast('Bitte erst einloggen.', 'error'); return; }
   const card = btn.closest('.card-body');
   const stars = card.querySelectorAll('.star.filled').length;
   const text = card.querySelector('textarea')?.value?.trim();
   const completedJobs = getCompletedJobs();
-  const hasActiveJob = !!getActiveJob();
-  if (!completedJobs.length && !hasActiveJob) { showToast('Du musst zuerst einen Job abschließen, bevor du bewerten kannst.', 'error'); return; }
+  const activeJob = getActiveJob();
+  if (!completedJobs.length && !activeJob) { showToast('Du musst zuerst einen Job abschließen, bevor du bewerten kannst.', 'error'); return; }
   if (!stars) { showToast('Bitte wähle eine Bewertung (1-5 Sterne).', 'error'); return; }
   if (!text) { showToast('Bitte schreibe einen kurzen Text.', 'error'); return; }
-  showToast('Bewertung abgegeben! Sie wird nach Prüfung sichtbar.');
+
+  // Determine reviewed employer: prefer the active job, else the most recent completed
+  const referenceJob = activeJob || completedJobs[completedJobs.length - 1];
+  const reviewedEmployerId = referenceJob && referenceJob.employerId;
+  if (!reviewedEmployerId) {
+    showToast('Konnte den Arbeitgeber der Bewertung nicht ermitteln.', 'error');
+    return;
+  }
+  try {
+    await DB.createReview({
+      reviewerId: state.user.id,
+      reviewedId: reviewedEmployerId,
+      jobId: referenceJob.jobId || null,
+      rating: stars,
+      text: text
+    });
+    showToast('Bewertung abgegeben! Danke für dein Feedback.');
+  } catch (e) {
+    console.error('[submitReview]', e);
+    showToast('Bewertung konnte nicht gespeichert werden: ' + (e.message || ''), 'error');
+    return;
+  }
   card.querySelector('textarea').value = '';
   card.querySelectorAll('.star').forEach(s => s.classList.remove('filled'));
 }
@@ -3361,11 +3413,24 @@ function limitSkills(cb, max) {
 }
 
 // ===== LEBENSLAUF ZUM PROFIL HINZUFÜGEN =====
-function addCVToProfile() {
+async function addCVToProfile() {
   if (!state.user) { navigate('login'); return; }
+  if (!window.DB) { showToast('Backend nicht geladen.', 'error'); return; }
+  const cvData = getCVData();
+  state.user.cvData = cvData;
   state.user.cvUploaded = true;
   state.user.cvFileName = 'Lebenslauf (Builder)';
-  showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
+  try {
+    await DB.updateProfile(state.user.id, {
+      cv_data: cvData,
+      cv_uploaded: true,
+      cv_file_name: 'Lebenslauf (Builder)'
+    });
+    showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
+  } catch (e) {
+    console.error('[addCVToProfile]', e);
+    showToast('Lebenslauf konnte nicht gespeichert werden.', 'error');
+  }
 }
 
 function getCVData() {
@@ -3545,12 +3610,17 @@ function downloadCV() {
 }
 
 // ===== DOKUMENT GESCANNT =====
-function docScanned(input) {
-  if (input.files.length) {
-    state.user.docsUploaded = true;
+async function docScanned(input) {
+  if (!input.files.length || !state.user || !window.DB) return;
+  state.user.docsUploaded = true;
+  try {
+    await DB.updateProfile(state.user.id, { docs_uploaded: true });
     showToast('Dokument erfolgreich hochgeladen!');
-    render();
+  } catch (e) {
+    console.error('[docScanned]', e);
+    showToast('Upload konnte nicht gespeichert werden.', 'error');
   }
+  render();
 }
 
 // ===== SAVE JOB =====
@@ -4773,13 +4843,19 @@ function renderWorkerDashboard() {
     </div>`;
 }
 
-function uploadCV(input) {
-  if (input.files.length) {
-    state.user.cvUploaded = true;
-    state.user.cvFileName = input.files[0].name;
+async function uploadCV(input) {
+  if (!input.files.length || !state.user || !window.DB) return;
+  const fileName = input.files[0].name;
+  state.user.cvUploaded = true;
+  state.user.cvFileName = fileName;
+  try {
+    await DB.updateProfile(state.user.id, { cv_uploaded: true, cv_file_name: fileName });
     showToast('Lebenslauf erfolgreich hochgeladen!');
-    render();
+  } catch (e) {
+    console.error('[uploadCV]', e);
+    showToast('Upload konnte nicht gespeichert werden.', 'error');
   }
+  render();
 }
 
 function addRef() {
@@ -5123,26 +5199,38 @@ function renderWorkerProfile() {
     </div>`;
 }
 
-function saveProfileStep() {
+async function saveProfileStep() {
+  if (!state.user || !window.DB) return;
   const u = state.user;
   const step = state.profileStep;
+  const patch = {};
   if (step === 0) {
     const addr   = document.getElementById('ps-address');
     const radius = document.querySelector('.range-slider');
-    if (addr   && addr.value.trim())  u.address = addr.value.trim();
+    if (addr && addr.value.trim()) { u.address = addr.value.trim(); patch.address = u.address; }
     if (radius) u.radius = parseInt(radius.value);
   }
   if (step === 3) {
-    const hours   = document.getElementById('ps-hours');
-    if (hours) u.weeklyHours = hours.value;
+    const hours = document.getElementById('ps-hours');
+    if (hours) { u.weeklyHours = parseInt(hours.value) || 0; patch.weekly_hours = u.weeklyHours; }
     const checked = [...document.querySelectorAll('.checkbox-group input:checked')]
       .map(c => c.nextElementSibling.textContent.trim());
-    if (checked.length) u.skills = checked;
-    // Referenzen werden via addRef() direkt gespeichert
+    if (checked.length) { u.skills = checked; patch.skills = checked; }
   }
-  // Legacy localStorage persist removed — CV builder / worker profile
-  // updates currently stay in-memory only. TODO: wire to Supabase
-  // profiles table when the schema is extended with those columns.
+  if (Object.keys(patch).length) {
+    try { await DB.updateProfile(u.id, patch); }
+    catch (e) { console.error('[saveProfileStep]', e); showToast('Konnte Profil nicht speichern.', 'error'); }
+  }
+}
+
+// Add a work reference to the current user's profile and persist it.
+async function addRefToProfile(ref) {
+  if (!state.user || !window.DB) return;
+  const refs = Array.isArray(state.user.refs) ? state.user.refs.slice() : [];
+  refs.push(ref);
+  state.user.refs = refs;
+  try { await DB.updateProfile(state.user.id, { refs }); }
+  catch (e) { console.error('[addRefToProfile]', e); }
 }
 
 function renderSavedJobs() {
@@ -6124,7 +6212,10 @@ function renderApplicants() {
               </thead>
               <tbody>
                 ${applicants.map(a => {
-                  const workerHasActiveJob = a.userId ? !!JSON.parse(localStorage.getItem('jj_active_job_' + a.userId) || 'null') : false;
+                  // "Already employed" — derived from the application status.
+                  // Actual cross-employer active-job check would require a
+                  // DB lookup per row and is overkill for this render.
+                  const workerHasActiveJob = a.status === 'accepted';
                   return `
                   <tr${workerHasActiveJob ? ' style="opacity:0.6"' : ''}>
                     <td>
