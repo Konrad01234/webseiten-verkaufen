@@ -2454,6 +2454,32 @@ function subscribeToChatList() {
   });
 }
 
+// Realtime: auto-refresh JOBS when any row in the jobs table changes
+// (another employer posts/edits/deletes a job → every connected
+// browser sees the update within 1-2 seconds).
+function subscribeToJobUpdates() {
+  if (!window.DB || !DB.sb) return;
+  if (state._jobsSub) { try { DB.sb.removeChannel(state._jobsSub); } catch (_) {} state._jobsSub = null; }
+  state._jobsSub = DB.sb.channel('jobs-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'jobs' }, () => {
+      loadJobsFromDB().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[realtime] jobs', e));
+    })
+    .subscribe();
+}
+
+// Realtime: auto-refresh applications cache when any application
+// changes (a worker applies → employer sees it live; employer
+// accepts/rejects → worker sees updated status).
+function subscribeToApplicationUpdates() {
+  if (!window.DB || !DB.sb || !state.user) return;
+  if (state._appsSub) { try { DB.sb.removeChannel(state._appsSub); } catch (_) {} state._appsSub = null; }
+  state._appsSub = DB.sb.channel('apps-realtime')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, () => {
+      loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[realtime] apps', e));
+    })
+    .subscribe();
+}
+
 // Bootstrap: restore session + jobs, then render. Runs once on page
 // load and again whenever Supabase fires SIGNED_IN / SIGNED_OUT.
 async function bootstrap() {
@@ -2465,7 +2491,9 @@ async function bootstrap() {
         await loadApplicationsForUser();
         await loadChatsForUser();
         subscribeToChatList();
+        subscribeToApplicationUpdates();
       }
+      subscribeToJobUpdates();
     } catch (e) { console.error('[bootstrap] session', e); }
     DB.onAuthChange(async (event) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
@@ -2475,7 +2503,9 @@ async function bootstrap() {
           await loadApplicationsForUser();
           await loadChatsForUser();
           subscribeToChatList();
+          subscribeToApplicationUpdates();
         }
+        subscribeToJobUpdates();
       } else if (event === 'SIGNED_OUT') {
         state.user = null;
         state._savedJobs = [];
@@ -2484,6 +2514,8 @@ async function bootstrap() {
         EMPLOYER_CHAT_MESSAGES.length = 0;
         if (state._chatListSub) { try { DB.sb.removeChannel(state._chatListSub); } catch (_) {} state._chatListSub = null; }
         if (state._chatSub)     { try { DB.sb.removeChannel(state._chatSub); }     catch (_) {} state._chatSub = null; }
+        if (state._jobsSub)     { try { DB.sb.removeChannel(state._jobsSub); }     catch (_) {} state._jobsSub = null; }
+        if (state._appsSub)     { try { DB.sb.removeChannel(state._appsSub); }     catch (_) {} state._appsSub = null; }
       }
       try { render(); } catch (_) {}
     });
@@ -2813,7 +2845,9 @@ async function login(email, password) {
     try { await loadApplicationsForUser(); } catch (e) { console.error('[login] apps', e); }
     try { await loadChatsForUser(); } catch (e) { console.error('[login] chats', e); }
     try { subscribeToChatList(); } catch (e) { console.error('[login] chatSub', e); }
+    try { subscribeToApplicationUpdates(); } catch (e) { console.error('[login] appsSub', e); }
   }
+  try { subscribeToJobUpdates(); } catch (e) { console.error('[login] jobsSub', e); }
   // Step 3: Navigate to the dashboard
   if (state.user) {
     navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
@@ -2854,7 +2888,9 @@ async function register(data) {
     try { await loadApplicationsForUser(); } catch (e) { console.error('[register] apps', e); }
     try { await loadChatsForUser(); } catch (e) { console.error('[register] chats', e); }
     try { subscribeToChatList(); } catch (e) { console.error('[register] chatSub', e); }
+    try { subscribeToApplicationUpdates(); } catch (e) { console.error('[register] appsSub', e); }
   }
+  try { subscribeToJobUpdates(); } catch (e) { console.error('[register] jobsSub', e); }
   if (state.user) {
     navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } else {
