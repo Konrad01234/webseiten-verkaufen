@@ -2689,6 +2689,10 @@ function navigate(page, data) {
     if (page === 'messages' || page === 'chat') {
       loadChatsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] chats refresh', e));
     }
+    // When opening a specific chat, load its messages from the DB
+    if (page === 'chat' && data && data.chatId) {
+      openChatById(data.chatId).then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] chat open', e));
+    }
     // Reload the user profile on dashboard/post pages so changes
     // made by the admin (e.g. employer approval) take effect
     // without a full page reload.
@@ -6058,13 +6062,8 @@ function renderEmployerProfile() {
 }
 
 
-const MOCK_APPLICANTS = [
-  { id: 1, name: 'Lisa Müller', initials: 'LM', age: 19, city: 'Berlin', job: 'Aushilfe im Einzelhandel', status: 'new', statusText: 'Neu', date: '2026-03-23', skills: ['Kundenservice', 'Teamarbeit'], weeklyHours: 15, refs: ['Supermarkt Frisch (2025)', 'Bäckerei Müller (2024)'], cvUploaded: true, docsUploaded: true, about: 'Ich bin eine zuverlässige und freundliche Schülerin, die nach einem Minijob im Einzelhandel sucht.' },
-  { id: 2, name: 'Tom Fischer', initials: 'TF', age: 17, city: 'Berlin', job: 'Aushilfe im Einzelhandel', status: 'reviewing', statusText: 'In Prüfung', date: '2026-03-22', skills: ['Zuverlässigkeit', 'Kasse'], weeklyHours: 10, refs: ['Aldi Nord (2025)'], cvUploaded: true, docsUploaded: false, about: 'Schüler im letzten Schuljahr, sehr motiviert und lernbereit.' },
-  { id: 3, name: 'Anna Becker', initials: 'AB', age: 20, city: 'Hamburg', job: 'Kellner/in im Café', status: 'accepted', statusText: 'Eingeladen', date: '2026-03-21', skills: ['Gastronomie', 'Freundlich'], weeklyHours: 20, refs: ['Café Central (2025)', 'Restaurant Adler (2024)', 'Eisdiele Süß (2023)'], cvUploaded: true, docsUploaded: true, about: 'Erfahrene Servicekraft mit Leidenschaft für gute Küche und freundlichen Umgang mit Gästen.' },
-  { id: 4, name: 'Max Weber', initials: 'MW', age: 18, city: 'München', job: 'Kellner/in im Café', status: 'new', statusText: 'Neu', date: '2026-03-23', skills: ['Service', 'Belastbar'], weeklyHours: 12, refs: [], cvUploaded: false, docsUploaded: true, about: 'Student im ersten Semester, suche Nebenjob an Wochenenden.' },
-  { id: 5, name: 'Sarah Koch', initials: 'SK', age: 21, city: 'Köln', job: 'Lagerhelfer/in', status: 'rejected', statusText: 'Abgelehnt', date: '2026-03-20', skills: ['Logistik'], weeklyHours: 20, refs: ['DHL Paketcenter (2025)'], cvUploaded: true, docsUploaded: true, about: 'Erfahren im Lager- und Logistikbereich, körperlich fit und strukturiert.' }
-];
+// Mock applicants removed — all applicants come from Supabase now.
+const MOCK_APPLICANTS = [];
 
 function renderApplicants() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
