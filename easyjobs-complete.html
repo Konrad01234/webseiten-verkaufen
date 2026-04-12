@@ -3548,6 +3548,20 @@ function isFreemailDomain(email) {
   return freemails.includes(domain);
 }
 
+async function deletePostedJob(jobId) {
+  if (!window.DB) { showToast('Backend nicht geladen.', 'error'); return; }
+  if (!confirm('Diese Stellenanzeige wirklich löschen?')) return;
+  try {
+    await DB.deleteJob(jobId);
+    await loadJobsFromDB();
+    showToast('Stellenanzeige gelöscht.');
+    render();
+  } catch (e) {
+    console.error('[deletePostedJob]', e);
+    showToast('Konnte Anzeige nicht löschen: ' + (e.message || ''), 'error');
+  }
+}
+
 function goPostJob() {
   requireEmployerLogin(() => navigate('post-job'));
 }
@@ -5591,7 +5605,8 @@ empObserver.observe(document.getElementById('app'), { childList: true, subtree: 
 
 function renderEmployerDashboard() {
   if (!state.user || state.user.role !== 'employer') return renderLogin();
-  const myJobs = (state.user.postedJobs || []);
+  // Jobs come from the Supabase-backed JOBS array, filtered by employer
+  const myJobs = JOBS.filter(j => j.employerId === state.user.id);
   const totalViews = myJobs.reduce((s, j) => s + (j.views || 0), 0);
   const totalApps = myJobs.reduce((s, j) => s + (j.applications || 0), 0);
   const hasJobs = myJobs.length > 0;
@@ -5658,7 +5673,10 @@ function renderEmployerDashboard() {
                       </div>
                     </div>
                   </div>
-                  <span class="badge badge-success">Aktiv</span>
+                  <div style="display:flex;align-items:center;gap:0.5rem">
+                    <span class="badge badge-success">Aktiv</span>
+                    <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="event.stopPropagation();deletePostedJob('${j.id}')">Löschen</button>
+                  </div>
                 </div>
               </div>
             `).join('')}
