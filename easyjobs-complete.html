@@ -2415,27 +2415,47 @@ async function loadAllProfilesForAdmin() {
   }
 }
 
+// Serialize loadChatsForUser so concurrent callers (realtime events
+// fire in bursts) share the same in-flight promise and always see
+// the latest state when their await resolves.
+let _loadChatsInFlight = null;
+let _loadChatsAgain = false;
 async function loadChatsForUser() {
   if (!state.user || !window.DB) return;
-  try {
-    const rows = await DB.listChatsForUser(state.user.id);
-    const list = (rows || []).map(dbChatToFrontend).filter(Boolean);
-    const container = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
-    // Preserve any `.messages` arrays that were already loaded via
-    // openChatById() so a reload triggered by the chat-list realtime
-    // subscription doesn't wipe the currently open conversation.
-    const existing = new Map(container.map(c => [c.id, c]));
-    container.length = 0;
-    list.forEach(c => {
-      const old = existing.get(c.id);
-      if (old && Array.isArray(old.messages) && old.messages.length > 0) {
-        c.messages = old.messages;
-      }
-      container.push(c);
-    });
-  } catch (e) {
-    console.error('[loadChatsForUser]', e);
+  if (_loadChatsInFlight) {
+    // A load is already running — mark that we want another pass,
+    // and return the same promise so our caller waits for it.
+    _loadChatsAgain = true;
+    return _loadChatsInFlight;
   }
+  const promise = (async () => {
+    try {
+      do {
+        _loadChatsAgain = false;
+        try {
+          const rows = await DB.listChatsForUser(state.user.id);
+          const list = (rows || []).map(dbChatToFrontend).filter(Boolean);
+          const container = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+          // Preserve `.messages` arrays already loaded via openChatById
+          const existing = new Map(container.map(c => [c.id, c]));
+          container.length = 0;
+          list.forEach(c => {
+            const old = existing.get(c.id);
+            if (old && Array.isArray(old.messages) && old.messages.length > 0) {
+              c.messages = old.messages;
+            }
+            container.push(c);
+          });
+        } catch (e) {
+          console.error('[loadChatsForUser]', e);
+        }
+      } while (_loadChatsAgain);
+    } finally {
+      _loadChatsInFlight = null;
+    }
+  })();
+  _loadChatsInFlight = promise;
+  return promise;
 }
 
 // Subscribe to INSERTs on the chats table for this user so new chats
