@@ -3222,13 +3222,17 @@ function openApplicationDoc(appId, docType) {
   html += '<style>body{font-family:Inter,Arial,sans-serif;margin:0;padding:2rem;background:#f3f4f6;color:#1a1a2e;} .doc{max-width:700px;margin:0 auto;background:#fff;padding:3rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);border-radius:4px;min-height:800px;} h1{font-size:1.5rem;margin:0 0 0.5rem;} .meta{color:#666;font-size:0.85rem;margin-bottom:2rem;padding-bottom:1rem;border-bottom:2px solid #eee;} .section-title{font-size:0.85rem;text-transform:uppercase;letter-spacing:0.1em;color:#1e3a5f;font-weight:700;margin:1.5rem 0 0.5rem;padding-bottom:0.3rem;border-bottom:1px solid #e5e7eb;} .content{font-size:0.95rem;line-height:1.7;white-space:pre-line;} .info-row{display:flex;gap:0.5rem;font-size:0.9rem;margin-bottom:0.3rem;} .info-label{color:#666;min-width:120px;} .skills-list{display:flex;flex-wrap:wrap;gap:0.4rem;} .skill-tag{padding:0.25rem 0.7rem;background:#eff6ff;color:#1e40af;border-radius:100px;font-size:0.8rem;font-weight:600;} @media print{body{padding:0;background:#fff;} .doc{box-shadow:none;padding:2rem;}}</style></head><body>';
 
   if (docType === 'motivation') {
+    // All user-controlled fields below are rendered into a brand new
+    // window via document.write, so they MUST be escaped — otherwise
+    // a malicious applicant could inject an SCRIPT tag and
+    // have it run in the employer's browser when they open the doc.
     html += '<div class="doc">';
     html += '<h1>Motivationsschreiben</h1>';
-    html += '<div class="meta">' + app.name + ' — Bewerbung als ' + app.jobTitle + ' bei ' + app.jobCompany + '</div>';
+    html += '<div class="meta">' + escapeHtml(app.name) + ' — Bewerbung als ' + escapeHtml(app.jobTitle) + ' bei ' + escapeHtml(app.jobCompany) + '</div>';
     if (app.motivation) {
-      html += '<div class="content">' + app.motivation + '</div>';
+      html += '<div class="content">' + escapeHtml(app.motivation) + '</div>';
     } else if (app.motivationFileName) {
-      html += '<div class="content" style="text-align:center;padding:3rem;color:#666"><p style="font-size:3rem;margin-bottom:1rem">📎</p><p>Hochgeladene Datei: <strong>' + app.motivationFileName + '</strong></p><p style="font-size:0.85rem;color:#999">Die Datei wurde vom Bewerber als Upload eingereicht</p></div>';
+      html += '<div class="content" style="text-align:center;padding:3rem;color:#666"><p style="font-size:3rem;margin-bottom:1rem">📎</p><p>Hochgeladene Datei: <strong>' + escapeHtml(app.motivationFileName) + '</strong></p><p style="font-size:0.85rem;color:#999">Die Datei wurde vom Bewerber als Upload eingereicht</p></div>';
     } else {
       html += '<div class="content" style="color:#999;text-align:center;padding:3rem">Kein Motivationsschreiben eingereicht</div>';
     }
@@ -3236,28 +3240,28 @@ function openApplicationDoc(appId, docType) {
   } else {
     html += '<div class="doc">';
     html += '<h1>Lebenslauf</h1>';
-    html += '<div class="meta">' + app.name + '</div>';
+    html += '<div class="meta">' + escapeHtml(app.name) + '</div>';
     html += '<div class="section-title">Persönliche Daten</div>';
-    html += '<div class="info-row"><span class="info-label">Name:</span><span>' + app.name + '</span></div>';
-    if (app.email) html += '<div class="info-row"><span class="info-label">E-Mail:</span><span>' + app.email + '</span></div>';
-    if (app.city) html += '<div class="info-row"><span class="info-label">Ort:</span><span>' + app.city + '</span></div>';
-    if (app.weeklyHours) html += '<div class="info-row"><span class="info-label">Verfügbar:</span><span>' + app.weeklyHours + ' Std/Woche</span></div>';
+    html += '<div class="info-row"><span class="info-label">Name:</span><span>' + escapeHtml(app.name) + '</span></div>';
+    if (app.email) html += '<div class="info-row"><span class="info-label">E-Mail:</span><span>' + escapeHtml(app.email) + '</span></div>';
+    if (app.city) html += '<div class="info-row"><span class="info-label">Ort:</span><span>' + escapeHtml(app.city) + '</span></div>';
+    if (app.weeklyHours) html += '<div class="info-row"><span class="info-label">Verfügbar:</span><span>' + escapeHtml(String(app.weeklyHours)) + ' Std/Woche</span></div>';
 
     if (app.skills && app.skills.length > 0) {
       html += '<div class="section-title">Kenntnisse & Fähigkeiten</div>';
-      html += '<div class="skills-list">' + app.skills.map(function(s){return '<span class="skill-tag">' + s + '</span>';}).join('') + '</div>';
+      html += '<div class="skills-list">' + app.skills.map(function(s){return '<span class="skill-tag">' + escapeHtml(s) + '</span>';}).join('') + '</div>';
     }
     if (app.refs && app.refs.length > 0) {
       html += '<div class="section-title">Erfahrungen</div>';
-      app.refs.forEach(function(r) { html += '<div class="info-row">' + (typeof r === 'string' ? r : r.company + ' (' + r.duration + ')') + '</div>'; });
+      app.refs.forEach(function(r) { html += '<div class="info-row">' + (typeof r === 'string' ? escapeHtml(r) : escapeHtml(r.company) + ' (' + escapeHtml(r.duration) + ')') + '</div>'; });
     }
     if (app.about) {
       html += '<div class="section-title">Über mich</div>';
-      html += '<div class="content">' + app.about + '</div>';
+      html += '<div class="content">' + escapeHtml(app.about) + '</div>';
     }
     if (app.cvFileName) {
       html += '<div class="section-title">Zusätzliche Datei</div>';
-      html += '<div class="info-row">📎 ' + app.cvFileName + ' (vom Bewerber hochgeladen)</div>';
+      html += '<div class="info-row">📎 ' + escapeHtml(app.cvFileName) + ' (vom Bewerber hochgeladen)</div>';
     }
     html += '</div>';
   }
@@ -3519,6 +3523,26 @@ function getSelectedTemplate() {
 }
 
 function buildCVHTML(data, template) {
+  // Escape ALL user-controlled fields up front — this HTML is written
+  // into a fresh window via document.write, so unescaped content would
+  // be a cross-user XSS (e.g. a malicious applicant injecting <script>
+  // into their CV which then runs in the employer's browser).
+  // data.photo is a data: URL so no escape needed (used in src= which
+  // won't interpret tags anyway).
+  data = {
+    photo:        data.photo || '',
+    vorname:      escapeHtml(data.vorname || ''),
+    nachname:     escapeHtml(data.nachname || ''),
+    email:        escapeHtml(data.email || ''),
+    telefon:      escapeHtml(data.telefon || ''),
+    adresse:      escapeHtml(data.adresse || ''),
+    geburtsdatum: escapeHtml(data.geburtsdatum || ''),
+    schule:       escapeHtml(data.schule || ''),
+    schulZeitraum: escapeHtml(data.schulZeitraum || ''),
+    erfahrungen:  escapeHtml(data.erfahrungen || ''),
+    hobbys:       escapeHtml(data.hobbys || ''),
+    skills:       (data.skills || []).map(escapeHtml)
+  };
   const name = `${data.vorname} ${data.nachname}`.trim();
   const kontakt = [data.adresse, data.telefon, data.email, data.geburtsdatum ? 'Geb. ' + data.geburtsdatum : ''].filter(Boolean);
   const hasSchule = data.schule || data.schulZeitraum;
