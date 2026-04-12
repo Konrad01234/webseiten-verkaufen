@@ -2934,22 +2934,31 @@ async function login(email, password) {
   if (!window.DB) { showErr('Backend nicht geladen - bitte Seite neu laden.'); return; }
   const cleanEmail = (email || '').trim().toLowerCase();
   if (!cleanEmail || !password) { showErr('Bitte E-Mail und Passwort eingeben.'); return; }
+  // Step 1: Authenticate with Supabase
   try {
     await DB.signIn({ email: cleanEmail, password });
-    await loadUserSession();
-    if (state.user) {
-      await loadSavedJobsForUser();
-      await loadApplicationsForUser();
-      await loadChatsForUser();
-      subscribeToChatList();
-    }
-    navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } catch (e) {
     const msg = (e && e.message) || '';
     if (/email not confirmed/i.test(msg)) showErr('E-Mail noch nicht bestätigt. Bitte Link in der Mail klicken.');
     else if (/invalid login/i.test(msg) || /invalid/i.test(msg)) showErr('E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.');
     else showErr('Login fehlgeschlagen: ' + msg);
-    console.error('[login]', e);
+    console.error('[login] signIn failed', e);
+    return;
+  }
+  // Step 2: Load session + data (each in its own try-catch so a
+  // failure in e.g. loadChatsForUser doesn't block the whole login)
+  try { await loadUserSession(); } catch (e) { console.error('[login] loadUserSession', e); }
+  if (state.user) {
+    try { await loadSavedJobsForUser(); } catch (e) { console.error('[login] savedJobs', e); }
+    try { await loadApplicationsForUser(); } catch (e) { console.error('[login] apps', e); }
+    try { await loadChatsForUser(); } catch (e) { console.error('[login] chats', e); }
+    try { subscribeToChatList(); } catch (e) { console.error('[login] chatSub', e); }
+  }
+  // Step 3: Navigate to the dashboard
+  if (state.user) {
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } else {
+    showErr('Login erfolgreich, aber Profil konnte nicht geladen werden. Bitte Seite neu laden.');
   }
 }
 
@@ -2961,6 +2970,7 @@ async function register(data) {
   const cleanEmail = (data.email || '').trim().toLowerCase();
   if (!cleanEmail || !data.password) { showErr('E-Mail und Passwort sind erforderlich.'); return; }
   if (data.password.length < 6) { showErr('Passwort muss mindestens 6 Zeichen lang sein.'); return; }
+  // Step 1: Create account
   try {
     await DB.signUp({
       email: cleanEmail,
@@ -2969,21 +2979,26 @@ async function register(data) {
       role: data.role || 'worker',
       company: data.company || null
     });
-    // signUp also signs in immediately (when email confirmation is off).
-    await loadUserSession();
-    if (state.user) {
-      await loadSavedJobsForUser();
-      await loadApplicationsForUser();
-      await loadChatsForUser();
-      subscribeToChatList();
-    }
-    navigate(state.user && state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
   } catch (e) {
     const msg = (e && e.message) || '';
     if (/already registered|already exists|duplicate/i.test(msg)) showErr('Diese E-Mail ist bereits registriert. Bitte melde dich an.');
     else if (/password/i.test(msg)) showErr('Passwort ungültig: ' + msg);
     else showErr('Registrierung fehlgeschlagen: ' + msg);
     console.error('[register]', e);
+    return;
+  }
+  // Step 2: signUp also signs in immediately (when email confirmation is off).
+  try { await loadUserSession(); } catch (e) { console.error('[register] loadUserSession', e); }
+  if (state.user) {
+    try { await loadSavedJobsForUser(); } catch (e) { console.error('[register] savedJobs', e); }
+    try { await loadApplicationsForUser(); } catch (e) { console.error('[register] apps', e); }
+    try { await loadChatsForUser(); } catch (e) { console.error('[register] chats', e); }
+    try { subscribeToChatList(); } catch (e) { console.error('[register] chatSub', e); }
+  }
+  if (state.user) {
+    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+  } else {
+    showErr('Registrierung erfolgreich, aber Profil konnte nicht geladen werden. Bitte Seite neu laden.');
   }
 }
 
