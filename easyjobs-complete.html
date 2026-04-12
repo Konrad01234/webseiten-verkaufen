@@ -6659,6 +6659,37 @@ async function adminToggleApproval(userId, newApproved) {
   }
 }
 
+// Remove an employer by wiping their profile data and locking the
+// account. We can't delete the Supabase Auth user from the client
+// (that requires the service_role key), but blanking the profile +
+// setting approved=false effectively locks them out.
+async function adminRemoveEmployer(userId) {
+  if (!window.DB || !DB.sb) return;
+  if (!confirm('Diesen Arbeitgeber wirklich entfernen? Der Account wird gesperrt und seine Daten gelöscht.')) return;
+  try {
+    const res = await DB.sb.from('profiles').update({
+      approved: false,
+      name: '[Entfernt]',
+      company: null,
+      about: null,
+      phone: null,
+      logo: null,
+      images: null
+    }).eq('id', userId);
+    if (res.error) throw res.error;
+    // Also delete all jobs posted by this employer
+    const jobRes = await DB.sb.from('jobs').delete().eq('employer_id', userId);
+    if (jobRes.error) console.error('[adminRemoveEmployer] jobs', jobRes.error);
+    showToast('Arbeitgeber entfernt und alle Stellenanzeigen gelöscht.');
+    await loadAllProfilesForAdmin();
+    await loadJobsFromDB();
+    render();
+  } catch (e) {
+    console.error('[adminRemoveEmployer]', e);
+    showToast('Konnte Arbeitgeber nicht entfernen: ' + (e.message || ''), 'error');
+  }
+}
+
 function adminLogout() {
   state.adminLoggedIn = false;
   navigate('landing');
@@ -7116,46 +7147,33 @@ function renderAdminPanel() {
       <!-- TAB: Benutzer -->
       <div class="admin-tab-content ${state.adminTab === 'benutzer' ? 'active' : ''}" id="admin-tab-benutzer">
 
-      <!-- Arbeitgeber Freischaltung -->
+      <!-- Arbeitgeber Freischaltung (nur wenn pending vorhanden) -->
       ${(() => {
-        const pendingEmployers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && !u.approved);
+        const pendingEmployers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && !u.approved && u.name !== '[Entfernt]');
         return pendingEmployers.length > 0 ? `
       <div class="card admin-chart-card" style="margin-bottom:1.5rem">
         <div class="card-body" style="padding:0;overflow:hidden">
           <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M9 12l2 2 4-4"/><rect x="2" y="3" width="20" height="18" rx="2"/></svg>
-            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Arbeitgeber Freischaltung</h4>
+            <h4 style="margin:0;font-size:0.95rem;font-weight:700">Neue Arbeitgeber freischalten</h4>
             <span class="badge badge-warning" style="margin-left:auto">${pendingEmployers.length} ausstehend</span>
           </div>
           <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
-            <thead>
-              <tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
-                <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
-                <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
-              </tr>
-            </thead>
+            <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
+              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Unternehmen</th>
+              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+              <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
+              <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
+            </tr></thead>
             <tbody>
               ${pendingEmployers.map(u => {
                 const freemail = isFreemailDomain(u.email);
                 const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
-                return `
-                <tr class="admin-table-row" style="${freemail ? 'background:rgba(245,158,11,0.08)' : ''}">
-                  <td style="padding:0.65rem 1.25rem">
-                    <div>
-                      <span style="font-weight:600">${escapeHtml(u.company || u.name || '-')}</span>
-                      <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name || '')}</div>
-                    </div>
-                  </td>
-                  <td style="padding:0.65rem 1.25rem">
-                    <span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email || '')}</span>
-                    ${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">&#9888; Freemail-Adresse</div>' : '<div style="font-size:0.7rem;color:var(--success)">&#10003; Geschäfts-E-Mail</div>'}
-                  </td>
+                return `<tr class="admin-table-row" style="${freemail ? 'background:rgba(245,158,11,0.08)' : ''}">
+                  <td style="padding:0.65rem 1.25rem"><div><span style="font-weight:600">${escapeHtml(u.company || u.name || '-')}</span><div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(u.name || '')}</div></div></td>
+                  <td style="padding:0.65rem 1.25rem"><span style="${freemail ? 'color:#f97316;font-weight:600' : 'color:var(--gray-500)'}">${escapeHtml(u.email || '')}</span>${freemail ? '<div style="font-size:0.7rem;color:#f97316;font-weight:500">Freemail</div>' : ''}</td>
                   <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
-                  <td style="padding:0.65rem 1.25rem;text-align:center">
-                    <button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>
-                  </td>
+                  <td style="padding:0.65rem 1.25rem;text-align:center"><button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button></td>
                 </tr>`;
               }).join('')}
             </tbody>
@@ -7164,7 +7182,49 @@ function renderAdminPanel() {
       </div>` : '';
       })()}
 
-      <!-- Benutzer-Liste -->
+      <!-- Alle Arbeitgeber -->
+      ${(() => {
+        const employers = (state._allProfilesCache || []).filter(u => u.role === 'employer' && u.name !== '[Entfernt]');
+        return `
+      <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body" style="padding:0;overflow:hidden">
+        <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+          <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Arbeitgeber</h4>
+          <span class="badge badge-warning" style="margin-left:auto">${employers.length} gesamt</span>
+          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" onclick="adminRefreshProfiles()">Neu laden</button>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
+          <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Firma</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Inhaber</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+            <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Status</th>
+            <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
+            <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktionen</th>
+          </tr></thead>
+          <tbody>
+            ${employers.map(u => {
+              const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+              return `<tr class="admin-table-row">
+                <td style="padding:0.65rem 1.25rem;font-weight:600">${escapeHtml(u.company || '-')}</td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.name || '-')}</td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '-')}</td>
+                <td style="padding:0.65rem 1.25rem;text-align:center">${u.approved ? '<span class="badge badge-success">Aktiv</span>' : '<span class="badge badge-warning">Ausstehend</span>'}</td>
+                <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
+                <td style="padding:0.65rem 1.25rem;text-align:center;white-space:nowrap">
+                  ${u.approved
+                    ? `<button class="btn btn-sm btn-outline" style="font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
+                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>`}
+                  <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminRemoveEmployer('${u.id}')">Entfernen</button>
+                </td>
+              </tr>`;
+            }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Arbeitgeber registriert</td></tr>'}
+          </tbody>
+        </table>
+      </div></div>`;
+      })()}
+
+      <!-- Alle Benutzer -->
       <div class="card admin-chart-card" style="margin-bottom:1.5rem"><div class="card-body" style="padding:0;overflow:hidden">
         <div style="padding:1.25rem 1.25rem 0.75rem;display:flex;align-items:center;gap:0.5rem">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
