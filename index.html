@@ -3871,33 +3871,20 @@ async function sendChatMessage() {
   const msgText = censorContactInfo(input.value);
   input.value = '';
 
-  // Real DB-backed chat: just hand it off to Supabase. The realtime
-  // subscription installed by openChatById() will append the message
-  // to chat.messages and re-render automatically.
+  // Real DB-backed chat: hand off to Supabase. The realtime subscription
+  // installed by openChatById() appends the message to chat.messages and
+  // re-renders automatically — no optimistic local push (it caused
+  // duplicates because the realtime dedupe check keys on message id
+  // and the optimistic push has no id).
   if (window.DB && state.user && chat.id) {
     try {
       await DB.sendMessage(chat.id, state.user.id, msgText);
-      // Optimistic local update in case the realtime event is slow
-      const now = new Date();
-      const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}`;
-      if (!chat.messages.some(m => m.text === msgText && m.time === time)) {
-        chat.messages.push({ text: msgText, sent: true, time: time });
-        chat.lastMessage = msgText;
-        chat.time = time;
-      }
     } catch (e) {
       console.error('[sendChatMessage]', e);
       showToast('Nachricht konnte nicht gesendet werden.', 'error');
+      // Put the text back in the input so the user can retry
+      input.value = msgText;
       return;
-    }
-    if (state.currentPage === 'chat') {
-      render();
-      setTimeout(() => {
-        const el = document.getElementById('chat-messages-page');
-        if (el) el.scrollTop = el.scrollHeight;
-      }, 50);
-    } else {
-      renderChatWidget();
     }
     return;
   }
