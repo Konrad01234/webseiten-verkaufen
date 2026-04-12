@@ -2646,6 +2646,20 @@ function navigate(page, data) {
   state.pageData = data;
   render();
   window.scrollTo(0, 0);
+  // Auto-refresh relevant data when navigating to key pages.
+  // This ensures the user always sees the latest DB state without
+  // needing a manual page reload.
+  if (window.DB) {
+    if (page === 'jobs' || page === 'job-detail' || page === 'employer-dashboard') {
+      loadJobsFromDB().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] jobs refresh', e));
+    }
+    if (page === 'employer-dashboard' || page === 'applicants' || page === 'worker-dashboard') {
+      loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] apps refresh', e));
+    }
+    if (page === 'messages' || page === 'chat') {
+      loadChatsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] chats refresh', e));
+    }
+  }
 }
 
 function navigateToSection(page, sectionId) {
@@ -4506,7 +4520,12 @@ function submitRegister(form) {
     role: form.role.value,
     name: form.firstName.value + ' ' + form.lastName.value,
     email: form.email.value,
-    password: simpleHash(form.password.value)
+    // Send plain-text password to Supabase — it handles bcrypt hashing
+    // internally. The old simpleHash() was a leftover from the
+    // localStorage era and caused a double-hash: the user could
+    // register but never log in again because login() sent the
+    // plain-text password which didn't match the hashed-then-hashed value.
+    password: form.password.value
   };
   if (data.role === 'employer') {
     data.company = form.company.value;
