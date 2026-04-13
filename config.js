@@ -17,7 +17,7 @@ window.SUPABASE_CONFIG = {
 //   2. Supabase Dashboard → Authentication → Bot Protection → hCaptcha
 //      → Site Key + Secret Key eintragen → Save
 //   3. Hier den Site-Key eintragen
-window.HCAPTCHA_SITE_KEY = '';
+window.HCAPTCHA_SITE_KEY = '0e0c0f20-4954-49c4-82cc-3f922daed460';
 
 // Optional Storage-Bucket für Bilder. Wenn leer, werden Bilder weiter
 // als Base64 in die DB geschrieben (funktioniert, aber bei vielen
