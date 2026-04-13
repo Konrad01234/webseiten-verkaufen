@@ -559,11 +559,13 @@ function trackPurchase(product, price) {
 
 function getAnalyticsData() {
   const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  // Purchases bleibt localStorage — tote Feature-Spalte (kein Bezahl-Modus).
   const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  // User counts come from the Supabase profiles cache loaded by
-  // loadAllProfilesForAdmin() (the legacy 'jj_users' localStorage key
-  // is empty after the Supabase migration).
+  // ECHTE Daten aus Supabase: User aus profiles-Cache, Jobs aus JOBS-Array,
+  // Bewerbungen aus apps-Cache.
   const allUsers = state._allProfilesCache || [];
+  state._adminTotalJobs = (typeof JOBS !== 'undefined' && JOBS) ? JOBS.length : 0;
+  state._adminTotalApps = (state._appsCache || []).length;
   const now = new Date();
   const onlineThreshold = 15 * 60 * 1000;
   const recentVisits = visits.filter(v => (now - new Date(v.timestamp)) < onlineThreshold);
@@ -603,7 +605,9 @@ function getAnalyticsData() {
     users: { total: totalUsers, employers, workers },
     visits: { today: visitsToday, thisWeek: visitsThisWeek, thisMonth: visitsThisMonth, last7Days },
     revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
-    purchases: { total: purchases.length, today: purchasesToday.length }
+    purchases: { total: purchases.length, today: purchasesToday.length },
+    jobs: { total: state._adminTotalJobs || 0 },
+    applications: { total: state._adminTotalApps || 0 }
   };
 }
 
@@ -704,6 +708,9 @@ function navigate(page, data) {
     // without a full page reload.
     if (page === 'employer-dashboard' || page === 'worker-dashboard' || page === 'post-job') {
       loadUserSession().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] session refresh', e));
+    }
+    if (page === 'support' || page === 'admin-panel') {
+      loadSupportTicketsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] tickets refresh', e));
     }
   }
 }
@@ -1238,8 +1245,11 @@ async function finalSubmitApplication() {
 }
 
 function openApplicationDoc(appId, docType) {
-  var allApps = JSON.parse(localStorage.getItem('jj_all_applications') || '[]');
-  var app = allApps.find(function(a) { return a.id === appId; });
+  // Read from the Supabase-backed apps cache (loaded by
+  // loadApplicationsForUser). Falls back to a string-equality lookup
+  // because UUIDs and integers can both legitimately appear here.
+  var allApps = state._appsCache || [];
+  var app = allApps.find(function(a) { return a.id === appId || String(a.id) === String(appId); });
   if (!app) { showToast('Bewerbung nicht gefunden', 'error'); return; }
 
   var win = window.open('', '_blank');
@@ -2692,6 +2702,9 @@ function renderLogin() {
           <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
         </form>
+        <p style="text-align:center;font-size:0.85rem;margin-top:0.75rem">
+          <a href="#" onclick="event.preventDefault();showForgotPassword()" style="color:var(--gray-600)">Passwort vergessen?</a>
+        </p>
         <div class="auth-divider">oder</div>
         <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" onclick="navigate('register')" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
       </div>
@@ -4565,41 +4578,63 @@ function renderMessages() {
     </div>`;
 }
 
-// ===== SUPPORT SYSTEM =====
+// ===== SUPPORT SYSTEM (Supabase-backed) =====
 function getSupportTickets() {
-  return JSON.parse(localStorage.getItem('jj_support_tickets') || '[]');
+  return state._supportTicketsCache || [];
 }
 
-function saveSupportTickets(tickets) {
-  localStorage.setItem('jj_support_tickets', JSON.stringify(tickets));
+async function loadSupportTicketsForUser() {
+  if (!state.user || !window.DB) { state._supportTicketsCache = []; return; }
+  try {
+    let rows;
+    if (typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin() && DB.sb) {
+      const res = await DB.sb.from('support_tickets').select('*').order('created_at', { ascending: false });
+      rows = res.error ? [] : (res.data || []);
+    } else {
+      rows = await DB.listSupportTickets(state.user.id);
+    }
+    state._supportTicketsCache = (rows || []).map(r => ({
+      id: r.id,
+      userId: r.user_id,
+      userName: state.user.name || '',
+      userEmail: state.user.email || '',
+      userRole: state.user.role || '',
+      category: r.category,
+      subject: r.subject,
+      message: r.message,
+      status: r.status,
+      adminReply: r.admin_reply,
+      createdAt: r.created_at
+    }));
+  } catch (e) {
+    console.error('[loadSupportTicketsForUser]', e);
+    state._supportTicketsCache = [];
+  }
 }
 
-function submitSupportTicket() {
+async function submitSupportTicket() {
+  if (!state.user || !window.DB) { showToast('Bitte erst einloggen.', 'error'); return; }
   const category = document.getElementById('support-category')?.value;
   const subject = document.getElementById('support-subject')?.value?.trim();
   const message = document.getElementById('support-message')?.value?.trim();
   if (!category || !subject || !message) {
-    alert('Bitte fülle alle Felder aus.');
+    showToast('Bitte fülle alle Felder aus.', 'error');
     return;
   }
-  const tickets = getSupportTickets();
-  const ticket = {
-    id: Date.now(),
-    userId: state.user.id,
-    userName: state.user.name || state.user.company || 'Unbekannt',
-    userEmail: state.user.email,
-    userRole: state.user.role,
-    category: category,
-    subject: subject,
-    message: message,
-    status: 'open',
-    createdAt: new Date().toISOString(),
-    adminReply: null
-  };
-  tickets.push(ticket);
-  saveSupportTickets(tickets);
-  alert('Dein Ticket wurde erfolgreich eingereicht! Wir melden uns so schnell wie möglich.');
-  render();
+  try {
+    await DB.createSupportTicket({
+      userId: state.user.id, category, subject, message
+    });
+    await loadSupportTicketsForUser();
+    showToast('Dein Ticket wurde erfolgreich eingereicht!');
+    const c = document.getElementById('support-category'); if (c) c.value = '';
+    const s = document.getElementById('support-subject'); if (s) s.value = '';
+    const m = document.getElementById('support-message'); if (m) m.value = '';
+    render();
+  } catch (e) {
+    console.error('[submitSupportTicket]', e);
+    showToast('Konnte Ticket nicht erstellen: ' + (e.message || ''), 'error');
+  }
 }
 
 function renderSupport() {
@@ -4757,88 +4792,9 @@ function renderReviews() {
     </div>`;
 }
 
-function selectBoost(card, type) {
-  // Alle Karten zurücksetzen
-  document.querySelectorAll('[onclick^="selectBoost"]').forEach(c => {
-    c.style.borderColor = 'var(--gray-200)';
-    c.style.background = '';
-  });
-  card.querySelector('input[type=radio]').checked = true;
-
-  const boostLine = document.getElementById('boost-line');
-  const boostLabel = document.getElementById('boost-label');
-  const boostPrice = document.getElementById('boost-price');
-  const taxAmount = document.getElementById('tax-amount');
-  const totalPrice = document.getElementById('total-price');
-
-  const base = 29;
-  let boostCost = 0;
-  if (type === 'standard') {
-    boostCost = 15;
-    boostLine?.classList.remove('hidden');
-    if (boostLabel) boostLabel.textContent = 'Standard Boost';
-    if (boostPrice) boostPrice.textContent = '15,00€';
-    card.style.borderColor = 'var(--secondary)';
-    card.style.background = 'rgba(249,115,22,0.03)';
-  } else if (type === 'premium') {
-    boostCost = 35;
-    boostLine?.classList.remove('hidden');
-    if (boostLabel) boostLabel.textContent = 'Premium Boost';
-    if (boostPrice) boostPrice.textContent = '35,00€';
-    card.style.borderColor = 'var(--primary)';
-    card.style.background = 'rgba(29,78,216,0.03)';
-  } else {
-    boostLine?.classList.add('hidden');
-    card.style.borderColor = 'var(--gray-200)';
-  }
-
-  const net = base + boostCost;
-  const tax = (net * 0.19).toFixed(2).replace('.', ',');
-  const total = (net * 1.19).toFixed(2).replace('.', ',');
-  if (taxAmount) taxAmount.textContent = tax + '€';
-  if (totalPrice) totalPrice.textContent = total + '€';
-}
-
-function showBoostModal(jobTitle) {
-  document.getElementById('boost-modal-title').textContent = 'Anzeige boosten: ' + jobTitle;
-  document.getElementById('boost-modal').classList.add('open');
-}
-
-function closeBoostModal() {
-  const modal = document.getElementById('boost-modal');
-  if (modal) modal.classList.remove('open');
-  // Reset
-  document.querySelectorAll('#boost-modal .card').forEach(c => {
-    c.style.borderColor = 'var(--gray-200)'; c.style.background = '';
-  });
-  const stdOpt = document.getElementById('boost-opt-standard');
-  if (stdOpt) stdOpt.style.borderColor = 'var(--secondary)';
-  document.getElementById('boost-modal-summary')?.classList.add('hidden');
-  const btn = document.getElementById('boost-modal-pay-btn');
-  if (btn) btn.disabled = true;
-}
-
-function selectBoostModal(card, type, price) {
-  document.querySelectorAll('#boost-modal .card').forEach(c => {
-    c.style.borderColor = 'var(--gray-200)'; c.style.background = '';
-  });
-  card.querySelector('input[type=radio]').checked = true;
-  card.style.borderColor = type === 'premium' ? 'var(--primary)' : 'var(--secondary)';
-  card.style.background = type === 'premium' ? 'rgba(29,78,216,0.04)' : 'rgba(249,115,22,0.04)';
-
-  const summary = document.getElementById('boost-modal-summary');
-  summary?.classList.remove('hidden');
-  const labels = { standard: 'Standard Boost (7 Tage)', standard30: 'Standard Boost (30 Tage)', premium: 'Premium Boost (14 Tage)' };
-  const tax = (price * 0.19).toFixed(2).replace('.', ',');
-  const total = (price * 1.19).toFixed(2).replace('.', ',');
-  if (document.getElementById('bms-label')) document.getElementById('bms-label').textContent = labels[type];
-  if (document.getElementById('bms-net')) document.getElementById('bms-net').textContent = price.toFixed(2).replace('.', ',') + '€';
-  if (document.getElementById('bms-tax')) document.getElementById('bms-tax').textContent = tax + '€';
-  if (document.getElementById('bms-total')) document.getElementById('bms-total').textContent = total + '€';
-
-  const btn = document.getElementById('boost-modal-pay-btn');
-  if (btn) btn.disabled = false;
-}
+// Boost-Code wurde komplett entfernt — aktuell keine kostenpflichtigen
+// Features. Wenn später Stripe integriert wird, kann der Code aus
+// der Git-Historie wiederhergestellt werden.
 
 function setRating(n) {
   document.querySelectorAll('#rating-stars .star').forEach((s, i) => {
@@ -5544,29 +5500,38 @@ function renderAdminPanel() {
     </div>`;
 }
 
-function adminUpdateTicketStatus(ticketId, newStatus) {
-  const tickets = getSupportTickets();
-  const ticket = tickets.find(t => t.id === ticketId);
-  if (ticket) {
-    ticket.status = newStatus;
-    saveSupportTickets(tickets);
+async function adminUpdateTicketStatus(ticketId, newStatus) {
+  if (!window.DB || !DB.sb) return;
+  try {
+    const dbStatus = newStatus === 'in-progress' ? 'in_progress' : newStatus;
+    const res = await DB.sb.from('support_tickets').update({ status: dbStatus }).eq('id', ticketId);
+    if (res.error) throw res.error;
+    await loadSupportTicketsForUser();
     render();
+  } catch (e) {
+    console.error('[adminUpdateTicketStatus]', e);
+    showToast('Konnte Status nicht ändern: ' + (e.message || ''), 'error');
   }
 }
 
-function adminReplyTicket(ticketId) {
+async function adminReplyTicket(ticketId) {
+  if (!window.DB || !DB.sb) return;
   const replyEl = document.getElementById('reply-' + ticketId);
   if (!replyEl || !replyEl.value.trim()) {
-    alert('Bitte schreibe eine Antwort.');
+    showToast('Bitte schreibe eine Antwort.', 'error');
     return;
   }
-  const tickets = getSupportTickets();
-  const ticket = tickets.find(t => t.id === ticketId);
-  if (ticket) {
-    ticket.adminReply = replyEl.value.trim();
-    if (ticket.status === 'open') ticket.status = 'in-progress';
-    saveSupportTickets(tickets);
+  try {
+    const res = await DB.sb.from('support_tickets').update({
+      admin_reply: replyEl.value.trim(),
+      status: 'in_progress'
+    }).eq('id', ticketId);
+    if (res.error) throw res.error;
+    await loadSupportTicketsForUser();
     render();
+  } catch (e) {
+    console.error('[adminReplyTicket]', e);
+    showToast('Antwort konnte nicht gespeichert werden.', 'error');
   }
 }
 
@@ -5632,6 +5597,36 @@ function animateCounters() {
 var _origRender = render;
 render = function() { _origRender(); setTimeout(initScrollAnimations, 100); };
 
+// ===== DSGVO Cookie-Banner =====
+function dismissCookieBanner(persist) {
+  const el = document.getElementById('cookie-banner');
+  if (el) el.style.display = 'none';
+  if (persist) { try { localStorage.setItem('jj_cookie_consent', '1'); } catch (_) {} }
+}
+function maybeShowCookieBanner() {
+  try { if (localStorage.getItem('jj_cookie_consent') === '1') return; } catch (_) {}
+  const el = document.getElementById('cookie-banner');
+  if (el) el.style.display = 'block';
+}
+
+// ===== Passwort vergessen =====
+// Nutzt Supabase resetPasswordForEmail. Generische Toast-Meldung verrät NICHT
+// ob die E-Mail registriert ist (Schutz gegen User-Enumeration).
+async function showForgotPassword() {
+  const email = prompt('Bitte gib deine E-Mail-Adresse ein, an die wir den Link zum Passwort-Zurücksetzen schicken:');
+  if (!email || !email.trim()) return;
+  if (!window.DB || !DB.resetPasswordForEmail) {
+    showToast('Backend nicht geladen.', 'error');
+    return;
+  }
+  try {
+    await DB.resetPasswordForEmail(email.trim().toLowerCase(), window.location.origin + '/?reset=1');
+  } catch (e) {
+    console.error('[showForgotPassword]', e);
+  }
+  showToast('Falls die E-Mail bei uns existiert, ist eine Reset-Mail unterwegs. Schau in dein Postfach.');
+}
+
 // Bootstrap reads the Supabase session + jobs, then renders. If the DB
 // module failed to load (offline / script blocked), fall back to a
 // plain render so the landing page still shows something.
@@ -5639,10 +5634,12 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof bootstrap === 'function') { bootstrap(); }
     else { render(); setTimeout(initScrollAnimations, 200); }
+    maybeShowCookieBanner();
   });
 } else {
   if (typeof bootstrap === 'function') { bootstrap(); }
   else { render(); setTimeout(initScrollAnimations, 200); }
+  maybeShowCookieBanner();
 }
 
 // Close mobile menu on nav

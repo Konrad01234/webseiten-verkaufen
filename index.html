@@ -3,7 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EasyJobs - Deine Jobvermittlung</title>
+  <title>EasyJobs — Minijobs für Schüler &amp; Studenten in deiner Nähe</title>
+  <meta name="description" content="EasyJobs verbindet junge Talente mit den besten Arbeitgebern. Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe — schnell, einfach, kostenlos.">
+  <meta name="keywords" content="Minijob, Schülerjob, Studentenjob, Nebenjob, Ferienjob, Aushilfe, Job finden">
+  <meta name="author" content="EasyJobs">
+  <meta name="theme-color" content="#2563eb">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EasyJobs — Minijobs für Schüler &amp; Studenten">
+  <meta property="og:description" content="Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe. Schnell, einfach, kostenlos.">
+  <meta property="og:locale" content="de_DE">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="EasyJobs — Minijobs für Schüler &amp; Studenten">
+  <meta name="twitter:description" content="Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe.">
+  <link rel="canonical" href="/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232563eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='central' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='14' fill='white'%3EJJ%3C/text%3E%3C/svg%3E">
   <style>/* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -1979,68 +1992,23 @@ body:has(.admin-login-wrap) {
     </div>
   </div>
 
-  <!-- Boost Modal (hidden — no paid features yet) -->
-  <div class="modal-overlay" id="boost-modal" style="display:none!important" onclick="if(event.target===this)closeBoostModal()">
-    <div class="modal">
-      <div class="modal-header">
-        <h3>&#9889; <span id="boost-modal-title">Anzeige boosten</span></h3>
-        <button class="close-btn" onclick="closeBoostModal()">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1.5rem">Boost deine Anzeige und erreiche deutlich mehr Bewerber.</p>
-        <div style="display:flex;flex-direction:column;gap:0.75rem">
-          <div class="card" style="border-color:var(--secondary);cursor:pointer;transition:all 0.2s" onclick="selectBoostModal(this,'standard',15)" id="boost-opt-standard">
-            <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-              <input type="radio" name="boost-modal" value="standard">
-              <div style="flex:1">
-                <strong>&#9650; Standard Boost &mdash; 7 Tage</strong>
-                <div style="font-size:0.85rem;color:var(--gray-500)">Hervorgehoben in den Suchergebnissen. 2&times; mehr Sichtbarkeit.</div>
-              </div>
-              <div style="font-weight:800;font-size:1.1rem;color:var(--secondary)">15€</div>
-            </div>
-          </div>
-          <div class="card" style="border-color:var(--gray-200);cursor:pointer;transition:all 0.2s" onclick="selectBoostModal(this,'standard30',29)" id="boost-opt-standard30">
-            <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-              <input type="radio" name="boost-modal" value="standard30">
-              <div style="flex:1">
-                <strong>&#9650; Standard Boost &mdash; 30 Tage</strong>
-                <div style="font-size:0.85rem;color:var(--gray-500)">Hervorgehoben für den ganzen Monat. Sparpaket.</div>
-              </div>
-              <div style="font-weight:800;font-size:1.1rem;color:var(--secondary)">29€</div>
-            </div>
-          </div>
-          <div class="card" style="border-color:var(--gray-200);cursor:pointer;transition:all 0.2s" onclick="selectBoostModal(this,'premium',35)" id="boost-opt-premium">
-            <div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem">
-              <input type="radio" name="boost-modal" value="premium">
-              <div style="flex:1">
-                <strong>&#9733; Premium Boost &mdash; 14 Tage</strong>
-                <div style="font-size:0.85rem;color:var(--gray-500)">Ganz oben + farblich hervorgehoben + E-Mail-Newsletter. 5&times; mehr Sichtbarkeit.</div>
-              </div>
-              <div style="font-weight:800;font-size:1.1rem;color:var(--primary)">35€</div>
-            </div>
-          </div>
-        </div>
-        <div id="boost-modal-summary" class="hidden" style="background:var(--gray-50);border-radius:var(--radius-sm);padding:1rem;margin-top:1rem">
-          <div style="display:flex;justify-content:space-between;margin-bottom:0.375rem;font-size:0.9rem">
-            <span id="bms-label">Boost</span><span id="bms-net">15,00€</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;font-size:0.9rem">
-            <span>MwSt. (19%)</span><span id="bms-tax">2,85€</span>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-weight:700">
-            <span>Gesamt</span><span id="bms-total">17,85€</span>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeBoostModal()">Abbrechen</button>
-        <button class="btn btn-secondary" id="boost-modal-pay-btn" disabled onclick="handleBoostPurchase();closeBoostModal()">&#9889; Jetzt boosten</button>
-      </div>
-    </div>
-  </div>
+  <!-- Boost Modal removed — no paid features yet. -->
 
   
   
+  <!-- DSGVO Cookie-Banner -->
+  <div id="cookie-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:2px solid var(--primary);box-shadow:0 -4px 24px rgba(0,0,0,0.1);padding:1rem;z-index:9999;max-height:80vh;overflow-y:auto">
+    <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <strong style="display:block;margin-bottom:0.4rem;color:#1a1a2e;font-size:0.95rem">🍪 Cookies</strong>
+        <p style="font-size:0.82rem;color:#4b5563;margin:0;line-height:1.55">
+          Wir speichern technisch notwendige Cookies für deine Login-Sitzung. <strong>Keine Tracking- oder Werbe-Cookies.</strong> Details in der <a href="#" onclick="event.preventDefault();navigate('datenschutz');dismissCookieBanner(true)" style="color:#2563eb;text-decoration:underline">Datenschutzerklärung</a>.
+        </p>
+      </div>
+      <button onclick="dismissCookieBanner(true)" class="btn btn-primary" style="padding:0.65rem 1.5rem;flex-shrink:0">Verstanden</button>
+    </div>
+  </div>
+
   <script src="app.js?v=1" defer></script>
 </body>
 </html>

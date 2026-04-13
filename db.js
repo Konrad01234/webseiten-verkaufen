@@ -61,6 +61,18 @@
     if (res.error) throw res.error;
   }
 
+  async function resetPasswordForEmail(email, redirectTo) {
+    const res = await sb.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo } : undefined);
+    if (res.error) throw res.error;
+    return res.data;
+  }
+
+  async function updatePassword(newPassword) {
+    const res = await sb.auth.updateUser({ password: newPassword });
+    if (res.error) throw res.error;
+    return res.data;
+  }
+
   async function getSession() {
     const res = await sb.auth.getSession();
     return res.data?.session || null;
@@ -262,7 +274,7 @@
   window.DB = {
     sb,
     // auth
-    signUp, signIn, signOut, getSession, onAuthChange,
+    signUp, signIn, signOut, getSession, onAuthChange, resetPasswordForEmail, updatePassword,
     // profiles
     getProfile, updateProfile,
     // jobs
