@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /index-multifile.html
+
+# Dashboard- und Admin-Routen werden clientseitig gerendert und brauchen
+# keine Indexierung. Bots kommen hier eh nicht rein weil alles hinter
+# Supabase Auth liegt.
+Disallow: /api/
+Disallow: /auth/

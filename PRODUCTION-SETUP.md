@@ -59,12 +59,11 @@ Schick mir Name, Anschrift, E-Mail, Telefon — ich trage sie ein.
 
 ## 6. Cron-Job für veraltete Jobs (optional)
 
-Supabase → Database → Cron Jobs → "New cron job":
-```sql
-UPDATE public.jobs SET active = false
- WHERE expires < now() AND active = true;
-```
-Schedule: `0 3 * * *` (täglich 3 Uhr).
+a) Supabase → Database → Extensions → **pg_cron aktivieren**
+b) SQL-Editor → Inhalt von `supabase-add-cron.sql` einfügen → Run
+
+Läuft täglich um 3 Uhr nachts und setzt Jobs älter als 90 Tage
+auf `active = false`. Anpassbar wenn du andere Grenzen willst.
 
 ## 7. Eigene Domain (optional, 10-15 €/Jahr)
 

@@ -551,11 +551,7 @@ function trackVisit() {
   }
 }
 
-function trackPurchase(product, price) {
-  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  purchases.push({ product, price, timestamp: new Date().toISOString(), userId: state.user ? state.user.id : null });
-  localStorage.setItem('jj_analytics_purchases', JSON.stringify(purchases));
-}
+// trackPurchase entfernt — war nur für Boost-Features die ebenfalls weg sind.
 
 function getAnalyticsData() {
   const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
@@ -4854,17 +4850,6 @@ function submitJobReview(jobId) {
   if (!stars) { alert('Bitte wähle eine Bewertung (1-5 Sterne).'); return; }
   if (!text) { alert('Bitte schreibe einen kurzen Text.'); return; }
   alert('Bewertung abgegeben! Sie wird nach Prüfung veröffentlicht.');
-}
-
-// ===== BOOST PURCHASE TRACKING =====
-function handleBoostPurchase() {
-  const selected = document.querySelector('#boost-modal input[type=radio]:checked');
-  if (!selected) return;
-  const labels = { standard: 'Standard Boost (7 Tage)', standard30: 'Standard Boost (30 Tage)', premium: 'Premium Boost (14 Tage)' };
-  const prices = { standard: 15, standard30: 29, premium: 35 };
-  const type = selected.value;
-  trackPurchase(labels[type] || type, prices[type] || 0);
-  alert('Boost aktiviert! Deine Anzeige wird jetzt hervorgehoben.');
 }
 
 // ===== ADMIN HELPERS =====
