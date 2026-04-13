@@ -31,11 +31,10 @@
   // -----------------------------------------------------------------
   // AUTH
   // -----------------------------------------------------------------
-  async function signUp({ email, password, name, role, company }) {
-    const res = await sb.auth.signUp({
-      email, password,
-      options: { data: { name, role, company: company || null } }
-    });
+  async function signUp({ email, password, name, role, company, captchaToken }) {
+    const opts = { data: { name, role, company: company || null } };
+    if (captchaToken) opts.captchaToken = captchaToken;
+    const res = await sb.auth.signUp({ email, password, options: opts });
     if (res.error) throw res.error;
     // The DB trigger inserts into profiles automatically. We then make
     // sure the row exists in case the trigger isn't installed yet.
@@ -269,6 +268,37 @@
   }
 
   // -----------------------------------------------------------------
+  // STORAGE (optional — nur wenn window.IMAGE_BUCKET in config.js gesetzt)
+  // -----------------------------------------------------------------
+  // Lädt eine Datei in den public bucket hoch und gibt die public-URL
+  // zurück. Wenn IMAGE_BUCKET leer ist, wirft das einen Fehler — der
+  // Aufrufer kann dann auf base64 zurückfallen.
+  async function uploadImage(file, path) {
+    const bucket = window.IMAGE_BUCKET;
+    if (!bucket) throw new Error('IMAGE_BUCKET nicht konfiguriert');
+    if (!file) throw new Error('Keine Datei');
+    // Eindeutigen Pfad bauen falls keiner mitgegeben (user-id/timestamp)
+    const session = await getSession();
+    const uid = session && session.user ? session.user.id : 'anon';
+    const safeName = (file.name || 'image').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const finalPath = path || `${uid}/${Date.now()}-${safeName}`;
+    const res = await sb.storage.from(bucket).upload(finalPath, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type || 'image/jpeg'
+    });
+    if (res.error) throw res.error;
+    const { data } = sb.storage.from(bucket).getPublicUrl(finalPath);
+    return { path: finalPath, url: data && data.publicUrl };
+  }
+  function getPublicImageUrl(path) {
+    const bucket = window.IMAGE_BUCKET;
+    if (!bucket || !path) return null;
+    const { data } = sb.storage.from(bucket).getPublicUrl(path);
+    return data && data.publicUrl;
+  }
+
+  // -----------------------------------------------------------------
   // EXPORT
   // -----------------------------------------------------------------
   window.DB = {
@@ -289,6 +319,8 @@
     // saved jobs
     listSavedJobIds, saveJob, unsaveJob,
     // support
-    createSupportTicket, listSupportTickets
+    createSupportTicket, listSupportTickets,
+    // storage (optional)
+    uploadImage, getPublicImageUrl
   };
 })();

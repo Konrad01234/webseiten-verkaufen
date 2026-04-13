@@ -955,7 +955,8 @@ async function register(data) {
       password: data.password,
       name: data.name || '',
       role: data.role || 'worker',
-      company: data.company || null
+      company: data.company || null,
+      captchaToken: data.captchaToken || null
     });
   } catch (e) {
     const msg = (e && e.message) || '';
@@ -1542,32 +1543,61 @@ function setPreviewBackground(preview, dataUrl) {
   preview.innerHTML = '';
 }
 
-function handleCVPhoto(input) {
-  if (!input.files || !input.files[0]) return;
-  readImageFileAsDataURL(input.files[0], (dataUrl) => {
-    state.cvPhoto = dataUrl;
-    setPreviewBackground(document.getElementById('cv-photo-preview'), dataUrl);
+// Versucht Storage-Upload, fällt bei Fehler auf base64 zurück. Liefert
+// in beiden Fällen eine Browser-anzeigbare URL (entweder data: oder https:).
+async function uploadImageWithFallback(file) {
+  if (window.IMAGE_BUCKET && window.DB && DB.uploadImage) {
+    try {
+      const { url } = await DB.uploadImage(file);
+      if (url) return url;
+    } catch (e) { console.error('[uploadImage] storage failed, falling back to base64', e); }
+  }
+  // Base64-Fallback (alte Logik)
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
   });
 }
 
-function handleCompanyLogo(input) {
+async function handleCVPhoto(input) {
   if (!input.files || !input.files[0]) return;
-  readImageFileAsDataURL(input.files[0], (dataUrl) => {
-    state.user.companyLogo = dataUrl;
-    setPreviewBackground(document.getElementById('company-logo-preview'), dataUrl);
+  try {
+    const url = await uploadImageWithFallback(input.files[0]);
+    state.cvPhoto = url;
+    setPreviewBackground(document.getElementById('cv-photo-preview'), url);
+  } catch (e) { console.error('[handleCVPhoto]', e); showToast('Foto konnte nicht geladen werden.', 'error'); }
+}
+
+async function handleCompanyLogo(input) {
+  if (!input.files || !input.files[0]) return;
+  try {
+    const url = await uploadImageWithFallback(input.files[0]);
+    state.user.companyLogo = url;
+    setPreviewBackground(document.getElementById('company-logo-preview'), url);
+    if (window.DB && DB.updateProfile) {
+      try { await DB.updateProfile(state.user.id, { company_logo: url }); }
+      catch (err) { console.error('[handleCompanyLogo] persist', err); }
+    }
     showToast('Logo hochgeladen!');
-  });
+  } catch (e) { console.error('[handleCompanyLogo]', e); showToast('Logo-Upload fehlgeschlagen.', 'error'); }
 }
 
-function handleCompanyImage(input) {
+async function handleCompanyImage(input) {
   if (!input.files || !input.files[0]) return;
   if (!state.user.companyImages) state.user.companyImages = [];
   if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
-  readImageFileAsDataURL(input.files[0], (dataUrl) => {
-    state.user.companyImages.push(dataUrl);
+  try {
+    const url = await uploadImageWithFallback(input.files[0]);
+    state.user.companyImages.push(url);
+    if (window.DB && DB.updateProfile) {
+      try { await DB.updateProfile(state.user.id, { company_images: state.user.companyImages }); }
+      catch (err) { console.error('[handleCompanyImage] persist', err); }
+    }
     showToast('Bild hochgeladen!');
     render();
-  });
+  } catch (e) { console.error('[handleCompanyImage]', e); showToast('Bild-Upload fehlgeschlagen.', 'error'); }
 }
 
 function removeCompanyImage(index) {
@@ -2757,6 +2787,7 @@ function renderRegister() {
             <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" required minlength="8">
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
+          ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
@@ -2780,15 +2811,22 @@ function submitRegister(form) {
     role: form.role.value,
     name: form.firstName.value + ' ' + form.lastName.value,
     email: form.email.value,
-    // Send plain-text password to Supabase — it handles bcrypt hashing
-    // internally. The old simpleHash() was a leftover from the
-    // localStorage era and caused a double-hash: the user could
-    // register but never log in again because login() sent the
-    // plain-text password which didn't match the hashed-then-hashed value.
     password: form.password.value
   };
   if (data.role === 'employer') {
     data.company = form.company.value;
+  }
+  // Wenn hCaptcha aktiviert ist, Token vom Widget abholen
+  if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
+    try {
+      const token = window.hcaptcha.getResponse();
+      if (!token) {
+        const err = document.getElementById('register-error');
+        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+        return;
+      }
+      data.captchaToken = token;
+    } catch (e) { console.error('[hcaptcha]', e); }
   }
   register(data);
 }
