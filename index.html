@@ -2483,7 +2483,11 @@ function subscribeToChatList() {
     try { DB.sb.removeChannel(state._chatListSub); } catch (_) {}
     state._chatListSub = null;
   }
-  state._chatListSub = DB.subscribeToChatList(state.user.id, async () => {
+  const ownerId = state.user.id;
+  state._chatListSub = DB.subscribeToChatList(ownerId, async () => {
+    // Guard: session may have been swapped (logout → login as another
+    // user) before this callback fires.
+    if (!state.user || state.user.id !== ownerId) return;
     await loadChatsForUser();
     try { render(); } catch (_) {}
   });
@@ -3454,53 +3458,83 @@ function getCVData() {
   };
 }
 
-function handleCVPhoto(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      state.cvPhoto = e.target.result;
-      const preview = document.getElementById('cv-photo-preview');
-      if (preview) {
-        preview.style.backgroundImage = `url(${e.target.result})`;
-        preview.style.backgroundSize = 'cover';
-        preview.style.backgroundPosition = 'center';
-        preview.innerHTML = '';
-      }
-    };
-    reader.readAsDataURL(input.files[0]);
+// Shared upload guard. Rejects anything that isn't a real image, anything
+// over MAX_IMAGE_BYTES, and (belt & braces) anything whose data: URL
+// doesn't start with image/ — that last check stops a FileReader result
+// from being injected into a CSS url() context with an arbitrary scheme.
+const MAX_IMAGE_BYTES = 3 * 1024 * 1024;  // 3 MB — base64 roughly 4 MB in DB
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
+
+function validateImageFile(file) {
+  if (!file) return 'Keine Datei ausgewählt.';
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return 'Nur PNG, JPG, WEBP oder GIF erlaubt.';
   }
+  if (file.size > MAX_IMAGE_BYTES) {
+    return 'Bild ist zu groß (max. 3 MB).';
+  }
+  return null;
+}
+
+function readImageFileAsDataURL(file, cb) {
+  const err = validateImageFile(file);
+  if (err) { showToast(err, 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const result = e.target.result;
+    // Second fence: result must be a data:image/... URL. FileReader
+    // always produces this for readAsDataURL, but verifying it means
+    // callers can safely embed `result` in CSS url() contexts.
+    if (typeof result !== 'string' || !/^data:image\//.test(result)) {
+      showToast('Bild konnte nicht verarbeitet werden.', 'error');
+      return;
+    }
+    cb(result);
+  };
+  reader.onerror = function() {
+    showToast('Bild konnte nicht gelesen werden.', 'error');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Set a preview element's background image safely. We assign the CSS
+// properties one at a time rather than via a template literal so a
+// malformed data URL can't break out of url(...) into adjacent
+// properties.
+function setPreviewBackground(preview, dataUrl) {
+  if (!preview) return;
+  preview.style.backgroundImage = 'url("' + dataUrl.replace(/"/g, '%22') + '")';
+  preview.style.backgroundSize = 'cover';
+  preview.style.backgroundPosition = 'center';
+  preview.innerHTML = '';
+}
+
+function handleCVPhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  readImageFileAsDataURL(input.files[0], (dataUrl) => {
+    state.cvPhoto = dataUrl;
+    setPreviewBackground(document.getElementById('cv-photo-preview'), dataUrl);
+  });
 }
 
 function handleCompanyLogo(input) {
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyLogo = e.target.result;
-      const preview = document.getElementById('company-logo-preview');
-      if (preview) {
-        preview.style.backgroundImage = `url(${e.target.result})`;
-        preview.style.backgroundSize = 'cover';
-        preview.style.backgroundPosition = 'center';
-        preview.innerHTML = '';
-      }
-      showToast('Logo hochgeladen!');
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
+  if (!input.files || !input.files[0]) return;
+  readImageFileAsDataURL(input.files[0], (dataUrl) => {
+    state.user.companyLogo = dataUrl;
+    setPreviewBackground(document.getElementById('company-logo-preview'), dataUrl);
+    showToast('Logo hochgeladen!');
+  });
 }
 
 function handleCompanyImage(input) {
-  if (input.files && input.files[0]) {
-    if (!state.user.companyImages) state.user.companyImages = [];
-    if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      state.user.companyImages.push(e.target.result);
-      showToast('Bild hochgeladen!');
-      render();
-    };
-    reader.readAsDataURL(input.files[0]);
-  }
+  if (!input.files || !input.files[0]) return;
+  if (!state.user.companyImages) state.user.companyImages = [];
+  if (state.user.companyImages.length >= 6) { showToast('Maximal 6 Bilder erlaubt.', 'error'); return; }
+  readImageFileAsDataURL(input.files[0], (dataUrl) => {
+    state.user.companyImages.push(dataUrl);
+    showToast('Bild hochgeladen!');
+    render();
+  });
 }
 
 function removeCompanyImage(index) {
@@ -3925,6 +3959,13 @@ async function openChatById(chatId) {
       state._chatSub = null;
     }
     state._chatSub = DB.subscribeToMessages(chatId, (newMsg) => {
+      // Guard: the user may have navigated away (or opened a different
+      // chat) between the time this subscription was created and this
+      // callback firing. Without the guard we'd mutate chat.messages
+      // and call render() for a view that isn't on screen any more,
+      // which leaks memory and can flash stale data.
+      if (state.activeChat !== chatId) return;
+      if (!state.user) return;
       const now = chat.messages.find(m => m.id === newMsg.id);
       if (now) return;
       chat.messages.push({
@@ -4018,7 +4059,11 @@ function sendAIMessage() {
   const response = bestMatch ? bestMatch.answer : AI_RESPONSES.defaultAnswer;
 
   setTimeout(() => {
-    container.innerHTML += `<div class="ai-msg bot">${response.replace(/\n/g, '<br>')}</div>`;
+    // Escape first, THEN swap newlines for <br>. The canned AI responses
+    // are developer-authored today, but this guards against a future
+    // code path where answers come from user input / remote sources.
+    const safe = escapeHtml(response).replace(/\n/g, '<br>');
+    container.innerHTML += `<div class="ai-msg bot">${safe}</div>`;
     container.scrollTop = container.scrollHeight;
   }, 800);
 }
@@ -4538,7 +4583,7 @@ function renderJobDetail() {
             </div>
           </div>
           <div class="job-detail-body">
-            ${job.description}
+            ${escapeHtml(job.description)}
           </div>
           ${job.images.length > 0 ? `
             <div style="padding:0 2rem 2rem">
@@ -5251,10 +5296,17 @@ async function saveProfileStep() {
 async function addRefToProfile(ref) {
   if (!state.user || !window.DB) return;
   const refs = Array.isArray(state.user.refs) ? state.user.refs.slice() : [];
+  const previousRefs = refs.slice();
   refs.push(ref);
   state.user.refs = refs;
-  try { await DB.updateProfile(state.user.id, { refs }); }
-  catch (e) { console.error('[addRefToProfile]', e); }
+  try {
+    await DB.updateProfile(state.user.id, { refs });
+  } catch (e) {
+    // Rollback the optimistic update so the UI doesn't pretend we saved.
+    state.user.refs = previousRefs;
+    console.error('[addRefToProfile]', e);
+    showToast('Referenz konnte nicht gespeichert werden: ' + (e.message || ''), 'error');
+  }
 }
 
 function renderSavedJobs() {
@@ -6825,7 +6877,10 @@ async function adminRefreshProfiles() {
   try {
     await loadAllProfilesForAdmin();
     render();
-  } catch (e) { console.error('[adminRefreshProfiles]', e); }
+  } catch (e) {
+    console.error('[adminRefreshProfiles]', e);
+    showToast('Liste konnte nicht aktualisiert werden: ' + (e.message || ''), 'error');
+  }
 }
 
 // Flip the `approved` flag on an employer profile. Backed by the
