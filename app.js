@@ -2374,7 +2374,7 @@ function renderLanding() {
 // Schritte erscheinen einer nach dem anderen und bleiben dann stehen.
 // Kein Loop — wenn alle drei drin sind, ist die Animation fertig.
 var scTimers = [];
-var SC_STEP_DELAY = 800; // ms zwischen den Schritten
+var SC_STEP_DELAY = 350; // ms zwischen den Schritten
 
 function clearScTimers() {
   scTimers.forEach(function(t) { clearTimeout(t); });
