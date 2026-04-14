@@ -2371,9 +2371,10 @@ function renderLanding() {
 }
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
-// Schritte erscheinen einer nach dem anderen und bleiben dann stehen.
-// Kein Loop — wenn alle drei drin sind, ist die Animation fertig.
+// Schritte sind unsichtbar bis der User wirklich zur Sektion scrollt.
+// Dann erscheinen sie nacheinander und bleiben dauerhaft stehen.
 var scTimers = [];
+var scIoObserver = null;
 var SC_STEP_DELAY = 350; // ms zwischen den Schritten
 
 function clearScTimers() {
@@ -2381,50 +2382,51 @@ function clearScTimers() {
   scTimers = [];
 }
 
-function playScOnce() {
-  var steps = document.querySelectorAll('.sc-step');
+function playSc(container) {
+  var steps = container.querySelectorAll('.sc-step');
   if (!steps.length) return;
-  // alle initial verstecken
+  clearScTimers();
+  // Sicherstellen dass alle unsichtbar starten
   steps.forEach(function(el) { el.classList.remove('show'); });
-  // nacheinander einblenden
+  // Nacheinander einblenden — Schritt 1 sofort, Schritt 2/3 kaskadiert
   steps.forEach(function(el, i) {
     scTimers.push(setTimeout(function() {
       el.classList.add('show');
-    }, SC_STEP_DELAY * (i + 1)));
+    }, SC_STEP_DELAY * i));
   });
 }
 
-// Start: nur EINMAL abspielen, wenn die Sektion in den Viewport kommt
-var scHasPlayed = false;
-function triggerSc() {
-  if (scHasPlayed) return;
-  var el = document.getElementById('steps-cascade');
-  if (!el) return;
-  var rect = el.getBoundingClientRect();
-  // Sektion ist zu mindestens 30% im Viewport sichtbar
-  var threshold = window.innerHeight * 0.7;
-  if (rect.top < threshold && rect.bottom > 0) {
-    scHasPlayed = true;
-    playScOnce();
-  }
+function setupScObserver() {
+  var container = document.getElementById('steps-cascade');
+  if (!container || scIoObserver) return;
+  // Reset: alle Steps unsichtbar setzen
+  container.querySelectorAll('.sc-step').forEach(function(el) {
+    el.classList.remove('show');
+  });
+  // IntersectionObserver: nur abspielen wenn mind. 25% sichtbar
+  scIoObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
+        playSc(container);
+        scIoObserver.disconnect();
+        scIoObserver = null;
+      }
+    });
+  }, { threshold: [0, 0.25, 0.5] });
+  scIoObserver.observe(container);
 }
 
-// Beim Scrollen prüfen
-window.addEventListener('scroll', triggerSc, { passive: true });
-window.addEventListener('resize', triggerSc, { passive: true });
-
-// Wenn die Landing-Page neu gerendert wird, Zustand zurücksetzen
-var scObserver = new MutationObserver(function() {
+// Wenn die Landing-Page neu gerendert wird, neu aufsetzen
+var scDomObserver = new MutationObserver(function() {
   var present = !!document.getElementById('steps-cascade');
   if (!present) {
     clearScTimers();
-    scHasPlayed = false;
-  } else if (present && !scHasPlayed) {
-    // sofort prüfen ob schon sichtbar
-    triggerSc();
+    if (scIoObserver) { scIoObserver.disconnect(); scIoObserver = null; }
+  } else if (present && !scIoObserver) {
+    setupScObserver();
   }
 });
-scObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+scDomObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
 function renderJobSearch() {
   const jobs = getFilteredJobs();
