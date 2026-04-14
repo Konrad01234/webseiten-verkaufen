@@ -2371,24 +2371,19 @@ function renderLanding() {
 }
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
-// Schritte sind unsichtbar bis der User wirklich zur Sektion scrollt.
-// Dann erscheinen sie nacheinander und bleiben dauerhaft stehen.
-var scTimers = [];
-var scIoObserver = null;
+// Schritte erscheinen nacheinander wenn die Sektion sichtbar wird.
+// Beim nächsten Rerender (z.B. Seitenwechsel und zurück) wird neu gespielt.
 var SC_STEP_DELAY = 350; // ms zwischen den Schritten
+var scLastContainer = null;
+var scTimers = [];
+var scIo = null;
 
-function clearScTimers() {
+function scPlay(container) {
+  // Timer zurücksetzen, dann nacheinander einblenden
   scTimers.forEach(function(t) { clearTimeout(t); });
   scTimers = [];
-}
-
-function playSc(container) {
   var steps = container.querySelectorAll('.sc-step');
-  if (!steps.length) return;
-  clearScTimers();
-  // Sicherstellen dass alle unsichtbar starten
-  steps.forEach(function(el) { el.classList.remove('show'); });
-  // Nacheinander einblenden — Schritt 1 sofort, Schritt 2/3 kaskadiert
+  // Schritt 1 sofort, Schritt 2/3 mit Delay
   steps.forEach(function(el, i) {
     scTimers.push(setTimeout(function() {
       el.classList.add('show');
@@ -2396,37 +2391,40 @@ function playSc(container) {
   });
 }
 
-function setupScObserver() {
+function scSetup() {
   var container = document.getElementById('steps-cascade');
-  if (!container || scIoObserver) return;
-  // Reset: alle Steps unsichtbar setzen
-  container.querySelectorAll('.sc-step').forEach(function(el) {
-    el.classList.remove('show');
-  });
-  // IntersectionObserver: nur abspielen wenn mind. 25% sichtbar
-  scIoObserver = new IntersectionObserver(function(entries) {
+  if (!container) return;
+  // Gleicher Container wie letztes Mal? Dann nichts tun.
+  if (container === scLastContainer) return;
+  scLastContainer = container;
+
+  // Alten Observer aufräumen
+  if (scIo) { scIo.disconnect(); scIo = null; }
+
+  // Fallback: keine IntersectionObserver-Unterstützung → direkt spielen
+  if (!('IntersectionObserver' in window)) {
+    scPlay(container);
+    return;
+  }
+
+  // Observer: abspielen sobald Sektion sichtbar wird
+  scIo = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
-      if (entry.isIntersecting && entry.intersectionRatio > 0.25) {
-        playSc(container);
-        scIoObserver.disconnect();
-        scIoObserver = null;
+      if (entry.isIntersecting) {
+        scPlay(container);
+        scIo.disconnect();
+        scIo = null;
       }
     });
-  }, { threshold: [0, 0.25, 0.5] });
-  scIoObserver.observe(container);
+  }, { threshold: 0.15 });
+  scIo.observe(container);
 }
 
-// Wenn die Landing-Page neu gerendert wird, neu aufsetzen
-var scDomObserver = new MutationObserver(function() {
-  var present = !!document.getElementById('steps-cascade');
-  if (!present) {
-    clearScTimers();
-    if (scIoObserver) { scIoObserver.disconnect(); scIoObserver = null; }
-  } else if (present && !scIoObserver) {
-    setupScObserver();
-  }
-});
+// Prüft regelmäßig ob der Container da ist (z.B. nach render())
+var scDomObserver = new MutationObserver(scSetup);
 scDomObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+// Initial auch direkt prüfen
+scSetup();
 
 function renderJobSearch() {
   const jobs = getFilteredJobs();
