@@ -2246,33 +2246,31 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- So einfach gehts - Vertikale Slideshow -->
+    <!-- So einfach gehts - Schritte erscheinen nacheinander -->
     <div style="background:var(--gray-50);padding:4rem 0">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
         <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach geht's</h2>
         <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zum neuen Job</p>
       </div>
 
-      <div class="vertical-slideshow" id="vertical-slideshow">
-        <div class="vs-line"><div class="vs-line-fill" id="vs-line-fill"></div></div>
-
-        <div class="vs-step active" data-i="0">
-          <div class="vs-step-circle">1</div>
-          <div class="vs-step-content">
+      <div class="steps-cascade" id="steps-cascade">
+        <div class="sc-step" data-i="0">
+          <div class="sc-step-circle">1</div>
+          <div class="sc-step-text">
             <h3>Profil anlegen</h3>
             <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
           </div>
         </div>
-        <div class="vs-step" data-i="1">
-          <div class="vs-step-circle">2</div>
-          <div class="vs-step-content">
+        <div class="sc-step" data-i="1">
+          <div class="sc-step-circle">2</div>
+          <div class="sc-step-text">
             <h3>Jobs entdecken</h3>
             <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Arbeitszeiten.</p>
           </div>
         </div>
-        <div class="vs-step" data-i="2">
-          <div class="vs-step-circle">3</div>
-          <div class="vs-step-content">
+        <div class="sc-step" data-i="2">
+          <div class="sc-step-circle">3</div>
+          <div class="sc-step-text">
             <h3>Bewerben & starten</h3>
             <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
           </div>
@@ -2280,38 +2278,43 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Feature Highlights -->
+    <!-- Die wichtigsten Features der Website -->
     <div style="padding:5rem 0;background:#fff">
       <div style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
         <div style="text-align:center;margin-bottom:3rem">
-          <span style="display:inline-block;font-size:0.78rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary);margin-bottom:0.75rem">Features</span>
-          <h2 style="font-size:1.9rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Alles was du brauchst</h2>
-          <p style="color:var(--gray-500);font-size:0.95rem">Tools die deinen Jobstart einfacher machen</p>
+          <h2 style="font-size:1.9rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Darum EasyJobs</h2>
+          <p style="color:var(--gray-500);font-size:0.95rem">Die drei Dinge, die uns wirklich anders machen</p>
         </div>
         <div class="features-grid">
           <div class="feature-card">
-            <div class="feature-icon feature-icon-blue">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+            <div class="feature-photo">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80" alt="Jobs in deiner Nähe" loading="lazy">
+              <span class="feature-badge">2.500+ Jobs</span>
             </div>
-            <h3>Lebenslauf-Builder</h3>
-            <p>Erstelle professionelle Lebensläufe mit verschiedenen Designs — direkt in der App, in nur wenigen Minuten.</p>
-            <span class="feature-link">Mehr erfahren →</span>
+            <div class="feature-body">
+              <h3>Jobs in deiner Nähe</h3>
+              <p>Echte Minijobs, Ferienjobs und Praktika bei Unternehmen in deiner Stadt — mit Umkreis-Filter und Kartenansicht.</p>
+            </div>
           </div>
           <div class="feature-card">
-            <div class="feature-icon feature-icon-purple">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+            <div class="feature-photo">
+              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80" alt="1-Klick-Bewerbung" loading="lazy">
+              <span class="feature-badge">1-Klick</span>
             </div>
-            <h3>Auto-Anschreiben</h3>
-            <p>Dein Motivationsschreiben wird basierend auf deinem Profil automatisch erstellt — kein Schreibstress mehr.</p>
-            <span class="feature-link">Mehr erfahren →</span>
+            <div class="feature-body">
+              <h3>Unkomplizierte Bewerbung</h3>
+              <p>Kein Anschreiben, kein Foto-Upload, kein Stress. Profil einmal ausfüllen und mit einem Klick bei jeder Stelle bewerben.</p>
+            </div>
           </div>
           <div class="feature-card">
-            <div class="feature-icon feature-icon-green">
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            <div class="feature-photo">
+              <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Direkter Chat" loading="lazy">
+              <span class="feature-badge">Direkt-Chat</span>
             </div>
-            <h3>Direkt-Chat</h3>
-            <p>Chatte direkt mit deinem zukünftigen Arbeitgeber — alles in der Plattform, ohne Umweg über E-Mails.</p>
-            <span class="feature-link">Mehr erfahren →</span>
+            <div class="feature-body">
+              <h3>Chat statt E-Mail-Pingpong</h3>
+              <p>Direkt mit dem Arbeitgeber schreiben, Fragen klären, Termin ausmachen. Alles läuft in der App — keine versteckten Anrufe oder Mails.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -2364,51 +2367,46 @@ function renderLanding() {
     </div>`;
 }
 
-// ===== Vertikale Slideshow ("So einfach geht's") =====
-var vsIndex = 0;
-var vsTimer = null;
-var VS_DURATION = 3000; // 3s pro Schritt (schneller)
+// ===== Kaskaden-Slideshow ("So einfach geht's") =====
+// Schritte erscheinen einer nach dem anderen, bleiben sichtbar,
+// nach dem letzten kurz warten und dann wieder von vorne.
+var scTimers = [];
+var SC_STEP_DELAY = 900;   // Zeit zwischen den Schritten
+var SC_CYCLE_PAUSE = 2500; // Pause wenn alle 3 stehen, bevor Reset
 
-function setVsStep(n) {
-  vsIndex = n;
-  var steps = document.querySelectorAll('.vs-step');
-  var fill = document.getElementById('vs-line-fill');
+function clearScTimers() {
+  scTimers.forEach(function(t) { clearTimeout(t); });
+  scTimers = [];
+}
+
+function playScCycle() {
+  var steps = document.querySelectorAll('.sc-step');
   if (!steps.length) return;
+  // Reset: alle verstecken
+  steps.forEach(function(el) { el.classList.remove('show'); });
+  // Jeden Schritt nacheinander einblenden
   steps.forEach(function(el, i) {
-    el.classList.remove('active', 'done');
-    if (i < n) el.classList.add('done');
-    else if (i === n) el.classList.add('active');
+    scTimers.push(setTimeout(function() {
+      el.classList.add('show');
+    }, SC_STEP_DELAY * (i + 1)));
   });
-  // Linie füllt sich von Schritt 1 bis zum aktuellen
-  if (fill) {
-    var pct = n === 0 ? 0 : n === 1 ? 50 : 100;
-    fill.style.height = pct + '%';
-  }
+  // Nach dem letzten Schritt + Pause: neu starten
+  var total = SC_STEP_DELAY * steps.length + SC_CYCLE_PAUSE;
+  scTimers.push(setTimeout(playScCycle, total));
 }
 
-function startVs() {
-  if (vsTimer) return;
-  setVsStep(0);
-  vsTimer = setInterval(function() {
-    var next = (vsIndex + 1) % 3;
-    setVsStep(next);
-  }, VS_DURATION);
+function startSc() {
+  clearScTimers();
+  playScCycle();
 }
+function stopSc() { clearScTimers(); }
 
-function stopVs() {
-  if (vsTimer) {
-    clearInterval(vsTimer);
-    vsTimer = null;
-    vsIndex = 0;
-  }
-}
-
-var vsObserver = new MutationObserver(function() {
-  var present = !!document.getElementById('vertical-slideshow');
-  if (present && !vsTimer) startVs();
-  if (!present && vsTimer) stopVs();
+var scObserver = new MutationObserver(function() {
+  var present = !!document.getElementById('steps-cascade');
+  if (present && !scTimers.length) startSc();
+  if (!present && scTimers.length) stopSc();
 });
-vsObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+scObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
 function renderJobSearch() {
   const jobs = getFilteredJobs();

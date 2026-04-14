@@ -510,133 +510,99 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .photo-section-card { height: 280px; }
 }
 
-/* ===== Vertikale Slideshow ("So einfach geht's") ===== */
-.vertical-slideshow {
-  position: relative; max-width: 620px; margin: 0 auto; padding: 0 1.5rem;
+/* ===== Kaskaden-Slideshow ("So einfach geht's") ===== */
+.steps-cascade {
+  max-width: 620px; margin: 0 auto; padding: 0 1.5rem;
+  display: flex; flex-direction: column; gap: 1.25rem;
 }
-/* Verbindungslinie zwischen den Schritten */
-.vs-line {
-  position: absolute; left: calc(1.5rem + 28px); top: 28px; bottom: 28px;
-  width: 3px; background: var(--gray-200); border-radius: 100px;
-  overflow: hidden;
+.sc-step {
+  display: flex; gap: 1.25rem; align-items: flex-start;
+  background: #fff; border-radius: 14px; padding: 1.25rem 1.5rem;
+  border: 1px solid var(--gray-200);
+  /* initial versteckt */
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
 }
-.vs-line-fill {
-  position: absolute; top: 0; left: 0; right: 0;
-  height: 0%; background: linear-gradient(180deg, #0ea5e9, #38bdf8);
-  transition: height 0.5s ease;
-  border-radius: 100px;
+.sc-step.show {
+  opacity: 1; transform: translateY(0);
 }
-/* Einzelne Schritte (alle gleichzeitig sichtbar) */
-.vs-step {
-  position: relative; display: flex; gap: 1.25rem; align-items: flex-start;
-  padding: 1rem 0; opacity: 0.4; transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.vs-step.active { opacity: 1; transform: translateX(4px); }
-.vs-step.done { opacity: 0.8; }
-.vs-step-circle {
-  flex-shrink: 0; width: 56px; height: 56px; border-radius: 50%;
-  background: #fff; color: var(--gray-400);
-  border: 3px solid var(--gray-200);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem; font-weight: 800; z-index: 2;
-  transition: all 0.4s ease;
-}
-.vs-step.active .vs-step-circle,
-.vs-step.done .vs-step-circle {
+.sc-step-circle {
+  flex-shrink: 0; width: 52px; height: 52px; border-radius: 50%;
   background: linear-gradient(135deg, #0ea5e9, #38bdf8);
-  color: #fff; border-color: #0ea5e9;
-  box-shadow: 0 8px 24px rgba(14,165,233,0.35);
+  color: #fff; display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; font-weight: 800;
+  box-shadow: 0 6px 16px rgba(14,165,233,0.3);
 }
-.vs-step.active .vs-step-circle {
-  transform: scale(1.08);
+.sc-step-text { flex: 1; padding-top: 0.2rem; }
+.sc-step-text h3 {
+  font-size: 1.15rem; font-weight: 700; color: var(--gray-900);
+  margin-bottom: 0.3rem;
 }
-.vs-step-content {
-  flex: 1; padding-top: 0.4rem;
-}
-.vs-step-content h3 {
-  font-size: 1.2rem; font-weight: 700; color: var(--gray-900);
-  margin-bottom: 0.35rem; transition: color 0.3s;
-}
-.vs-step.active .vs-step-content h3 { color: var(--primary); }
-.vs-step-content p {
+.sc-step-text p {
   color: var(--gray-500); font-size: 0.92rem;
   line-height: 1.6; margin: 0;
 }
 @media (max-width: 600px) {
-  .vs-step-circle { width: 44px; height: 44px; font-size: 1rem; }
-  .vs-line { left: calc(1.5rem + 22px); }
-  .vs-step-content h3 { font-size: 1.05rem; }
-  .vs-step-content p { font-size: 0.88rem; }
+  .sc-step { padding: 1rem 1.15rem; gap: 1rem; }
+  .sc-step-circle { width: 44px; height: 44px; font-size: 1.05rem; }
+  .sc-step-text h3 { font-size: 1rem; }
+  .sc-step-text p { font-size: 0.88rem; }
 }
 
-/* ===== Feature Cards ("Alles was du brauchst") ===== */
+/* ===== Feature Cards ("Darum EasyJobs") — mit Fotos ===== */
 .features-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
 }
 .feature-card {
   position: relative; background: #fff;
   border: 1px solid var(--gray-200); border-radius: 18px;
-  padding: 2rem 1.75rem; transition: all 0.3s ease;
-  cursor: pointer;
-}
-.feature-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--primary), #60a5fa);
-  border-radius: 18px 18px 0 0; opacity: 0; transition: opacity 0.3s;
+  overflow: hidden; transition: all 0.3s ease;
 }
 .feature-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 20px 50px rgba(30,58,138,0.12);
+  box-shadow: 0 24px 50px rgba(30,58,138,0.15);
   border-color: var(--primary);
 }
-.feature-card:hover::before { opacity: 1; }
-.feature-icon {
-  width: 56px; height: 56px; border-radius: 16px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1.25rem; transition: transform 0.3s;
+.feature-photo {
+  position: relative; height: 210px; overflow: hidden;
 }
-.feature-card:hover .feature-icon { transform: scale(1.08) rotate(-3deg); }
-.feature-icon-blue { background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e40af; }
-.feature-icon-purple { background: linear-gradient(135deg, #ede9fe, #ddd6fe); color: #6d28d9; }
-.feature-icon-green { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #047857; }
-.feature-card h3 {
-  font-size: 1.15rem; font-weight: 700; color: var(--gray-900);
+.feature-photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.6s ease;
+}
+.feature-card:hover .feature-photo img {
+  transform: scale(1.08);
+}
+.feature-badge {
+  position: absolute; top: 1rem; left: 1rem;
+  background: rgba(255,255,255,0.95); backdrop-filter: blur(6px);
+  color: var(--primary); font-size: 0.75rem; font-weight: 700;
+  padding: 0.35rem 0.85rem; border-radius: 100px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  letter-spacing: 0.02em;
+}
+.feature-body { padding: 1.5rem 1.5rem 1.75rem; }
+.feature-body h3 {
+  font-size: 1.2rem; font-weight: 700; color: var(--gray-900);
   margin-bottom: 0.5rem; letter-spacing: -0.01em;
 }
-.feature-card p {
-  color: var(--gray-500); font-size: 0.9rem; line-height: 1.65;
-  margin-bottom: 1.25rem;
+.feature-body p {
+  color: var(--gray-500); font-size: 0.92rem; line-height: 1.65;
+  margin: 0;
 }
-.feature-link {
-  display: inline-flex; align-items: center; font-size: 0.85rem;
-  font-weight: 700; color: var(--primary);
-  transition: gap 0.2s, transform 0.2s;
-}
-.feature-card:hover .feature-link { transform: translateX(4px); }
 @media (max-width: 768px) {
   .features-grid { grid-template-columns: 1fr; }
+  .feature-photo { height: 180px; }
 }
 
-/* CTA Section — richtig dunkles Design wie Hero */
+/* CTA Section — schlicht dunkel, kein Bild */
 .cta-section {
-  position: relative; overflow: hidden;
-  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 60%, #1e40af 100%);
+  position: relative;
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
   color: #fff; padding: 4rem 2rem; text-align: center;
   border-radius: var(--radius-lg); margin: 1rem auto; max-width: 1200px;
-  box-shadow: 0 20px 60px rgba(15,23,42,0.35);
+  box-shadow: 0 20px 60px rgba(30,58,138,0.3);
 }
-.cta-section::before {
-  content: ''; position: absolute; inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80');
-  background-size: cover; background-position: center;
-  opacity: 0.25; pointer-events: none;
-}
-.cta-section::after {
-  content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(15,23,42,0.75) 0%, rgba(30,58,138,0.65) 100%);
-  pointer-events: none;
-}
-.cta-section > * { position: relative; z-index: 2; }
 .cta-section h2 {
   font-size: 2.3rem; font-weight: 800; margin-bottom: 0.75rem;
   font-family: 'Playfair Display', serif; letter-spacing: -0.02em;
