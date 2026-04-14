@@ -2246,34 +2246,36 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- So einfach gehts - Einfache Auto-Slideshow -->
+    <!-- So einfach gehts - Vertikale Slideshow -->
     <div style="background:var(--gray-50);padding:4rem 0">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
         <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach geht's</h2>
         <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zum neuen Job</p>
       </div>
 
-      <div class="simple-slideshow" id="simple-slideshow">
-        <div class="simple-slide active">
-          <div class="simple-slide-circle">1</div>
-          <h3>Profil anlegen</h3>
-          <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
-        </div>
-        <div class="simple-slide">
-          <div class="simple-slide-circle">2</div>
-          <h3>Jobs entdecken</h3>
-          <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Arbeitszeiten.</p>
-        </div>
-        <div class="simple-slide">
-          <div class="simple-slide-circle">3</div>
-          <h3>Bewerben & starten</h3>
-          <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
-        </div>
+      <div class="vertical-slideshow" id="vertical-slideshow">
+        <div class="vs-line"><div class="vs-line-fill" id="vs-line-fill"></div></div>
 
-        <div class="simple-slide-dots">
-          <span class="simple-slide-dot active" data-i="0"></span>
-          <span class="simple-slide-dot" data-i="1"></span>
-          <span class="simple-slide-dot" data-i="2"></span>
+        <div class="vs-step active" data-i="0">
+          <div class="vs-step-circle">1</div>
+          <div class="vs-step-content">
+            <h3>Profil anlegen</h3>
+            <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
+          </div>
+        </div>
+        <div class="vs-step" data-i="1">
+          <div class="vs-step-circle">2</div>
+          <div class="vs-step-content">
+            <h3>Jobs entdecken</h3>
+            <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Arbeitszeiten.</p>
+          </div>
+        </div>
+        <div class="vs-step" data-i="2">
+          <div class="vs-step-circle">3</div>
+          <div class="vs-step-content">
+            <h3>Bewerben & starten</h3>
+            <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
+          </div>
         </div>
       </div>
     </div>
@@ -2362,58 +2364,51 @@ function renderLanding() {
     </div>`;
 }
 
-// ===== Einfache Auto-Slideshow ("So einfach geht's") =====
-var simpleSlideIndex = 0;
-var simpleSlideTimer = null;
-var SIMPLE_SLIDE_DURATION = 5000; // 5s per slide
+// ===== Vertikale Slideshow ("So einfach geht's") =====
+var vsIndex = 0;
+var vsTimer = null;
+var VS_DURATION = 3000; // 3s pro Schritt (schneller)
 
-function setSimpleSlide(n) {
-  simpleSlideIndex = n;
-  var slides = document.querySelectorAll('.simple-slide');
-  var dots = document.querySelectorAll('.simple-slide-dot');
-  if (!slides.length) return;
-  slides.forEach(function(el, i) { el.classList.toggle('active', i === n); });
-  dots.forEach(function(el, i) { el.classList.toggle('active', i === n); });
-}
-
-function startSimpleSlideshow() {
-  if (simpleSlideTimer) return;
-  setSimpleSlide(0);
-  simpleSlideTimer = setInterval(function() {
-    setSimpleSlide((simpleSlideIndex + 1) % 3);
-  }, SIMPLE_SLIDE_DURATION);
-}
-
-function stopSimpleSlideshow() {
-  if (simpleSlideTimer) {
-    clearInterval(simpleSlideTimer);
-    simpleSlideTimer = null;
-    simpleSlideIndex = 0;
+function setVsStep(n) {
+  vsIndex = n;
+  var steps = document.querySelectorAll('.vs-step');
+  var fill = document.getElementById('vs-line-fill');
+  if (!steps.length) return;
+  steps.forEach(function(el, i) {
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
+  // Linie füllt sich von Schritt 1 bis zum aktuellen
+  if (fill) {
+    var pct = n === 0 ? 0 : n === 1 ? 50 : 100;
+    fill.style.height = pct + '%';
   }
 }
 
-// Auto-start whenever the slideshow appears in the DOM
-var simpleSlideObserver = new MutationObserver(function() {
-  var present = !!document.getElementById('simple-slideshow');
-  if (present && !simpleSlideTimer) startSimpleSlideshow();
-  if (!present && simpleSlideTimer) stopSimpleSlideshow();
-});
-simpleSlideObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+function startVs() {
+  if (vsTimer) return;
+  setVsStep(0);
+  vsTimer = setInterval(function() {
+    var next = (vsIndex + 1) % 3;
+    setVsStep(next);
+  }, VS_DURATION);
+}
 
-// Optional manual jump via dot click
-document.addEventListener('click', function(e) {
-  var dot = e.target.closest && e.target.closest('.simple-slide-dot');
-  if (!dot) return;
-  var i = parseInt(dot.getAttribute('data-i'), 10);
-  if (isNaN(i)) return;
-  setSimpleSlide(i);
-  if (simpleSlideTimer) {
-    clearInterval(simpleSlideTimer);
-    simpleSlideTimer = setInterval(function() {
-      setSimpleSlide((simpleSlideIndex + 1) % 3);
-    }, SIMPLE_SLIDE_DURATION);
+function stopVs() {
+  if (vsTimer) {
+    clearInterval(vsTimer);
+    vsTimer = null;
+    vsIndex = 0;
   }
+}
+
+var vsObserver = new MutationObserver(function() {
+  var present = !!document.getElementById('vertical-slideshow');
+  if (present && !vsTimer) startVs();
+  if (!present && vsTimer) stopVs();
 });
+vsObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
 function renderJobSearch() {
   const jobs = getFilteredJobs();
