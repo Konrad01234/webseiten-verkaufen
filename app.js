@@ -2278,42 +2278,45 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Die wichtigsten Features der Website -->
+    <!-- Darum EasyJobs - Editorial-Stil, abwechselnd Bild links/rechts -->
     <div style="padding:5rem 0;background:#fff">
-      <div style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
-        <div style="text-align:center;margin-bottom:3rem">
+      <div style="max-width:1000px;margin:0 auto;padding:0 1.5rem">
+        <div style="text-align:center;margin-bottom:4rem">
           <h2 style="font-size:1.9rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Darum EasyJobs</h2>
-          <p style="color:var(--gray-500);font-size:0.95rem">Die drei Dinge, die uns wirklich anders machen</p>
+          <p style="color:var(--gray-500);font-size:0.95rem">Drei Dinge, die den Unterschied machen</p>
         </div>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-photo">
-              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=80" alt="Jobs in deiner Nähe" loading="lazy">
-              <span class="feature-badge">2.500+ Jobs</span>
+
+        <div class="editorial">
+          <div class="editorial-row">
+            <div class="editorial-image">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80" alt="Jobs in deiner Nähe" loading="lazy">
             </div>
-            <div class="feature-body">
+            <div class="editorial-text">
+              <span class="editorial-num">01</span>
               <h3>Jobs in deiner Nähe</h3>
-              <p>Echte Minijobs, Ferienjobs und Praktika bei Unternehmen in deiner Stadt — mit Umkreis-Filter und Kartenansicht.</p>
+              <p>Keine endlosen Treffer aus ganz Deutschland. Du siehst echte Minijobs, Ferienjobs und Praktika bei Unternehmen in deiner Stadt — mit Umkreis-Filter und Kartenansicht.</p>
             </div>
           </div>
-          <div class="feature-card">
-            <div class="feature-photo">
-              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&q=80" alt="1-Klick-Bewerbung" loading="lazy">
-              <span class="feature-badge">1-Klick</span>
+
+          <div class="editorial-row reverse">
+            <div class="editorial-image">
+              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=900&q=80" alt="Einfache Bewerbung" loading="lazy">
             </div>
-            <div class="feature-body">
-              <h3>Unkomplizierte Bewerbung</h3>
-              <p>Kein Anschreiben, kein Foto-Upload, kein Stress. Profil einmal ausfüllen und mit einem Klick bei jeder Stelle bewerben.</p>
+            <div class="editorial-text">
+              <span class="editorial-num">02</span>
+              <h3>Bewerbung in 10 Sekunden</h3>
+              <p>Kein Anschreiben, kein Foto-Upload, kein Stress. Profil einmal ausfüllen — und mit einem Klick bei jedem Job bewerben. Fertig.</p>
             </div>
           </div>
-          <div class="feature-card">
-            <div class="feature-photo">
-              <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=800&q=80" alt="Direkter Chat" loading="lazy">
-              <span class="feature-badge">Direkt-Chat</span>
+
+          <div class="editorial-row">
+            <div class="editorial-image">
+              <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=900&q=80" alt="Chat mit Arbeitgeber" loading="lazy">
             </div>
-            <div class="feature-body">
-              <h3>Chat statt E-Mail-Pingpong</h3>
-              <p>Direkt mit dem Arbeitgeber schreiben, Fragen klären, Termin ausmachen. Alles läuft in der App — keine versteckten Anrufe oder Mails.</p>
+            <div class="editorial-text">
+              <span class="editorial-num">03</span>
+              <h3>Direkt im Chat klären</h3>
+              <p>Fragen stellen, Termin ausmachen, Details klären — alles direkt in der App. Kein E-Mail-Pingpong und keine versteckten Anrufnummern.</p>
             </div>
           </div>
         </div>
@@ -2368,43 +2371,58 @@ function renderLanding() {
 }
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
-// Schritte erscheinen einer nach dem anderen, bleiben sichtbar,
-// nach dem letzten kurz warten und dann wieder von vorne.
+// Schritte erscheinen einer nach dem anderen und bleiben dann stehen.
+// Kein Loop — wenn alle drei drin sind, ist die Animation fertig.
 var scTimers = [];
-var SC_STEP_DELAY = 900;   // Zeit zwischen den Schritten
-var SC_CYCLE_PAUSE = 2500; // Pause wenn alle 3 stehen, bevor Reset
+var SC_STEP_DELAY = 800; // ms zwischen den Schritten
 
 function clearScTimers() {
   scTimers.forEach(function(t) { clearTimeout(t); });
   scTimers = [];
 }
 
-function playScCycle() {
+function playScOnce() {
   var steps = document.querySelectorAll('.sc-step');
   if (!steps.length) return;
-  // Reset: alle verstecken
+  // alle initial verstecken
   steps.forEach(function(el) { el.classList.remove('show'); });
-  // Jeden Schritt nacheinander einblenden
+  // nacheinander einblenden
   steps.forEach(function(el, i) {
     scTimers.push(setTimeout(function() {
       el.classList.add('show');
     }, SC_STEP_DELAY * (i + 1)));
   });
-  // Nach dem letzten Schritt + Pause: neu starten
-  var total = SC_STEP_DELAY * steps.length + SC_CYCLE_PAUSE;
-  scTimers.push(setTimeout(playScCycle, total));
 }
 
-function startSc() {
-  clearScTimers();
-  playScCycle();
+// Start: nur EINMAL abspielen, wenn die Sektion in den Viewport kommt
+var scHasPlayed = false;
+function triggerSc() {
+  if (scHasPlayed) return;
+  var el = document.getElementById('steps-cascade');
+  if (!el) return;
+  var rect = el.getBoundingClientRect();
+  // Sektion ist zu mindestens 30% im Viewport sichtbar
+  var threshold = window.innerHeight * 0.7;
+  if (rect.top < threshold && rect.bottom > 0) {
+    scHasPlayed = true;
+    playScOnce();
+  }
 }
-function stopSc() { clearScTimers(); }
 
+// Beim Scrollen prüfen
+window.addEventListener('scroll', triggerSc, { passive: true });
+window.addEventListener('resize', triggerSc, { passive: true });
+
+// Wenn die Landing-Page neu gerendert wird, Zustand zurücksetzen
 var scObserver = new MutationObserver(function() {
   var present = !!document.getElementById('steps-cascade');
-  if (present && !scTimers.length) startSc();
-  if (!present && scTimers.length) stopSc();
+  if (!present) {
+    clearScTimers();
+    scHasPlayed = false;
+  } else if (present && !scHasPlayed) {
+    // sofort prüfen ob schon sichtbar
+    triggerSc();
+  }
 });
 scObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
