@@ -2246,58 +2246,88 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- So einfach gehts - Interactive Steps Slideshow -->
-    <div style="background:var(--gray-50);padding:4rem 0">
-      <div style="text-align:center;margin-bottom:3rem;padding:0 1.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach geht's</h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zum neuen Job</p>
+    <!-- So einfach gehts - Auto Slideshow (Cinematic) -->
+    <div style="background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);padding:5rem 0;position:relative;overflow:hidden">
+      <div style="text-align:center;margin-bottom:3rem;padding:0 1.5rem;position:relative;z-index:2">
+        <span style="display:inline-block;font-size:0.78rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:0.75rem">— So funktioniert's —</span>
+        <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem;color:#f8fafc">In 3 Schritten zum neuen Job</h2>
+        <p style="color:#94a3b8;font-size:0.95rem">Lehn dich zurück — wir zeigen dir wie's geht</p>
       </div>
-      <div class="steps-showcase" id="steps-showcase">
-        <div class="steps-nav">
-          <div class="step-nav-item active">
-            <div class="step-nav-number">1</div>
-            <div class="step-nav-title">Profil anlegen</div>
-            <div class="step-nav-desc">Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</div>
+
+      <div class="auto-slideshow" id="auto-slideshow">
+        <!-- Progress Bar Top -->
+        <div class="auto-slideshow-progress">
+          <div class="auto-slideshow-progress-fill" id="auto-slideshow-progress-fill"></div>
+        </div>
+
+        <!-- Slides -->
+        <div class="auto-slideshow-track" id="auto-slideshow-track">
+          <div class="auto-slide active" data-step="1">
+            <div class="auto-slide-image-wrap">
+              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=80" alt="Profil anlegen">
+              <div class="auto-slide-overlay"></div>
+            </div>
+            <div class="auto-slide-content">
+              <div class="auto-slide-number">01</div>
+              <div class="auto-slide-text">
+                <span class="auto-slide-tag">Schritt 1 von 3</span>
+                <h3>Profil anlegen</h3>
+                <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
+                <div class="auto-slide-chips">
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Name & Skills</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lebenslauf</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>2 Minuten</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="step-nav-item">
-            <div class="step-nav-number">2</div>
-            <div class="step-nav-title">Jobs entdecken</div>
-            <div class="step-nav-desc">Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Zeiten.</div>
+
+          <div class="auto-slide" data-step="2">
+            <div class="auto-slide-image-wrap">
+              <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1400&q=80" alt="Jobs entdecken">
+              <div class="auto-slide-overlay"></div>
+            </div>
+            <div class="auto-slide-content">
+              <div class="auto-slide-number">02</div>
+              <div class="auto-slide-text">
+                <span class="auto-slide-tag">Schritt 2 von 3</span>
+                <h3>Jobs entdecken</h3>
+                <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Zeiten.</p>
+                <div class="auto-slide-chips">
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Smart Filter</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>In deiner Nähe</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Echtzeit</span>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="step-nav-item">
-            <div class="step-nav-number">3</div>
-            <div class="step-nav-title">Bewerben & starten</div>
-            <div class="step-nav-desc">Ein Klick, fertig. Dein Anschreiben wird automatisch erstellt. Der Rest läuft per Chat.</div>
+
+          <div class="auto-slide" data-step="3">
+            <div class="auto-slide-image-wrap">
+              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80" alt="Bewerben">
+              <div class="auto-slide-overlay"></div>
+            </div>
+            <div class="auto-slide-content">
+              <div class="auto-slide-number">03</div>
+              <div class="auto-slide-text">
+                <span class="auto-slide-tag">Schritt 3 von 3</span>
+                <h3>Bewerben & starten</h3>
+                <p>Ein Klick, fertig. Dein Anschreiben wird automatisch erstellt. Der Rest läuft per Chat.</p>
+                <div class="auto-slide-chips">
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>1-Klick</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Auto-Anschreiben</span>
+                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Live-Chat</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="steps-visual">
-          <div class="step-slide active">
-            <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900&q=80" alt="Profil">
-            <div class="step-slide-badge">Schritt 1 — Profil</div>
-            <div class="step-slide-features">
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Name & Skills</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Lebenslauf</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>2 Minuten</div>
-            </div>
-          </div>
-          <div class="step-slide">
-            <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=900&q=80" alt="Suche">
-            <div class="step-slide-badge">Schritt 2 — Suche</div>
-            <div class="step-slide-features">
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Smart Filter</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>In deiner Nähe</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Echtzeit</div>
-            </div>
-          </div>
-          <div class="step-slide">
-            <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=900&q=80" alt="Bewerben">
-            <div class="step-slide-badge">Schritt 3 — Bewerben</div>
-            <div class="step-slide-features">
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>1-Klick</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Auto-Anschreiben</div>
-              <div class="step-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>Live-Chat</div>
-            </div>
-          </div>
+
+        <!-- Bottom Indicators -->
+        <div class="auto-slideshow-dots">
+          <span class="auto-slide-dot active" data-i="0"></span>
+          <span class="auto-slide-dot" data-i="1"></span>
+          <span class="auto-slide-dot" data-i="2"></span>
         </div>
       </div>
     </div>
@@ -2382,31 +2412,69 @@ function renderLanding() {
     </div>`;
 }
 
-// Steps Slideshow Logic
-var stepIndex = 0;
-var stepTimer = null;
-function switchStep(n) {
-  stepIndex = n;
-  var items = document.querySelectorAll('.step-nav-item');
-  var slides = document.querySelectorAll('.step-slide');
-  if (!items.length) return;
-  items.forEach(function(el, i) { el.classList.toggle('active', i === n); });
+// ===== Auto Slideshow ("So einfach geht's") =====
+var autoSlideIndex = 0;
+var autoSlideTimer = null;
+var AUTO_SLIDE_DURATION = 6000; // 6s per slide
+
+function setAutoSlide(n) {
+  autoSlideIndex = n;
+  var slides = document.querySelectorAll('.auto-slide');
+  var dots = document.querySelectorAll('.auto-slide-dot');
+  var fill = document.getElementById('auto-slideshow-progress-fill');
+  if (!slides.length) return;
   slides.forEach(function(el, i) { el.classList.toggle('active', i === n); });
-  clearInterval(stepTimer);
-  stepTimer = setInterval(function() { switchStep((stepIndex + 1) % 3); }, 6000);
-}
-// Auto-start when landing loads
-var stepObserver = new MutationObserver(function() {
-  if (document.getElementById('steps-showcase') && !stepTimer) {
-    stepTimer = setInterval(function() { switchStep((stepIndex + 1) % 3); }, 6000);
+  dots.forEach(function(el, i) { el.classList.toggle('active', i === n); });
+  // restart the progress bar animation
+  if (fill) {
+    fill.style.transition = 'none';
+    fill.style.width = '0%';
+    // force reflow then start
+    void fill.offsetWidth;
+    fill.style.transition = 'width ' + (AUTO_SLIDE_DURATION / 1000) + 's linear';
+    fill.style.width = '100%';
   }
-  if (!document.getElementById('steps-showcase') && stepTimer) {
-    clearInterval(stepTimer);
-    stepTimer = null;
-    stepIndex = 0;
+}
+
+function startAutoSlideshow() {
+  if (autoSlideTimer) return;
+  setAutoSlide(0);
+  autoSlideTimer = setInterval(function() {
+    setAutoSlide((autoSlideIndex + 1) % 3);
+  }, AUTO_SLIDE_DURATION);
+}
+
+function stopAutoSlideshow() {
+  if (autoSlideTimer) {
+    clearInterval(autoSlideTimer);
+    autoSlideTimer = null;
+    autoSlideIndex = 0;
+  }
+}
+
+// Auto-start whenever the slideshow appears in the DOM
+var autoSlideObserver = new MutationObserver(function() {
+  var present = !!document.getElementById('auto-slideshow');
+  if (present && !autoSlideTimer) startAutoSlideshow();
+  if (!present && autoSlideTimer) stopAutoSlideshow();
+});
+autoSlideObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+
+// Allow manual jump via dot click (still optional)
+document.addEventListener('click', function(e) {
+  var dot = e.target.closest && e.target.closest('.auto-slide-dot');
+  if (!dot) return;
+  var i = parseInt(dot.getAttribute('data-i'), 10);
+  if (isNaN(i)) return;
+  setAutoSlide(i);
+  // restart timer so the user gets full duration on the chosen slide
+  if (autoSlideTimer) {
+    clearInterval(autoSlideTimer);
+    autoSlideTimer = setInterval(function() {
+      setAutoSlide((autoSlideIndex + 1) % 3);
+    }, AUTO_SLIDE_DURATION);
   }
 });
-stepObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
 function renderJobSearch() {
   const jobs = getFilteredJobs();
