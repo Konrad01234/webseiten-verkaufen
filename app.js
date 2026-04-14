@@ -2246,88 +2246,34 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- So einfach gehts - Auto Slideshow (Cinematic) -->
-    <div style="background:linear-gradient(180deg,#0f172a 0%,#1e293b 100%);padding:5rem 0;position:relative;overflow:hidden">
-      <div style="text-align:center;margin-bottom:3rem;padding:0 1.5rem;position:relative;z-index:2">
-        <span style="display:inline-block;font-size:0.78rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:#60a5fa;margin-bottom:0.75rem">— So funktioniert's —</span>
-        <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem;color:#f8fafc">In 3 Schritten zum neuen Job</h2>
-        <p style="color:#94a3b8;font-size:0.95rem">Lehn dich zurück — wir zeigen dir wie's geht</p>
+    <!-- So einfach gehts - Einfache Auto-Slideshow -->
+    <div style="background:var(--gray-50);padding:4rem 0">
+      <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
+        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach geht's</h2>
+        <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zum neuen Job</p>
       </div>
 
-      <div class="auto-slideshow" id="auto-slideshow">
-        <!-- Progress Bar Top -->
-        <div class="auto-slideshow-progress">
-          <div class="auto-slideshow-progress-fill" id="auto-slideshow-progress-fill"></div>
+      <div class="simple-slideshow" id="simple-slideshow">
+        <div class="simple-slide active">
+          <div class="simple-slide-circle">1</div>
+          <h3>Profil anlegen</h3>
+          <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
+        </div>
+        <div class="simple-slide">
+          <div class="simple-slide-circle">2</div>
+          <h3>Jobs entdecken</h3>
+          <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Arbeitszeiten.</p>
+        </div>
+        <div class="simple-slide">
+          <div class="simple-slide-circle">3</div>
+          <h3>Bewerben & starten</h3>
+          <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
         </div>
 
-        <!-- Slides -->
-        <div class="auto-slideshow-track" id="auto-slideshow-track">
-          <div class="auto-slide active" data-step="1">
-            <div class="auto-slide-image-wrap">
-              <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1400&q=80" alt="Profil anlegen">
-              <div class="auto-slide-overlay"></div>
-            </div>
-            <div class="auto-slide-content">
-              <div class="auto-slide-number">01</div>
-              <div class="auto-slide-text">
-                <span class="auto-slide-tag">Schritt 1 von 3</span>
-                <h3>Profil anlegen</h3>
-                <p>Sag uns wer du bist, was du kannst und wann du Zeit hast. Dauert keine 2 Minuten.</p>
-                <div class="auto-slide-chips">
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Name & Skills</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Lebenslauf</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>2 Minuten</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="auto-slide" data-step="2">
-            <div class="auto-slide-image-wrap">
-              <img src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=1400&q=80" alt="Jobs entdecken">
-              <div class="auto-slide-overlay"></div>
-            </div>
-            <div class="auto-slide-content">
-              <div class="auto-slide-number">02</div>
-              <div class="auto-slide-text">
-                <span class="auto-slide-tag">Schritt 2 von 3</span>
-                <h3>Jobs entdecken</h3>
-                <p>Stöbere durch Angebote in deiner Nähe. Filter nach Entfernung, Branche und Zeiten.</p>
-                <div class="auto-slide-chips">
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Smart Filter</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>In deiner Nähe</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Echtzeit</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="auto-slide" data-step="3">
-            <div class="auto-slide-image-wrap">
-              <img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?w=1400&q=80" alt="Bewerben">
-              <div class="auto-slide-overlay"></div>
-            </div>
-            <div class="auto-slide-content">
-              <div class="auto-slide-number">03</div>
-              <div class="auto-slide-text">
-                <span class="auto-slide-tag">Schritt 3 von 3</span>
-                <h3>Bewerben & starten</h3>
-                <p>Ein Klick, fertig. Dein Anschreiben wird automatisch erstellt. Der Rest läuft per Chat.</p>
-                <div class="auto-slide-chips">
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>1-Klick</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Auto-Anschreiben</span>
-                  <span class="auto-slide-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>Live-Chat</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bottom Indicators -->
-        <div class="auto-slideshow-dots">
-          <span class="auto-slide-dot active" data-i="0"></span>
-          <span class="auto-slide-dot" data-i="1"></span>
-          <span class="auto-slide-dot" data-i="2"></span>
+        <div class="simple-slide-dots">
+          <span class="simple-slide-dot active" data-i="0"></span>
+          <span class="simple-slide-dot" data-i="1"></span>
+          <span class="simple-slide-dot" data-i="2"></span>
         </div>
       </div>
     </div>
@@ -2412,67 +2358,56 @@ function renderLanding() {
     </div>`;
 }
 
-// ===== Auto Slideshow ("So einfach geht's") =====
-var autoSlideIndex = 0;
-var autoSlideTimer = null;
-var AUTO_SLIDE_DURATION = 6000; // 6s per slide
+// ===== Einfache Auto-Slideshow ("So einfach geht's") =====
+var simpleSlideIndex = 0;
+var simpleSlideTimer = null;
+var SIMPLE_SLIDE_DURATION = 5000; // 5s per slide
 
-function setAutoSlide(n) {
-  autoSlideIndex = n;
-  var slides = document.querySelectorAll('.auto-slide');
-  var dots = document.querySelectorAll('.auto-slide-dot');
-  var fill = document.getElementById('auto-slideshow-progress-fill');
+function setSimpleSlide(n) {
+  simpleSlideIndex = n;
+  var slides = document.querySelectorAll('.simple-slide');
+  var dots = document.querySelectorAll('.simple-slide-dot');
   if (!slides.length) return;
   slides.forEach(function(el, i) { el.classList.toggle('active', i === n); });
   dots.forEach(function(el, i) { el.classList.toggle('active', i === n); });
-  // restart the progress bar animation
-  if (fill) {
-    fill.style.transition = 'none';
-    fill.style.width = '0%';
-    // force reflow then start
-    void fill.offsetWidth;
-    fill.style.transition = 'width ' + (AUTO_SLIDE_DURATION / 1000) + 's linear';
-    fill.style.width = '100%';
-  }
 }
 
-function startAutoSlideshow() {
-  if (autoSlideTimer) return;
-  setAutoSlide(0);
-  autoSlideTimer = setInterval(function() {
-    setAutoSlide((autoSlideIndex + 1) % 3);
-  }, AUTO_SLIDE_DURATION);
+function startSimpleSlideshow() {
+  if (simpleSlideTimer) return;
+  setSimpleSlide(0);
+  simpleSlideTimer = setInterval(function() {
+    setSimpleSlide((simpleSlideIndex + 1) % 3);
+  }, SIMPLE_SLIDE_DURATION);
 }
 
-function stopAutoSlideshow() {
-  if (autoSlideTimer) {
-    clearInterval(autoSlideTimer);
-    autoSlideTimer = null;
-    autoSlideIndex = 0;
+function stopSimpleSlideshow() {
+  if (simpleSlideTimer) {
+    clearInterval(simpleSlideTimer);
+    simpleSlideTimer = null;
+    simpleSlideIndex = 0;
   }
 }
 
 // Auto-start whenever the slideshow appears in the DOM
-var autoSlideObserver = new MutationObserver(function() {
-  var present = !!document.getElementById('auto-slideshow');
-  if (present && !autoSlideTimer) startAutoSlideshow();
-  if (!present && autoSlideTimer) stopAutoSlideshow();
+var simpleSlideObserver = new MutationObserver(function() {
+  var present = !!document.getElementById('simple-slideshow');
+  if (present && !simpleSlideTimer) startSimpleSlideshow();
+  if (!present && simpleSlideTimer) stopSimpleSlideshow();
 });
-autoSlideObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+simpleSlideObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
 
-// Allow manual jump via dot click (still optional)
+// Optional manual jump via dot click
 document.addEventListener('click', function(e) {
-  var dot = e.target.closest && e.target.closest('.auto-slide-dot');
+  var dot = e.target.closest && e.target.closest('.simple-slide-dot');
   if (!dot) return;
   var i = parseInt(dot.getAttribute('data-i'), 10);
   if (isNaN(i)) return;
-  setAutoSlide(i);
-  // restart timer so the user gets full duration on the chosen slide
-  if (autoSlideTimer) {
-    clearInterval(autoSlideTimer);
-    autoSlideTimer = setInterval(function() {
-      setAutoSlide((autoSlideIndex + 1) % 3);
-    }, AUTO_SLIDE_DURATION);
+  setSimpleSlide(i);
+  if (simpleSlideTimer) {
+    clearInterval(simpleSlideTimer);
+    simpleSlideTimer = setInterval(function() {
+      setSimpleSlide((simpleSlideIndex + 1) % 3);
+    }, SIMPLE_SLIDE_DURATION);
   }
 });
 
