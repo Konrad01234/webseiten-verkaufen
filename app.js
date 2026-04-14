@@ -67,37 +67,6 @@ const SKILLS = [
 let WORKER_CHAT_MESSAGES = [];
 let EMPLOYER_CHAT_MESSAGES = [];
 
-const AI_RESPONSES = [
-  { keywords: ['16 jahre', 'mit 16', 'ab 16', 'welche jobs', 'alter'], answer: 'Mit 16 Jahren darfst du in vielen Bereichen arbeiten! Auf EasyJobs findest du z.B.:\n\n• Aushilfe im Einzelhandel (z.B. MediaMarkt, Supermärkte)\n• Kellner/in im Café oder Restaurant\n• Nachhilfe geben\n• Hundesitting & Tierpflege\n• Promotion & Flyerverteilen\n\nGeh einfach auf "Jobs finden" und filtere nach deiner Stadt und Kategorie. Viele Arbeitgeber suchen gezielt junge, motivierte Leute!' },
-  { keywords: ['in meiner nähe', 'in der nähe', 'umkreis', 'umgebung', 'stadt', 'entfernung'], answer: 'Ja! Auf EasyJobs kannst du Jobs in deiner Nähe finden:\n\n1. Geh auf "Jobs finden"\n2. Gib deine Stadt ein oder nutze den Umkreis-Filter\n3. Stelle den Radius ein (z.B. 5 km, 10 km, 20 km)\n\nSo siehst du nur Jobs, die du gut erreichen kannst. In deinem Profil kannst du auch deine Adresse und einen Suchradius hinterlegen.' },
-  { keywords: ['ohne erfahrung', 'keine erfahrung', 'erster job', 'erstes mal', 'anfänger', 'passen zu mir'], answer: 'Keine Sorge – die meisten Jobs auf EasyJobs brauchen keine Vorerfahrung! Besonders gut geeignet für Einsteiger:\n\n• Aushilfe im Einzelhandel – Kasse, Regale auffüllen\n• Gastronomie – Bedienen, Abräumen\n• Promotion – Flyer verteilen auf Events\n• Nachhilfe – wenn du in einem Fach gut bist\n• Tierpflege – Gassi gehen, Hundesitting\n\nTipp: Hebe in deinem Profil deine Stärken hervor (z.B. Teamarbeit, Zuverlässigkeit, Pünktlichkeit). Das zählt oft mehr als Erfahrung!' },
-  { keywords: ['ferienjob', 'ferien', 'sommerferien', 'schulferien', 'bester job'], answer: 'Die beliebtesten Ferienjobs für Schüler auf EasyJobs:\n\n1. Lagerhelfer/in – z.B. bei Amazon, DHL (ca. 14€/Std)\n2. Aushilfe im Einzelhandel (ca. 12-13€/Std)\n3. Event-Promotion – Festivals, Messen (ca. 13€/Std)\n4. Gastronomie – Cafés, Restaurants (ca. 13€/Std + Trinkgeld)\n\nFerienjobs bieten meist 30-40 Std/Woche und sind perfekt, um in kurzer Zeit gut zu verdienen. Filter auf EasyJobs einfach nach "Ferienjob"!' },
-  { keywords: ['wie bewerbe', 'bewerben', 'bewerbung schicken', 'bewerbung abschicken'], answer: 'So bewirbst du dich auf EasyJobs:\n\n1. Erstelle dein Profil (Name, Fähigkeiten, Verfügbarkeit)\n2. Suche passende Jobs unter "Jobs finden"\n3. Klicke auf einen Job und dann auf "Jetzt bewerben"\n4. Fertig! Der Arbeitgeber sieht dein Profil und meldet sich per Chat\n\nTipp: Je vollständiger dein Profil ist (Lebenslauf, Fähigkeiten, Foto), desto besser stehen deine Chancen!' },
-  { keywords: ['lebenslauf', 'cv', 'brauche ich einen'], answer: 'Ein Lebenslauf ist nicht zwingend nötig, hilft aber sehr! Auf EasyJobs gibt es einen kostenlosen Lebenslauf-Builder:\n\n1. Geh auf "Lebenslauf" in deinem Dashboard\n2. Wähle eine Vorlage (Modern, Klassisch oder Kreativ)\n3. Fülle deine Daten aus\n4. Fertig – er wird automatisch deinem Profil hinzugefügt\n\nAuch ohne Berufserfahrung kannst du Schulbildung, Hobbys, Ehrenämter und Stärken angeben.' },
-  { keywords: ['erste nachricht', 'anschreiben', 'was schreibe ich', 'nachricht an', 'kontakt aufnehmen'], answer: 'Eine gute erste Nachricht an den Arbeitgeber ist kurz und freundlich:\n\n"Hallo, ich bin [Name], [Alter] Jahre alt und interessiere mich für die Stelle als [Jobtitel]. Ich bin [1-2 Stärken, z.B. zuverlässig und teamfähig] und könnte ab [Datum] anfangen. Ich freue mich auf eine Rückmeldung!"\n\nTipps:\n• Sei freundlich und direkt\n• Erwähne, warum dich der Job interessiert\n• Schreibe fehlerfrei\n• Stelle eine Frage (zeigt Interesse)' },
-  { keywords: ['verdienen', 'verdienst', 'gehalt', 'stundenlohn', 'geld', 'mindestlohn', 'lohn'], answer: 'Als Schüler/in kannst du auf EasyJobs gut verdienen! Typische Stundenlöhne:\n\n• Einzelhandel: 12-13€/Std\n• Gastronomie: 12-14€/Std + Trinkgeld\n• Nachhilfe: 13-18€/Std\n• IT/Büro: 14-17€/Std\n• Lager/Logistik: 13-15€/Std\n\nDer gesetzliche Mindestlohn (12,82€/Std) gilt ab 18 Jahren. Für Minijobs gilt die 538€-Grenze pro Monat – darüber hinaus fallen Steuern an.' },
-  { keywords: ['stunden', 'arbeitszeit', 'wie viel arbeiten', 'wie lange arbeiten', 'arbeiten darf'], answer: 'Die Arbeitszeiten für Jugendliche sind gesetzlich geregelt:\n\nUnter 15 Jahren: Max. 2 Std/Tag (mit Erlaubnis der Eltern)\n15-17 Jahre: Max. 8 Std/Tag, 40 Std/Woche\nAb 18 Jahren: Keine besonderen Einschränkungen\n\nWichtig:\n• Nicht vor 6 Uhr und nicht nach 20 Uhr (unter 18)\n• Mindestens 12 Stunden Ruhezeit zwischen den Schichten\n• An Wochenenden nur in bestimmten Branchen (z.B. Gastronomie)' },
-  { keywords: ['schulzeit', 'schule', 'während der schule', 'neben der schule', 'schulpflichtig'], answer: 'Ja, du darfst neben der Schule arbeiten! Regeln während der Schulzeit:\n\n• 13-14 Jahre: Max. 2 Std/Tag, nur leichte Arbeiten (z.B. Zeitung austragen)\n• 15-17 Jahre: Max. 2 Std an Schultagen, mehr am Wochenende & in Ferien\n• Schulpflicht geht immer vor – dein Job darf die Schule nicht beeinträchtigen\n\nAuf EasyJobs findest du viele Minijobs mit flexiblen Zeiten, die perfekt neben die Schule passen!' },
-  { keywords: ['seriös', 'vertrauen', 'sicher', 'betrug'], answer: 'Gute Frage! Auf EasyJobs achten wir auf Seriosität:\n\n• Arbeitgeber werden überprüft\n• Bewertungen von anderen Arbeitnehmern sichtbar\n• Direkter Chat auf der Plattform\n• Keine Vorab-Zahlungen nötig\n\nAchte selbst auf:\n• Hat das Unternehmen ein vollständiges Profil?\n• Gibt es Bewertungen von anderen?\n• Wird ein normaler Stundenlohn angeboten?\n\nWenn dir etwas komisch vorkommt, melde es uns!' },
-  { keywords: ['fake', 'gefälscht', 'falsch', 'erkennen', 'warnung'], answer: 'So erkennst du unseriöse Job-Angebote:\n\nUnrealistisch hoher Lohn (z.B. "500€ am Tag")\nDu sollst vorher Geld bezahlen\nKeine klare Jobbeschreibung\nKommunikation nur per WhatsApp/Telegram statt über die Plattform\nKein Firmenname oder keine Adresse\nDruck, sofort zuzusagen\n\nAuf EasyJobs kannst du Unternehmen anhand ihrer Bewertungen und ihres Profils einschätzen. Im Zweifel: Finger weg und uns melden!' },
-  { keywords: ['antwortet nicht', 'keine antwort', 'nicht gemeldet', 'wartezeit', 'warten'], answer: 'Wenn ein Arbeitgeber nicht antwortet:\n\n1. Warte 2-3 Werktage – viele Arbeitgeber sind beschäftigt\n2. Schicke eine freundliche Nachfolge-Nachricht über den Chat\n3. Bewirb dich parallel auf andere Jobs – setze nicht alles auf eine Karte!\n\nTipp: Ein vollständiges Profil mit Lebenslauf und Fähigkeiten erhöht deine Antwortchancen deutlich.' },
-  { keywords: ['mehrere jobs', 'gleichzeitig', 'zwei jobs', 'verschiedene jobs'], answer: 'Ja, du kannst mehrere Jobs gleichzeitig haben! Beachte dabei:\n\n• Die 538€-Grenze gilt für alle Minijobs zusammen\n• Deine Arbeitszeiten dürfen sich nicht überschneiden\n• Unter 18: Max. 40 Std/Woche insgesamt\n• Informiere beide Arbeitgeber\n\nAuf EasyJobs kannst du mehrere Jobs speichern und dich auf verschiedene Stellen gleichzeitig bewerben.' },
-  { keywords: ['rückmeldung', 'wie schnell', 'wie lange dauert', 'antwortzeit'], answer: 'Die Antwortzeit variiert je nach Arbeitgeber:\n\n• Schnelle Antwort: Innerhalb von 1-2 Tagen\n• Normal: 3-5 Werktage\n• Manchmal dauert es bis zu 1-2 Wochen\n\nTipps für schnellere Rückmeldungen:\n• Vervollständige dein Profil (100%)\n• Lade einen Lebenslauf hoch\n• Schreibe eine persönliche Nachricht zum Job\n• Bewirb dich zeitnah nach Veröffentlichung' },
-  { keywords: ['nach der bewerbung', 'was passiert', 'nächste schritte', 'ablauf', 'wie läuft', 'prozess'], answer: 'So läuft es nach deiner Bewerbung auf EasyJobs ab:\n\n1. Bewerbung abgeschickt – der Arbeitgeber wird benachrichtigt\n2. Chat – der Arbeitgeber kann dir direkt schreiben\n3. Kennenlernen – ihr vereinbart ein Treffen oder Telefonat\n4. Zusage – ihr klärt Startdatum und Details\n5. Jobstart!\n\nDen Status deiner Bewerbungen siehst du jederzeit in deinem Dashboard unter "Bewerbungen".' },
-  { keywords: ['schüler einstellen', 'ab welchem alter', 'einstellen alter', 'minderjährig einstellen'], answer: 'Als Arbeitgeber können Sie Schüler ab folgenden Altersgruppen einstellen:\n\n• Ab 13 Jahren: Leichte Tätigkeiten (z.B. Zeitung austragen) mit Einwilligung der Eltern, max. 2 Std/Tag\n• Ab 15 Jahren: Die meisten Minijobs & Ferienjobs, max. 8 Std/Tag\n• Ab 18 Jahren: Keine besonderen Einschränkungen\n\nAuf EasyJobs finden Sie motivierte junge Talente – erstellen Sie einfach eine Stellenanzeige über "Anzeige schalten"!' },
-  { keywords: ['regeln', 'minderjährig', 'jugendarbeitsschutz', 'vorschriften', 'beachten', 'beschäftige'], answer: 'Wichtige Regeln bei der Beschäftigung von Minderjährigen:\n\nJugendarbeitsschutzgesetz (JArbSchG):\n• Max. 8 Std/Tag, 40 Std/Woche (15-17 Jahre)\n• Arbeitszeit: 6-20 Uhr (Ausnahmen in Gastronomie bis 22 Uhr)\n• Mind. 30 Min Pause bei 4,5+ Std Arbeit\n• Kein Alkohol-Ausschank unter 16\n• Schriftliche Einwilligung der Eltern unter 18\n• 12 Std Ruhezeit zwischen Schichten' },
-  { keywords: ['jobanzeige', 'anzeige erstellen', 'stelle ausschreiben', 'stellenanzeige'], answer: 'So erstellen Sie eine Jobanzeige auf EasyJobs:\n\n1. Registrieren Sie sich als "Arbeitgeber"\n2. Klicken Sie auf "Anzeige schalten"\n3. Füllen Sie den 5-Schritte-Assistenten aus:\n   • Jobtitel & Kategorie\n   • Standort & Arbeitszeiten\n   • Gehalt & Anforderungen\n   • Beschreibung\n   • Vorschau & Veröffentlichung\n\nIhre Anzeige ist sofort sichtbar und Sie erhalten Bewerbungen direkt über die Plattform.' },
-  { keywords: ['passende bewerber', 'bewerber finden', 'matching', 'vorgeschlagen'], answer: 'EasyJobs hilft Ihnen, passende Bewerber zu finden:\n\n• Bewerber werden nach Standort, Verfügbarkeit und Fähigkeiten gematcht\n• Sie sehen das vollständige Profil jedes Bewerbers\n• Fähigkeiten, Lebenslauf und Verfügbarkeit auf einen Blick\n• Direkter Chat für schnelle Kommunikation\n\nTipp: Je detaillierter Ihre Jobbeschreibung, desto passendere Bewerbungen erhalten Sie!' },
-  { keywords: ['zuverlässig', 'zuverlässige bewerber', 'bewerber einschätzen', 'vergleichen'], answer: 'So erkennen Sie zuverlässige Bewerber auf EasyJobs:\n\n• Vollständiges Profil (100% ausgefüllt)\n• Lebenslauf hochgeladen\n• Positive Bewertungen von früheren Arbeitgebern\n• Schnelle Antwortzeit im Chat\n• Fähigkeiten passen zur Stelle\n\nUnter "Bewerber" in Ihrem Dashboard können Sie alle Bewerbungen vergleichen und Profile nebeneinander ansehen.' },
-  { keywords: ['nicht erscheint', 'nicht gekommen', 'absage', 'abgesagt', 'kurzfristig'], answer: 'Wenn ein Schüler nicht erscheint oder kurzfristig absagt:\n\n1. Kontaktieren Sie den Schüler über den EasyJobs-Chat\n2. Geben Sie eine Bewertung ab – das hilft anderen Arbeitgebern\n3. Suchen Sie über Ihre aktive Anzeige schnell Ersatz\n\nTipp: Stellen Sie mehrere Kandidaten ein oder halten Sie eine Warteliste.' },
-  { keywords: ['wie schnell einstellen', 'schnell jemanden', 'dringend', 'sofort'], answer: 'Auf EasyJobs können Sie sehr schnell einstellen:\n\n• Anzeige erstellen: Ca. 5 Minuten\n• Erste Bewerbungen: Oft innerhalb von Stunden\n• Chat & Kennenlernen: Direkt über die Plattform\n• Einstellung: Teilweise am selben Tag möglich\n\nTipp: Beschreiben Sie die Stelle möglichst genau, um passende Bewerber zu erreichen!' },
-  { keywords: ['wie funktioniert', 'plattform', 'easyjobs'], answer: 'So funktioniert EasyJobs:\n\nFür Arbeitnehmer (Schüler):\n1. Kostenlos registrieren\n2. Profil ausfüllen (Fähigkeiten, Verfügbarkeit)\n3. Jobs in deiner Nähe finden und bewerben\n4. Per Chat mit Arbeitgebern kommunizieren\n\nFür Arbeitgeber:\n1. Kostenlos registrieren\n2. Stellenanzeige erstellen\n3. Bewerbungen erhalten und vergleichen\n4. Direkt über die Plattform einstellen\n\nAlles an einem Ort – einfach, schnell und sicher!' },
-  { keywords: ['zusage', 'zugesagt', 'job bekommen', 'eingestellt'], answer: 'Glückwunsch zur Zusage! So geht es weiter:\n\n1. Kläre im Chat die Details (Startdatum, Arbeitszeiten, Treffpunkt)\n2. Frage nach, ob du etwas mitbringen musst (Ausweis, Kleidung etc.)\n3. Sei am ersten Tag pünktlich und freundlich\n4. Nach dem Job: Gib eine Bewertung ab!' },
-  { keywords: ['problem', 'probleme', 'konflikt', 'ärger', 'beschwerde', 'hilfe'], answer: 'Bei Problemen im Job oder auf der Plattform:\n\n1. Sprich das Problem zuerst direkt mit dem Arbeitgeber/Arbeitnehmer an (per Chat)\n2. Versucht eine gemeinsame Lösung zu finden\n3. Wenn das nicht hilft: Kontaktiere unser Support-Team\n4. Du kannst den Vorfall auch über die Bewertungsfunktion melden\n\nDeine Sicherheit ist uns wichtig – bei ernsten Problemen melde dich sofort bei uns!' },
-  { keywords: ['vorschlag', 'vorschläge', 'warum dieser job', 'empfehlung', 'keine vorschläge'], answer: 'EasyJobs schlägt dir Jobs basierend auf deinem Profil vor:\n\n• Dein Standort und Suchradius\n• Deine Fähigkeiten und Interessen\n• Deine gewünschten Arbeitszeiten\n• Deine Jobkategorie-Präferenzen\n\nKeine passenden Vorschläge? Dann:\n1. Vervollständige dein Profil\n2. Erweitere deinen Suchradius\n3. Füge mehr Fähigkeiten hinzu\n4. Probiere verschiedene Kategorien aus' },
-  { keywords: ['hallo', 'hi', 'hey', 'moin', 'servus', 'guten tag'], answer: 'Hallo! Schön, dass du da bist! Ich bin der EasyJobs-Assistent und helfe dir gerne weiter.\n\nIch kann dir helfen bei:\n• Jobsuche & Bewerbungstipps\n• Lebenslauf erstellen\n• Arbeitszeiten & Verdienst\n• Fragen zur Plattform\n• Sicherheit & Vertrauen\n\nStell mir einfach deine Frage!' }
-];
-AI_RESPONSES.defaultAnswer = 'Das ist eine gute Frage! Leider habe ich darauf keine spezifische Antwort. Aber ich kann dir bei vielen Themen helfen:\n\n• Jobsuche & Bewerbung\n• Lebenslauf & Anschreiben\n• Arbeitszeiten & Verdienst für Schüler\n• Sicherheit auf der Plattform\n• Fragen für Arbeitgeber\n\nFormuliere deine Frage gerne etwas anders, oder schau dich auf der Plattform um!';
 
 const CV_TEMPLATES = [
   {
@@ -123,7 +92,6 @@ let state = {
   get savedJobs() { return this._savedJobs || []; },
   filters: { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date', address: '' },
   chatOpen: false,
-  aiOpen: false,
   activeChat: null,
   wizardStep: 0,
   newJob: {},
@@ -775,10 +743,6 @@ function render() {
       if (el) el.scrollTop = el.scrollHeight;
     }, 50);
   }
-
-  // Show/hide widgets based on login
-  // chat-widget removed
-  document.getElementById('ai-widget').classList.toggle('hidden', state.aiOpen);
 
   // Re-attach event listeners
   attachEventListeners();
@@ -2090,41 +2054,6 @@ async function sendChatMessage() {
   } else {
     renderChatWidget();
   }
-}
-
-// ===== AI ASSISTANT =====
-function toggleAI() {
-  state.aiOpen = !state.aiOpen;
-  document.getElementById('ai-panel').classList.toggle('hidden');
-  document.getElementById('ai-widget').classList.toggle('hidden', state.aiOpen);
-}
-
-function sendAIMessage() {
-  const input = document.getElementById('ai-input');
-  if (!input || !input.value.trim()) return;
-  const msg = input.value.trim();
-  const container = document.getElementById('ai-messages');
-  container.innerHTML += `<div class="ai-msg user">${escapeHtml(msg)}</div>`;
-  input.value = '';
-
-  // Find best matching response (most keyword hits wins)
-  const lower = msg.toLowerCase();
-  let bestMatch = null;
-  let bestScore = 0;
-  for (const entry of AI_RESPONSES) {
-    const score = entry.keywords.filter(kw => lower.includes(kw)).length;
-    if (score > bestScore) { bestScore = score; bestMatch = entry; }
-  }
-  const response = bestMatch ? bestMatch.answer : AI_RESPONSES.defaultAnswer;
-
-  setTimeout(() => {
-    // Escape first, THEN swap newlines for <br>. The canned AI responses
-    // are developer-authored today, but this guards against a future
-    // code path where answers come from user input / remote sources.
-    const safe = escapeHtml(response).replace(/\n/g, '<br>');
-    container.innerHTML += `<div class="ai-msg bot">${safe}</div>`;
-    container.scrollTop = container.scrollHeight;
-  }, 800);
 }
 
 // ===== HELPER =====
