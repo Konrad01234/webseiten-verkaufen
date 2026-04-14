@@ -517,9 +517,15 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .sc-step {
   display: flex; gap: 1.5rem; align-items: flex-start;
-  /* initial versteckt */
-  opacity: 0; transform: translateY(12px);
   transition: opacity 0.35s ease, transform 0.35s ease;
+}
+/* Schritt 1 ist von Anfang an sichtbar */
+.sc-step:first-child {
+  opacity: 1; transform: translateY(0);
+}
+/* Schritt 2 und 3 starten versteckt */
+.sc-step:not(:first-child) {
+  opacity: 0; transform: translateY(12px);
 }
 .sc-step.show {
   opacity: 1; transform: translateY(0);

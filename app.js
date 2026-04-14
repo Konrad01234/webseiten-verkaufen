@@ -2379,12 +2379,13 @@ var scTimers = [];
 var scIo = null;
 
 function scPlay(container) {
-  // Timer zurücksetzen, dann nacheinander einblenden
+  // Timer zurücksetzen, dann Schritt 2 und 3 nacheinander einblenden.
+  // Schritt 1 ist per CSS schon sichtbar.
   scTimers.forEach(function(t) { clearTimeout(t); });
   scTimers = [];
   var steps = container.querySelectorAll('.sc-step');
-  // Schritt 1 sofort, Schritt 2/3 mit Delay
   steps.forEach(function(el, i) {
+    if (i === 0) { el.classList.add('show'); return; } // Schritt 1 sofort
     scTimers.push(setTimeout(function() {
       el.classList.add('show');
     }, SC_STEP_DELAY * i));
@@ -2416,7 +2417,7 @@ function scSetup() {
         scIo = null;
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.5 });
   scIo.observe(container);
 }
 
