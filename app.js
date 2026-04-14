@@ -2279,33 +2279,37 @@ function renderLanding() {
     </div>
 
     <!-- Feature Highlights -->
-    <div style="padding:4rem 0">
+    <div style="padding:5rem 0;background:#fff">
       <div style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
-        <div style="text-align:center;margin-bottom:2.5rem">
-          <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Alles was du brauchst</h2>
+        <div style="text-align:center;margin-bottom:3rem">
+          <span style="display:inline-block;font-size:0.78rem;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary);margin-bottom:0.75rem">Features</span>
+          <h2 style="font-size:1.9rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Alles was du brauchst</h2>
           <p style="color:var(--gray-500);font-size:0.95rem">Tools die deinen Jobstart einfacher machen</p>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem">
-          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;transition:all 0.3s">
-            <div style="height:180px;overflow:hidden"><img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=600&q=80" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-            <div style="padding:1.5rem">
-              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.4rem">Lebenslauf-Builder</h3>
-              <p style="color:var(--gray-500);font-size:0.85rem;line-height:1.6">Erstelle professionelle Lebensläufe mit verschiedenen Designs — direkt in der App.</p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon feature-icon-blue">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
             </div>
+            <h3>Lebenslauf-Builder</h3>
+            <p>Erstelle professionelle Lebensläufe mit verschiedenen Designs — direkt in der App, in nur wenigen Minuten.</p>
+            <span class="feature-link">Mehr erfahren →</span>
           </div>
-          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;transition:all 0.3s">
-            <div style="height:180px;overflow:hidden"><img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=600&q=80" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-            <div style="padding:1.5rem">
-              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.4rem">Auto-Anschreiben</h3>
-              <p style="color:var(--gray-500);font-size:0.85rem;line-height:1.6">Dein Motivationsschreiben wird basierend auf deinem Profil automatisch erstellt.</p>
+          <div class="feature-card">
+            <div class="feature-icon feature-icon-purple">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
             </div>
+            <h3>Auto-Anschreiben</h3>
+            <p>Dein Motivationsschreiben wird basierend auf deinem Profil automatisch erstellt — kein Schreibstress mehr.</p>
+            <span class="feature-link">Mehr erfahren →</span>
           </div>
-          <div style="background:#fff;border:1px solid var(--gray-200);border-radius:16px;overflow:hidden;transition:all 0.3s">
-            <div style="height:180px;overflow:hidden"><img src="https://images.unsplash.com/photo-1577563908411-5077b6dc7624?w=600&q=80" alt="" style="width:100%;height:100%;object-fit:cover"></div>
-            <div style="padding:1.5rem">
-              <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:0.4rem">Direkt-Chat</h3>
-              <p style="color:var(--gray-500);font-size:0.85rem;line-height:1.6">Chatte direkt mit deinem zukünftigen Arbeitgeber — alles in der Plattform.</p>
+          <div class="feature-card">
+            <div class="feature-icon feature-icon-green">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             </div>
+            <h3>Direkt-Chat</h3>
+            <p>Chatte direkt mit deinem zukünftigen Arbeitgeber — alles in der Plattform, ohne Umweg über E-Mails.</p>
+            <span class="feature-link">Mehr erfahren →</span>
           </div>
         </div>
       </div>
@@ -2352,7 +2356,7 @@ function renderLanding() {
         <p>Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
         <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
           <button class="btn btn-lg" onclick="navigate('register')">Jetzt loslegen</button>
-          <button class="btn btn-lg btn-outline" style="border-color:rgba(255,255,255,0.4);color:#fff" onclick="navigate('jobs')">Jobs ansehen</button>
+          <button class="btn btn-lg btn-outline" onclick="navigate('jobs')">Jobs ansehen</button>
         </div>
       </div>
     </div>`;
