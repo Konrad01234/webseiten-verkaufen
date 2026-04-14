@@ -23,4 +23,4 @@ window.HCAPTCHA_SITE_KEY = '0e0c0f20-4954-49c4-82cc-3f922daed460';
 // als Base64 in die DB geschrieben (funktioniert, aber bei vielen
 // Bildern ineffizient). Sobald du im Supabase-Dashboard einen public
 // bucket "images" anlegst, hier 'images' eintragen:
-window.IMAGE_BUCKET = '';
+window.IMAGE_BUCKET = 'images';
