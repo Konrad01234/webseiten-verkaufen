@@ -743,6 +743,11 @@ function render() {
     injectJobPostingSchema(null);
   }
 
+  // Dynamische Meta-Tags pro Seite (Title, Description, Canonical, OG).
+  // Wichtig für SEO — Google rankt Seiten mit eindeutigen Meta-Tags
+  // deutlich besser als solche mit einem globalen Default.
+  updatePageMeta();
+
   // Analytics tracking
   trackVisit();
 
@@ -1619,7 +1624,7 @@ function buildCVHTML(data, template) {
 
   if (template === 'modern') {
     // MODERN: Dunkelblaue Sidebar + weißer Inhalt (passend zur Preview)
-    const photoHTML = data.photo ? `<img src="${data.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.3)">` : '';
+    const photoHTML = data.photo ? `<img src="${data.photo}" alt="Profilbild ${escapeHtml(data.name || '')}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:3px solid rgba(255,255,255,0.3)">` : '';
     const skillBars = data.skills.map(s => `<div style="margin-bottom:0.5rem"><div style="font-size:0.85rem;margin-bottom:0.2rem">${s}</div><div style="height:5px;background:rgba(255,255,255,0.15);border-radius:3px"><div style="height:100%;width:${60+Math.random()*35}%;background:rgba(255,255,255,0.6);border-radius:3px"></div></div></div>`).join('');
     return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;max-width:750px;margin:0 auto;display:flex;min-height:1000px;box-shadow:0 2px 20px rgba(0,0,0,0.08)">
       <div style="width:240px;background:#1e3a5f;color:#fff;padding:2rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem">
@@ -1637,7 +1642,7 @@ function buildCVHTML(data, template) {
     </div>`;
   } else if (template === 'classic') {
     // KLASSISCH: Serifen, traditionell, doppelte Linie (passend zur Preview)
-    const photoClassic = data.photo ? `<img src="${data.photo}" style="width:100px;height:100px;border-radius:4px;object-fit:cover">` : '';
+    const photoClassic = data.photo ? `<img src="${data.photo}" alt="Profilbild ${escapeHtml(data.name || '')}" style="width:100px;height:100px;border-radius:4px;object-fit:cover">` : '';
     return `<div style="font-family:Georgia,'Times New Roman',serif;max-width:750px;margin:0 auto;background:#fff;padding:2.5rem;box-shadow:0 2px 20px rgba(0,0,0,0.08);min-height:1000px">
       <div style="display:flex;align-items:flex-start;gap:1.5rem;padding-bottom:1rem;border-bottom:2px double #111;margin-bottom:1.5rem">
         ${photoClassic}
@@ -1653,7 +1658,7 @@ function buildCVHTML(data, template) {
     </div>`;
   } else {
     // KREATIV: Blauer Gradient Header + rechte Sidebar (passend zur Preview)
-    const photoCreative = data.photo ? `<img src="${data.photo}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.4)">` : '';
+    const photoCreative = data.photo ? `<img src="${data.photo}" alt="Profilbild ${escapeHtml(data.name || '')}" style="width:110px;height:110px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.4)">` : '';
     const skillPills = data.skills.map(s => `<span style="display:inline-block;padding:0.25rem 0.7rem;background:#eff6ff;color:#1e40af;border-radius:100px;font-size:0.8rem;font-weight:600;margin:0.15rem">${s}</span>`).join('');
     return `<div style="font-family:Inter,Helvetica,Arial,sans-serif;max-width:750px;margin:0 auto;background:#fff;box-shadow:0 2px 20px rgba(0,0,0,0.08);min-height:1000px">
       <div style="background:linear-gradient(135deg,#3b82f6,#93c5fd);padding:2rem 2.5rem;display:flex;align-items:center;gap:1.5rem;color:#fff">
@@ -1736,6 +1741,85 @@ async function toggleSaveJob(jobId, e) {
     state._savedJobs = saved;
     showToast('Konnte nicht gespeichert werden.', 'error');
     render();
+  }
+}
+
+// ===== Job-Sharing =====
+// WhatsApp, E-Mail und "Link kopieren" auf der Job-Detailseite. Bei
+// Geräten die die native Web-Share-API unterstützen (fast alle Mobiles)
+// wird stattdessen der native Share-Dialog geöffnet.
+function shareJob(jobId) {
+  const job = JOBS.find(j => j.id === jobId);
+  if (!job) return;
+  const url = `${window.location.origin}${window.location.pathname}#job-${job.id}`;
+  const title = `${job.title}${job.company ? ' bei ' + job.company : ''}`;
+  const text = `${title}${job.location ? ' in ' + job.location : ''}${job.salary ? ' — ' + job.salary : ''}. Jetzt bewerben auf EasyJobs:`;
+
+  // Native Web-Share-API (Mobile + manche Desktop-Browser)
+  if (navigator.share) {
+    navigator.share({ title, text, url }).catch(err => {
+      // AbortError = User hat abgebrochen → kein Toast
+      if (err && err.name !== 'AbortError') console.warn('[shareJob] native', err);
+    });
+    return;
+  }
+  // Fallback: eigenes kleines Menü
+  showShareMenu(url, text);
+}
+
+function showShareMenu(url, text) {
+  const existing = document.getElementById('share-menu');
+  if (existing) existing.remove();
+  const encoded = encodeURIComponent(text + ' ' + url);
+  const encodedUrl = encodeURIComponent(url);
+  const html = `
+    <div id="share-menu" role="dialog" aria-modal="true" aria-label="Job teilen" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;display:flex;align-items:center;justify-content:center;padding:1rem" onclick="if(event.target===this)this.remove()">
+      <div style="background:#fff;border-radius:12px;padding:1.25rem;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+          <strong style="font-size:1.05rem">Job teilen</strong>
+          <button class="close-btn" onclick="document.getElementById('share-menu').remove()" aria-label="Schließen">&times;</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.5rem">
+          <a href="https://wa.me/?text=${encoded}" target="_blank" rel="noopener noreferrer" class="btn btn-block" style="background:#25D366;color:#fff;text-align:center;justify-content:center;display:flex;align-items:center;gap:0.5rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1s-.8 1-.9 1.2c-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.2-1.4-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.3-.3.4-.5.1-.2.2-.3.3-.5 0-.2 0-.4-.1-.5-.1-.1-.7-1.6-.9-2.2-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.7.3-.3.3-1 1-1 2.4s1 2.8 1.1 3c.1.2 2 3.1 5 4.4 2.4 1.1 2.9.9 3.4.8.5-.1 1.7-.7 1.9-1.3.2-.6.2-1.2.2-1.3-.1-.2-.3-.2-.4-.3zM12 2a10 10 0 00-8.7 15l-1 4 4.1-1A10 10 0 1012 2z"/></svg>
+            WhatsApp
+          </a>
+          <a href="mailto:?subject=${encodeURIComponent(text)}&body=${encoded}" class="btn btn-block btn-outline" style="text-align:center;justify-content:center;display:flex;align-items:center;gap:0.5rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            E-Mail
+          </a>
+          <a href="https://twitter.com/intent/tweet?text=${encoded}" target="_blank" rel="noopener noreferrer" class="btn btn-block btn-outline" style="text-align:center;justify-content:center;display:flex;align-items:center;gap:0.5rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+            X / Twitter
+          </a>
+          <button class="btn btn-block btn-outline" onclick="copyJobLink('${url.replace(/'/g,"\\'")}')" style="display:flex;align-items:center;justify-content:center;gap:0.5rem">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Link kopieren
+          </button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function copyJobLink(url) {
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+    } else {
+      // Legacy fallback
+      const ta = document.createElement('textarea');
+      ta.value = url; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+    }
+    showToast('Link kopiert!');
+    const menu = document.getElementById('share-menu');
+    if (menu) menu.remove();
+  } catch (e) {
+    console.warn('[copyJobLink]', e);
+    showToast('Kopieren fehlgeschlagen.', 'error');
   }
 }
 
@@ -2791,6 +2875,113 @@ function injectJobPostingSchema(job) {
   }
 }
 
+// ===== Dynamische Meta-Tags pro Seite =====
+// Google, Bing, Social-Media-Crawler lesen <title>, <meta description>,
+// <link rel=canonical> und og:*-Tags. Wenn jede Seite die gleichen
+// Werte hat, kann Google keine Unterseiten unterscheiden → schlechtes
+// Ranking. Diese Funktion aktualisiert die Tags bei jedem render().
+function _setMeta(selector, attr, value) {
+  let el = document.head.querySelector(selector);
+  if (!el) {
+    el = document.createElement(selector.startsWith('link') ? 'link' : 'meta');
+    // Attribut-Selektor "meta[name=foo]" → name="foo"
+    const m = selector.match(/\[([^=]+)="([^"]+)"\]/);
+    if (m) el.setAttribute(m[1], m[2]);
+    document.head.appendChild(el);
+  }
+  el.setAttribute(attr, value);
+}
+
+function updatePageMeta() {
+  try {
+    const page = state.currentPage;
+    const origin = (typeof window !== 'undefined' && window.location) ? window.location.origin : '';
+    const brand = 'EasyJobs';
+
+    // Default-Werte (Landing)
+    let title = `${brand} — Minijobs für Schüler & Studenten in deiner Nähe`;
+    let description = 'EasyJobs verbindet junge Talente mit den besten Arbeitgebern. Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe — schnell, einfach, kostenlos.';
+    let canonical = `${origin}/`;
+
+    // Seite-spezifisch anpassen
+    switch (page) {
+      case 'jobs': {
+        const f = state.filters || {};
+        const parts = [];
+        if (f.category) parts.push(f.category);
+        if (f.type) parts.push(f.type);
+        if (f.city || f.address) parts.push(`in ${f.city || f.address}`);
+        const suffix = parts.length ? parts.join(' ') + ' — ' : '';
+        title = `${suffix}Jobs finden | ${brand}`;
+        description = `Finde ${f.type || 'Minijobs, Ferienjobs und Nebenjobs'}${f.category ? ' im Bereich ' + f.category : ''}${f.city || f.address ? ' in ' + (f.city || f.address) : ' in deiner Nähe'} — schnell, einfach, kostenlos.`;
+        canonical = `${origin}/#jobs`;
+        break;
+      }
+      case 'job-detail': {
+        const jobId = state.pageData && state.pageData.jobId;
+        const job = typeof JOBS !== 'undefined' ? JOBS.find(j => j.id === jobId) : null;
+        if (job) {
+          title = `${job.title} ${job.company ? 'bei ' + job.company : ''} ${job.location ? 'in ' + job.location : ''} | ${brand}`.replace(/\s+/g, ' ').trim();
+          const descRaw = (job.description || '').replace(/\s+/g, ' ').trim();
+          description = `${job.type || 'Minijob'}${job.company ? ' bei ' + job.company : ''}${job.location ? ' in ' + job.location : ''}${job.salary ? ' — ' + job.salary : ''}. ${descRaw.slice(0, 120)}${descRaw.length > 120 ? '…' : ''}`.trim();
+          canonical = `${origin}/#job-${job.id}`;
+        }
+        break;
+      }
+      case 'employer-landing':
+        title = `Für Arbeitgeber — Stellenanzeige kostenlos schalten | ${brand}`;
+        description = 'Schalte kostenlos deine Stellenanzeige und finde motivierte Schüler, Studenten und Aushilfen in deiner Nähe.';
+        canonical = `${origin}/#employer-landing`;
+        break;
+      case 'login':
+        title = `Anmelden | ${brand}`;
+        description = 'Melde dich bei EasyJobs an und entdecke Minijobs, Ferienjobs und Nebenjobs in deiner Nähe.';
+        canonical = `${origin}/#login`;
+        break;
+      case 'register':
+        title = `Kostenlos registrieren | ${brand}`;
+        description = 'Erstelle kostenlos dein EasyJobs-Profil — als Schüler, Student oder Arbeitgeber. In 60 Sekunden startklar.';
+        canonical = `${origin}/#register`;
+        break;
+      case 'cv-builder':
+        title = `Lebenslauf-Builder | ${brand}`;
+        description = 'Erstelle in wenigen Minuten einen professionellen Lebenslauf für deinen nächsten Schülerjob oder Nebenjob.';
+        canonical = `${origin}/#cv-builder`;
+        break;
+      case 'impressum':
+        title = `Impressum | ${brand}`;
+        description = 'Impressum und Anbieterkennzeichnung von EasyJobs.';
+        canonical = `${origin}/#impressum`;
+        break;
+      case 'datenschutz':
+        title = `Datenschutz | ${brand}`;
+        description = 'Datenschutzerklärung gemäß DSGVO von EasyJobs.';
+        canonical = `${origin}/#datenschutz`;
+        break;
+      case 'agb':
+        title = `AGB | ${brand}`;
+        description = 'Allgemeine Geschäftsbedingungen für die Nutzung von EasyJobs.';
+        canonical = `${origin}/#agb`;
+        break;
+    }
+
+    // In Länge kappen (Google zeigt ~60/160 Zeichen)
+    if (title.length > 65) title = title.slice(0, 62).trim() + '…';
+    if (description.length > 160) description = description.slice(0, 157).trim() + '…';
+
+    document.title = title;
+    _setMeta('meta[name="description"]', 'content', description);
+    _setMeta('link[rel="canonical"]', 'href', canonical);
+    _setMeta('meta[property="og:title"]', 'content', title);
+    _setMeta('meta[property="og:description"]', 'content', description);
+    _setMeta('meta[property="og:url"]', 'content', canonical);
+    _setMeta('meta[name="twitter:title"]', 'content', title);
+    _setMeta('meta[name="twitter:description"]', 'content', description);
+  } catch (e) {
+    console.warn('[updatePageMeta]', e);
+  }
+}
+
 function renderJobDetail() {
   const jobId = state.pageData?.jobId;
   const job = JOBS.find(j => j.id === jobId);
@@ -2811,7 +3002,12 @@ function renderJobDetail() {
                   <span style="font-weight:600">${escapeHtml(job.company)}</span>
                 </div>
               </div>
-              <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '♥' : '♡'}</span></button>
+              <div style="display:flex;gap:0.5rem;align-items:center">
+                <button class="save-btn" onclick="shareJob(${job.id})" style="font-size:1.25rem;background:none;border:none;cursor:pointer;padding:0.35rem" aria-label="Job teilen" title="Job teilen">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                </button>
+                <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '♥' : '♡'}</span></button>
+              </div>
             </div>
             <div class="job-detail-badges">
               <span class="badge badge-primary">${job.type}</span>
@@ -2831,13 +3027,13 @@ function renderJobDetail() {
           </div>
           ${job.images.length > 0 ? `
             <div style="padding:0 2rem 2rem">
-              <h3 style="font-size:1.05rem;margin-bottom:0.75rem">Bilder</h3>
+              <h2 style="font-size:1.05rem;margin-bottom:0.75rem;font-weight:600">Bilder</h2>
               <div class="job-images">
                 ${job.images.map(img => `<div class="job-image-placeholder">${img}</div>`).join('')}
               </div>
             </div>` : ''}
           <div style="padding:0 2rem 2rem">
-            <h3 style="font-size:1.05rem;margin-bottom:0.75rem">★ Bewertungen</h3>
+            <h2 style="font-size:1.05rem;margin-bottom:0.75rem;font-weight:600"><span aria-hidden="true">★</span> Bewertungen</h2>
             ${job.reviews.length > 0 ? job.reviews.map(r => `
               <div class="review-card">
                 <div class="review-header">
@@ -2872,7 +3068,7 @@ function renderJobDetail() {
               })()}
 
               <div style="margin-top:1.5rem">
-                <h3 style="font-size:1rem;margin-bottom:1rem">Über ${escapeHtml(job.company)}</h3>
+                <h2 style="font-size:1rem;margin-bottom:1rem;font-weight:600">Über ${escapeHtml(job.company)}</h2>
                 <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:1rem">${escapeHtml(job.companyInfo.about)}</p>
                 <div style="display:flex;flex-direction:column;gap:0.5rem">
                   <div class="company-info-row"><span class="label">Branche:</span> <span>${escapeHtml(job.companyInfo.industry)}</span></div>
@@ -5233,7 +5429,7 @@ function renderDatenschutz() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">8. Zahlungsabwicklung</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Für kostenpflichtige Dienste (z. B. Boost-Pakete für Stellenanzeigen) werden Zahlungsdaten an einen externen Zahlungsdienstleister übermittelt. Wir selbst speichern keine Kreditkarten- oder Bankdaten. Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Die Plattform bietet derzeit ausschließlich kostenfreie Dienste an. Es werden keine Zahlungsdaten erhoben oder verarbeitet.</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -5287,20 +5483,14 @@ function renderAGB() {
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 3 Leistungen der Plattform</h3>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) <strong>Für Arbeitnehmer</strong> bietet die Plattform: Erstellung eines Nutzerprofils, Jobsuche mit Filteroptionen, Ein-Klick-Bewerbung, automatische Erstellung von Motivationsschreiben, Lebenslauf-Builder, Chat-Kommunikation mit Arbeitgebern.</p>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) <strong>Für Arbeitgeber</strong> bietet die Plattform: Veröffentlichung von Stellenanzeigen, Verwaltung von Bewerbungen, Chat-Kommunikation mit Bewerbern, Analyse-Dashboard sowie optionale kostenpflichtige Boost-Pakete.</p>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Die Grundnutzung der Plattform ist für Arbeitnehmer und Arbeitgeber kostenlos.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) <strong>Für Arbeitgeber</strong> bietet die Plattform: Veröffentlichung von Stellenanzeigen, Verwaltung von Bewerbungen, Chat-Kommunikation mit Bewerbern und Analyse-Dashboard.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Die Nutzung der Plattform ist für Arbeitnehmer und Arbeitgeber vollständig kostenlos.</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
-      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 4 Kostenpflichtige Leistungen</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) Arbeitgeber können kostenpflichtige Boost-Pakete erwerben, um ihre Stellenanzeigen prominenter zu platzieren. Folgende Pakete stehen zur Verfügung:</p>
-      <ul style="color:var(--gray-600);line-height:2;font-size:0.9rem;padding-left:1.25rem;margin-top:0.5rem">
-        <li>Standard Boost (7 Tage) — erhöhte Sichtbarkeit für 7 Tage</li>
-        <li>Standard Boost (30 Tage) — erhöhte Sichtbarkeit für 30 Tage</li>
-        <li>Premium Boost (14 Tage) — maximale Sichtbarkeit mit Hervorhebung</li>
-      </ul>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) Die jeweiligen Preise werden vor dem Kauf transparent dargestellt. Mit dem Kauf kommt ein Vertrag über die gebuchte Leistung zustande.</p>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Ein Widerrufsrecht für Unternehmer besteht nicht. Verbraucher haben ein 14-tägiges Widerrufsrecht, sofern die Leistung noch nicht vollständig erbracht wurde.</p>
+      <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 4 Kostenfreiheit</h3>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) Die Nutzung sämtlicher Funktionen der Plattform ist derzeit kostenlos. Es werden keine kostenpflichtigen Dienste angeboten.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) Sollten in Zukunft kostenpflichtige Leistungen eingeführt werden, werden die betroffenen Nutzer rechtzeitig informiert und um ausdrückliche Zustimmung gebeten, bevor ein kostenpflichtiger Vertrag zustande kommt.</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -5446,6 +5636,53 @@ function renderAdminPanel() {
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
       </div>
+
+      <!-- Ausstehende Arbeitgeber-Freischaltungen (nur anzeigen wenn es welche gibt) -->
+      ${(() => {
+        const pending = (state._allProfilesCache || []).filter(u => u.role === 'employer' && !u.approved);
+        if (pending.length === 0) return '';
+        return `
+        <div class="card admin-chart-card" style="margin-bottom:1.5rem;border:2px solid #f59e0b;background:linear-gradient(135deg,#fffbeb 0%,#fef3c7 100%)">
+          <div class="card-body" style="padding:0;overflow:hidden">
+            <div style="padding:1rem 1.25rem;display:flex;align-items:center;gap:0.75rem;border-bottom:1px solid #fde68a">
+              <div style="width:36px;height:36px;border-radius:8px;background:#f59e0b;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </div>
+              <div style="flex:1">
+                <h4 style="margin:0;font-size:1rem;font-weight:700;color:#92400e">Arbeitgeber warten auf Freischaltung</h4>
+                <p style="margin:0.1rem 0 0;font-size:0.8rem;color:#b45309">${pending.length} ${pending.length === 1 ? 'Konto muss' : 'Konten müssen'} geprüft und freigeschaltet werden, bevor Stellenanzeigen geschaltet werden können.</p>
+              </div>
+              <span class="badge" style="background:#f59e0b;color:#fff;font-weight:700">${pending.length}</span>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:0.9rem;background:#fff">
+              <thead>
+                <tr style="background:var(--gray-50);border-bottom:1px solid var(--gray-200)">
+                  <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Firma</th>
+                  <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Kontakt</th>
+                  <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">E-Mail</th>
+                  <th style="padding:0.65rem 1.25rem;text-align:left;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Registriert</th>
+                  <th style="padding:0.65rem 1.25rem;text-align:center;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--gray-500);font-weight:600">Aktion</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${pending.map(u => {
+                  const created = u.createdAt ? new Date(u.createdAt).toLocaleString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+                  return `<tr class="admin-table-row" style="border-bottom:1px solid var(--gray-100)">
+                    <td style="padding:0.8rem 1.25rem;font-weight:600">${escapeHtml(u.company || '—')}</td>
+                    <td style="padding:0.8rem 1.25rem;color:var(--gray-700)">${escapeHtml(u.name || '—')}</td>
+                    <td style="padding:0.8rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '—')}</td>
+                    <td style="padding:0.8rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
+                    <td style="padding:0.8rem 1.25rem;text-align:center;white-space:nowrap">
+                      <button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.78rem;font-weight:600;padding:0.45rem 0.9rem;margin-right:0.3rem" onclick="adminToggleApproval('${u.id}', true)">✓ Freischalten</button>
+                      <button class="btn btn-sm btn-ghost" style="font-size:0.78rem;color:var(--danger)" onclick="adminRemoveEmployer('${u.id}')">Ablehnen</button>
+                    </td>
+                  </tr>`;
+                }).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>`;
+      })()}
 
       <!-- Tab Navigation -->
       <div class="admin-tabs">

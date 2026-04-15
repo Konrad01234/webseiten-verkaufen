@@ -24,8 +24,7 @@
 - [ ] **Datenschutzerklärung personalisieren** — aktuell Vorlagentext
   - Namentliche Nennung Betreiber, Supabase als Auftragsverarbeiter, hCaptcha, Cookies
   - Datei: `app.js` → `renderDatenschutz()`
-- [ ] **AGB an Realität anpassen** — erwähnt „Boost-Pakete" (nicht implementiert) → entfernen
-  - Datei: `app.js` → `renderAGB()`
+- [x] **AGB: „Boost-Pakete"-Erwähnung entfernt**, durch „Kostenfreiheit"-Abschnitt ersetzt — `app.js` → `renderAGB()` + Datenschutz § 8 mitgefixt
 - [ ] **Admin-E-Mails anpassen** in `app.js` (aktuell `kwg.range@web.de`, `jojo102009@icloud.com`)
 
 ### Datenbank-Migrations
@@ -54,16 +53,13 @@
   - Neue Chat-Nachricht → Mail an Empfänger
   - Bewerbung angenommen/abgelehnt → Mail an Bewerber
   - Umsetzung: Supabase Edge Function + Resend/SendGrid oder Supabase SMTP
-- [ ] **Employer-Approval-Workflow UI fertigstellen**
-  - Admin-Panel: Liste ausstehender Arbeitgeber + Freischalten-Button
-  - Status-Badge im Employer-Dashboard („wartet auf Freischaltung")
+- [x] **Employer-Approval-Workflow UI fertiggestellt** — prominente „Wartet auf Freischaltung"-Karte oben im Admin-Panel (gelber Alarm-Banner, Freischalten-/Ablehnen-Buttons). Status-Badge im Employer-Dashboard war schon da.
 - [ ] **Geofilter / Suchradius** vervollständigen (aktuell teilweise implementiert)
 
 ### SEO
 - [x] **JSON-LD JobPosting** für Google for Jobs — *Commit f393f91*
 - [x] **Dynamische sitemap.xml** via Cloudflare Pages Function (`functions/sitemap.xml.js`) + `robots.txt` verweist darauf
-- [ ] **`<link rel="canonical">` pro Job** dynamisch setzen (aktuell immer `/`)
-- [ ] **Meta-Title & -Description pro Seite** dynamisch (aktuell statisch)
+- [x] **Dynamische `<link rel="canonical">`, `<title>`, `<meta description>`, `og:*`, `twitter:*`** pro Seite via `updatePageMeta()`
 - [ ] Google Search Console einrichten + Sitemap einreichen (nach Go-Live)
 
 ### Accessibility
@@ -72,8 +68,9 @@
 - [x] Chat-Input mit Label verknüpft (sr-only Label)
 - [x] Modal mit `role="dialog"` + `aria-modal` + `aria-labelledby`
 - [x] Nutzer-Avatar als keyboard-bedienbarer Button (Enter/Space)
-- [ ] `alt`-Attribute auf Company-Logo-Bildern und Job-Images (aktuell Hintergrundbilder, kein `<img>`)
-- [ ] Heading-Hierarchie durchgehend prüfen (h1→h2→h3 ohne Sprünge)
+- [x] `alt`-Attribute auf CV-Profilbildern (3 Templates)
+- [x] Heading-Hierarchie auf Job-Detailseite gefixt (h1 → h2 statt h1 → h3-Sprung)
+- [ ] Company-Logos & Job-Images: aktuell CSS-Background → Umbau auf `<img alt="">` ausstehend
 - [ ] Farbkontrast (graue Texte auf weiß — z. T. unter WCAG AA)
 - [ ] Vollständiger Screen-Reader-Durchlauf (NVDA / VoiceOver)
 
@@ -91,7 +88,7 @@
 - [ ] Push-Notifications für Chat (PWA Service Worker)
 - [ ] Mehrsprachigkeit (hreflang, Englisch als zweite Sprache)
 - [ ] Job-Alerts per E-Mail (tägliche/wöchentliche Zusammenfassung)
-- [ ] Job-Sharing per WhatsApp/Instagram
+- [x] **Job-Sharing** via Web-Share-API (mobil nativ) + WhatsApp/E-Mail/X/Link-kopieren Fallback-Menü. Share-Button auf Job-Detailseite.
 
 ### Code-Qualität
 - [ ] `app.js` modularisieren (aktuell 5800+ Zeilen in einer Datei)
