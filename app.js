@@ -2324,6 +2324,42 @@ function renderLanding() {
       </div>
     </div>
 
+    <!-- Lohn-Rechner - interaktiv, ungewöhnlich -->
+    <section class="wage-calc">
+      <div class="wage-calc-inner">
+        <div class="wage-calc-left">
+          <span class="wage-calc-kicker">Mal rechnen</span>
+          <h2>Was kannst du nebenbei verdienen?</h2>
+          <p>Die meisten Schüler bei uns machen zwischen <strong>8 und 15 Stunden pro Woche</strong>. Zieh an dem Regler um zu sehen was bei dir rauskommt.</p>
+          <div class="wage-calc-tip">
+            <span class="wage-calc-tip-dot"></span>
+            <span><strong>Wichtig:</strong> Bis <strong>556 €/Monat</strong> bleibt's steuerfrei (Minijob-Grenze 2026).</span>
+          </div>
+        </div>
+        <div class="wage-calc-right">
+          <div class="wage-calc-card">
+            <div class="wage-calc-top">
+              <div>
+                <div class="wage-calc-value" id="wage-value">120 €</div>
+                <div class="wage-calc-label">pro Woche · <span id="wage-monthly">480 €</span>/Monat</div>
+              </div>
+              <div class="wage-calc-badge" id="wage-badge">Minijob ✓</div>
+            </div>
+            <div class="wage-calc-row">
+              <label>Stunden / Woche</label>
+              <span id="wage-hours-display">10h</span>
+            </div>
+            <input type="range" id="wage-hours" min="2" max="20" value="10" step="1" class="wage-slider" oninput="updateWageCalc()">
+            <div class="wage-calc-row">
+              <label>Stundenlohn</label>
+              <span id="wage-rate-display">12,00 €</span>
+            </div>
+            <input type="range" id="wage-rate" min="10" max="20" value="12" step="0.5" class="wage-slider" oninput="updateWageCalc()">
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Testimonials - scrollender Ticker -->
     <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
@@ -2335,104 +2371,72 @@ function renderLanding() {
         <div class="testi-ticker-fade testi-ticker-fade-right"></div>
         <div class="testi-ticker">
           <div class="testi-ticker-track">
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)">LM</div><div><div class="testi-name">Lena M., 17</div><div class="testi-role">Schülerin aus Düsseldorf</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">TK</div><div><div class="testi-name">Tim K., 19</div><div class="testi-role">Student aus Köln</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">SH</div><div><div class="testi-name">Sara H., 16</div><div class="testi-role">Schülerin aus Essen</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#34d399,#10b981)">JP</div><div><div class="testi-name">Jonas P., 18</div><div class="testi-role">Schüler aus München</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">MA</div><div><div class="testi-name">Mia A., 15</div><div class="testi-role">Schülerin aus Berlin</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f87171,#ef4444)">NR</div><div><div class="testi-name">Niklas R., 20</div><div class="testi-role">Student aus Hamburg</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#22d3ee,#06b6d4)">LK</div><div><div class="testi-name">Lina K., 17</div><div class="testi-role">Schülerin aus Stuttgart</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fb923c,#f97316)">DH</div><div><div class="testi-name">David H., 16</div><div class="testi-role">Schüler aus Frankfurt</div></div></div>
-            </div>
-
-            <!-- Duplikat für endlosen Loop -->
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)">LM</div><div><div class="testi-name">Lena M., 17</div><div class="testi-role">Schülerin aus Düsseldorf</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">TK</div><div><div class="testi-name">Tim K., 19</div><div class="testi-role">Student aus Köln</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">SH</div><div><div class="testi-name">Sara H., 16</div><div class="testi-role">Schülerin aus Essen</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#34d399,#10b981)">JP</div><div><div class="testi-name">Jonas P., 18</div><div class="testi-role">Schüler aus München</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">MA</div><div><div class="testi-name">Mia A., 15</div><div class="testi-role">Schülerin aus Berlin</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f87171,#ef4444)">NR</div><div><div class="testi-name">Niklas R., 20</div><div class="testi-role">Student aus Hamburg</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#22d3ee,#06b6d4)">LK</div><div><div class="testi-name">Lina K., 17</div><div class="testi-role">Schülerin aus Stuttgart</div></div></div>
-            </div>
-            <div class="testi-card">
-              <div class="testi-stars">★★★★★</div>
-              <p>„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."</p>
-              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fb923c,#f97316)">DH</div><div><div class="testi-name">David H., 16</div><div class="testi-role">Schüler aus Frankfurt</div></div></div>
-            </div>
+            ${(() => {
+              var list = [
+                { name:'Lena M., 17', role:'Schülerin aus Düsseldorf', initials:'LM', color:'linear-gradient(135deg,#f472b6,#ec4899)', text:'„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"', rating:5 },
+                { name:'Tim K., 19', role:'Student aus Köln', initials:'TK', color:'linear-gradient(135deg,#60a5fa,#3b82f6)', text:'„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."', rating:4.5 },
+                { name:'Sara H., 16', role:'Schülerin aus Essen', initials:'SH', color:'linear-gradient(135deg,#fbbf24,#f59e0b)', text:'„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"', rating:5 },
+                { name:'Jonas P., 18', role:'Schüler aus München', initials:'JP', color:'linear-gradient(135deg,#34d399,#10b981)', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
+                { name:'Mia A., 15', role:'Schülerin aus Berlin', initials:'MA', color:'linear-gradient(135deg,#a78bfa,#8b5cf6)', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
+                { name:'Niklas R., 20', role:'Student aus Hamburg', initials:'NR', color:'linear-gradient(135deg,#f87171,#ef4444)', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
+                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', initials:'LK', color:'linear-gradient(135deg,#22d3ee,#06b6d4)', text:'„Ich fand\\'s mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."', rating:5 },
+                { name:'David H., 16', role:'Schüler aus Frankfurt', initials:'DH', color:'linear-gradient(135deg,#fb923c,#f97316)', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
+              ];
+              var render = function(t) {
+                var pct = (t.rating / 5) * 100;
+                var label = t.rating.toString().replace('.', ',');
+                return '<div class="testi-card">' +
+                  '<div class="testi-rating">' +
+                    '<span class="testi-stars"><span class="testi-stars-bg">★★★★★</span><span class="testi-stars-fill" style="--rating:' + pct + '%">★★★★★</span></span>' +
+                    '<span class="testi-rating-num">' + label + '</span>' +
+                  '</div>' +
+                  '<p>' + t.text + '</p>' +
+                  '<div class="testi-author"><div class="testi-avatar" style="background:' + t.color + '">' + t.initials + '</div><div><div class="testi-name">' + t.name + '</div><div class="testi-role">' + t.role + '</div></div></div>' +
+                '</div>';
+              };
+              // Einmal die Liste + Duplikat für nahtlosen Loop
+              return list.map(render).join('') + list.map(render).join('');
+            })()}
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Finaler CTA -->
-    <div style="padding:4rem 1.5rem">
-      <div class="cta-section" style="margin:0 auto;max-width:1100px">
+    <!-- Finaler CTA - full-width Block -->
+    <section class="cta-fullblock">
+      <div class="cta-fullblock-inner">
+        <span class="cta-fullblock-kicker">Bereit?</span>
         <h2>Worauf wartest du?</h2>
         <p>Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
-        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-          <button class="btn btn-lg" onclick="navigate('register')">Jetzt loslegen</button>
-          <button class="btn btn-lg btn-outline" onclick="navigate('jobs')">Jobs ansehen</button>
+        <div class="cta-fullblock-buttons">
+          <button class="btn btn-lg cta-btn-primary" onclick="navigate('register')">Jetzt loslegen <span class="cta-arrow">→</span></button>
+          <button class="btn btn-lg cta-btn-outline" onclick="navigate('jobs')">Jobs ansehen</button>
         </div>
       </div>
-    </div>`;
+    </section>`;
+}
+
+// ===== Wage Calculator =====
+function updateWageCalc() {
+  var h = document.getElementById('wage-hours');
+  var r = document.getElementById('wage-rate');
+  if (!h || !r) return;
+  var hours = parseInt(h.value, 10);
+  var rate = parseFloat(r.value);
+  var weekly = hours * rate;
+  var monthly = Math.round(weekly * 4.33);
+  var fmt = function(n) { return n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' €'; };
+  var fmtRate = function(n) { return n.toFixed(2).replace('.', ',') + ' €'; };
+  var e = function(id) { return document.getElementById(id); };
+  if (e('wage-value')) e('wage-value').textContent = fmt(weekly);
+  if (e('wage-monthly')) e('wage-monthly').textContent = fmt(monthly);
+  if (e('wage-hours-display')) e('wage-hours-display').textContent = hours + 'h';
+  if (e('wage-rate-display')) e('wage-rate-display').textContent = fmtRate(rate);
+  var badge = e('wage-badge');
+  if (badge) {
+    if (monthly <= 556) { badge.textContent = 'Minijob ✓'; badge.classList.remove('over'); }
+    else { badge.textContent = 'Über Minijob-Grenze'; badge.classList.add('over'); }
+  }
 }
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
