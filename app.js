@@ -2279,106 +2279,87 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Feature Spotlight (scroll-gesteuert) -->
-    <section class="sp-scroll" id="sp-scroll">
-      <div class="sp-sticky">
-        <div class="sp-inner">
-          <div class="sp-head">
-            <h2>Was EasyJobs <em>anders</em> macht</h2>
-            <p class="sp-hint">Scroll nach unten &mdash; die Punkte wechseln automatisch</p>
-          </div>
+    <!-- Darum EasyJobs - 3 gestapelte Bloecke -->
+    <section class="sp-wrap">
+      <div class="sp-wrap-head">
+        <h2>Was EasyJobs <em>anders</em> macht</h2>
+        <p class="sp-wrap-sub">Drei Dinge, die uns von anderen Jobportalen unterscheiden.</p>
+      </div>
 
-          <div class="sp-tabs" id="sp-tabs">
-            <button class="sp-tab active" data-i="0">
-              <span class="sp-tab-num">01</span>
-              In deiner Stadt
-            </button>
-            <button class="sp-tab" data-i="1">
-              <span class="sp-tab-num">02</span>
-              1-Klick-Bewerbung
-            </button>
-            <button class="sp-tab" data-i="2">
-              <span class="sp-tab-num">03</span>
-              Direkt-Chat
-            </button>
-          </div>
-
-          <div class="sp-progress">
-            <div class="sp-progress-fill" id="sp-progress"></div>
-          </div>
-
-          <div class="sp-stage" id="sp-stage">
-            <div class="sp-photo">
-              <img class="active" data-i="0" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
-              <img data-i="1" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
-              <img data-i="2" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop" alt="" loading="lazy">
-
-              <div class="sp-photo-badge active" data-i="0">
-                <span class="sp-photo-badge-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                </span>
-                <div class="sp-photo-badge-text">
-                  <strong>2.400+ Jobs</strong>
-                  <span>in deiner Stadt heute</span>
-                </div>
-              </div>
-              <div class="sp-photo-badge" data-i="1">
-                <span class="sp-photo-badge-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                </span>
-                <div class="sp-photo-badge-text">
-                  <strong>10 Sekunden</strong>
-                  <span>pro Bewerbung</span>
-                </div>
-              </div>
-              <div class="sp-photo-badge" data-i="2">
-                <span class="sp-photo-badge-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                </span>
-                <div class="sp-photo-badge-text">
-                  <strong>Direkt im Chat</strong>
-                  <span>keine Telefonate</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="sp-text">
-              <div class="sp-panel active" data-i="0">
-                <span class="sp-panel-num">eins.</span>
-                <h3>Jobs, die du zu Fuß erreichst.</h3>
-                <p>Nur Stellen bei Unternehmen in deiner Stadt &mdash; mit Umkreis-Filter und Kartenansicht.</p>
-                <div class="sp-panel-features">
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kartenansicht mit Pins</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Radius-Filter (2 / 5 / 10 km)</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Push bei neuen Jobs in der Nähe</div>
-                </div>
-              </div>
-
-              <div class="sp-panel" data-i="1">
-                <span class="sp-panel-num">zwei.</span>
-                <h3>Bewerben in einem Wisch.</h3>
-                <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen &mdash; dann ein Klick pro Job.</p>
-                <div class="sp-panel-features">
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-Motivationsschreiben</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf-Builder inklusive</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Status jederzeit im Dashboard</div>
-                </div>
-              </div>
-
-              <div class="sp-panel" data-i="2">
-                <span class="sp-panel-num">drei.</span>
-                <h3>Schreib den Chef direkt an.</h3>
-                <p>Alle Fragen, Termine und Zusagen im Chat. Läuft wie Messenger &mdash; nur dass's ums Arbeiten geht.</p>
-                <div class="sp-panel-features">
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Antwort meist in unter 24h</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keine E-Mail-Kette</div>
-                  <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nummer bleibt privat</div>
-                </div>
-              </div>
+      <article class="sp-block" data-i="0">
+        <div class="sp-block-media">
+          <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+          <div class="sp-block-badge">
+            <span class="sp-block-badge-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </span>
+            <div class="sp-block-badge-text">
+              <strong>2.400+ Jobs</strong>
+              <span>in deiner Stadt heute</span>
             </div>
           </div>
         </div>
-      </div>
+        <div class="sp-block-body">
+          <span class="sp-block-num">eins.</span>
+          <h3>Jobs, die du zu Fuß erreichst.</h3>
+          <p>Nur Stellen bei Unternehmen in deiner Stadt &mdash; mit Umkreis-Filter und Kartenansicht.</p>
+          <div class="sp-block-features">
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kartenansicht mit Pins</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Radius-Filter (2 / 5 / 10 km)</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Push bei neuen Jobs in der Nähe</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-block sp-block-reverse" data-i="1">
+        <div class="sp-block-media">
+          <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+          <div class="sp-block-badge">
+            <span class="sp-block-badge-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </span>
+            <div class="sp-block-badge-text">
+              <strong>10 Sekunden</strong>
+              <span>pro Bewerbung</span>
+            </div>
+          </div>
+        </div>
+        <div class="sp-block-body">
+          <span class="sp-block-num">zwei.</span>
+          <h3>Bewerben in einem Wisch.</h3>
+          <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen &mdash; dann ein Klick pro Job.</p>
+          <div class="sp-block-features">
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-Motivationsschreiben</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf-Builder inklusive</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Status jederzeit im Dashboard</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="sp-block" data-i="2">
+        <div class="sp-block-media">
+          <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+          <div class="sp-block-badge">
+            <span class="sp-block-badge-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </span>
+            <div class="sp-block-badge-text">
+              <strong>Direkt im Chat</strong>
+              <span>keine Telefonate</span>
+            </div>
+          </div>
+        </div>
+        <div class="sp-block-body">
+          <span class="sp-block-num">drei.</span>
+          <h3>Schreib den Chef direkt an.</h3>
+          <p>Alle Fragen, Termine und Zusagen im Chat. Läuft wie Messenger &mdash; nur dass's ums Arbeiten geht.</p>
+          <div class="sp-block-features">
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Antwort meist in unter 24h</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keine E-Mail-Kette</div>
+            <div class="sp-block-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nummer bleibt privat</div>
+          </div>
+        </div>
+      </article>
     </section>
 
     <!-- Testimonials - scrollender Ticker -->
@@ -2433,110 +2414,46 @@ function renderLanding() {
     </section>`;
 }
 
-// ===== Feature Spotlight ("Darum EasyJobs") - scroll-gesteuert =====
-// Der User scrollt durch einen hohen Container (.sp-scroll, 280vh),
-// waehrend .sp-sticky in der Viewport haengt. Die aktive Karte und
-// der Fortschrittsbalken folgen der Scroll-Position.
-var spLastContainer = null;
-var spCurrent = -1;
-var spScrollHandler = null;
-var spResizeHandler = null;
-var spRaf = null;
-
-function spSetActive(i, container) {
-  if (i === spCurrent) return;
-  spCurrent = i;
-  ['.sp-tab', '.sp-photo img', '.sp-photo-badge', '.sp-panel'].forEach(function(sel) {
-    container.querySelectorAll(sel).forEach(function(el, j) {
-      el.classList.toggle('active', j === i);
-    });
-  });
-}
-
-function spUpdate(container) {
-  var outer = document.getElementById('sp-scroll');
-  if (!outer) return;
-  var fill = container.querySelector('#sp-progress');
-  var tabs = container.querySelectorAll('.sp-tab');
-  var n = tabs.length || 3;
-
-  var rect = outer.getBoundingClientRect();
-  var scrollable = rect.height - window.innerHeight;
-
-  // Mobile / zu klein: Scroll-Hijack aus, alles erst mal sichtbar lassen.
-  if (scrollable <= 0 || window.innerWidth <= 880) {
-    if (fill) fill.style.width = '0%';
-    // Auf Mobile sind alle Panels via CSS stacked sichtbar - aktiver Tab bleibt 0.
-    if (spCurrent === -1) spSetActive(0, container);
-    return;
-  }
-
-  var progress = Math.max(0, Math.min(1, -rect.top / scrollable));
-  if (fill) fill.style.width = (progress * 100) + '%';
-
-  // Progress in n Baender unterteilen.
-  var idx = Math.min(n - 1, Math.floor(progress * n));
-  spSetActive(idx, container);
-}
-
-function spScheduleUpdate(container) {
-  if (spRaf) return;
-  spRaf = requestAnimationFrame(function() {
-    spRaf = null;
-    spUpdate(container);
-  });
-}
-
-function spTabClick(i, container) {
-  var outer = document.getElementById('sp-scroll');
-  if (!outer) { spSetActive(i, container); return; }
-  var rect = outer.getBoundingClientRect();
-  var scrollable = rect.height - window.innerHeight;
-  if (scrollable <= 0 || window.innerWidth <= 880) {
-    spSetActive(i, container);
-    return;
-  }
-  var n = container.querySelectorAll('.sp-tab').length;
-  // Zielposition: Mitte des i-ten Bandes.
-  var targetProgress = (i + 0.5) / n;
-  var targetY = window.scrollY + rect.top + targetProgress * scrollable;
-  window.scrollTo({ top: targetY, behavior: 'smooth' });
-}
+// ===== Feature Spotlight ("Darum EasyJobs") - 3 gestapelte Bloecke =====
+// Jeder Block fadet sanft ein, sobald er in den Viewport kommt.
+var spLastWrap = null;
+var spIo = null;
 
 function spSetup() {
-  var container = document.querySelector('.sp-scroll');
-  if (!container) return;
-  if (container === spLastContainer) return;
-  spLastContainer = container;
-  spCurrent = -1;
+  var wrap = document.querySelector('.sp-wrap');
+  if (!wrap) return;
+  if (wrap === spLastWrap) return;
+  spLastWrap = wrap;
 
-  var tabs = container.querySelectorAll('.sp-tab');
-  tabs.forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      spTabClick(parseInt(tab.getAttribute('data-i'), 10), container);
+  if (spIo) { spIo.disconnect(); spIo = null; }
+
+  if (!('IntersectionObserver' in window)) {
+    // Fallback: sofort sichtbar
+    wrap.querySelectorAll('.sp-block').forEach(function(b) { b.classList.add('visible'); });
+    return;
+  }
+
+  spIo = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        spIo.unobserve(entry.target);
+      }
     });
+  }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+  wrap.querySelectorAll('.sp-block').forEach(function(block) {
+    spIo.observe(block);
   });
-
-  if (spScrollHandler) window.removeEventListener('scroll', spScrollHandler);
-  if (spResizeHandler) window.removeEventListener('resize', spResizeHandler);
-  spScrollHandler = function() { spScheduleUpdate(container); };
-  spResizeHandler = function() { spScheduleUpdate(container); };
-  window.addEventListener('scroll', spScrollHandler, { passive: true });
-  window.addEventListener('resize', spResizeHandler);
-
-  spUpdate(container);
 }
 
 function spTeardown() {
-  if (spScrollHandler) { window.removeEventListener('scroll', spScrollHandler); spScrollHandler = null; }
-  if (spResizeHandler) { window.removeEventListener('resize', spResizeHandler); spResizeHandler = null; }
-  if (spRaf) { cancelAnimationFrame(spRaf); spRaf = null; }
-  spLastContainer = null;
-  spCurrent = -1;
+  if (spIo) { spIo.disconnect(); spIo = null; }
+  spLastWrap = null;
 }
 
 var spDomObserver = new MutationObserver(function() {
-  var present = !!document.querySelector('.sp-scroll');
+  var present = !!document.querySelector('.sp-wrap');
   if (!present) {
     spTeardown();
   } else {

@@ -615,169 +615,113 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Feature Spotlight "Darum EasyJobs" — scroll-gesteuert ===== */
-.sp-scroll {
-  position: relative;
+/* ===== Feature Spotlight "Darum EasyJobs" — 3 gestapelte Bloecke ===== */
+.sp-wrap {
   background: #fff;
-  height: 400vh; /* 3 Panels x ~100vh Scroll-Raum */
+  padding: 5rem 1.5rem 2rem;
 }
-.sp-sticky {
-  position: sticky;
-  top: 60px;
-  height: calc(100vh - 60px);
-  min-height: 660px;
-  display: flex;
-  align-items: center;
-  padding: 2rem 1.5rem;
-  box-sizing: border-box;
-  overflow: hidden;
+.sp-wrap-head {
+  max-width: 720px; margin: 0 auto 3rem;
+  text-align: center;
 }
-.sp-inner { max-width: 1120px; margin: 0 auto; width: 100%; }
-.sp-head { text-align: center; margin-bottom: 1.75rem; }
-.sp-hint {
-  color: var(--gray-500);
-  font-size: 0.9rem;
-  margin: 0.5rem 0 0;
-  font-weight: 500;
-}
-.sp-head h2 {
+.sp-wrap-head h2 {
   font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 800;
   letter-spacing: -0.02em; line-height: 1.1; margin: 0;
   color: var(--gray-900);
 }
-.sp-head h2 em {
+.sp-wrap-head h2 em {
   font-family: 'Playfair Display', serif; font-style: italic; color: #1e3a8a;
 }
-
-.sp-tabs {
-  display: flex; gap: 0.5rem; justify-content: center;
-  margin-bottom: 1rem; flex-wrap: wrap;
-}
-.sp-tab {
-  background: #fff; border: 1.5px solid var(--gray-200);
-  padding: 0.7rem 1.25rem; border-radius: 100px;
-  font-size: 0.9rem; font-weight: 600; color: var(--gray-600);
-  cursor: pointer; font-family: inherit;
-  transition: all 0.25s ease;
-  display: inline-flex; align-items: center; gap: 0.5rem;
-}
-.sp-tab:hover { border-color: var(--gray-400); color: var(--gray-800); }
-.sp-tab.active {
-  background: #1e3a8a; border-color: #1e3a8a;
-  color: #fff; box-shadow: 0 6px 18px rgba(30,58,138,0.25);
-}
-.sp-tab-num {
-  font-size: 0.72rem; opacity: 0.7;
-  font-weight: 700; letter-spacing: 0.05em;
-}
-.sp-tab.active .sp-tab-num { opacity: 0.85; }
-
-.sp-progress {
-  height: 3px; background: var(--gray-100); border-radius: 100px;
-  margin: 0 auto 1.75rem; max-width: 260px; overflow: hidden;
-}
-.sp-progress-fill {
-  height: 100%; width: 0%;
-  background: linear-gradient(90deg, #1e3a8a, #3b82f6);
-  border-radius: 100px;
-  transition: width 0.08s linear;
+.sp-wrap-sub {
+  color: var(--gray-500); margin: 1rem 0 0;
+  font-size: 1.05rem; font-weight: 500;
 }
 
-.sp-stage {
-  display: grid; grid-template-columns: 1.1fr 1fr;
-  gap: 3rem; align-items: center; min-height: 460px;
+.sp-block {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.05fr 1fr;
+  gap: 4.5rem; align-items: center;
+  min-height: 85vh;
+  padding: 3rem 0;
+  opacity: 0; transform: translateY(48px);
+  transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.2,.8,.2,1);
 }
-.sp-photo {
+.sp-block.visible {
+  opacity: 1; transform: translateY(0);
+}
+.sp-block-reverse .sp-block-media { order: 2; }
+.sp-block-reverse .sp-block-body  { order: 1; }
+
+.sp-block-media {
   position: relative; overflow: hidden; border-radius: 24px;
   aspect-ratio: 5/4; background: var(--gray-100);
   box-shadow: 0 20px 50px rgba(0,0,0,0.12);
 }
-.sp-photo img {
-  position: absolute; inset: 0;
+.sp-block-media img {
   width: 100%; height: 100%; object-fit: cover; display: block;
-  opacity: 0; transform: scale(1.05);
-  transition: opacity 0.5s ease, transform 0.7s cubic-bezier(.2,.8,.2,1);
 }
-.sp-photo img.active { opacity: 1; transform: scale(1); }
-
-.sp-photo-badge {
+.sp-block-badge {
   position: absolute; bottom: 18px; left: 18px; z-index: 2;
   background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
   padding: 0.55rem 0.85rem 0.55rem 0.7rem; border-radius: 14px;
   display: flex; align-items: center; gap: 0.6rem;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  opacity: 0; transform: translateY(10px);
-  transition: opacity 0.45s ease 0.2s, transform 0.45s ease 0.2s;
-  pointer-events: none;
 }
-.sp-photo-badge.active { opacity: 1; transform: translateY(0); }
-.sp-photo-badge-icon {
+.sp-block-badge-icon {
   width: 28px; height: 28px; border-radius: 8px;
   background: #1e3a8a; color: #fff;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.sp-photo-badge-icon svg { width: 14px; height: 14px; }
-.sp-photo-badge-text strong {
+.sp-block-badge-icon svg { width: 14px; height: 14px; }
+.sp-block-badge-text strong {
   display: block; font-size: 0.82rem; font-weight: 700;
   color: var(--gray-900); line-height: 1;
 }
-.sp-photo-badge-text span {
+.sp-block-badge-text span {
   display: block; font-size: 0.7rem; color: var(--gray-500); margin-top: 2px;
 }
 
-.sp-text { position: relative; }
-.sp-panel {
-  opacity: 0; transform: translateX(20px);
-  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(.2,.8,.2,1);
-  position: absolute; top: 0; left: 0; right: 0;
-  pointer-events: none;
-}
-.sp-panel.active {
-  opacity: 1; transform: translateX(0);
-  position: relative; pointer-events: auto;
-}
-.sp-panel-num {
+.sp-block-body { max-width: 480px; }
+.sp-block-num {
   display: inline-block; font-family: 'Playfair Display', serif;
   font-style: italic; font-size: 1.1rem; color: #1e3a8a;
   margin-bottom: 0.75rem; letter-spacing: 0.02em;
 }
-.sp-panel h3 {
-  font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
-  line-height: 1.15; margin: 0 0 1rem;
+.sp-block-body h3 {
+  font-size: clamp(1.75rem, 3vw, 2.2rem); font-weight: 800;
+  letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 1rem;
   color: var(--gray-900); font-family: 'Playfair Display', serif;
 }
-.sp-panel p {
-  color: var(--gray-600); font-size: 1.05rem; line-height: 1.6;
-  margin: 0 0 1.5rem; max-width: 440px;
+.sp-block-body p {
+  color: var(--gray-600); font-size: 1.05rem; line-height: 1.65;
+  margin: 0 0 1.5rem;
 }
-.sp-panel-features {
-  display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1.25rem;
+.sp-block-features {
+  display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.25rem;
 }
-.sp-panel-feature {
+.sp-block-feature {
   display: flex; align-items: center; gap: 0.65rem;
-  font-size: 0.92rem; color: var(--gray-700); font-weight: 500;
+  font-size: 0.95rem; color: var(--gray-700); font-weight: 500;
 }
-.sp-panel-feature svg {
+.sp-block-feature svg {
   flex-shrink: 0; width: 18px; height: 18px; color: #1e3a8a;
 }
 
 @media (max-width: 880px) {
-  /* Mobile: kein Scroll-Hijack — normale Höhe, Panels nacheinander */
-  .sp-scroll { height: auto; }
-  .sp-sticky {
-    position: static; height: auto; min-height: 0;
-    padding: 3rem 1.25rem; display: block; overflow: visible;
+  .sp-wrap { padding: 3rem 1.25rem 1rem; }
+  .sp-wrap-head { margin-bottom: 1.5rem; }
+  .sp-wrap-head h2 { font-size: 1.65rem; }
+  .sp-wrap-sub { font-size: 0.95rem; }
+  .sp-block {
+    grid-template-columns: 1fr; gap: 1.75rem;
+    min-height: auto; padding: 2rem 0 2.5rem;
   }
-  .sp-head h2 { font-size: 1.65rem; }
-  .sp-hint { display: none; }
-  .sp-progress { display: none; }
-  .sp-stage { grid-template-columns: 1fr; gap: 1.75rem; min-height: auto; }
-  .sp-photo { aspect-ratio: 16/11; }
-  .sp-panel h3 { font-size: 1.4rem; }
-  .sp-panel p { font-size: 0.95rem; }
-  .sp-tab { padding: 0.55rem 0.95rem; font-size: 0.82rem; }
-  .sp-tab-num { display: none; }
+  .sp-block-reverse .sp-block-media,
+  .sp-block-reverse .sp-block-body { order: unset; }
+  .sp-block-media { aspect-ratio: 16/11; }
+  .sp-block-body h3 { font-size: 1.5rem; }
+  .sp-block-body p { font-size: 0.98rem; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */
@@ -2110,18 +2054,16 @@ body:has(.admin-login-wrap) {
   .sc-step-text p { font-size: 0.88rem !important; }
 
   /* Feature Spotlight ("Darum EasyJobs") */
-  .sp-sticky { padding: 2.5rem 1rem !important; }
-  .sp-head h2 { font-size: 1.6rem !important; }
-  .sp-tabs { gap: 0.35rem !important; margin-bottom: 0.75rem !important; }
-  .sp-tab { padding: 0.5rem 0.85rem !important; font-size: 0.78rem !important; }
-  .sp-progress { margin-bottom: 1.75rem !important; }
-  .sp-stage { gap: 1.5rem !important; }
-  .sp-photo { aspect-ratio: 16/11 !important; }
-  .sp-panel h3 { font-size: 1.35rem !important; }
-  .sp-panel p { font-size: 0.92rem !important; }
-  .sp-photo-badge { bottom: 12px !important; left: 12px !important; padding: 0.45rem 0.7rem 0.45rem 0.55rem !important; }
-  .sp-photo-badge-text strong { font-size: 0.78rem !important; }
-  .sp-photo-badge-text span { font-size: 0.65rem !important; }
+  .sp-wrap { padding: 2.5rem 1rem 0.5rem !important; }
+  .sp-wrap-head h2 { font-size: 1.6rem !important; }
+  .sp-wrap-sub { font-size: 0.9rem !important; }
+  .sp-block { gap: 1.5rem !important; padding: 1.5rem 0 2rem !important; }
+  .sp-block-media { aspect-ratio: 16/11 !important; }
+  .sp-block-body h3 { font-size: 1.35rem !important; }
+  .sp-block-body p { font-size: 0.92rem !important; }
+  .sp-block-badge { bottom: 12px !important; left: 12px !important; padding: 0.45rem 0.7rem 0.45rem 0.55rem !important; }
+  .sp-block-badge-text strong { font-size: 0.78rem !important; }
+  .sp-block-badge-text span { font-size: 0.65rem !important; }
 
   /* Testimonial Ticker */
   .testi-ticker-fade { width: 40px !important; }
@@ -2142,8 +2084,8 @@ body:has(.admin-login-wrap) {
 
 @media (max-width: 380px) {
   .employer-hero h1 { font-size: 1.9rem !important; }
-  .sp-head h2 { font-size: 1.35rem !important; }
-  .sp-panel h3 { font-size: 1.2rem !important; }
+  .sp-wrap-head h2 { font-size: 1.35rem !important; }
+  .sp-block-body h3 { font-size: 1.2rem !important; }
   .cta-fullblock h2 { font-size: 1.5rem !important; }
 }
 </style>
