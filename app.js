@@ -2379,7 +2379,7 @@ function renderLanding() {
                 { name:'Jonas P., 18', role:'Schüler aus München', initials:'JP', color:'linear-gradient(135deg,#34d399,#10b981)', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
                 { name:'Mia A., 15', role:'Schülerin aus Berlin', initials:'MA', color:'linear-gradient(135deg,#a78bfa,#8b5cf6)', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
                 { name:'Niklas R., 20', role:'Student aus Hamburg', initials:'NR', color:'linear-gradient(135deg,#f87171,#ef4444)', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
-                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', initials:'LK', color:'linear-gradient(135deg,#22d3ee,#06b6d4)', text:'„Ich fand\\'s mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."', rating:5 },
+                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', initials:'LK', color:'linear-gradient(135deg,#22d3ee,#06b6d4)', text:"„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit.\"", rating:5 },
                 { name:'David H., 16', role:'Schüler aus Frankfurt', initials:'DH', color:'linear-gradient(135deg,#fb923c,#f97316)', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
               ];
               var render = function(t) {
