@@ -615,10 +615,31 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Feature Spotlight "Darum EasyJobs" — interaktiv ===== */
-.sp { background: #fff; padding: 5rem 1.5rem; }
-.sp-inner { max-width: 1120px; margin: 0 auto; }
-.sp-head { text-align: center; margin-bottom: 2.25rem; }
+/* ===== Feature Spotlight "Darum EasyJobs" — scroll-gesteuert ===== */
+.sp-scroll {
+  position: relative;
+  background: #fff;
+  height: 280vh; /* ~93vh Scroll-Raum pro Panel */
+}
+.sp-sticky {
+  position: sticky;
+  top: 60px;
+  height: calc(100vh - 60px);
+  min-height: 660px;
+  display: flex;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.sp-inner { max-width: 1120px; margin: 0 auto; width: 100%; }
+.sp-head { text-align: center; margin-bottom: 1.75rem; }
+.sp-hint {
+  color: var(--gray-500);
+  font-size: 0.9rem;
+  margin: 0.5rem 0 0;
+  font-weight: 500;
+}
 .sp-head h2 {
   font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 800;
   letter-spacing: -0.02em; line-height: 1.1; margin: 0;
@@ -653,12 +674,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 
 .sp-progress {
   height: 3px; background: var(--gray-100); border-radius: 100px;
-  margin: 0 auto 2.5rem; max-width: 260px; overflow: hidden;
+  margin: 0 auto 1.75rem; max-width: 260px; overflow: hidden;
 }
 .sp-progress-fill {
   height: 100%; width: 0%;
   background: linear-gradient(90deg, #1e3a8a, #3b82f6);
   border-radius: 100px;
+  transition: width 0.08s linear;
 }
 
 .sp-stage {
@@ -741,8 +763,15 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 
 @media (max-width: 880px) {
-  .sp { padding: 3rem 1.25rem; }
+  /* Mobile: kein Scroll-Hijack — normale Höhe, Panels nacheinander */
+  .sp-scroll { height: auto; }
+  .sp-sticky {
+    position: static; height: auto; min-height: 0;
+    padding: 3rem 1.25rem; display: block; overflow: visible;
+  }
   .sp-head h2 { font-size: 1.65rem; }
+  .sp-hint { display: none; }
+  .sp-progress { display: none; }
   .sp-stage { grid-template-columns: 1fr; gap: 1.75rem; min-height: auto; }
   .sp-photo { aspect-ratio: 16/11; }
   .sp-panel h3 { font-size: 1.4rem; }
@@ -2081,7 +2110,7 @@ body:has(.admin-login-wrap) {
   .sc-step-text p { font-size: 0.88rem !important; }
 
   /* Feature Spotlight ("Darum EasyJobs") */
-  .sp { padding: 2.5rem 1rem !important; }
+  .sp-sticky { padding: 2.5rem 1rem !important; }
   .sp-head h2 { font-size: 1.6rem !important; }
   .sp-tabs { gap: 0.35rem !important; margin-bottom: 0.75rem !important; }
   .sp-tab { padding: 0.5rem 0.85rem !important; font-size: 0.78rem !important; }
