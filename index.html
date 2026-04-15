@@ -615,42 +615,49 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Zenjob/Jobmensa-Stil "Darum EasyJobs" ===== */
+/* ===== "Darum EasyJobs" — minimal, auf einen Blick ===== */
 .zj { background: #fff; padding: 4.5rem 1.5rem; }
 .zj-inner { max-width: 1100px; margin: 0 auto; }
-.zj-head { max-width: 640px; margin-bottom: 3rem; }
+.zj-head { text-align: center; margin-bottom: 3rem; }
 .zj-head h2 {
   font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em;
-  line-height: 1.15; margin: 0 0 0.75rem; color: var(--gray-900);
-}
-.zj-head p {
-  color: var(--gray-500); font-size: 1.05rem; line-height: 1.6; margin: 0;
+  line-height: 1.15; margin: 0; color: var(--gray-900);
 }
 .zj-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
 }
-.zj-item { display: flex; flex-direction: column; }
+.zj-item {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
+}
 .zj-photo {
-  width: 100%; aspect-ratio: 4/5; margin-bottom: 1.25rem;
-  overflow: hidden; border-radius: 12px; background: var(--gray-100);
+  position: relative; width: 100%; aspect-ratio: 4/3;
+  margin-bottom: 1.25rem; overflow: hidden; border-radius: 16px;
+  background: var(--gray-100);
 }
 .zj-photo img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   transition: transform 0.6s ease;
 }
-.zj-item:hover .zj-photo img { transform: scale(1.04); }
-.zj-item h3 {
-  font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em;
-  margin: 0 0 0.5rem; color: var(--gray-900);
+.zj-item:hover .zj-photo img { transform: scale(1.05); }
+.zj-icon {
+  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+  width: 52px; height: 52px; border-radius: 50%;
+  background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 8px 20px rgba(30,58,138,0.35);
+  border: 3px solid #fff;
 }
-.zj-item p {
-  color: var(--gray-600); font-size: 0.95rem; line-height: 1.6; margin: 0;
+.zj-icon svg { width: 22px; height: 22px; }
+.zj-item h3 {
+  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
+  margin: 1.5rem 0 0; color: var(--gray-900);
+  max-width: 240px;
 }
 @media (max-width: 768px) {
   .zj { padding: 3rem 1.25rem; }
   .zj-head h2 { font-size: 1.65rem; }
-  .zj-head p { font-size: 0.95rem; }
-  .zj-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .zj-grid { grid-template-columns: 1fr; gap: 2.5rem; max-width: 360px; margin: 0 auto; }
   .zj-photo { aspect-ratio: 16/10; }
 }
 
