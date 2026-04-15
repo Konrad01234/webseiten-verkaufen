@@ -2279,69 +2279,101 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Bento-Grid mit großen Zahlen -->
-    <section class="bento">
-      <div class="bento-inner">
-        <div class="bento-head">
-          <span class="bento-kicker"><span class="bento-dot"></span>Für Schüler & Studenten</span>
-          <h2>Dein Nebenjob &mdash;<br><em>so einfach wie nie.</em></h2>
+    <!-- Darum EasyJobs - Feature Spotlight (Idee #3) -->
+    <section class="sp">
+      <div class="sp-inner">
+        <div class="sp-head">
+          <h2>Was EasyJobs <em>anders</em> macht</h2>
         </div>
 
-        <div class="bento-grid">
-          <!-- Großer Block links: Jobs in deiner Stadt -->
-          <a class="bento-card bento-hero" href="#" onclick="navigate('jobs');return false">
-            <div class="bento-bg">
-              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop" alt="" loading="lazy">
-            </div>
-            <div class="bento-overlay"></div>
-            <div class="bento-content">
-              <span class="bento-num">01</span>
-              <div>
-                <div class="bento-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                  In deiner Nähe
-                </div>
-                <h3>Nur Jobs,<br>die du erreichen kannst.</h3>
-                <div class="bento-arrow">Jobs entdecken <span>→</span></div>
-              </div>
-            </div>
-          </a>
+        <div class="sp-tabs" id="sp-tabs">
+          <button class="sp-tab active" data-i="0">
+            <span class="sp-tab-num">01</span>
+            In deiner Stadt
+          </button>
+          <button class="sp-tab" data-i="1">
+            <span class="sp-tab-num">02</span>
+            1-Klick-Bewerbung
+          </button>
+          <button class="sp-tab" data-i="2">
+            <span class="sp-tab-num">03</span>
+            Direkt-Chat
+          </button>
+        </div>
 
-          <!-- Oben rechts: Bewerbung in 10s -->
-          <a class="bento-card bento-small bento-apply" href="#" onclick="navigate('register');return false">
-            <div class="bento-bg">
-              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&auto=format&fit=crop" alt="" loading="lazy">
-            </div>
-            <div class="bento-overlay"></div>
-            <div class="bento-content">
-              <span class="bento-num">02</span>
-              <div>
-                <div class="bento-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
-                  1 Klick
-                </div>
-                <h3>In 10 Sekunden beworben.</h3>
-              </div>
-            </div>
-          </a>
+        <div class="sp-progress">
+          <div class="sp-progress-fill" id="sp-progress"></div>
+        </div>
 
-          <!-- Unten rechts: Chat -->
-          <a class="bento-card bento-small bento-chat" href="#" onclick="navigate('jobs');return false">
-            <div class="bento-bg">
-              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop" alt="" loading="lazy">
-            </div>
-            <div class="bento-overlay"></div>
-            <div class="bento-content">
-              <span class="bento-num">03</span>
-              <div>
-                <div class="bento-tag">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                  Direkt-Chat
-                </div>
-                <h3>Schreib den Chef an. Sofort.</h3>
+        <div class="sp-stage" id="sp-stage">
+          <div class="sp-photo">
+            <img class="active" data-i="0" src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <img data-i="1" src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <img data-i="2" src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+
+            <div class="sp-photo-badge active" data-i="0">
+              <span class="sp-photo-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </span>
+              <div class="sp-photo-badge-text">
+                <strong>2.400+ Jobs</strong>
+                <span>in deiner Stadt heute</span>
               </div>
             </div>
-          </a>
+            <div class="sp-photo-badge" data-i="1">
+              <span class="sp-photo-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </span>
+              <div class="sp-photo-badge-text">
+                <strong>10 Sekunden</strong>
+                <span>pro Bewerbung</span>
+              </div>
+            </div>
+            <div class="sp-photo-badge" data-i="2">
+              <span class="sp-photo-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              </span>
+              <div class="sp-photo-badge-text">
+                <strong>Direkt im Chat</strong>
+                <span>keine Telefonate</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sp-text">
+            <div class="sp-panel active" data-i="0">
+              <span class="sp-panel-num">eins.</span>
+              <h3>Jobs, die du zu Fuß erreichst.</h3>
+              <p>Nur Stellen bei Unternehmen in deiner Stadt &mdash; mit Umkreis-Filter und Kartenansicht.</p>
+              <div class="sp-panel-features">
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Kartenansicht mit Pins</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Radius-Filter (2 / 5 / 10 km)</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Push bei neuen Jobs in der Nähe</div>
+              </div>
+            </div>
+
+            <div class="sp-panel" data-i="1">
+              <span class="sp-panel-num">zwei.</span>
+              <h3>Bewerben in einem Wisch.</h3>
+              <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen &mdash; dann ein Klick pro Job.</p>
+              <div class="sp-panel-features">
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-Motivationsschreiben</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf-Builder inklusive</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Status jederzeit im Dashboard</div>
+              </div>
+            </div>
+
+            <div class="sp-panel" data-i="2">
+              <span class="sp-panel-num">drei.</span>
+              <h3>Schreib den Chef direkt an.</h3>
+              <p>Alle Fragen, Termine und Zusagen im Chat. Läuft wie Messenger &mdash; nur dass's ums Arbeiten geht.</p>
+              <div class="sp-panel-features">
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Antwort meist in unter 24h</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keine E-Mail-Kette</div>
+                <div class="sp-panel-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Nummer bleibt privat</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -2397,6 +2429,76 @@ function renderLanding() {
       </div>
     </section>`;
 }
+
+// ===== Feature Spotlight ("Darum EasyJobs") =====
+var spLastContainer = null;
+var spTimer = null;
+var spRaf = null;
+var spProgressStart = 0;
+var spCurrent = 0;
+var SP_DURATION = 5000;
+
+function spSetActive(i, container) {
+  spCurrent = i;
+  ['.sp-tab', '.sp-photo img', '.sp-photo-badge', '.sp-panel'].forEach(function(sel) {
+    container.querySelectorAll(sel).forEach(function(el, j) {
+      el.classList.toggle('active', j === i);
+    });
+  });
+  spRestart(container);
+}
+
+function spTick() {
+  var fill = document.getElementById('sp-progress');
+  if (!fill) return;
+  var elapsed = Date.now() - spProgressStart;
+  var pct = Math.min(100, (elapsed / SP_DURATION) * 100);
+  fill.style.width = pct + '%';
+  if (pct < 100) spRaf = requestAnimationFrame(spTick);
+}
+
+function spRestart(container) {
+  if (spTimer) clearTimeout(spTimer);
+  if (spRaf) cancelAnimationFrame(spRaf);
+  var fill = container.querySelector('#sp-progress');
+  if (fill) { fill.style.width = '0%'; }
+  spProgressStart = Date.now();
+  spRaf = requestAnimationFrame(spTick);
+  spTimer = setTimeout(function() {
+    var tabs = container.querySelectorAll('.sp-tab');
+    spSetActive((spCurrent + 1) % tabs.length, container);
+  }, SP_DURATION);
+}
+
+function spSetup() {
+  var container = document.querySelector('.sp');
+  if (!container) return;
+  if (container === spLastContainer) return;
+  spLastContainer = container;
+
+  var tabs = container.querySelectorAll('.sp-tab');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      spSetActive(parseInt(tab.getAttribute('data-i'), 10), container);
+    });
+  });
+  spCurrent = 0;
+  spRestart(container);
+}
+
+var spDomObserver = new MutationObserver(function() {
+  var present = !!document.querySelector('.sp');
+  if (!present) {
+    if (spTimer) { clearTimeout(spTimer); spTimer = null; }
+    if (spRaf) { cancelAnimationFrame(spRaf); spRaf = null; }
+    spLastContainer = null;
+    spCurrent = 0;
+  } else {
+    spSetup();
+  }
+});
+spDomObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
+spSetup();
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
 // Schritte erscheinen nacheinander wenn die Sektion sichtbar wird.
