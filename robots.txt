@@ -7,3 +7,6 @@ Disallow: /index-multifile.html
 # Supabase Auth liegt.
 Disallow: /api/
 Disallow: /auth/
+
+# Dynamische Sitemap (Cloudflare Pages Function, Quelle: Supabase)
+Sitemap: /sitemap.xml

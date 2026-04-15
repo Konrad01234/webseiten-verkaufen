@@ -765,8 +765,8 @@ function updateNav() {
     actions.innerHTML = `
       <div class="user-menu">
 
-        <div class="user-avatar" onclick="toggleDropdown()">${(state.user.name||'').split(' ').map(n=>n[0]).join('')}</div>
-        <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown">
+        <div class="user-avatar" onclick="toggleDropdown()" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleDropdown();}" aria-label="Nutzermenü" aria-haspopup="true" aria-expanded="${state.dropdownOpen}" aria-controls="user-dropdown">${(state.user.name||'').split(' ').map(n=>n[0]).join('')}</div>
+        <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown" role="menu">
           <a href="#" onclick="navigate('${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}'); toggleDropdown()">Dashboard</a>
           <a href="#" onclick="navigate('${isEmployer ? 'employer-profile' : 'worker-profile'}'); toggleDropdown()">Profil</a>
           ${!isEmployer ? '<a href="#" onclick="navigate(\'saved-jobs\'); toggleDropdown()">Gespeicherte Jobs</a>' : ''}
@@ -1838,7 +1838,8 @@ function renderChatWidget() {
         `).join('')}
       </div>
       <div class="chat-input-area">
-        <input type="text" placeholder="Nachricht..." id="chat-input" onkeydown="if(event.key==='Enter')sendChatMessage()">
+        <label for="chat-input" class="sr-only">Nachricht schreiben</label>
+        <input type="text" placeholder="Nachricht..." id="chat-input" onkeydown="if(event.key==='Enter')sendChatMessage()" aria-label="Nachricht schreiben">
         <button onclick="sendChatMessage()">→</button>
       </div>`;
   }
@@ -2650,8 +2651,8 @@ function renderJobCard(j) {
             ${j.views || 0}
           </div>
         </div>
-        <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${j.id}, event)" title="${saved ? 'Gespeichert' : 'Speichern'}">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${j.id}, event)" title="${saved ? 'Gespeichert' : 'Speichern'}" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
       </div>
     </div>`;
@@ -2810,7 +2811,7 @@ function renderJobDetail() {
                   <span style="font-weight:600">${escapeHtml(job.company)}</span>
                 </div>
               </div>
-              <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem">${saved ? '♥' : '♡'}</button>
+              <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '♥' : '♡'}</span></button>
             </div>
             <div class="job-detail-badges">
               <span class="badge badge-primary">${job.type}</span>
@@ -4746,7 +4747,8 @@ function renderChatDetail() {
 
           <!-- Eingabezeile -->
           <div style="display:flex;gap:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200);max-width:620px">
-            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" onkeydown="if(event.key==='Enter')sendChatMessage()">
+            <label for="chat-input" class="sr-only">Nachricht schreiben</label>
+            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" onkeydown="if(event.key==='Enter')sendChatMessage()" aria-label="Nachricht schreiben">
             <button class="btn btn-primary" onclick="sendChatMessage()">Senden</button>
           </div>
 
