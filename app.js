@@ -733,6 +733,16 @@ function render() {
   const renderFn = pages[state.currentPage] || renderLanding;
   app.innerHTML = renderFn();
 
+  // JSON-LD (schema.org/JobPosting) für Google for Jobs pflegen:
+  // auf der Job-Detailseite einfügen, auf allen anderen Seiten entfernen.
+  if (state.currentPage === 'job-detail') {
+    const _jobId = state.pageData && state.pageData.jobId;
+    const _job = typeof JOBS !== 'undefined' ? JOBS.find(j => j.id === _jobId) : null;
+    injectJobPostingSchema(_job);
+  } else {
+    injectJobPostingSchema(null);
+  }
+
   // Analytics tracking
   trackVisit();
 
@@ -2645,6 +2655,139 @@ function renderJobCard(j) {
         </button>
       </div>
     </div>`;
+}
+
+// ===== JSON-LD (schema.org/JobPosting) für Google for Jobs =====
+// Erzeugt strukturierte Daten speziell für Minijobs, Schülerjobs,
+// Ferienjobs und Praktika. Ohne diese Auszeichnung erscheinen
+// Stellenanzeigen NICHT in der Google-Jobs-Box.
+function buildJobPostingSchema(job) {
+  if (!job) return null;
+
+  // Schema.org employmentType Mapping (Google-konform)
+  // Minijob = geringfügige Beschäftigung → PART_TIME
+  // Ferienjob = kurzfristige Beschäftigung → TEMPORARY
+  // Praktikum → INTERN
+  const employmentTypeMap = {
+    'Minijob': ['PART_TIME'],
+    'Ferienjob': ['TEMPORARY', 'PART_TIME'],
+    'Praktikum': ['INTERN']
+  };
+  const employmentType = employmentTypeMap[job.type] || ['PART_TIME', 'CONTRACTOR'];
+
+  // Datum: Google verlangt ISO-8601 für datePosted & validThrough
+  const posted = job.date ? new Date(job.date) : new Date();
+  const validThrough = job.expires
+    ? new Date(job.expires)
+    : new Date(posted.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+  // Minijob/Schülerjob-spezifischer Kontext für bessere Auffindbarkeit
+  // (Google indexiert den Description-Text — diese Zusätze bringen
+  //  Rankings für „Schülerjob", „Studentenjob", „Nebenjob" etc.)
+  const typeContext = {
+    'Minijob': 'Minijob / geringfügige Beschäftigung — bis 556 €/Monat steuerfrei. Perfekt als Schülerjob, Studentenjob oder Nebenjob mit flexiblen Arbeitszeiten.',
+    'Ferienjob': 'Ferienjob / kurzfristige Beschäftigung — ideal für Schüler und Studenten in den Schulferien. Flexible Einsatzzeiten.',
+    'Praktikum': 'Praktikumsstelle — ideal für Schüler, Studenten und Berufseinsteiger. Erste Berufserfahrung sammeln.'
+  };
+  const ctx = typeContext[job.type] || '';
+  const rawDesc = (job.description || '').toString();
+  const description = (rawDesc ? `<p>${rawDesc}</p>` : '') + (ctx ? `<p><em>${ctx}</em></p>` : '');
+
+  // Ort: primär city, sonst erstes Segment der location
+  const city = (job.city && job.city.trim())
+    || ((job.location || '').split(',')[0] || '').trim()
+    || 'Deutschland';
+
+  const schema = {
+    '@context': 'https://schema.org/',
+    '@type': 'JobPosting',
+    'title': job.title || `${job.type || 'Minijob'}${job.company ? ' bei ' + job.company : ''}`,
+    'description': description || `<p>${job.type || 'Minijob'} bei ${job.company || 'einem Arbeitgeber'} in ${city}.</p>`,
+    'identifier': {
+      '@type': 'PropertyValue',
+      'name': job.company || 'EasyJobs',
+      'value': String(job.id)
+    },
+    'datePosted': posted.toISOString().slice(0, 10),
+    'validThrough': validThrough.toISOString(),
+    'employmentType': employmentType,
+    'hiringOrganization': {
+      '@type': 'Organization',
+      'name': job.company || 'EasyJobs Partner'
+    },
+    'jobLocation': {
+      '@type': 'Place',
+      'address': {
+        '@type': 'PostalAddress',
+        'addressLocality': city,
+        'addressCountry': 'DE'
+      }
+    },
+    'directApply': true
+  };
+
+  if (job.companyInfo && job.companyInfo.website) {
+    schema.hiringOrganization.sameAs = job.companyInfo.website;
+  }
+  if (job.category) {
+    schema.industry = job.category;
+    schema.occupationalCategory = job.category;
+  }
+
+  // Gehalt: job.salaryNum ist numerisch; Heuristik Stunden- vs. Monatslohn
+  if (typeof job.salaryNum === 'number' && job.salaryNum > 0) {
+    // < 50 → Stundenlohn (z. B. 13,50 €/h)
+    // >= 50 → Monatslohn (z. B. 520 €/Monat)
+    const unitText = job.salaryNum < 50 ? 'HOUR' : 'MONTH';
+    schema.baseSalary = {
+      '@type': 'MonetaryAmount',
+      'currency': 'EUR',
+      'value': {
+        '@type': 'QuantitativeValue',
+        'value': job.salaryNum,
+        'unitText': unitText
+      }
+    };
+  }
+
+  // Jobvorteile — besonders relevant für Schüler/Studenten-Zielgruppe
+  const benefits = [];
+  if (job.type === 'Minijob') {
+    benefits.push('Steuerfrei bis 556 €/Monat', 'Flexible Arbeitszeiten neben Schule/Studium', 'Ideal als Nebenjob');
+  } else if (job.type === 'Ferienjob') {
+    benefits.push('Ideal für die Schulferien', 'Kurzfristige Beschäftigung', 'Schnelle Einarbeitung');
+  } else if (job.type === 'Praktikum') {
+    benefits.push('Erste Berufserfahrung', 'Praxiseinblick', 'Netzwerk aufbauen');
+  }
+  if (benefits.length) schema.jobBenefits = benefits.join(', ');
+
+  // URL der Stellenanzeige (Hash-Route, da SPA)
+  if (typeof window !== 'undefined' && window.location) {
+    schema.url = `${window.location.origin}${window.location.pathname}#job-${job.id}`;
+  }
+
+  return schema;
+}
+
+// Fügt das JSON-LD Script-Tag in den <head> ein (und entfernt ein
+// vorhandenes zuerst). Wird `job` null übergeben, wird nur aufgeräumt.
+function injectJobPostingSchema(job) {
+  try {
+    const prev = document.getElementById('jobposting-jsonld');
+    if (prev) prev.remove();
+    if (!job) return;
+    const schema = buildJobPostingSchema(job);
+    if (!schema) return;
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.id = 'jobposting-jsonld';
+    // JSON.stringify escapt Anführungszeichen. Zusätzlich </ escapen,
+    // damit kein Script-Tag im JSON den Parser bricht.
+    script.textContent = JSON.stringify(schema).replace(/<\//g, '<\\/');
+    document.head.appendChild(script);
+  } catch (e) {
+    console.warn('[injectJobPostingSchema]', e);
+  }
 }
 
 function renderJobDetail() {
