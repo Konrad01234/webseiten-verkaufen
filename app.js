@@ -3482,8 +3482,8 @@ function renderCVBuilder() {
         <div class="dashboard-content">
           <h2 class="dashboard-title">Lebenslauf Builder</h2>
 
-          <div style="margin-bottom:2rem">
-            <h3 style="font-size:1.1rem;margin-bottom:1rem">Vorlage wählen</h3>
+          <div style="margin-bottom:1.5rem">
+            <h3 style="font-size:1.05rem;margin-bottom:0.75rem">Vorlage wählen</h3>
             <div class="cv-templates">
               <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">

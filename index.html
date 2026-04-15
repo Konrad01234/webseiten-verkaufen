@@ -1155,7 +1155,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 
 /* ===== CV BUILDER ===== */
-.cv-templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; max-width: 520px; }
+.cv-templates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.85rem; }
 .cv-template {
   border: 2px solid var(--gray-200); border-radius: var(--radius-sm);
   overflow: hidden; cursor: pointer; transition: all 0.2s;
@@ -1163,10 +1163,10 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .cv-template:hover { border-color: var(--primary); box-shadow: var(--shadow-md); }
 .cv-template.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.15); }
 .cv-preview {
-  aspect-ratio: 210/297; background: #fff; padding: 0;
+  aspect-ratio: 3/4; background: #fff; padding: 0;
   border-bottom: 1px solid var(--gray-200);
 }
-.cv-template-name { padding: 0.75rem; text-align: center; font-weight: 600; font-size: 0.9rem; }
+.cv-template-name { padding: 0.5rem; text-align: center; font-weight: 600; font-size: 0.85rem; }
 
 /* ===== APPLICANTS TABLE ===== */
 .applicants-table { width: 100%; border-collapse: collapse; }
