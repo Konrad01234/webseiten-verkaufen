@@ -29,14 +29,14 @@
 - [ ] **Admin-E-Mails anpassen** in `app.js` (aktuell `kwg.range@web.de`, `jojo102009@icloud.com`)
 
 ### Datenbank-Migrations
-- [ ] Im Supabase SQL Editor einspielen (Reihenfolge):
-  1. `supabase-schema.sql` (Basis, ggf. schon vorhanden)
-  2. `supabase-security-hardening.sql`
-  3. `supabase-add-approval.sql` (Arbeitgeber-Freischaltung)
-  4. `supabase-add-worker-fields.sql` (CV, Skills)
-  5. `supabase-add-storage.sql` (Bilder-Bucket + RLS)
-  6. `supabase-add-cron.sql` (Auto-Archivierung alter Jobs)
-- [ ] In Supabase Storage einen **public bucket „images"** anlegen
+- [x] Im Supabase SQL Editor eingespielt (von User bestätigt 2026-04-15):
+  1. `supabase-schema.sql` ✅
+  2. `supabase-security-hardening.sql` ✅
+  3. `supabase-add-approval.sql` (Arbeitgeber-Freischaltung) ✅
+  4. `supabase-add-worker-fields.sql` (CV, Skills) ✅
+  5. `supabase-add-storage.sql` (Bilder-Bucket + RLS) ✅
+  6. `supabase-add-cron.sql` (Auto-Archivierung alter Jobs) ✅
+- [x] In Supabase Storage public bucket „images" angelegt ✅
 - [ ] RLS-Policies nach Einspielen prüfen (Smoke-Test: Jobs posten, Bewerbung senden)
 
 ### Deployment
