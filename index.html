@@ -615,140 +615,43 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Product Showcase ("Darum EasyJobs") — wie Zenjob/Jobmensa ===== */
-.showcase-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
+/* ===== Zenjob/Jobmensa-Stil "Darum EasyJobs" ===== */
+.zj { background: #fff; padding: 4.5rem 1.5rem; }
+.zj-inner { max-width: 1100px; margin: 0 auto; }
+.zj-head { max-width: 640px; margin-bottom: 3rem; }
+.zj-head h2 {
+  font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.15; margin: 0 0 0.75rem; color: var(--gray-900);
 }
-.showcase-card {
-  background: #fff; border: 1px solid var(--gray-200);
-  border-radius: 20px; overflow: hidden;
-  transition: all 0.3s ease;
+.zj-head p {
+  color: var(--gray-500); font-size: 1.05rem; line-height: 1.6; margin: 0;
 }
-.showcase-card:hover {
-  transform: translateY(-6px);
-  border-color: var(--primary);
-  box-shadow: 0 20px 50px rgba(30,58,138,0.12);
+.zj-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem;
 }
-.showcase-visual {
-  height: 220px; padding: 1.5rem;
-  display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;
-  position: relative; overflow: hidden;
+.zj-item { display: flex; flex-direction: column; }
+.zj-photo {
+  width: 100%; aspect-ratio: 4/5; margin-bottom: 1.25rem;
+  overflow: hidden; border-radius: 12px; background: var(--gray-100);
 }
-.showcase-body { padding: 1.5rem 1.5rem 1.75rem; }
-.showcase-body h3 {
-  font-size: 1.15rem; font-weight: 700; color: var(--gray-900);
-  margin: 0 0 0.5rem; letter-spacing: -0.01em;
+.zj-photo img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transition: transform 0.6s ease;
 }
-.showcase-body p {
-  color: var(--gray-500); font-size: 0.92rem; line-height: 1.65; margin: 0;
+.zj-item:hover .zj-photo img { transform: scale(1.04); }
+.zj-item h3 {
+  font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em;
+  margin: 0 0 0.5rem; color: var(--gray-900);
 }
-
-/* Visual 1: Job-Liste Mockup */
-.showcase-visual-jobs {
-  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+.zj-item p {
+  color: var(--gray-600); font-size: 0.95rem; line-height: 1.6; margin: 0;
 }
-.sc-mock-job {
-  display: flex; align-items: center; gap: 0.75rem;
-  background: #fff; padding: 0.75rem 0.85rem; border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  transition: transform 0.3s;
-}
-.showcase-card:hover .sc-mock-job:nth-child(1) { transform: translateX(4px); }
-.sc-mock-job.sc-mock-dim { opacity: 0.7; }
-.sc-mock-logo {
-  width: 34px; height: 34px; border-radius: 8px; color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.88rem; flex-shrink: 0;
-}
-.sc-mock-info { flex: 1; min-width: 0; }
-.sc-mock-title {
-  font-size: 0.82rem; font-weight: 700; color: var(--gray-900);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.sc-mock-meta { font-size: 0.7rem; color: var(--gray-500); margin-top: 1px; }
-.sc-mock-pay {
-  font-size: 0.78rem; font-weight: 700; color: #1e3a8a;
-  background: rgba(30,58,138,0.08); padding: 0.2rem 0.55rem;
-  border-radius: 100px; flex-shrink: 0;
-}
-
-/* Visual 2: Bewerbungs-Mockup */
-.showcase-visual-apply {
-  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
-  gap: 0.75rem;
-}
-.sc-apply-profile {
-  display: flex; align-items: center; gap: 0.75rem;
-  background: #fff; padding: 0.75rem 0.85rem; border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.sc-apply-avatar {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: linear-gradient(135deg, #60a5fa, #3b82f6); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.82rem; flex-shrink: 0;
-}
-.sc-apply-name { font-size: 0.85rem; font-weight: 700; color: var(--gray-900); }
-.sc-apply-skills { display: flex; gap: 0.3rem; margin-top: 3px; }
-.sc-skill {
-  font-size: 0.65rem; background: var(--gray-100); color: var(--gray-600);
-  padding: 0.1rem 0.45rem; border-radius: 100px; font-weight: 600;
-}
-.sc-apply-btn {
-  background: #1e3a8a; color: #fff; border: none;
-  padding: 0.65rem; border-radius: 10px; font-weight: 700;
-  font-size: 0.85rem; cursor: pointer;
-  box-shadow: 0 4px 12px rgba(30,58,138,0.25);
-  font-family: inherit;
-  transition: transform 0.2s;
-}
-.showcase-card:hover .sc-apply-btn { transform: scale(1.02); }
-.sc-apply-success {
-  display: flex; align-items: center; gap: 0.65rem;
-  background: #fff; padding: 0.65rem 0.85rem; border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  border-left: 3px solid #10b981;
-}
-.sc-apply-check {
-  width: 28px; height: 28px; border-radius: 50%;
-  background: #10b981; color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.85rem;
-}
-.sc-apply-sent { font-size: 0.82rem; font-weight: 700; color: var(--gray-900); }
-.sc-apply-time { font-size: 0.68rem; color: var(--gray-500); }
-
-/* Visual 3: Chat-Mockup */
-.showcase-visual-chat {
-  background: linear-gradient(135deg, #fff7ed, #fed7aa);
-  padding-top: 1rem;
-}
-.sc-chat-header {
-  display: flex; align-items: center; gap: 0.65rem;
-  padding-bottom: 0.75rem; margin-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(0,0,0,0.08);
-}
-.sc-chat-avatar {
-  width: 32px; height: 32px; border-radius: 50%; color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; font-size: 0.85rem; flex-shrink: 0;
-}
-.sc-chat-name { font-size: 0.82rem; font-weight: 700; color: var(--gray-900); }
-.sc-chat-status { font-size: 0.68rem; color: #10b981; }
-.sc-chat-bubble {
-  padding: 0.5rem 0.75rem; border-radius: 12px;
-  font-size: 0.8rem; line-height: 1.35; max-width: 80%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-}
-.sc-chat-them { background: #fff; color: var(--gray-800); align-self: flex-start; border-bottom-left-radius: 4px; }
-.sc-chat-you {
-  background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #fff;
-  align-self: flex-end; border-bottom-right-radius: 4px;
-}
-
 @media (max-width: 768px) {
-  .showcase-grid { grid-template-columns: 1fr; }
-  .showcase-visual { height: auto; min-height: 180px; }
+  .zj { padding: 3rem 1.25rem; }
+  .zj-head h2 { font-size: 1.65rem; }
+  .zj-head p { font-size: 0.95rem; }
+  .zj-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .zj-photo { aspect-ratio: 16/10; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */

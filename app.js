@@ -2279,99 +2279,41 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Product-Showcase Stil -->
-    <div style="padding:5rem 0 4rem;background:#fff">
-      <div style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
-        <div style="text-align:center;margin-bottom:3rem">
-          <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin:0 0 0.75rem;letter-spacing:-0.02em">Darum EasyJobs</h2>
-          <p style="color:var(--gray-500);font-size:1rem;max-width:560px;margin:0 auto">Speziell für Schüler und Studenten gebaut. Einfach, direkt, fair.</p>
+    <!-- Darum EasyJobs - wie Zenjob/Jobmensa, mit echten Fotos -->
+    <section class="zj">
+      <div class="zj-inner">
+        <div class="zj-head">
+          <h2>Für Schüler und Studenten gemacht</h2>
+          <p>Nebenjob, Ferienjob oder Praktikum &mdash; bei uns findest du ehrliche Stellen aus deiner Stadt. Ohne Bewerbungsstress.</p>
         </div>
 
-        <div class="showcase-grid">
-          <!-- Feature 1: Jobs in der Nähe -->
-          <div class="showcase-card">
-            <div class="showcase-visual showcase-visual-jobs">
-              <div class="sc-mock-job">
-                <div class="sc-mock-logo" style="background:#0ea5e9">S</div>
-                <div class="sc-mock-info">
-                  <div class="sc-mock-title">Barista (m/w/d)</div>
-                  <div class="sc-mock-meta">Starbucks · 2,3 km</div>
-                </div>
-                <div class="sc-mock-pay">13 €/h</div>
-              </div>
-              <div class="sc-mock-job">
-                <div class="sc-mock-logo" style="background:#f97316">M</div>
-                <div class="sc-mock-info">
-                  <div class="sc-mock-title">Verkäufer Elektro</div>
-                  <div class="sc-mock-meta">MediaMarkt · 4,1 km</div>
-                </div>
-                <div class="sc-mock-pay">14 €/h</div>
-              </div>
-              <div class="sc-mock-job sc-mock-dim">
-                <div class="sc-mock-logo" style="background:#ef4444">R</div>
-                <div class="sc-mock-info">
-                  <div class="sc-mock-title">Lager-Aushilfe</div>
-                  <div class="sc-mock-meta">REWE · 5,6 km</div>
-                </div>
-                <div class="sc-mock-pay">12,50 €/h</div>
-              </div>
+        <div class="zj-grid">
+          <article class="zj-item">
+            <div class="zj-photo">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&auto=format&fit=crop" alt="Junge Leute unterwegs" loading="lazy">
             </div>
-            <div class="showcase-body">
-              <h3>Jobs in deiner Stadt</h3>
-              <p>Echte Stellen bei Unternehmen in deinem Umkreis — mit Entfernung, Lohn und Branche direkt im Überblick.</p>
-            </div>
-          </div>
+            <h3>Jobs aus deiner Stadt</h3>
+            <p>Keine endlosen Treffer, die 200 km weg sind. Du siehst nur Stellen, die du tatsächlich erreichen kannst.</p>
+          </article>
 
-          <!-- Feature 2: 1-Klick-Bewerbung -->
-          <div class="showcase-card">
-            <div class="showcase-visual showcase-visual-apply">
-              <div class="sc-apply-profile">
-                <div class="sc-apply-avatar">JD</div>
-                <div>
-                  <div class="sc-apply-name">Jona D., 17</div>
-                  <div class="sc-apply-skills">
-                    <span class="sc-skill">zuverlässig</span>
-                    <span class="sc-skill">teamfähig</span>
-                  </div>
-                </div>
-              </div>
-              <button class="sc-apply-btn">Jetzt bewerben</button>
-              <div class="sc-apply-success">
-                <div class="sc-apply-check">✓</div>
-                <div>
-                  <div class="sc-apply-sent">Bewerbung verschickt!</div>
-                  <div class="sc-apply-time">vor 2 Sekunden</div>
-                </div>
-              </div>
+          <article class="zj-item">
+            <div class="zj-photo">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&auto=format&fit=crop" alt="Schüler bewirbt sich mit dem Handy" loading="lazy">
             </div>
-            <div class="showcase-body">
-              <h3>Bewerben in 10 Sekunden</h3>
-              <p>Profil einmal anlegen, dann reicht ein Klick. Kein Anschreiben, kein Foto-Upload, keine ewigen Formulare.</p>
-            </div>
-          </div>
+            <h3>Bewerben ohne Formular-Hölle</h3>
+            <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen, dann reicht ein Klick pro Bewerbung.</p>
+          </article>
 
-          <!-- Feature 3: Chat -->
-          <div class="showcase-card">
-            <div class="showcase-visual showcase-visual-chat">
-              <div class="sc-chat-header">
-                <div class="sc-chat-avatar" style="background:linear-gradient(135deg,#f97316,#fb923c)">C</div>
-                <div>
-                  <div class="sc-chat-name">Café Central</div>
-                  <div class="sc-chat-status">● online</div>
-                </div>
-              </div>
-              <div class="sc-chat-bubble sc-chat-them">Hi! Wann kannst du anfangen?</div>
-              <div class="sc-chat-bubble sc-chat-you">Ab nächstem Samstag!</div>
-              <div class="sc-chat-bubble sc-chat-them">Perfekt 🙌</div>
+          <article class="zj-item">
+            <div class="zj-photo">
+              <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop" alt="Team unterhält sich" loading="lazy">
             </div>
-            <div class="showcase-body">
-              <h3>Chat statt Telefon</h3>
-              <p>Alle Fragen und Termine direkt in der App. Keine fremden Nummern, keine E-Mail-Ketten — läuft wie Messenger.</p>
-            </div>
-          </div>
+            <h3>Direkter Draht zum Chef</h3>
+            <p>Fragen klären, Termin machen, zusagen &mdash; alles im Chat. Keine Anrufnummern, keine E-Mail-Ketten.</p>
+          </article>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Testimonials - scrollender Ticker -->
     <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
