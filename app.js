@@ -2201,7 +2201,8 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Stats -->
+    <!-- Stats + Logo Ticker vorübergehend entfernt -->
+    <!--
     <div class="emp-stats-row">
       <div class="emp-stat-card"><div class="emp-stat-number">2.500+</div><div class="emp-stat-label">Stellenangebote</div></div>
       <div class="emp-stat-card"><div class="emp-stat-number">15.000+</div><div class="emp-stat-label">Registrierte Nutzer</div></div>
@@ -2209,7 +2210,6 @@ function renderLanding() {
       <div class="emp-stat-card"><div class="emp-stat-number">95%</div><div class="emp-stat-label">Weiterempfehlung</div></div>
     </div>
 
-    <!-- Logo Ticker -->
     <div style="padding:2rem 1.5rem 2.5rem;text-align:center;background:#fff">
       <p style="color:var(--gray-400);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:1.25rem">Vertrauen von über 800 Unternehmen</p>
       <div class="employer-ticker-wrap">
@@ -2245,6 +2245,7 @@ function renderLanding() {
         </div>
       </div>
     </div>
+    -->
 
     <!-- So einfach gehts - Schritte erscheinen nacheinander -->
     <div style="background:var(--gray-50);padding:4rem 0">
@@ -2323,35 +2324,99 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Testimonials -->
-    <div style="background:var(--gray-50);padding:4rem 0">
+    <!-- Testimonials - scrollender Ticker -->
+    <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
         <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem"><span style="color:var(--primary)">Echte</span> Geschichten, <span style="color:var(--primary)">echte</span> Jobs</h2>
         <p style="color:var(--gray-500);font-size:0.95rem">Das sagen unsere Nutzer</p>
       </div>
-      <div class="emp-testimonials">
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">LM</div>
-            <div><div class="emp-testimonial-name">Lena M., 17</div><div class="emp-testimonial-role">Schülerin aus Düsseldorf</div></div>
-          </div>
-        </div>
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Endlich eine Plattform, die für junge Leute gemacht ist. Keine komplizierten Formulare, alles läuft über den Chat."</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">TK</div>
-            <div><div class="emp-testimonial-name">Tim K., 19</div><div class="emp-testimonial-role">Student aus Köln</div></div>
-          </div>
-        </div>
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — und er sieht richtig professionell aus."</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">SH</div>
-            <div><div class="emp-testimonial-name">Sara H., 16</div><div class="emp-testimonial-role">Schülerin aus Essen</div></div>
+      <div class="testi-ticker-wrap">
+        <div class="testi-ticker-fade testi-ticker-fade-left"></div>
+        <div class="testi-ticker-fade testi-ticker-fade-right"></div>
+        <div class="testi-ticker">
+          <div class="testi-ticker-track">
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)">LM</div><div><div class="testi-name">Lena M., 17</div><div class="testi-role">Schülerin aus Düsseldorf</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">TK</div><div><div class="testi-name">Tim K., 19</div><div class="testi-role">Student aus Köln</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">SH</div><div><div class="testi-name">Sara H., 16</div><div class="testi-role">Schülerin aus Essen</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#34d399,#10b981)">JP</div><div><div class="testi-name">Jonas P., 18</div><div class="testi-role">Schüler aus München</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">MA</div><div><div class="testi-name">Mia A., 15</div><div class="testi-role">Schülerin aus Berlin</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f87171,#ef4444)">NR</div><div><div class="testi-name">Niklas R., 20</div><div class="testi-role">Student aus Hamburg</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#22d3ee,#06b6d4)">LK</div><div><div class="testi-name">Lina K., 17</div><div class="testi-role">Schülerin aus Stuttgart</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fb923c,#f97316)">DH</div><div><div class="testi-name">David H., 16</div><div class="testi-role">Schüler aus Frankfurt</div></div></div>
+            </div>
+
+            <!-- Duplikat für endlosen Loop -->
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f472b6,#ec4899)">LM</div><div><div class="testi-name">Lena M., 17</div><div class="testi-role">Schülerin aus Düsseldorf</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#60a5fa,#3b82f6)">TK</div><div><div class="testi-name">Tim K., 19</div><div class="testi-role">Student aus Köln</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fbbf24,#f59e0b)">SH</div><div><div class="testi-name">Sara H., 16</div><div class="testi-role">Schülerin aus Essen</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#34d399,#10b981)">JP</div><div><div class="testi-name">Jonas P., 18</div><div class="testi-role">Schüler aus München</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#a78bfa,#8b5cf6)">MA</div><div><div class="testi-name">Mia A., 15</div><div class="testi-role">Schülerin aus Berlin</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#f87171,#ef4444)">NR</div><div><div class="testi-name">Niklas R., 20</div><div class="testi-role">Student aus Hamburg</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#22d3ee,#06b6d4)">LK</div><div><div class="testi-name">Lina K., 17</div><div class="testi-role">Schülerin aus Stuttgart</div></div></div>
+            </div>
+            <div class="testi-card">
+              <div class="testi-stars">★★★★★</div>
+              <p>„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."</p>
+              <div class="testi-author"><div class="testi-avatar" style="background:linear-gradient(135deg,#fb923c,#f97316)">DH</div><div><div class="testi-name">David H., 16</div><div class="testi-role">Schüler aus Frankfurt</div></div></div>
+            </div>
           </div>
         </div>
       </div>

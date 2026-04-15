@@ -554,7 +554,60 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .sc-step-text p { font-size: 0.88rem; }
 }
 
-/* ===== Editorial ("Darum EasyJobs") — abwechselnd Bild/Text ===== */
+/* ===== Testimonial Ticker — scrollt nach links endlos ===== */
+.testi-ticker-wrap {
+  position: relative; width: 100%; overflow: hidden;
+}
+.testi-ticker-fade {
+  position: absolute; top: 0; bottom: 0; width: 120px; z-index: 2;
+  pointer-events: none;
+}
+.testi-ticker-fade-left {
+  left: 0; background: linear-gradient(90deg, var(--gray-50), transparent);
+}
+.testi-ticker-fade-right {
+  right: 0; background: linear-gradient(-90deg, var(--gray-50), transparent);
+}
+.testi-ticker { overflow: hidden; }
+.testi-ticker-track {
+  display: flex; gap: 1.25rem; width: max-content;
+  animation: testi-scroll 55s linear infinite;
+  padding: 0 0.75rem;
+}
+.testi-ticker-track:hover { animation-play-state: paused; }
+@keyframes testi-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.testi-card {
+  flex-shrink: 0; width: 340px;
+  background: #fff; border: 1px solid var(--gray-100);
+  border-radius: 16px; padding: 1.5rem 1.5rem 1.25rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+  display: flex; flex-direction: column; gap: 0.75rem;
+}
+.testi-stars { color: #fbbf24; font-size: 0.95rem; letter-spacing: 0.1em; }
+.testi-card p {
+  color: var(--gray-700); font-size: 0.92rem; line-height: 1.55;
+  margin: 0; flex: 1;
+}
+.testi-author {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-top: 0.4rem; padding-top: 0.85rem;
+  border-top: 1px solid var(--gray-100);
+}
+.testi-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 0.88rem;
+  flex-shrink: 0;
+}
+.testi-name { font-size: 0.88rem; font-weight: 700; color: var(--gray-900); }
+.testi-role { font-size: 0.78rem; color: var(--gray-500); margin-top: 1px; }
+@media (max-width: 600px) {
+  .testi-card { width: 280px; }
+  .testi-ticker-fade { width: 60px; }
+}
 .editorial { display: flex; flex-direction: column; gap: 4.5rem; }
 .editorial-row {
   display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
