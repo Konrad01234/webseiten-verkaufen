@@ -554,89 +554,6 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .sc-step-text p { font-size: 0.88rem; }
 }
 
-/* ===== Wage Calculator — interaktive Sektion ===== */
-.wage-calc {
-  background: #fff; padding: 5rem 1.5rem; border-top: 1px solid var(--gray-100);
-}
-.wage-calc-inner {
-  max-width: 1000px; margin: 0 auto;
-  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
-}
-.wage-calc-kicker {
-  display: inline-block; font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.18em; text-transform: uppercase; color: var(--primary);
-  margin-bottom: 0.85rem;
-}
-.wage-calc-left h2 {
-  font-size: 2rem; font-weight: 800; letter-spacing: -0.02em;
-  line-height: 1.15; margin: 0 0 1rem;
-  font-family: 'Playfair Display', serif;
-}
-.wage-calc-left p {
-  color: var(--gray-600); font-size: 1rem; line-height: 1.65; margin: 0 0 1.25rem;
-}
-.wage-calc-tip {
-  display: flex; gap: 0.75rem; align-items: flex-start;
-  background: #fef3c7; border-left: 3px solid #f59e0b;
-  padding: 0.85rem 1rem; border-radius: 8px;
-  font-size: 0.88rem; color: #78350f; line-height: 1.5;
-}
-.wage-calc-tip-dot {
-  flex-shrink: 0; width: 8px; height: 8px; border-radius: 50%;
-  background: #f59e0b; margin-top: 6px;
-}
-.wage-calc-card {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-  color: #fff; border-radius: 20px; padding: 2rem;
-  box-shadow: 0 20px 50px rgba(30,58,138,0.3);
-}
-.wage-calc-top {
-  display: flex; justify-content: space-between; align-items: flex-start;
-  margin-bottom: 1.75rem;
-}
-.wage-calc-value {
-  font-size: 2.5rem; font-weight: 800; line-height: 1; letter-spacing: -0.02em;
-}
-.wage-calc-label {
-  color: rgba(255,255,255,0.75); font-size: 0.88rem; margin-top: 0.4rem;
-}
-.wage-calc-badge {
-  background: rgba(34,197,94,0.2); border: 1px solid rgba(34,197,94,0.5);
-  color: #86efac; font-size: 0.75rem; font-weight: 700;
-  padding: 0.35rem 0.75rem; border-radius: 100px;
-}
-.wage-calc-badge.over { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); color: #fca5a5; }
-.wage-calc-row {
-  display: flex; justify-content: space-between; align-items: center;
-  margin-bottom: 0.5rem; margin-top: 1rem;
-}
-.wage-calc-row label { font-size: 0.85rem; color: rgba(255,255,255,0.85); font-weight: 500; }
-.wage-calc-row span { font-size: 0.9rem; font-weight: 700; color: #fff; }
-.wage-slider {
-  -webkit-appearance: none; appearance: none;
-  width: 100%; height: 6px; border-radius: 100px;
-  background: rgba(255,255,255,0.2); outline: none; margin: 0.25rem 0 0;
-}
-.wage-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 22px; height: 22px; border-radius: 50%;
-  background: #fff; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  transition: transform 0.15s;
-}
-.wage-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
-.wage-slider::-moz-range-thumb {
-  width: 22px; height: 22px; border-radius: 50%; border: none;
-  background: #fff; cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-@media (max-width: 768px) {
-  .wage-calc { padding: 3rem 1.25rem; }
-  .wage-calc-inner { grid-template-columns: 1fr; gap: 2rem; }
-  .wage-calc-left h2 { font-size: 1.6rem; }
-  .wage-calc-value { font-size: 2rem; }
-}
-
 /* ===== Testimonial Ticker — scrollt nach links endlos ===== */
 .testi-ticker-wrap {
   position: relative; width: 100%; overflow: hidden;
@@ -698,46 +615,149 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-.editorial { display: flex; flex-direction: column; gap: 4.5rem; }
-.editorial-row {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 3rem;
-  align-items: center;
+/* ===== Zine ("Darum EasyJobs") — persönlich, handgemacht ===== */
+.zine-kicker {
+  display: inline-block; font-size: 0.8rem; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--gray-400); font-weight: 600;
 }
-.editorial-row.reverse .editorial-image { order: 2; }
-.editorial-row.reverse .editorial-text { order: 1; }
-.editorial-image {
-  position: relative; overflow: hidden; border-radius: 16px;
-  aspect-ratio: 4 / 3; box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+.zine { display: flex; flex-direction: column; gap: 5rem; }
+.zine-block { display: grid; gap: 3rem; align-items: center; }
+.zine-block-1 { grid-template-columns: 0.9fr 1fr; }
+.zine-block-2 { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+.zine-block-3 { grid-template-columns: 1fr 0.85fr; }
+
+.zine-num {
+  display: inline-block; font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 1.15rem; color: var(--primary);
+  margin-bottom: 0.5rem; letter-spacing: 0.01em;
 }
-.editorial-image img {
-  width: 100%; height: 100%; object-fit: cover;
-  transition: transform 0.8s ease;
-}
-.editorial-row:hover .editorial-image img { transform: scale(1.04); }
-.editorial-text { padding: 0 0.5rem; }
-.editorial-num {
-  display: inline-block; font-size: 0.8rem; font-weight: 700;
-  letter-spacing: 0.18em; color: var(--primary);
-  margin-bottom: 0.85rem; font-family: 'Inter', sans-serif;
-}
-.editorial-text h3 {
-  font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em;
-  margin-bottom: 0.85rem; line-height: 1.15;
+.zine-text h3 {
+  font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.2; margin: 0 0 1rem;
   font-family: 'Playfair Display', serif; color: var(--gray-900);
 }
-.editorial-text p {
+.zine-text p {
   color: var(--gray-600); font-size: 1rem; line-height: 1.7;
-  margin: 0; max-width: 420px;
+  margin: 0; max-width: 440px;
 }
+.zine-text em {
+  font-style: normal; background: linear-gradient(180deg, transparent 62%, #fef3c7 62%);
+  padding: 0 2px;
+}
+
+.zine-polaroid {
+  position: relative; background: #fff; padding: 0.85rem 0.85rem 3rem;
+  border: 1px solid var(--gray-200);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+  max-width: 420px; margin: 0 auto;
+  transition: transform 0.4s ease;
+}
+.zine-polaroid-tilt-left { transform: rotate(-2.5deg); }
+.zine-polaroid:hover { transform: rotate(0deg) scale(1.02); }
+.zine-polaroid img {
+  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
+}
+.zine-polaroid-caption {
+  position: absolute; bottom: 0.75rem; left: 0; right: 0;
+  text-align: center; font-family: 'Playfair Display', serif;
+  font-style: italic; color: var(--gray-600); font-size: 0.95rem;
+}
+.zine-tape {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%) rotate(-4deg);
+  width: 90px; height: 22px;
+  background: rgba(251, 191, 36, 0.55);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.zine-stat-pill {
+  display: inline-block; margin-top: 1.25rem;
+  background: var(--gray-100); padding: 0.5rem 1rem; border-radius: 100px;
+  font-size: 0.88rem; color: var(--gray-700);
+}
+.zine-stat-pill strong { color: var(--primary); font-weight: 800; margin-right: 0.35rem; }
+
+.zine-feature-img {
+  position: relative; max-width: 720px; margin: 0 auto;
+  border-radius: 4px; overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+}
+.zine-feature-img img { width: 100%; aspect-ratio: 16/7; object-fit: cover; display: block; }
+.zine-stamp {
+  position: absolute; top: 20px; right: 20px; transform: rotate(-8deg);
+  background: #ef4444; color: #fff; font-weight: 800;
+  padding: 0.4rem 1rem; font-size: 0.85rem; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 2px solid #fff; box-shadow: 0 4px 14px rgba(239,68,68,0.4);
+}
+.zine-pullquote { max-width: 640px; margin: 0 auto; }
+.zine-pullquote .zine-num { display: block; margin-bottom: 0.85rem; }
+.zine-pullquote h3 {
+  font-size: 2.1rem; font-weight: 800; line-height: 1.25;
+  letter-spacing: -0.02em; font-family: 'Playfair Display', serif;
+  color: var(--gray-900); margin: 0 0 1rem;
+}
+.zine-pullquote p {
+  color: var(--gray-600); font-size: 1.02rem; line-height: 1.7;
+  margin: 0 auto; max-width: 480px;
+}
+.zine-highlight {
+  position: relative; display: inline-block;
+  background: linear-gradient(180deg, transparent 62%, #bae6fd 62%);
+  padding: 0 4px;
+}
+
+.zine-chat {
+  background: #fff; border: 1px solid var(--gray-200);
+  border-radius: 20px; padding: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  max-width: 360px; margin: 0 auto;
+  transform: rotate(1deg);
+}
+.zine-chat-header {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--gray-100); margin-bottom: 1rem;
+}
+.zine-chat-avatar {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #fb923c); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800;
+}
+.zine-chat-name { font-size: 0.92rem; font-weight: 700; color: var(--gray-900); }
+.zine-chat-status { font-size: 0.72rem; color: #10b981; }
+.zine-chat-msg {
+  padding: 0.6rem 0.9rem; border-radius: 14px;
+  font-size: 0.88rem; line-height: 1.45; margin-bottom: 0.5rem;
+  max-width: 80%;
+}
+.zine-chat-msg-them {
+  background: var(--gray-100); color: var(--gray-800);
+  border-bottom-left-radius: 4px;
+}
+.zine-chat-msg-you {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #fff;
+  margin-left: auto; border-bottom-right-radius: 4px;
+}
+.zine-checklist {
+  list-style: none; padding: 0; margin: 1.25rem 0 0;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.zine-checklist li {
+  font-size: 0.92rem; color: var(--gray-700); padding-left: 1.5rem;
+  position: relative;
+}
+.zine-checklist li::before {
+  content: '✓'; position: absolute; left: 0; top: 0;
+  color: #10b981; font-weight: 800;
+}
+
 @media (max-width: 768px) {
-  .editorial { gap: 3rem; }
-  .editorial-row, .editorial-row.reverse {
-    grid-template-columns: 1fr; gap: 1.25rem;
-  }
-  .editorial-row.reverse .editorial-image,
-  .editorial-row.reverse .editorial-text { order: initial; }
-  .editorial-text h3 { font-size: 1.4rem; }
-  .editorial-text p { font-size: 0.95rem; }
+  .zine { gap: 3.5rem; }
+  .zine-block-1, .zine-block-3 { grid-template-columns: 1fr; gap: 2rem; }
+  .zine-block-3 .zine-chat { order: -1; }
+  .zine-text h3 { font-size: 1.45rem; }
+  .zine-pullquote h3 { font-size: 1.55rem; }
+  .zine-polaroid { max-width: 320px; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */

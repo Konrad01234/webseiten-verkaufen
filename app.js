@@ -2279,86 +2279,73 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Editorial-Stil, abwechselnd Bild links/rechts -->
-    <div style="padding:5rem 0;background:#fff">
+    <!-- Darum EasyJobs - Zine-Stil, jedes Block anders -->
+    <div style="padding:5rem 0 4rem;background:#fff">
       <div style="max-width:1000px;margin:0 auto;padding:0 1.5rem">
         <div style="text-align:center;margin-bottom:4rem">
-          <h2 style="font-size:1.9rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Darum EasyJobs</h2>
-          <p style="color:var(--gray-500);font-size:0.95rem">Drei Dinge, die den Unterschied machen</p>
+          <span class="zine-kicker">was uns anders macht</span>
+          <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin:0.75rem 0 0;letter-spacing:-0.02em">Darum EasyJobs.</h2>
         </div>
 
-        <div class="editorial">
-          <div class="editorial-row">
-            <div class="editorial-image">
+        <div class="zine">
+          <!-- Block 1: Polaroid links, Text rechts -->
+          <div class="zine-block zine-block-1">
+            <div class="zine-polaroid zine-polaroid-tilt-left">
+              <div class="zine-tape"></div>
               <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80" alt="Jobs in deiner Nähe" loading="lazy">
+              <div class="zine-polaroid-caption">— unterwegs durch die Stadt</div>
             </div>
-            <div class="editorial-text">
-              <span class="editorial-num">01</span>
-              <h3>Jobs in deiner Nähe</h3>
-              <p>Keine endlosen Treffer aus ganz Deutschland. Du siehst echte Minijobs, Ferienjobs und Praktika bei Unternehmen in deiner Stadt — mit Umkreis-Filter und Kartenansicht.</p>
-            </div>
-          </div>
-
-          <div class="editorial-row reverse">
-            <div class="editorial-image">
-              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=900&q=80" alt="Einfache Bewerbung" loading="lazy">
-            </div>
-            <div class="editorial-text">
-              <span class="editorial-num">02</span>
-              <h3>Bewerbung in 10 Sekunden</h3>
-              <p>Kein Anschreiben, kein Foto-Upload, kein Stress. Profil einmal ausfüllen — und mit einem Klick bei jedem Job bewerben. Fertig.</p>
+            <div class="zine-text">
+              <span class="zine-num">eins.</span>
+              <h3>Jobs, die wirklich in deiner Stadt sind.</h3>
+              <p>Keine endlosen Treffer aus ganz Deutschland. Du siehst Minijobs, Ferienjobs und Praktika bei Unternehmen <em>in deinem Umkreis</em>. Mit Karte. Mit Radius. Ohne Gelaber.</p>
+              <div class="zine-stat-pill">
+                <strong>2.400+</strong> Jobs heute live
+              </div>
             </div>
           </div>
 
-          <div class="editorial-row">
-            <div class="editorial-image">
-              <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=900&q=80" alt="Chat mit Arbeitgeber" loading="lazy">
+          <!-- Block 2: zentrierter Pull-Quote mit Bild darüber -->
+          <div class="zine-block zine-block-2">
+            <div class="zine-feature-img">
+              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&q=80" alt="Einfache Bewerbung" loading="lazy">
+              <span class="zine-stamp">no stress</span>
             </div>
-            <div class="editorial-text">
-              <span class="editorial-num">03</span>
-              <h3>Direkt im Chat klären</h3>
-              <p>Fragen stellen, Termin ausmachen, Details klären — alles direkt in der App. Kein E-Mail-Pingpong und keine versteckten Anrufnummern.</p>
+            <div class="zine-pullquote">
+              <span class="zine-num">zwei.</span>
+              <h3>10 Sekunden.<br>Kein Lebenslauf. Kein Foto.<br><span class="zine-highlight">Einfach &mdash; bewerben.</span></h3>
+              <p>Profil einmal anlegen. Danach siehst du einen Job und klickst <strong>Bewerben</strong>. Das war's. Wir kümmern uns um den Rest.</p>
+            </div>
+          </div>
+
+          <!-- Block 3: Chat-Mockup rechts, Text links -->
+          <div class="zine-block zine-block-3">
+            <div class="zine-text">
+              <span class="zine-num">drei.</span>
+              <h3>Erstmal schreiben. Nicht erstmal telefonieren.</h3>
+              <p>Fragen stellen, Termin ausmachen, Details klären &mdash; alles direkt im Chat. Keine fremden Anrufnummern, keine E-Mail-Ketten. Läuft wie WhatsApp, nur dass's ums Arbeiten geht.</p>
+              <ul class="zine-checklist">
+                <li>Antwort meistens in unter <strong>24h</strong></li>
+                <li>Bewerbungen sicher in der App</li>
+                <li>Kein Weitergeben an Dritte</li>
+              </ul>
+            </div>
+            <div class="zine-chat">
+              <div class="zine-chat-header">
+                <div class="zine-chat-avatar">M</div>
+                <div>
+                  <div class="zine-chat-name">Café Central</div>
+                  <div class="zine-chat-status">● online</div>
+                </div>
+              </div>
+              <div class="zine-chat-msg zine-chat-msg-them">Hey! Klingt gut, kannst du am Samstag ab 10 Uhr?</div>
+              <div class="zine-chat-msg zine-chat-msg-you">Ja, pass super! Soll ich was mitbringen?</div>
+              <div class="zine-chat-msg zine-chat-msg-them">Nur dich und gute Laune 😊</div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Lohn-Rechner - interaktiv, ungewöhnlich -->
-    <section class="wage-calc">
-      <div class="wage-calc-inner">
-        <div class="wage-calc-left">
-          <span class="wage-calc-kicker">Mal rechnen</span>
-          <h2>Was kannst du nebenbei verdienen?</h2>
-          <p>Die meisten Schüler bei uns machen zwischen <strong>8 und 15 Stunden pro Woche</strong>. Zieh an dem Regler um zu sehen was bei dir rauskommt.</p>
-          <div class="wage-calc-tip">
-            <span class="wage-calc-tip-dot"></span>
-            <span><strong>Wichtig:</strong> Bis <strong>556 €/Monat</strong> bleibt's steuerfrei (Minijob-Grenze 2026).</span>
-          </div>
-        </div>
-        <div class="wage-calc-right">
-          <div class="wage-calc-card">
-            <div class="wage-calc-top">
-              <div>
-                <div class="wage-calc-value" id="wage-value">120 €</div>
-                <div class="wage-calc-label">pro Woche · <span id="wage-monthly">480 €</span>/Monat</div>
-              </div>
-              <div class="wage-calc-badge" id="wage-badge">Minijob ✓</div>
-            </div>
-            <div class="wage-calc-row">
-              <label>Stunden / Woche</label>
-              <span id="wage-hours-display">10h</span>
-            </div>
-            <input type="range" id="wage-hours" min="2" max="20" value="10" step="1" class="wage-slider" oninput="updateWageCalc()">
-            <div class="wage-calc-row">
-              <label>Stundenlohn</label>
-              <span id="wage-rate-display">12,00 €</span>
-            </div>
-            <input type="range" id="wage-rate" min="10" max="20" value="12" step="0.5" class="wage-slider" oninput="updateWageCalc()">
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Testimonials - scrollender Ticker -->
     <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
@@ -2414,29 +2401,6 @@ function renderLanding() {
         </div>
       </div>
     </section>`;
-}
-
-// ===== Wage Calculator =====
-function updateWageCalc() {
-  var h = document.getElementById('wage-hours');
-  var r = document.getElementById('wage-rate');
-  if (!h || !r) return;
-  var hours = parseInt(h.value, 10);
-  var rate = parseFloat(r.value);
-  var weekly = hours * rate;
-  var monthly = Math.round(weekly * 4.33);
-  var fmt = function(n) { return n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' €'; };
-  var fmtRate = function(n) { return n.toFixed(2).replace('.', ',') + ' €'; };
-  var e = function(id) { return document.getElementById(id); };
-  if (e('wage-value')) e('wage-value').textContent = fmt(weekly);
-  if (e('wage-monthly')) e('wage-monthly').textContent = fmt(monthly);
-  if (e('wage-hours-display')) e('wage-hours-display').textContent = hours + 'h';
-  if (e('wage-rate-display')) e('wage-rate-display').textContent = fmtRate(rate);
-  var badge = e('wage-badge');
-  if (badge) {
-    if (monthly <= 556) { badge.textContent = 'Minijob ✓'; badge.classList.remove('over'); }
-    else { badge.textContent = 'Über Minijob-Grenze'; badge.classList.add('over'); }
-  }
 }
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
