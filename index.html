@@ -2018,6 +2018,85 @@ body:has(.admin-login-wrap) {
   .admin-rev-tab { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
   .admin-panel { padding: 1rem 0.75rem; }
 }
+
+/* ===== Landing Page — Mobile Optimierung ===== */
+@media (max-width: 900px) {
+  .employer-hero {
+    min-height: 440px !important;
+    padding: 0 !important;
+  }
+  .employer-hero-content {
+    padding: 3rem 1.25rem !important;
+    max-width: 100% !important;
+  }
+  .employer-hero h1 {
+    font-size: 2.2rem !important;
+    line-height: 1.15 !important;
+  }
+  .employer-hero p {
+    font-size: 1rem !important;
+    max-width: 100% !important;
+  }
+  .employer-hero-content > div:last-child {
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    align-items: stretch !important;
+  }
+  .employer-hero-content > div:last-child .btn {
+    width: 100%;
+    padding: 0.85rem 1.25rem !important;
+    font-size: 0.95rem !important;
+    justify-content: center;
+  }
+  .employer-hero-content > div:first-child {
+    font-size: 0.72rem !important;
+    padding: 0.35rem 0.85rem !important;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Slideshow "So einfach geht's" */
+  .steps-cascade { max-width: 100%; padding: 0 0.75rem !important; gap: 1.5rem !important; }
+  .sc-step { gap: 0.9rem !important; }
+  .sc-step-circle { width: 42px !important; height: 42px !important; font-size: 1rem !important; }
+  .sc-step-text h3 { font-size: 1rem !important; }
+  .sc-step-text p { font-size: 0.88rem !important; }
+
+  /* Bento */
+  .bento { padding: 2.5rem 1rem !important; }
+  .bento-head h2 { font-size: 1.6rem !important; }
+  .bento-kicker { font-size: 0.7rem !important; }
+  .bento-card { min-height: 220px !important; border-radius: 16px !important; }
+  .bento-hero { min-height: 280px !important; }
+  .bento-content { padding: 1.25rem !important; }
+  .bento-content h3 { font-size: 1.15rem !important; }
+  .bento-hero .bento-content h3 { font-size: 1.5rem !important; }
+  .bento-num { font-size: 2rem !important; }
+  .bento-hero .bento-num { font-size: 2.75rem !important; }
+  .bento-tag { font-size: 0.68rem !important; }
+
+  /* Testimonial Ticker */
+  .testi-ticker-fade { width: 40px !important; }
+  .testi-card { width: 260px !important; padding: 1.1rem !important; }
+  .testi-card p { font-size: 0.86rem !important; }
+
+  /* CTA Fullblock */
+  .cta-fullblock { padding: 3.5rem 1.25rem !important; }
+  .cta-fullblock h2 { font-size: 1.7rem !important; }
+  .cta-fullblock p { font-size: 0.95rem !important; }
+  .cta-fullblock-buttons { flex-direction: column !important; gap: 0.6rem !important; }
+  .cta-fullblock-buttons .btn {
+    width: 100% !important; justify-content: center !important;
+    padding: 0.85rem 1.25rem !important; font-size: 0.95rem !important;
+  }
+  .cta-fullblock-kicker { font-size: 0.7rem !important; padding: 0.3rem 0.7rem !important; }
+}
+
+@media (max-width: 380px) {
+  .employer-hero h1 { font-size: 1.9rem !important; }
+  .bento-head h2 { font-size: 1.4rem !important; }
+  .cta-fullblock h2 { font-size: 1.5rem !important; }
+}
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Supabase backend: must load before the app script so window.DB is
