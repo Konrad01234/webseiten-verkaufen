@@ -80,7 +80,7 @@
 
 ### Design
 - [ ] Dark Mode
-- [ ] Admin-Panel responsive optimieren (Tabellen/Charts auf Mobile)
+- [x] **Mobile-Overhaul** — globaler `@media (max-width: 640px)`-Block in `style.css` schließt die Lücke zwischen den 768px/480px-Queries. Gefixt: Nav (Desktop-Links auf Mobile versteckt, nur Hamburger), iOS-Input-Zoom (16px erzwungen), Job-Suche Sidebar stacked, Job-Detail stacked, Admin-Panel KPI/Tabellen scrollable, Chat-/Messages-Layout stacked, Touch-Targets ≥ 40px, Hero/Headings kleiner, Footer 2-spaltig.
 - [ ] Ladeanimationen/Skeleton-Screens einheitlich
 
 ### Features

@@ -1586,3 +1586,213 @@ body:has(.admin-login-wrap) { background: linear-gradient(135deg, #0f172a 0%, #1
   .admin-rev-tab { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
   .admin-panel { padding: 1rem 0.75rem; }
 }
+
+/* ==========================================================================
+   MOBILE OVERHAUL (640px und kleiner)
+   --------------------------------------------------------------------------
+   Schließt die Lücke zwischen den bestehenden 768px- und 480px-Queries und
+   fixt die gravierendsten Mobile-Probleme: 2-Spalten-Layouts die nicht
+   stacken, zu kleine Touch-Targets, iOS-Input-Zoom, überdimensionierte
+   Paddings, zu grosse Headings. Ab ~640px greift ausser iPads auch jedes
+   aktuelle Android-/iOS-Gerät.
+   ========================================================================== */
+@media (max-width: 640px) {
+
+  /* --- Navbar: Desktop-Links auf Mobile verstecken, nur Hamburger --- */
+  #navbar .nav-links { display: none !important; }
+  #navbar .nav-container { gap: 0.5rem; }
+  .nav-actions { display: none !important; }
+  .mobile-nav-btns { display: flex !important; align-items: center; gap: 0.25rem; margin-left: auto; }
+  .mobile-menu-btn { display: block !important; min-width: 44px; min-height: 44px; font-size: 1.4rem; }
+  .mobile-menu a {
+    padding: 0.85rem 0;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  /* --- Globale Spacings ---------------------------------------------- */
+  .page { padding: 1rem 0.75rem; }
+  .page-wide { padding: 1rem 0.75rem; }
+  .container { padding: 0 0.75rem; }
+
+  /* iOS zoomt automatisch hinein, wenn Eingabefelder < 16px Font-Size
+     haben. 16px erzwingen löst das — der Zoom ist extrem irritierend. */
+  input, select, textarea,
+  .form-input, .form-select, .form-textarea,
+  .search-bar input {
+    font-size: 16px !important;
+  }
+
+  /* --- Nav / Buttons (Touch-Target 40px min.) ----------------------- */
+  .nav-actions .btn {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.9rem;
+    min-height: 40px;
+  }
+  .btn { min-height: 40px; }
+  .btn-sm { min-height: 36px; }
+
+  /* --- Hero / Landing Headings -------------------------------------- */
+  .hero h1, h1 { font-size: 1.7rem; line-height: 1.2; }
+  .hero p { font-size: 0.95rem; }
+  .hero-content { max-width: 100%; padding: 0 0.5rem; }
+  h2 { font-size: 1.25rem; }
+
+  /* --- Footer --------------------------------------------------------- */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .footer-container { padding: 1.5rem 1rem; }
+  .footer-bottom {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  /* --- Job-Suche: Filter-Sidebar stacken --------------------------- */
+  .search-layout,
+  .page-with-sidebar {
+    grid-template-columns: 1fr !important;
+  }
+  .search-sidebar {
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    top: auto !important;
+    margin-bottom: 1rem;
+  }
+
+  /* --- Job-Detail: Sidebar unter Main ------------------------------ */
+  .job-detail-layout {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+  .job-detail-sidebar {
+    position: static !important;
+    width: 100% !important;
+    margin-top: 0;
+  }
+  .job-detail-header { padding: 1.25rem; }
+  .job-detail-header h1 { font-size: 1.3rem; line-height: 1.3; }
+  .job-detail-body { padding: 1rem 1.25rem; font-size: 0.92rem; }
+  .job-detail-badges { gap: 0.35rem; }
+  .job-detail-badges .badge { font-size: 0.72rem; padding: 0.25rem 0.55rem; }
+
+  /* --- Messages / Chat: 2-Spalten → Stack --------------------------- */
+  .dashboard-layout {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+  .wdt-msg-preview { max-width: none; }
+  .chat-messages { max-height: 55vh; }
+
+  /* --- Worker / Employer Dashboard Cards ---------------------------- */
+  .dashboard-title { font-size: 1.25rem; }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.5rem;
+  }
+  .stat-card { padding: 0.9rem; }
+  .stat-value { font-size: 1.25rem; }
+
+  /* --- Job-Cards im Grid -------------------------------------------- */
+  .jobs-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+  .job-card { padding: 1rem; }
+  .job-card h3 { font-size: 1rem; }
+
+  /* --- Modals / Dialoge --------------------------------------------- */
+  .modal {
+    max-width: 95vw !important;
+    max-height: 92vh;
+    margin: 0.5rem;
+  }
+  .modal-header { padding: 0.9rem 1rem; }
+  .modal-body { padding: 1rem; }
+  .modal-footer { padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem; }
+
+  /* --- Forms -------------------------------------------------------- */
+  .form-row, .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+  .form-label { font-size: 0.85rem; }
+
+  /* --- Admin-Panel (war nicht mobile-optimiert) -------------------- */
+  .admin-kpi-strip {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.6rem;
+  }
+  .admin-kpi { padding: 0.75rem; gap: 0.6rem; }
+  .admin-kpi-value { font-size: 1rem; }
+  .admin-kpi-label { font-size: 0.7rem; }
+  .admin-kpi-icon { width: 32px; height: 32px; }
+  .admin-row-2,
+  .admin-row-3 {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+  .admin-header h1 { font-size: 1.2rem !important; }
+  .admin-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap;
+  }
+  .admin-tab {
+    flex-shrink: 0;
+    font-size: 0.78rem;
+    padding: 0.5rem 0.75rem;
+  }
+  /* Tabellen horizontal scrollbar machen statt überlaufen zu lassen */
+  .admin-chart-card table,
+  .admin-panel table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .admin-chart-card table thead,
+  .admin-chart-card table tbody,
+  .admin-chart-card table tr {
+    display: table;
+    width: 100%;
+    table-layout: auto;
+  }
+
+  /* --- Chat-Input-Area bleibt tippbar ------------------------------- */
+  .chat-input-area {
+    padding: 0.6rem 0.75rem;
+    gap: 0.5rem;
+  }
+  .chat-input-area input { flex: 1; min-width: 0; }
+
+  /* --- Auth-Cards voll breit --------------------------------------- */
+  .auth-card, .auth-page .auth-card {
+    max-width: 100% !important;
+    margin: 1rem 0.5rem !important;
+    padding: 1.5rem 1.25rem !important;
+  }
+}
+
+/* Extra kleine Geräte (iPhone SE, 360 px) */
+@media (max-width: 380px) {
+  .nav-actions .btn { font-size: 0.78rem; padding: 0.5rem 0.7rem; }
+  .hero h1, h1 { font-size: 1.45rem; }
+  .hero p { font-size: 0.88rem; }
+  .dashboard-title { font-size: 1.1rem; }
+  .job-detail-header h1 { font-size: 1.15rem; }
+  .admin-kpi-value { font-size: 0.9rem; }
+  .stats-grid { grid-template-columns: 1fr !important; }
+}
