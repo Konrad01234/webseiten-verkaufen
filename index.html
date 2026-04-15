@@ -615,50 +615,122 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== "Darum EasyJobs" — minimal, auf einen Blick ===== */
-.zj { background: #fff; padding: 4.5rem 1.5rem; }
-.zj-inner { max-width: 1100px; margin: 0 auto; }
-.zj-head { text-align: center; margin-bottom: 3rem; }
-.zj-head h2 {
-  font-size: 2.1rem; font-weight: 800; letter-spacing: -0.02em;
-  line-height: 1.15; margin: 0; color: var(--gray-900);
+/* ===== Bento-Grid "Darum EasyJobs" — innovativ ===== */
+.bento { background: #fafafa; padding: 5rem 1.5rem; }
+.bento-inner { max-width: 1120px; margin: 0 auto; }
+.bento-head { margin-bottom: 2.5rem; }
+.bento-kicker {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--gray-500);
+  margin-bottom: 1rem;
 }
-.zj-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;
+.bento-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #22c55e; box-shadow: 0 0 0 3px rgba(34,197,94,0.2);
+  animation: bento-pulse 2s infinite;
 }
-.zj-item {
-  display: flex; flex-direction: column; align-items: center;
-  text-align: center;
+@keyframes bento-pulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
 }
-.zj-photo {
-  position: relative; width: 100%; aspect-ratio: 4/3;
-  margin-bottom: 1.25rem; overflow: hidden; border-radius: 16px;
-  background: var(--gray-100);
+.bento-head h2 {
+  font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 800;
+  letter-spacing: -0.025em; line-height: 1.1; margin: 0;
+  color: var(--gray-900);
 }
-.zj-photo img {
-  width: 100%; height: 100%; object-fit: cover; display: block;
-  transition: transform 0.6s ease;
+.bento-head h2 em {
+  font-style: italic; color: #1e3a8a;
+  font-family: 'Playfair Display', serif;
 }
-.zj-item:hover .zj-photo img { transform: scale(1.05); }
-.zj-icon {
-  position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
-  width: 52px; height: 52px; border-radius: 50%;
-  background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 8px 20px rgba(30,58,138,0.35);
-  border: 3px solid #fff;
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem; height: 560px;
 }
-.zj-icon svg { width: 22px; height: 22px; }
-.zj-item h3 {
-  font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em;
-  margin: 1.5rem 0 0; color: var(--gray-900);
-  max-width: 240px;
+.bento-hero { grid-row: span 2; }
+
+.bento-card {
+  position: relative; overflow: hidden; border-radius: 20px;
+  display: block; text-decoration: none; color: #fff;
+  transition: transform 0.4s cubic-bezier(.2,.8,.2,1);
+  isolation: isolate;
 }
-@media (max-width: 768px) {
-  .zj { padding: 3rem 1.25rem; }
-  .zj-head h2 { font-size: 1.65rem; }
-  .zj-grid { grid-template-columns: 1fr; gap: 2.5rem; max-width: 360px; margin: 0 auto; }
-  .zj-photo { aspect-ratio: 16/10; }
+.bento-card:hover { transform: translateY(-4px); }
+.bento-bg { position: absolute; inset: 0; z-index: 0; }
+.bento-bg img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 1s cubic-bezier(.2,.8,.2,1);
+}
+.bento-card:hover .bento-bg img { transform: scale(1.08); }
+.bento-overlay {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(15,23,42,0) 30%, rgba(15,23,42,0.85) 100%),
+    linear-gradient(135deg, rgba(30,58,138,0.35) 0%, rgba(15,23,42,0) 60%);
+}
+.bento-content {
+  position: relative; z-index: 2;
+  padding: 1.75rem; height: 100%;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.bento-num {
+  display: block; font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 2.5rem; font-weight: 700;
+  line-height: 1; opacity: 0.55; color: #fff;
+}
+.bento-tag {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  padding: 0.35rem 0.75rem; border-radius: 100px;
+  font-size: 0.72rem; font-weight: 600;
+  color: #fff; margin-bottom: 0.75rem;
+}
+.bento-tag svg { width: 13px; height: 13px; }
+.bento-content h3 {
+  font-size: 1.45rem; font-weight: 700; letter-spacing: -0.01em;
+  line-height: 1.2; margin: 0; color: #fff;
+}
+.bento-hero .bento-num { font-size: 3.5rem; }
+.bento-hero .bento-content h3 {
+  font-size: 2rem; font-family: 'Playfair Display', serif;
+  font-weight: 800; line-height: 1.1;
+}
+.bento-arrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  margin-top: 1rem; font-size: 0.92rem; font-weight: 700;
+  color: #fff;
+}
+.bento-arrow span { transition: transform 0.3s; display: inline-block; }
+.bento-card:hover .bento-arrow span { transform: translateX(5px); }
+
+/* Kleine Akzent-Farbe pro Karte */
+.bento-apply .bento-overlay {
+  background:
+    linear-gradient(180deg, rgba(15,23,42,0) 30%, rgba(15,23,42,0.85) 100%),
+    linear-gradient(135deg, rgba(16,185,129,0.35) 0%, rgba(15,23,42,0) 60%);
+}
+.bento-chat .bento-overlay {
+  background:
+    linear-gradient(180deg, rgba(15,23,42,0) 30%, rgba(15,23,42,0.85) 100%),
+    linear-gradient(135deg, rgba(249,115,22,0.35) 0%, rgba(15,23,42,0) 60%);
+}
+
+@media (max-width: 880px) {
+  .bento { padding: 3rem 1.25rem; }
+  .bento-head h2 { font-size: 1.75rem; }
+  .bento-grid {
+    grid-template-columns: 1fr; grid-template-rows: auto;
+    height: auto; gap: 0.85rem;
+  }
+  .bento-hero { grid-row: auto; }
+  .bento-card { min-height: 260px; }
+  .bento-hero { min-height: 340px; }
+  .bento-hero .bento-content h3 { font-size: 1.45rem; }
+  .bento-hero .bento-num { font-size: 2.5rem; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */

@@ -2279,43 +2279,69 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - minimalistisch, auf einen Blick -->
-    <section class="zj">
-      <div class="zj-inner">
-        <div class="zj-head">
-          <h2>Für Schüler & Studenten gemacht</h2>
+    <!-- Darum EasyJobs - Bento-Grid mit großen Zahlen -->
+    <section class="bento">
+      <div class="bento-inner">
+        <div class="bento-head">
+          <span class="bento-kicker"><span class="bento-dot"></span>Für Schüler & Studenten</span>
+          <h2>Dein Nebenjob &mdash;<br><em>so einfach wie nie.</em></h2>
         </div>
 
-        <div class="zj-grid">
-          <article class="zj-item">
-            <div class="zj-photo">
-              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&auto=format&fit=crop" alt="" loading="lazy">
-              <div class="zj-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div class="bento-grid">
+          <!-- Großer Block links: Jobs in deiner Stadt -->
+          <a class="bento-card bento-hero" href="#" onclick="navigate('jobs');return false">
+            <div class="bento-bg">
+              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1200&auto=format&fit=crop" alt="" loading="lazy">
+            </div>
+            <div class="bento-overlay"></div>
+            <div class="bento-content">
+              <span class="bento-num">01</span>
+              <div>
+                <div class="bento-tag">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20 10c0 7-8 13-8 13s-8-6-8-13a8 8 0 0116 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  In deiner Nähe
+                </div>
+                <h3>Nur Jobs,<br>die du erreichen kannst.</h3>
+                <div class="bento-arrow">Jobs entdecken <span>→</span></div>
               </div>
             </div>
-            <h3>Jobs in deiner Stadt</h3>
-          </article>
+          </a>
 
-          <article class="zj-item">
-            <div class="zj-photo">
+          <!-- Oben rechts: Bewerbung in 10s -->
+          <a class="bento-card bento-small bento-apply" href="#" onclick="navigate('register');return false">
+            <div class="bento-bg">
               <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=900&auto=format&fit=crop" alt="" loading="lazy">
-              <div class="zj-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 13 9 20 9"/><path d="M6 2h7l7 7v11a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2z"/><polyline points="9 15 11 17 15 13"/></svg>
+            </div>
+            <div class="bento-overlay"></div>
+            <div class="bento-content">
+              <span class="bento-num">02</span>
+              <div>
+                <div class="bento-tag">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                  1 Klick
+                </div>
+                <h3>In 10 Sekunden beworben.</h3>
               </div>
             </div>
-            <h3>Bewerbung in 1 Klick</h3>
-          </article>
+          </a>
 
-          <article class="zj-item">
-            <div class="zj-photo">
+          <!-- Unten rechts: Chat -->
+          <a class="bento-card bento-small bento-chat" href="#" onclick="navigate('jobs');return false">
+            <div class="bento-bg">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=900&auto=format&fit=crop" alt="" loading="lazy">
-              <div class="zj-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <div class="bento-overlay"></div>
+            <div class="bento-content">
+              <span class="bento-num">03</span>
+              <div>
+                <div class="bento-tag">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  Direkt-Chat
+                </div>
+                <h3>Schreib den Chef an. Sofort.</h3>
               </div>
             </div>
-            <h3>Direkt mit dem Chef schreiben</h3>
-          </article>
+          </a>
         </div>
       </div>
     </section>
