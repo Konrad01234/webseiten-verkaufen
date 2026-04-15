@@ -574,7 +574,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   animation: testi-scroll 55s linear infinite;
   padding: 0 0.75rem;
 }
-.testi-ticker-track:hover { animation-play-state: paused; }
+/* niemals pausieren — läuft durchgehend */
 @keyframes testi-scroll {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
@@ -615,149 +615,140 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Zine ("Darum EasyJobs") — persönlich, handgemacht ===== */
-.zine-kicker {
-  display: inline-block; font-size: 0.8rem; letter-spacing: 0.3em;
-  text-transform: uppercase; color: var(--gray-400); font-weight: 600;
+/* ===== Product Showcase ("Darum EasyJobs") — wie Zenjob/Jobmensa ===== */
+.showcase-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem;
 }
-.zine { display: flex; flex-direction: column; gap: 5rem; }
-.zine-block { display: grid; gap: 3rem; align-items: center; }
-.zine-block-1 { grid-template-columns: 0.9fr 1fr; }
-.zine-block-2 { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
-.zine-block-3 { grid-template-columns: 1fr 0.85fr; }
-
-.zine-num {
-  display: inline-block; font-family: 'Playfair Display', serif;
-  font-style: italic; font-size: 1.15rem; color: var(--primary);
-  margin-bottom: 0.5rem; letter-spacing: 0.01em;
-}
-.zine-text h3 {
-  font-size: 1.85rem; font-weight: 800; letter-spacing: -0.02em;
-  line-height: 1.2; margin: 0 0 1rem;
-  font-family: 'Playfair Display', serif; color: var(--gray-900);
-}
-.zine-text p {
-  color: var(--gray-600); font-size: 1rem; line-height: 1.7;
-  margin: 0; max-width: 440px;
-}
-.zine-text em {
-  font-style: normal; background: linear-gradient(180deg, transparent 62%, #fef3c7 62%);
-  padding: 0 2px;
-}
-
-.zine-polaroid {
-  position: relative; background: #fff; padding: 0.85rem 0.85rem 3rem;
-  border: 1px solid var(--gray-200);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.12);
-  max-width: 420px; margin: 0 auto;
-  transition: transform 0.4s ease;
-}
-.zine-polaroid-tilt-left { transform: rotate(-2.5deg); }
-.zine-polaroid:hover { transform: rotate(0deg) scale(1.02); }
-.zine-polaroid img {
-  width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block;
-}
-.zine-polaroid-caption {
-  position: absolute; bottom: 0.75rem; left: 0; right: 0;
-  text-align: center; font-family: 'Playfair Display', serif;
-  font-style: italic; color: var(--gray-600); font-size: 0.95rem;
-}
-.zine-tape {
-  position: absolute; top: -14px; left: 50%; transform: translateX(-50%) rotate(-4deg);
-  width: 90px; height: 22px;
-  background: rgba(251, 191, 36, 0.55);
-  border: 1px solid rgba(251, 191, 36, 0.4);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.zine-stat-pill {
-  display: inline-block; margin-top: 1.25rem;
-  background: var(--gray-100); padding: 0.5rem 1rem; border-radius: 100px;
-  font-size: 0.88rem; color: var(--gray-700);
-}
-.zine-stat-pill strong { color: var(--primary); font-weight: 800; margin-right: 0.35rem; }
-
-.zine-feature-img {
-  position: relative; max-width: 720px; margin: 0 auto;
-  border-radius: 4px; overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.15);
-}
-.zine-feature-img img { width: 100%; aspect-ratio: 16/7; object-fit: cover; display: block; }
-.zine-stamp {
-  position: absolute; top: 20px; right: 20px; transform: rotate(-8deg);
-  background: #ef4444; color: #fff; font-weight: 800;
-  padding: 0.4rem 1rem; font-size: 0.85rem; letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 2px solid #fff; box-shadow: 0 4px 14px rgba(239,68,68,0.4);
-}
-.zine-pullquote { max-width: 640px; margin: 0 auto; }
-.zine-pullquote .zine-num { display: block; margin-bottom: 0.85rem; }
-.zine-pullquote h3 {
-  font-size: 2.1rem; font-weight: 800; line-height: 1.25;
-  letter-spacing: -0.02em; font-family: 'Playfair Display', serif;
-  color: var(--gray-900); margin: 0 0 1rem;
-}
-.zine-pullquote p {
-  color: var(--gray-600); font-size: 1.02rem; line-height: 1.7;
-  margin: 0 auto; max-width: 480px;
-}
-.zine-highlight {
-  position: relative; display: inline-block;
-  background: linear-gradient(180deg, transparent 62%, #bae6fd 62%);
-  padding: 0 4px;
-}
-
-.zine-chat {
+.showcase-card {
   background: #fff; border: 1px solid var(--gray-200);
-  border-radius: 20px; padding: 1.25rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
-  max-width: 360px; margin: 0 auto;
-  transform: rotate(1deg);
+  border-radius: 20px; overflow: hidden;
+  transition: all 0.3s ease;
 }
-.zine-chat-header {
+.showcase-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: 0 20px 50px rgba(30,58,138,0.12);
+}
+.showcase-visual {
+  height: 220px; padding: 1.5rem;
+  display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.showcase-body { padding: 1.5rem 1.5rem 1.75rem; }
+.showcase-body h3 {
+  font-size: 1.15rem; font-weight: 700; color: var(--gray-900);
+  margin: 0 0 0.5rem; letter-spacing: -0.01em;
+}
+.showcase-body p {
+  color: var(--gray-500); font-size: 0.92rem; line-height: 1.65; margin: 0;
+}
+
+/* Visual 1: Job-Liste Mockup */
+.showcase-visual-jobs {
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+.sc-mock-job {
   display: flex; align-items: center; gap: 0.75rem;
-  padding-bottom: 1rem; border-bottom: 1px solid var(--gray-100); margin-bottom: 1rem;
+  background: #fff; padding: 0.75rem 0.85rem; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  transition: transform 0.3s;
 }
-.zine-chat-avatar {
-  width: 40px; height: 40px; border-radius: 50%;
-  background: linear-gradient(135deg, #f97316, #fb923c); color: #fff;
+.showcase-card:hover .sc-mock-job:nth-child(1) { transform: translateX(4px); }
+.sc-mock-job.sc-mock-dim { opacity: 0.7; }
+.sc-mock-logo {
+  width: 34px; height: 34px; border-radius: 8px; color: #fff;
   display: flex; align-items: center; justify-content: center;
-  font-weight: 800;
+  font-weight: 800; font-size: 0.88rem; flex-shrink: 0;
 }
-.zine-chat-name { font-size: 0.92rem; font-weight: 700; color: var(--gray-900); }
-.zine-chat-status { font-size: 0.72rem; color: #10b981; }
-.zine-chat-msg {
-  padding: 0.6rem 0.9rem; border-radius: 14px;
-  font-size: 0.88rem; line-height: 1.45; margin-bottom: 0.5rem;
-  max-width: 80%;
+.sc-mock-info { flex: 1; min-width: 0; }
+.sc-mock-title {
+  font-size: 0.82rem; font-weight: 700; color: var(--gray-900);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.zine-chat-msg-them {
-  background: var(--gray-100); color: var(--gray-800);
-  border-bottom-left-radius: 4px;
+.sc-mock-meta { font-size: 0.7rem; color: var(--gray-500); margin-top: 1px; }
+.sc-mock-pay {
+  font-size: 0.78rem; font-weight: 700; color: #1e3a8a;
+  background: rgba(30,58,138,0.08); padding: 0.2rem 0.55rem;
+  border-radius: 100px; flex-shrink: 0;
 }
-.zine-chat-msg-you {
+
+/* Visual 2: Bewerbungs-Mockup */
+.showcase-visual-apply {
+  background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+  gap: 0.75rem;
+}
+.sc-apply-profile {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: #fff; padding: 0.75rem 0.85rem; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.sc-apply-avatar {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.82rem; flex-shrink: 0;
+}
+.sc-apply-name { font-size: 0.85rem; font-weight: 700; color: var(--gray-900); }
+.sc-apply-skills { display: flex; gap: 0.3rem; margin-top: 3px; }
+.sc-skill {
+  font-size: 0.65rem; background: var(--gray-100); color: var(--gray-600);
+  padding: 0.1rem 0.45rem; border-radius: 100px; font-weight: 600;
+}
+.sc-apply-btn {
+  background: #1e3a8a; color: #fff; border: none;
+  padding: 0.65rem; border-radius: 10px; font-weight: 700;
+  font-size: 0.85rem; cursor: pointer;
+  box-shadow: 0 4px 12px rgba(30,58,138,0.25);
+  font-family: inherit;
+  transition: transform 0.2s;
+}
+.showcase-card:hover .sc-apply-btn { transform: scale(1.02); }
+.sc-apply-success {
+  display: flex; align-items: center; gap: 0.65rem;
+  background: #fff; padding: 0.65rem 0.85rem; border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  border-left: 3px solid #10b981;
+}
+.sc-apply-check {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #10b981; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.85rem;
+}
+.sc-apply-sent { font-size: 0.82rem; font-weight: 700; color: var(--gray-900); }
+.sc-apply-time { font-size: 0.68rem; color: var(--gray-500); }
+
+/* Visual 3: Chat-Mockup */
+.showcase-visual-chat {
+  background: linear-gradient(135deg, #fff7ed, #fed7aa);
+  padding-top: 1rem;
+}
+.sc-chat-header {
+  display: flex; align-items: center; gap: 0.65rem;
+  padding-bottom: 0.75rem; margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+.sc-chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%; color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.85rem; flex-shrink: 0;
+}
+.sc-chat-name { font-size: 0.82rem; font-weight: 700; color: var(--gray-900); }
+.sc-chat-status { font-size: 0.68rem; color: #10b981; }
+.sc-chat-bubble {
+  padding: 0.5rem 0.75rem; border-radius: 12px;
+  font-size: 0.8rem; line-height: 1.35; max-width: 80%;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.sc-chat-them { background: #fff; color: var(--gray-800); align-self: flex-start; border-bottom-left-radius: 4px; }
+.sc-chat-you {
   background: linear-gradient(135deg, #1e3a8a, #1e40af); color: #fff;
-  margin-left: auto; border-bottom-right-radius: 4px;
-}
-.zine-checklist {
-  list-style: none; padding: 0; margin: 1.25rem 0 0;
-  display: flex; flex-direction: column; gap: 0.4rem;
-}
-.zine-checklist li {
-  font-size: 0.92rem; color: var(--gray-700); padding-left: 1.5rem;
-  position: relative;
-}
-.zine-checklist li::before {
-  content: '✓'; position: absolute; left: 0; top: 0;
-  color: #10b981; font-weight: 800;
+  align-self: flex-end; border-bottom-right-radius: 4px;
 }
 
 @media (max-width: 768px) {
-  .zine { gap: 3.5rem; }
-  .zine-block-1, .zine-block-3 { grid-template-columns: 1fr; gap: 2rem; }
-  .zine-block-3 .zine-chat { order: -1; }
-  .zine-text h3 { font-size: 1.45rem; }
-  .zine-pullquote h3 { font-size: 1.55rem; }
-  .zine-polaroid { max-width: 320px; }
+  .showcase-grid { grid-template-columns: 1fr; }
+  .showcase-visual { height: auto; min-height: 180px; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */

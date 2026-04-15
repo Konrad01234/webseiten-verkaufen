@@ -2279,68 +2279,94 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Zine-Stil, jedes Block anders -->
+    <!-- Darum EasyJobs - Product-Showcase Stil -->
     <div style="padding:5rem 0 4rem;background:#fff">
-      <div style="max-width:1000px;margin:0 auto;padding:0 1.5rem">
-        <div style="text-align:center;margin-bottom:4rem">
-          <span class="zine-kicker">was uns anders macht</span>
-          <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin:0.75rem 0 0;letter-spacing:-0.02em">Darum EasyJobs.</h2>
+      <div style="max-width:1100px;margin:0 auto;padding:0 1.5rem">
+        <div style="text-align:center;margin-bottom:3rem">
+          <h2 style="font-size:2rem;font-weight:800;font-family:'Playfair Display',serif;margin:0 0 0.75rem;letter-spacing:-0.02em">Darum EasyJobs</h2>
+          <p style="color:var(--gray-500);font-size:1rem;max-width:560px;margin:0 auto">Speziell für Schüler und Studenten gebaut. Einfach, direkt, fair.</p>
         </div>
 
-        <div class="zine">
-          <!-- Block 1: Polaroid links, Text rechts -->
-          <div class="zine-block zine-block-1">
-            <div class="zine-polaroid zine-polaroid-tilt-left">
-              <div class="zine-tape"></div>
-              <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=900&q=80" alt="Jobs in deiner Nähe" loading="lazy">
-              <div class="zine-polaroid-caption">— unterwegs durch die Stadt</div>
-            </div>
-            <div class="zine-text">
-              <span class="zine-num">eins.</span>
-              <h3>Jobs, die wirklich in deiner Stadt sind.</h3>
-              <p>Keine endlosen Treffer aus ganz Deutschland. Du siehst Minijobs, Ferienjobs und Praktika bei Unternehmen <em>in deinem Umkreis</em>. Mit Karte. Mit Radius. Ohne Gelaber.</p>
-              <div class="zine-stat-pill">
-                <strong>2.400+</strong> Jobs heute live
+        <div class="showcase-grid">
+          <!-- Feature 1: Jobs in der Nähe -->
+          <div class="showcase-card">
+            <div class="showcase-visual showcase-visual-jobs">
+              <div class="sc-mock-job">
+                <div class="sc-mock-logo" style="background:#0ea5e9">S</div>
+                <div class="sc-mock-info">
+                  <div class="sc-mock-title">Barista (m/w/d)</div>
+                  <div class="sc-mock-meta">Starbucks · 2,3 km</div>
+                </div>
+                <div class="sc-mock-pay">13 €/h</div>
+              </div>
+              <div class="sc-mock-job">
+                <div class="sc-mock-logo" style="background:#f97316">M</div>
+                <div class="sc-mock-info">
+                  <div class="sc-mock-title">Verkäufer Elektro</div>
+                  <div class="sc-mock-meta">MediaMarkt · 4,1 km</div>
+                </div>
+                <div class="sc-mock-pay">14 €/h</div>
+              </div>
+              <div class="sc-mock-job sc-mock-dim">
+                <div class="sc-mock-logo" style="background:#ef4444">R</div>
+                <div class="sc-mock-info">
+                  <div class="sc-mock-title">Lager-Aushilfe</div>
+                  <div class="sc-mock-meta">REWE · 5,6 km</div>
+                </div>
+                <div class="sc-mock-pay">12,50 €/h</div>
               </div>
             </div>
-          </div>
-
-          <!-- Block 2: zentrierter Pull-Quote mit Bild darüber -->
-          <div class="zine-block zine-block-2">
-            <div class="zine-feature-img">
-              <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&q=80" alt="Einfache Bewerbung" loading="lazy">
-              <span class="zine-stamp">no stress</span>
-            </div>
-            <div class="zine-pullquote">
-              <span class="zine-num">zwei.</span>
-              <h3>10 Sekunden.<br>Kein Lebenslauf. Kein Foto.<br><span class="zine-highlight">Einfach &mdash; bewerben.</span></h3>
-              <p>Profil einmal anlegen. Danach siehst du einen Job und klickst <strong>Bewerben</strong>. Das war's. Wir kümmern uns um den Rest.</p>
+            <div class="showcase-body">
+              <h3>Jobs in deiner Stadt</h3>
+              <p>Echte Stellen bei Unternehmen in deinem Umkreis — mit Entfernung, Lohn und Branche direkt im Überblick.</p>
             </div>
           </div>
 
-          <!-- Block 3: Chat-Mockup rechts, Text links -->
-          <div class="zine-block zine-block-3">
-            <div class="zine-text">
-              <span class="zine-num">drei.</span>
-              <h3>Erstmal schreiben. Nicht erstmal telefonieren.</h3>
-              <p>Fragen stellen, Termin ausmachen, Details klären &mdash; alles direkt im Chat. Keine fremden Anrufnummern, keine E-Mail-Ketten. Läuft wie WhatsApp, nur dass's ums Arbeiten geht.</p>
-              <ul class="zine-checklist">
-                <li>Antwort meistens in unter <strong>24h</strong></li>
-                <li>Bewerbungen sicher in der App</li>
-                <li>Kein Weitergeben an Dritte</li>
-              </ul>
-            </div>
-            <div class="zine-chat">
-              <div class="zine-chat-header">
-                <div class="zine-chat-avatar">M</div>
+          <!-- Feature 2: 1-Klick-Bewerbung -->
+          <div class="showcase-card">
+            <div class="showcase-visual showcase-visual-apply">
+              <div class="sc-apply-profile">
+                <div class="sc-apply-avatar">JD</div>
                 <div>
-                  <div class="zine-chat-name">Café Central</div>
-                  <div class="zine-chat-status">● online</div>
+                  <div class="sc-apply-name">Jona D., 17</div>
+                  <div class="sc-apply-skills">
+                    <span class="sc-skill">zuverlässig</span>
+                    <span class="sc-skill">teamfähig</span>
+                  </div>
                 </div>
               </div>
-              <div class="zine-chat-msg zine-chat-msg-them">Hey! Klingt gut, kannst du am Samstag ab 10 Uhr?</div>
-              <div class="zine-chat-msg zine-chat-msg-you">Ja, pass super! Soll ich was mitbringen?</div>
-              <div class="zine-chat-msg zine-chat-msg-them">Nur dich und gute Laune 😊</div>
+              <button class="sc-apply-btn">Jetzt bewerben</button>
+              <div class="sc-apply-success">
+                <div class="sc-apply-check">✓</div>
+                <div>
+                  <div class="sc-apply-sent">Bewerbung verschickt!</div>
+                  <div class="sc-apply-time">vor 2 Sekunden</div>
+                </div>
+              </div>
+            </div>
+            <div class="showcase-body">
+              <h3>Bewerben in 10 Sekunden</h3>
+              <p>Profil einmal anlegen, dann reicht ein Klick. Kein Anschreiben, kein Foto-Upload, keine ewigen Formulare.</p>
+            </div>
+          </div>
+
+          <!-- Feature 3: Chat -->
+          <div class="showcase-card">
+            <div class="showcase-visual showcase-visual-chat">
+              <div class="sc-chat-header">
+                <div class="sc-chat-avatar" style="background:linear-gradient(135deg,#f97316,#fb923c)">C</div>
+                <div>
+                  <div class="sc-chat-name">Café Central</div>
+                  <div class="sc-chat-status">● online</div>
+                </div>
+              </div>
+              <div class="sc-chat-bubble sc-chat-them">Hi! Wann kannst du anfangen?</div>
+              <div class="sc-chat-bubble sc-chat-you">Ab nächstem Samstag!</div>
+              <div class="sc-chat-bubble sc-chat-them">Perfekt 🙌</div>
+            </div>
+            <div class="showcase-body">
+              <h3>Chat statt Telefon</h3>
+              <p>Alle Fragen und Termine direkt in der App. Keine fremden Nummern, keine E-Mail-Ketten — läuft wie Messenger.</p>
             </div>
           </div>
         </div>
@@ -2371,12 +2397,8 @@ function renderLanding() {
               ];
               var render = function(t) {
                 var pct = (t.rating / 5) * 100;
-                var label = t.rating.toString().replace('.', ',');
                 return '<div class="testi-card">' +
-                  '<div class="testi-rating">' +
-                    '<span class="testi-stars"><span class="testi-stars-bg">★★★★★</span><span class="testi-stars-fill" style="--rating:' + pct + '%">★★★★★</span></span>' +
-                    '<span class="testi-rating-num">' + label + '</span>' +
-                  '</div>' +
+                  '<span class="testi-stars"><span class="testi-stars-bg">★★★★★</span><span class="testi-stars-fill" style="--rating:' + pct + '%">★★★★★</span></span>' +
                   '<p>' + t.text + '</p>' +
                   '<div class="testi-author"><div class="testi-avatar" style="background:' + t.color + '">' + t.initials + '</div><div><div class="testi-name">' + t.name + '</div><div class="testi-role">' + t.role + '</div></div></div>' +
                 '</div>';
