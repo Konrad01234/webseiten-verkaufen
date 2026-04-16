@@ -1,5 +1,5 @@
 // =====================================================================
-// EasyJobs — Supabase Configuration
+// WorkPilot — Supabase Configuration
 // ---------------------------------------------------------------------
 // The anon key is meant to be public; row-level security policies in
 // supabase-schema.sql enforce who can read/write what. NEVER paste your

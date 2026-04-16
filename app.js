@@ -10,7 +10,7 @@ const JOBS = [];
 const TESTIMONIALS = [
   {
     name: 'Lena Müller', role: 'Schülerin, 17 Jahre – Gymnasium München',
-    text: 'Über EasyJobs habe ich meinen ersten Minijob im Café gefunden – die App ist super einfach und ich hatte innerhalb von 3 Tagen eine Zusage!',
+    text: 'Über WorkPilot habe ich meinen ersten Minijob im Café gefunden – die App ist super einfach und ich hatte innerhalb von 3 Tagen eine Zusage!',
     rating: 5, initials: 'LM'
   },
   {
@@ -1919,7 +1919,7 @@ function shareJob(jobId) {
   if (!job) return;
   const url = `${window.location.origin}${window.location.pathname}#job-${job.id}`;
   const title = `${job.title}${job.company ? ' bei ' + job.company : ''}`;
-  const text = `${title}${job.location ? ' in ' + job.location : ''}${job.salary ? ' — ' + job.salary : ''}. Jetzt bewerben auf EasyJobs:`;
+  const text = `${title}${job.location ? ' in ' + job.location : ''}${job.salary ? ' — ' + job.salary : ''}. Jetzt bewerben auf WorkPilot:`;
 
   // Native Web-Share-API (Mobile + manche Desktop-Browser)
   if (navigator.share) {
@@ -2704,10 +2704,10 @@ function renderLanding() {
       </div>
     </div>
 
-    <!-- Darum EasyJobs - Slideshow (sticky-Stack, naechste Seite schiebt sich drueber) -->
+    <!-- Darum WorkPilot - Slideshow (sticky-Stack, naechste Seite schiebt sich drueber) -->
     <section class="sp-wrap">
       <div class="sp-wrap-head">
-        <h2>Was EasyJobs <em>anders</em> macht</h2>
+        <h2>Was WorkPilot <em>anders</em> macht</h2>
         <p class="sp-wrap-sub">Drei Dinge, die uns von anderen Jobportalen unterscheiden.</p>
       </div>
 
@@ -2848,7 +2848,7 @@ function renderLanding() {
     </section>`;
 }
 
-// ===== Feature Spotlight ("Darum EasyJobs") - Slideshow =====
+// ===== Feature Spotlight ("Darum WorkPilot") - Slideshow =====
 // Komplett CSS-getrieben (position:sticky + z-index). Kein JS auf
 // scroll - das hielt den Main-Thread beim Scrollen unnoetig auf.
 
@@ -3225,7 +3225,7 @@ function buildJobPostingSchema(job) {
     'description': description || `<p>${job.type || 'Minijob'} bei ${job.company || 'einem Arbeitgeber'} in ${city}.</p>`,
     'identifier': {
       '@type': 'PropertyValue',
-      'name': job.company || 'EasyJobs',
+      'name': job.company || 'WorkPilot',
       'value': String(job.id)
     },
     'datePosted': posted.toISOString().slice(0, 10),
@@ -3233,7 +3233,7 @@ function buildJobPostingSchema(job) {
     'employmentType': employmentType,
     'hiringOrganization': {
       '@type': 'Organization',
-      'name': job.company || 'EasyJobs Partner'
+      'name': job.company || 'WorkPilot Partner'
     },
     'jobLocation': {
       '@type': 'Place',
@@ -3331,11 +3331,11 @@ function updatePageMeta() {
   try {
     const page = state.currentPage;
     const origin = (typeof window !== 'undefined' && window.location) ? window.location.origin : '';
-    const brand = 'EasyJobs';
+    const brand = 'WorkPilot';
 
     // Default-Werte (Landing)
     let title = `${brand} — Minijobs für Schüler & Studenten in deiner Nähe`;
-    let description = 'EasyJobs verbindet junge Talente mit den besten Arbeitgebern. Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe — schnell, einfach, kostenlos.';
+    let description = 'WorkPilot verbindet junge Talente mit den besten Arbeitgebern. Finde deinen Minijob, Ferienjob oder Nebenjob in deiner Nähe — schnell, einfach, kostenlos.';
     let canonical = `${origin}/`;
 
     // Seite-spezifisch anpassen
@@ -3370,12 +3370,12 @@ function updatePageMeta() {
         break;
       case 'login':
         title = `Anmelden | ${brand}`;
-        description = 'Melde dich bei EasyJobs an und entdecke Minijobs, Ferienjobs und Nebenjobs in deiner Nähe.';
+        description = 'Melde dich bei WorkPilot an und entdecke Minijobs, Ferienjobs und Nebenjobs in deiner Nähe.';
         canonical = `${origin}/#login`;
         break;
       case 'register':
         title = `Kostenlos registrieren | ${brand}`;
-        description = 'Erstelle kostenlos dein EasyJobs-Profil — als Schüler, Student oder Arbeitgeber. In 60 Sekunden startklar.';
+        description = 'Erstelle kostenlos dein WorkPilot-Profil — als Schüler, Student oder Arbeitgeber. In 60 Sekunden startklar.';
         canonical = `${origin}/#register`;
         break;
       case 'cv-builder':
@@ -3385,17 +3385,17 @@ function updatePageMeta() {
         break;
       case 'impressum':
         title = `Impressum | ${brand}`;
-        description = 'Impressum und Anbieterkennzeichnung von EasyJobs.';
+        description = 'Impressum und Anbieterkennzeichnung von WorkPilot.';
         canonical = `${origin}/#impressum`;
         break;
       case 'datenschutz':
         title = `Datenschutz | ${brand}`;
-        description = 'Datenschutzerklärung gemäß DSGVO von EasyJobs.';
+        description = 'Datenschutzerklärung gemäß DSGVO von WorkPilot.';
         canonical = `${origin}/#datenschutz`;
         break;
       case 'agb':
         title = `AGB | ${brand}`;
-        description = 'Allgemeine Geschäftsbedingungen für die Nutzung von EasyJobs.';
+        description = 'Allgemeine Geschäftsbedingungen für die Nutzung von WorkPilot.';
         canonical = `${origin}/#agb`;
         break;
     }
@@ -4739,7 +4739,7 @@ function renderEmployerLanding() {
           </div>
         </article>
         <article class="emp2-quote scroll-reveal">
-          <p>&bdquo;Wir suchen regelmäßig Aushilfen für Wochenenden. Über EasyJobs läuft das ohne Bürokratie &mdash; einfach hingucken, anschreiben, fertig.&ldquo;</p>
+          <p>&bdquo;Wir suchen regelmäßig Aushilfen für Wochenenden. Über WorkPilot läuft das ohne Bürokratie &mdash; einfach hingucken, anschreiben, fertig.&ldquo;</p>
           <div class="emp2-quote-author">
             <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="">
             <div>
@@ -5153,7 +5153,7 @@ function renderWizardStep4() {
       <div style="font-size:1.5rem">&#127881;</div>
       <div>
         <strong style="color:var(--primary)">Aktuell komplett kostenlos!</strong>
-        <div style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Alle Stellenanzeigen auf EasyJobs sind derzeit kostenfrei. Keine versteckten Kosten, kein Abo.</div>
+        <div style="font-size:0.85rem;color:var(--gray-500);margin-top:0.25rem">Alle Stellenanzeigen auf WorkPilot sind derzeit kostenfrei. Keine versteckten Kosten, kein Abo.</div>
       </div>
     </div>`;
 }
@@ -5949,7 +5949,7 @@ function renderImpressum() {
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Betreiber der Website</h3>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">
-        EasyJobs GmbH<br>
+        WorkPilot GmbH<br>
         Musterstraße 1<br>
         40213 Düsseldorf<br>
         Deutschland
@@ -5959,8 +5959,8 @@ function renderImpressum() {
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Kontakt</h3>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">
         Telefon: +49 (0) 211 123 456 78<br>
-        E-Mail: info@easyjobs.de<br>
-        Website: www.easyjobs.de
+        E-Mail: info@workpilot.de<br>
+        Website: www.workpilot.de
       </p>
     </div>
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -6006,7 +6006,7 @@ function renderDatenschutz() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">1. Verantwortlicher</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Verantwortlich im Sinne der DSGVO:<br>EasyJobs GmbH<br>Musterstraße 1, 40213 Düsseldorf<br>E-Mail: datenschutz@easyjobs.de<br>Telefon: +49 (0) 211 123 456 78</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Verantwortlich im Sinne der DSGVO:<br>WorkPilot GmbH<br>Musterstraße 1, 40213 Düsseldorf<br>E-Mail: datenschutz@workpilot.de<br>Telefon: +49 (0) 211 123 456 78</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -6068,7 +6068,7 @@ function renderDatenschutz() {
         <li><strong>Widerruf</strong> — Erteilte Einwilligungen können jederzeit mit Wirkung für die Zukunft widerrufen werden</li>
         <li><strong>Beschwerde</strong> (Art. 77 DSGVO) — Recht auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde</li>
       </ul>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.75rem">Kontaktieren Sie uns hierzu unter datenschutz@easyjobs.de.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.75rem">Kontaktieren Sie uns hierzu unter datenschutz@workpilot.de.</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -6085,7 +6085,7 @@ function renderAGB() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 1 Geltungsbereich und Vertragsgegenstand</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für sämtliche Leistungen, die über die Plattform EasyJobs (nachfolgend „Plattform") der EasyJobs GmbH, Musterstraße 1, 40213 Düsseldorf (nachfolgend „Betreiber"), erbracht werden.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für sämtliche Leistungen, die über die Plattform WorkPilot (nachfolgend „Plattform") der WorkPilot GmbH, Musterstraße 1, 40213 Düsseldorf (nachfolgend „Betreiber"), erbracht werden.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) Die Plattform ist ein Online-Marktplatz, der Arbeitgeber und Arbeitnehmer — insbesondere Schüler, Studenten und junge Erwachsene — zusammenbringt. Der Betreiber vermittelt lediglich den Kontakt; ein Arbeitsvertrag kommt ausschließlich zwischen Arbeitgeber und Arbeitnehmer zustande.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Mit der Registrierung akzeptiert der Nutzer diese AGB.</p>
     </div>
@@ -6238,7 +6238,7 @@ function renderAdminPanel() {
       <div class="admin-header">
         <div style="display:flex;align-items:center;gap:1rem">
           <div class="admin-header-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div><h1 style="font-size:1.5rem;margin:0">Admin-Kontrollpanel</h1><p style="color:var(--gray-500);font-size:0.85rem;margin:0">EasyJobs &mdash; Live-Dashboard</p></div>
+          <div><h1 style="font-size:1.5rem;margin:0">Admin-Kontrollpanel</h1><p style="color:var(--gray-500);font-size:0.85rem;margin:0">WorkPilot &mdash; Live-Dashboard</p></div>
         </div>
         <div style="display:flex;gap:0.5rem;align-items:center">
           <span class="admin-live-dot"></span><span style="font-size:0.8rem;color:var(--success);font-weight:600">Live</span>

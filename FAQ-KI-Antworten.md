@@ -1,11 +1,11 @@
-# EasyJobs KI-Assistent – Fragen & Antworten
+# WorkPilot KI-Assistent – Fragen & Antworten
 
 ## Arbeitnehmer (Schüler)
 
 ### Jobsuche
 
 **Frage: Welche Jobs kann ich mit 16 Jahren machen?**
-> Mit 16 Jahren darfst du in vielen Bereichen arbeiten! Auf EasyJobs findest du z.B.:
+> Mit 16 Jahren darfst du in vielen Bereichen arbeiten! Auf WorkPilot findest du z.B.:
 > - Aushilfe im Einzelhandel (z.B. MediaMarkt, Supermärkte)
 > - Kellner/in im Café oder Restaurant
 > - Nachhilfe geben
@@ -15,7 +15,7 @@
 > Geh einfach auf "Jobs finden" und filtere nach deiner Stadt und Kategorie. Viele Arbeitgeber suchen gezielt junge, motivierte Leute!
 
 **Frage: Gibt es Jobs in meiner Nähe?**
-> Ja! Auf EasyJobs kannst du Jobs in deiner Nähe finden:
+> Ja! Auf WorkPilot kannst du Jobs in deiner Nähe finden:
 > 1. Geh auf "Jobs finden"
 > 2. Gib deine Stadt ein oder nutze den Umkreis-Filter
 > 3. Stelle den Radius ein (z.B. 5 km, 10 km, 20 km)
@@ -23,7 +23,7 @@
 > So siehst du nur Jobs, die du gut erreichen kannst. In deinem Profil kannst du auch deine Adresse und einen Suchradius hinterlegen.
 
 **Frage: Welche Jobs passen zu mir ohne Erfahrung?**
-> Keine Sorge – die meisten Jobs auf EasyJobs brauchen keine Vorerfahrung! Besonders gut geeignet für Einsteiger:
+> Keine Sorge – die meisten Jobs auf WorkPilot brauchen keine Vorerfahrung! Besonders gut geeignet für Einsteiger:
 > - Aushilfe im Einzelhandel – Kasse, Regale auffüllen
 > - Gastronomie – Bedienen, Abräumen
 > - Promotion – Flyer verteilen auf Events
@@ -33,20 +33,20 @@
 > Tipp: Hebe in deinem Profil deine Stärken hervor (z.B. Teamarbeit, Zuverlässigkeit, Pünktlichkeit). Das zählt oft mehr als Erfahrung!
 
 **Frage: Was ist der beste Ferienjob für Schüler?**
-> Die beliebtesten Ferienjobs für Schüler auf EasyJobs:
+> Die beliebtesten Ferienjobs für Schüler auf WorkPilot:
 > 1. Lagerhelfer/in – z.B. bei Amazon, DHL (ca. 14€/Std)
 > 2. Aushilfe im Einzelhandel (ca. 12-13€/Std)
 > 3. Event-Promotion – Festivals, Messen (ca. 13€/Std)
 > 4. Gastronomie – Cafés, Restaurants (ca. 13€/Std + Trinkgeld)
 >
-> Ferienjobs bieten meist 30-40 Std/Woche und sind perfekt, um in kurzer Zeit gut zu verdienen. Filter auf EasyJobs einfach nach "Ferienjob"!
+> Ferienjobs bieten meist 30-40 Std/Woche und sind perfekt, um in kurzer Zeit gut zu verdienen. Filter auf WorkPilot einfach nach "Ferienjob"!
 
 ---
 
 ### Bewerbung
 
 **Frage: Wie bewerbe ich mich für einen Job auf der Plattform?**
-> So bewirbst du dich auf EasyJobs:
+> So bewirbst du dich auf WorkPilot:
 > 1. Erstelle dein Profil (Name, Fähigkeiten, Verfügbarkeit)
 > 2. Suche passende Jobs unter "Jobs finden"
 > 3. Klicke auf einen Job und dann auf "Jetzt bewerben"
@@ -55,7 +55,7 @@
 > Tipp: Je vollständiger dein Profil ist (Lebenslauf, Fähigkeiten, Foto), desto besser stehen deine Chancen!
 
 **Frage: Brauche ich einen Lebenslauf?**
-> Ein Lebenslauf ist nicht zwingend nötig, hilft aber sehr! Auf EasyJobs gibt es einen kostenlosen Lebenslauf-Builder:
+> Ein Lebenslauf ist nicht zwingend nötig, hilft aber sehr! Auf WorkPilot gibt es einen kostenlosen Lebenslauf-Builder:
 > 1. Geh auf "Lebenslauf" in deinem Dashboard
 > 2. Wähle eine Vorlage (Modern, Klassisch oder Kreativ)
 > 3. Fülle deine Daten aus
@@ -79,7 +79,7 @@
 ### Arbeitsbedingungen
 
 **Frage: Wie viel darf ich als Schüler verdienen?**
-> Typische Stundenlöhne auf EasyJobs:
+> Typische Stundenlöhne auf WorkPilot:
 > - Einzelhandel: 12-13€/Std
 > - Gastronomie: 12-14€/Std + Trinkgeld
 > - Nachhilfe: 13-18€/Std
@@ -105,14 +105,14 @@
 > - 15-17 Jahre: Max. 2 Std an Schultagen, mehr am Wochenende & in Ferien
 > - Schulpflicht geht immer vor – dein Job darf die Schule nicht beeinträchtigen
 >
-> Auf EasyJobs findest du viele Minijobs mit flexiblen Zeiten, die perfekt neben die Schule passen!
+> Auf WorkPilot findest du viele Minijobs mit flexiblen Zeiten, die perfekt neben die Schule passen!
 
 ---
 
 ### Sicherheit & Vertrauen
 
 **Frage: Ist dieser Job seriös?**
-> Auf EasyJobs achten wir auf Seriosität:
+> Auf WorkPilot achten wir auf Seriosität:
 > - Arbeitgeber werden überprüft
 > - Bewertungen von anderen Arbeitnehmern sichtbar
 > - Direkter Chat auf der Plattform
@@ -166,7 +166,7 @@
 > - Schreibe eine persönliche Nachricht zum Job
 
 **Frage: Was passiert nach der Bewerbung?**
-> So läuft es nach deiner Bewerbung auf EasyJobs ab:
+> So läuft es nach deiner Bewerbung auf WorkPilot ab:
 > 1. Bewerbung abgeschickt – der Arbeitgeber wird benachrichtigt
 > 2. Chat – der Arbeitgeber kann dir direkt schreiben
 > 3. Kennenlernen – ihr vereinbart ein Treffen oder Telefonat
@@ -211,7 +211,7 @@
 > Ihre Anzeige ist sofort sichtbar und Sie erhalten Bewerbungen direkt über die Plattform.
 
 **Frage: Wie finde ich passende Bewerber? / Wie funktioniert das Matching?**
-> EasyJobs hilft Ihnen, passende Bewerber zu finden:
+> WorkPilot hilft Ihnen, passende Bewerber zu finden:
 > - Bewerber werden nach Standort, Verfügbarkeit und Fähigkeiten gematcht
 > - Sie sehen das vollständige Profil jedes Bewerbers
 > - Fähigkeiten, Lebenslauf und Verfügbarkeit auf einen Blick
@@ -231,7 +231,7 @@
 > Unter "Bewerber" in Ihrem Dashboard können Sie alle Bewerbungen vergleichen.
 
 **Frage: Was tun, wenn ein Schüler nicht erscheint? / Was wenn jemand kurzfristig absagt?**
-> 1. Kontaktieren Sie den Schüler über den EasyJobs-Chat
+> 1. Kontaktieren Sie den Schüler über den WorkPilot-Chat
 > 2. Geben Sie eine Bewertung ab – das hilft anderen Arbeitgebern
 > 3. Suchen Sie über Ihre aktive Anzeige schnell Ersatz
 >
@@ -279,7 +279,7 @@
 > Deine Sicherheit ist uns wichtig – bei ernsten Problemen melde dich sofort bei uns!
 
 **Frage: Warum bekomme ich keine passenden Vorschläge?**
-> EasyJobs schlägt dir Jobs basierend auf deinem Profil vor. Keine passenden Vorschläge? Dann:
+> WorkPilot schlägt dir Jobs basierend auf deinem Profil vor. Keine passenden Vorschläge? Dann:
 > 1. Vervollständige dein Profil
 > 2. Erweitere deinen Suchradius
 > 3. Füge mehr Fähigkeiten hinzu

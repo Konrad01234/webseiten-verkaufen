@@ -1,5 +1,5 @@
 // =====================================================================
-// EasyJobs — Database Wrapper (Supabase)
+// WorkPilot — Database Wrapper (Supabase)
 // ---------------------------------------------------------------------
 // All Supabase calls live here. The rest of the app talks to these
 // helpers instead of touching the SDK directly. Every helper either

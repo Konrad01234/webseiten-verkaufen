@@ -1,4 +1,4 @@
-# EasyJobs — Offene Aufgaben & Roadmap
+# WorkPilot — Offene Aufgaben & Roadmap
 
 > **Single Source of Truth** für alles, was noch gemacht werden muss.
 > Diese Datei wird bei jeder Änderung aktualisiert — nach „erledigt" oder „neu dazu".

@@ -1,4 +1,4 @@
-# EasyJobs — Supabase Setup
+# WorkPilot — Supabase Setup
 
 Diese Anleitung führt dich durch die einmalige Einrichtung deines Supabase-Backends, damit User A und User B sich gegenseitig sehen.
 
