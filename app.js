@@ -4102,34 +4102,31 @@ function renderEmployerLanding() {
         <h2>Aushilfen, die <em>sofort</em> loslegen</h2>
       </div>
 
-      <article class="emp3-row">
+      <article class="emp3-row scroll-reveal">
         <div class="emp3-row-photo">
           <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
         </div>
         <div class="emp3-row-text">
-          <span class="emp3-row-num">eins.</span>
           <h3>Bewerbungen mit Profil &amp; Lebenslauf.</h3>
           <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick &mdash; kein Suchen in PDFs, kein Mail-Anhang.</p>
         </div>
       </article>
 
-      <article class="emp3-row emp3-row-reverse">
+      <article class="emp3-row emp3-row-reverse scroll-reveal">
         <div class="emp3-row-photo">
           <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1100&q=80" alt="" loading="lazy">
         </div>
         <div class="emp3-row-text">
-          <span class="emp3-row-num">zwei.</span>
           <h3>Junge Aushilfen, schnell bereit.</h3>
           <p>Schüler und Studenten, die wirklich Lust haben. Schnelle Einarbeitung, motiviert, flexibel &mdash; perfekt für Stoßzeiten, Wochenenden oder den Sommer.</p>
         </div>
       </article>
 
-      <article class="emp3-row">
+      <article class="emp3-row scroll-reveal">
         <div class="emp3-row-photo">
           <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1100&q=80" alt="" loading="lazy">
         </div>
         <div class="emp3-row-text">
-          <span class="emp3-row-num">drei.</span>
           <h3>Direkter Chat statt Mail-Hölle.</h3>
           <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Antwortest du in fünf Minuten, hast du schon den nächsten Bewerber im Boot.</p>
         </div>
@@ -4143,7 +4140,7 @@ function renderEmployerLanding() {
         <h2>Was <em>Arbeitgeber</em> sagen</h2>
       </div>
       <div class="emp2-quotes-grid">
-        <article class="emp2-quote">
+        <article class="emp2-quote scroll-reveal">
           <p>&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir im Café.&ldquo;</p>
           <div class="emp2-quote-author">
             <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="">
@@ -4153,7 +4150,7 @@ function renderEmployerLanding() {
             </div>
           </div>
         </article>
-        <article class="emp2-quote">
+        <article class="emp2-quote scroll-reveal">
           <p>&bdquo;Wir suchen regelmäßig Aushilfen für Wochenenden. Über EasyJobs läuft das ohne Bürokratie &mdash; einfach hingucken, anschreiben, fertig.&ldquo;</p>
           <div class="emp2-quote-author">
             <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="">
@@ -4163,7 +4160,7 @@ function renderEmployerLanding() {
             </div>
           </div>
         </article>
-        <article class="emp2-quote">
+        <article class="emp2-quote scroll-reveal">
           <p>&bdquo;Der direkte Chat ist Gold wert. Keine Bewerbungs-Mails mehr durchforsten &mdash; und die Schüler antworten schneller als jeder Erwachsene.&ldquo;</p>
           <div class="emp2-quote-author">
             <img src="https://randomuser.me/api/portraits/women/82.jpg" alt="">
