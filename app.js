@@ -2519,78 +2519,8 @@ function renderLanding() {
 }
 
 // ===== Feature Spotlight ("Darum EasyJobs") - Slideshow =====
-// Die Stapelung laeuft via CSS (position:sticky + z-index).
-// Zusaetzlich fade/scalen wir den auslaufenden Slide per Scroll-Listener
-// sanft in den Hintergrund, waehrend der naechste hochkommt.
-// Ergebnis: weicher "Receding"-Uebergang statt harter Kante.
-var spScrollHandler = null;
-var spResizeHandler = null;
-var spRaf = null;
-
-function spUpdateSlides() {
-  var wrap = document.querySelector('.sp-wrap');
-  if (!wrap) return;
-  var slides = wrap.querySelectorAll('.sp-slide');
-  if (!slides.length) return;
-  var vh = window.innerHeight;
-
-  slides.forEach(function(slide, i) {
-    var inner = slide.querySelector('.sp-slide-inner');
-    if (!inner) return;
-
-    if (i === slides.length - 1) {
-      inner.style.opacity = '';
-      inner.style.transform = '';
-      return;
-    }
-
-    // Wie weit ist der NAECHSTE Slide ans obere Ende gekommen?
-    // nextTop = vh: naechster ist 1 Viewport unter dem oberen Rand
-    // nextTop = 0:  naechster klebt am oberen Rand, aktueller ist komplett bedeckt
-    var nextTop = slides[i + 1].getBoundingClientRect().top;
-    var p = 1 - (nextTop / vh);
-    if (p < 0) p = 0; else if (p > 1) p = 1;
-
-    // easeInQuad fuer weichen Start
-    var eased = p * p;
-
-    inner.style.opacity = (1 - eased * 0.45).toFixed(3);
-    inner.style.transform = 'scale(' + (1 - eased * 0.06).toFixed(4) + ')';
-  });
-}
-
-function spSchedule() {
-  if (spRaf) return;
-  spRaf = requestAnimationFrame(function() {
-    spRaf = null;
-    spUpdateSlides();
-  });
-}
-
-function spSetupFade() {
-  var wrap = document.querySelector('.sp-wrap');
-  if (!wrap) return;
-  if (spScrollHandler) window.removeEventListener('scroll', spScrollHandler);
-  if (spResizeHandler) window.removeEventListener('resize', spResizeHandler);
-  spScrollHandler = spSchedule;
-  spResizeHandler = spSchedule;
-  window.addEventListener('scroll', spScrollHandler, { passive: true });
-  window.addEventListener('resize', spResizeHandler);
-  spUpdateSlides();
-}
-
-function spTeardownFade() {
-  if (spScrollHandler) { window.removeEventListener('scroll', spScrollHandler); spScrollHandler = null; }
-  if (spResizeHandler) { window.removeEventListener('resize', spResizeHandler); spResizeHandler = null; }
-  if (spRaf) { cancelAnimationFrame(spRaf); spRaf = null; }
-}
-
-var spDomObserver = new MutationObserver(function() {
-  if (document.querySelector('.sp-wrap')) spSetupFade();
-  else spTeardownFade();
-});
-spDomObserver.observe(document.getElementById('app'), { childList: true, subtree: true });
-spSetupFade();
+// Komplett CSS-getrieben (position:sticky + z-index). Kein JS auf
+// scroll - das hielt den Main-Thread beim Scrollen unnoetig auf.
 
 // ===== Kaskaden-Slideshow ("So einfach geht's") =====
 // Schritte erscheinen nacheinander wenn die Sektion sichtbar wird.

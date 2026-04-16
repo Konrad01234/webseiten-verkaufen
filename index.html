@@ -653,7 +653,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   top: 0;
   height: 100vh;
   height: 100svh; /* sicher fuer Mobile Safari mit dynamischer Toolbar */
-  min-height: 580px;
+  min-height: 520px;
   background: #fff;
   display: flex;
   align-items: center;
@@ -661,20 +661,14 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   box-sizing: border-box;
   overflow: hidden;
 }
-/* Innerer Content: wird per JS gescaliert/gefadet - weich animieren */
-.sp-slide-inner {
-  will-change: transform, opacity;
-  transform-origin: center top;
-  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
-}
 /* z-index steigt: spaetere Slides schieben sich ueber frueheste.
-   Rundung oben + stark gebundener Schatten lassen neue Slides wie
-   "aufgeschlagene Karten" wirken. */
+   Rundung oben + Top-Schatten lassen neue Slides wie aufgeschlagene
+   Karten wirken. */
 .sp-slide[data-i="1"] { z-index: 1; }
 .sp-slide[data-i="2"], .sp-slide[data-i="3"] {
   border-top-left-radius: 22px;
   border-top-right-radius: 22px;
-  box-shadow: 0 -28px 60px -12px rgba(15, 23, 42, 0.18);
+  box-shadow: 0 -24px 48px -14px rgba(15, 23, 42, 0.15);
 }
 .sp-slide[data-i="2"] { z-index: 2; }
 .sp-slide[data-i="3"] { z-index: 3; }
@@ -743,8 +737,9 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   flex-shrink: 0; width: 18px; height: 18px; color: #1e3a8a;
 }
 
-/* Extra-Raum am Ende, damit Slide 3 voll 100vh Pin-Zeit bekommt */
-.sp-end { height: 100vh; }
+/* Kleiner End-Spacer: Slide 3 bekommt kurzen "Dwell" bevor er freigegeben wird.
+   Absichtlich kurz, damit die Section nicht zu lang wirkt. */
+.sp-end { height: 40vh; }
 
 @media (max-width: 880px) {
   /* Mobile: Slideshow bleibt aktiv, nur kompakteres Layout */
@@ -752,7 +747,7 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .sp-wrap-head h2 { font-size: 1.65rem; }
   .sp-wrap-sub { font-size: 0.95rem; }
   .sp-slide {
-    min-height: 560px;
+    min-height: 500px;
     padding: 1.5rem 1rem;
   }
   .sp-slide-inner {
@@ -2100,7 +2095,7 @@ body:has(.admin-login-wrap) {
   .sp-wrap-head { padding: 2.5rem 1rem 0.25rem !important; }
   .sp-wrap-head h2 { font-size: 1.6rem !important; }
   .sp-wrap-sub { font-size: 0.9rem !important; }
-  .sp-slide { padding: 1rem 1rem !important; min-height: 540px !important; }
+  .sp-slide { padding: 1rem 1rem !important; min-height: 480px !important; }
   .sp-slide-inner { gap: 1rem !important; }
   .sp-slide-media { aspect-ratio: 16/10 !important; }
   .sp-slide-body h3 { font-size: 1.35rem !important; }
