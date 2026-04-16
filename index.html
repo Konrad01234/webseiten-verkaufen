@@ -772,6 +772,180 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .sp-slide-feature { font-size: 0.85rem; }
 }
 
+/* ===== Arbeitgeber-Hero v2 (Split mit Browser+Phone-Mockup) ===== */
+.eh2 {
+  background: #fff;
+  padding: 4.5rem 1.5rem 5rem;
+}
+.eh2-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+}
+.eh2-text { max-width: 560px; }
+.eh2-kicker {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: #1e3a8a;
+  margin-bottom: 1.25rem;
+}
+.eh2-text h1 {
+  font-size: clamp(2.4rem, 4.2vw, 3.2rem);
+  font-family: 'Playfair Display', serif;
+  font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  color: var(--gray-900);
+}
+.eh2-text p {
+  font-size: 1.08rem; line-height: 1.6;
+  color: var(--gray-600);
+  margin: 0 0 2rem;
+}
+.eh2-buttons {
+  display: flex; gap: 0.75rem; flex-wrap: wrap;
+}
+
+.eh2-visual {
+  position: relative;
+  display: block;
+}
+
+/* Browser-Mockup */
+.eh2-browser {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 28px 70px -20px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+  border: 1px solid var(--gray-100);
+}
+.eh2-browser-bar {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 0.85rem;
+  background: #f1f5f9;
+  border-bottom: 1px solid var(--gray-100);
+}
+.eh2-bd {
+  width: 11px; height: 11px; border-radius: 50%;
+  display: inline-block;
+}
+.eh2-browser-url {
+  margin-left: 0.6rem;
+  background: #fff;
+  color: var(--gray-500);
+  font-size: 0.72rem; font-weight: 500;
+  padding: 0.3rem 0.85rem;
+  border-radius: 6px;
+  border: 1px solid var(--gray-100);
+  flex: 1;
+  max-width: 260px;
+}
+.eh2-browser-body {
+  padding: 1.25rem 1.25rem 1.1rem;
+}
+.eh2-heading {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 0.75rem; margin-bottom: 1rem;
+}
+.eh2-heading strong {
+  display: block; font-size: 0.95rem; font-weight: 700; color: var(--gray-900);
+  margin-bottom: 0.2rem;
+}
+.eh2-heading span {
+  display: block; font-size: 0.72rem; color: var(--gray-500);
+}
+.eh2-chip {
+  background: #eff6ff; color: #1e3a8a;
+  font-size: 0.72rem; font-weight: 700;
+  padding: 0.25rem 0.65rem; border-radius: 100px;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+.eh2-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid var(--gray-100);
+}
+.eh2-row:first-of-type { border-top: none; }
+.eh2-av {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; color: var(--gray-700);
+  flex-shrink: 0;
+}
+.eh2-info { flex: 1; min-width: 0; }
+.eh2-info strong {
+  display: block; font-size: 0.86rem; font-weight: 700; color: var(--gray-900);
+}
+.eh2-info span {
+  display: block; font-size: 0.72rem; color: var(--gray-500); margin-top: 1px;
+}
+.eh2-pill {
+  font-size: 0.68rem; font-weight: 700;
+  padding: 0.2rem 0.6rem; border-radius: 100px;
+  flex-shrink: 0;
+}
+.eh2-pill-new { background: #fef2f2; color: #dc2626; }
+.eh2-pill-chat { background: #f0fdf4; color: #15803d; }
+
+/* Phone-Mockup schwebt vorne rechts */
+.eh2-phone {
+  position: absolute;
+  bottom: -30px; right: -20px;
+  width: 200px;
+  background: #0f172a;
+  border-radius: 28px;
+  padding: 10px;
+  box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.35);
+}
+.eh2-phone-screen {
+  background: #fff;
+  border-radius: 20px;
+  padding: 0.75rem;
+  min-height: 260px;
+}
+.eh2-phone-top {
+  width: 60px; height: 5px; margin: 0 auto 0.75rem;
+  background: var(--gray-200); border-radius: 100px;
+}
+.eh2-phone-heading {
+  font-size: 0.9rem; font-weight: 700; color: var(--gray-900);
+  margin-bottom: 0.65rem;
+}
+.eh2-phone-msg {
+  display: flex; gap: 0.5rem; padding: 0.5rem 0;
+  border-top: 1px solid var(--gray-100);
+  align-items: flex-start;
+}
+.eh2-phone-msg:first-of-type { border-top: none; }
+.eh2-av-sm {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.7rem; font-weight: 700; color: var(--gray-700);
+  flex-shrink: 0;
+}
+.eh2-phone-msg strong {
+  display: block; font-size: 0.75rem; font-weight: 700; color: var(--gray-900);
+}
+.eh2-phone-msg p {
+  font-size: 0.7rem; color: var(--gray-500);
+  margin: 1px 0 0;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+@media (max-width: 880px) {
+  .eh2 { padding: 2.5rem 1.25rem 3rem; }
+  .eh2-inner { grid-template-columns: 1fr; gap: 2.5rem; }
+  .eh2-text { max-width: 100%; }
+  .eh2-text h1 { font-size: 2.1rem; }
+  .eh2-visual { margin: 0 0.5rem 3rem; }
+  .eh2-phone {
+    width: 150px; bottom: -40px; right: -10px;
+  }
+  .eh2-phone-screen { min-height: 220px; }
+}
+
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */
 .cta-fullblock {
   position: relative; overflow: hidden;

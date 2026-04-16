@@ -4692,21 +4692,85 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- HERO: gleiche Struktur wie Landing-Hero, anderes Foto -->
-    <div class="employer-hero" style="min-height:560px">
-      <div class="employer-hero-bg">
-        <img src="https://images.unsplash.com/photo-1607270788972-66a2989ad7e7?w=1400&q=80" alt="">
-      </div>
-      <div class="employer-hero-content slide-up" style="max-width:700px;padding:4rem 2rem">
-        <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">FÜR ARBEITGEBER</div>
-        <h1 style="font-size:3.2rem;line-height:1.12;font-family:'Playfair Display',serif">Junge Talente.<br>Direkt erreichen.</h1>
-        <p style="font-size:1.15rem;margin:1rem 0 2rem;opacity:0.95">Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <button onclick="goPostJob()" style="background:#ef4444;color:#fff;border:none;padding:1rem 2.25rem;border-radius:100px;font-weight:700;font-size:0.9rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(239,68,68,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(239,68,68,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(239,68,68,0.3)'">Jetzt Anzeige schalten</button>
-          <button onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})" style="background:#0f172a;color:#fff;border:none;padding:1rem 2.25rem;border-radius:100px;font-weight:700;font-size:0.9rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:transform 0.2s,background 0.2s" onmouseover="this.style.transform='translateY(-1px)';this.style.background='#1e293b'" onmouseout="this.style.transform='';this.style.background='#0f172a'">So funktioniert's</button>
+    <!-- HERO: Split-Layout - Text links, Mac-Browser-Mockup mit unserer UI rechts -->
+    <section class="eh2">
+      <div class="eh2-inner">
+        <div class="eh2-text">
+          <span class="eh2-kicker">Für Arbeitgeber</span>
+          <h1>Junge Talente.<br>Direkt erreichen.</h1>
+          <p>Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
+          <div class="eh2-buttons">
+            <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
+            <button class="btn btn-lg cta-btn-outline" onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
+          </div>
+        </div>
+        <div class="eh2-visual">
+          <!-- Browser-Fenster Mockup mit unserer WorkPilot-Oberflaeche -->
+          <div class="eh2-browser">
+            <div class="eh2-browser-bar">
+              <span class="eh2-bd" style="background:#ef4444"></span>
+              <span class="eh2-bd" style="background:#f59e0b"></span>
+              <span class="eh2-bd" style="background:#22c55e"></span>
+              <div class="eh2-browser-url">workpilot.de/dashboard</div>
+            </div>
+            <div class="eh2-browser-body">
+              <div class="eh2-heading">
+                <div>
+                  <strong>Neue Bewerbungen</strong>
+                  <span>Heute, 14. April</span>
+                </div>
+                <span class="eh2-chip">3 neu</span>
+              </div>
+              <div class="eh2-row">
+                <div class="eh2-av" style="background:linear-gradient(135deg,#fce7f3,#f9a8d4)">LM</div>
+                <div class="eh2-info">
+                  <strong>Lena M., 17</strong>
+                  <span>Schülerin &middot; Köln</span>
+                </div>
+                <span class="eh2-pill eh2-pill-new">Neu</span>
+              </div>
+              <div class="eh2-row">
+                <div class="eh2-av" style="background:linear-gradient(135deg,#dbeafe,#93c5fd)">TK</div>
+                <div class="eh2-info">
+                  <strong>Tim K., 19</strong>
+                  <span>Student &middot; Düsseldorf</span>
+                </div>
+                <span class="eh2-pill eh2-pill-new">Neu</span>
+              </div>
+              <div class="eh2-row">
+                <div class="eh2-av" style="background:linear-gradient(135deg,#fef3c7,#fcd34d)">SH</div>
+                <div class="eh2-info">
+                  <strong>Sara H., 16</strong>
+                  <span>Schülerin &middot; Essen</span>
+                </div>
+                <span class="eh2-pill eh2-pill-chat">Im Chat</span>
+              </div>
+            </div>
+          </div>
+          <!-- Kleines Phone-Mockup im Vordergrund, wie bei workflow.at -->
+          <div class="eh2-phone">
+            <div class="eh2-phone-screen">
+              <div class="eh2-phone-top"></div>
+              <div class="eh2-phone-heading">Nachrichten</div>
+              <div class="eh2-phone-msg">
+                <div class="eh2-av-sm" style="background:#fce7f3">L</div>
+                <div>
+                  <strong>Lena M.</strong>
+                  <p>Hallo! Ich hätte Interesse...</p>
+                </div>
+              </div>
+              <div class="eh2-phone-msg">
+                <div class="eh2-av-sm" style="background:#dbeafe">T</div>
+                <div>
+                  <strong>Tim K.</strong>
+                  <p>Wann kann ich anfangen?</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- KASKADEN-SCHRITTE: gleicher Aufbau wie Landing -->
     <div style="background:var(--gray-50);padding:4rem 0" id="emp-cascade-wrap">
