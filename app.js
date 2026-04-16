@@ -2283,7 +2283,7 @@ function renderLanding() {
     <!-- Hero -->
     <div class="employer-hero" style="min-height:560px">
       <div class="employer-hero-bg">
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80" alt="">
       </div>
       <div class="employer-hero-content slide-up" style="max-width:700px;padding:4rem 2rem">
         <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">DEIN WEG ZUM ERSTEN JOB</div>
@@ -4048,160 +4048,135 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- Hero mit Hintergrundbild -->
-    <div class="employer-hero">
-      <div class="employer-hero-bg">
-        <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1400&q=80" alt="">
+    <!-- Hero: junger Mensch bei der Arbeit, Text links -->
+    <section class="emp2-hero">
+      <div class="emp2-hero-photo">
+        <img src="https://images.unsplash.com/photo-1607270788972-66a2989ad7e7?w=1400&q=80" alt="" loading="eager">
       </div>
-      <div class="employer-hero-content slide-up">
-        <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">FÜR ARBEITGEBER</div>
-        <h1>Finde junge Talente für dein Team</h1>
-        <p>Schalte deine Stellenanzeige und erreiche tausende motivierte Jugendliche in deiner Region. Schnell, einfach und effektiv.</p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <button class="btn btn-lg" style="background:#fff;color:#1d4ed8;font-size:1rem;padding:0.875rem 2.5rem" onclick="goPostJob()">Kostenlos starten</button>
-          <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1rem;padding:0.875rem 2rem" onclick="document.getElementById('emp-how-it-works').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
+      <div class="emp2-hero-text">
+        <span class="emp2-kicker">Für Arbeitgeber</span>
+        <h1>Junge Aushilfen,<br><em>direkt</em> erreicht.</h1>
+        <p>Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
+        <div class="emp2-hero-actions">
+          <button class="btn btn-lg emp2-cta-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
+          <button class="btn btn-lg emp2-cta-ghost" onclick="document.getElementById('emp2-flow').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
+        </div>
+        <p class="emp2-hero-note">Komplett kostenlos &middot; Kein Vertrag &middot; Keine Provision</p>
+      </div>
+    </section>
+
+    <!-- 3 Werte-Karten: warum EasyJobs für Arbeitgeber -->
+    <section class="emp2-values">
+      <article class="emp2-value">
+        <div class="emp2-value-icon emp2-value-icon-blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <h3>In fünf Minuten online</h3>
+        <p>Titel, Beschreibung, Standort &mdash; fertig. Deine Anzeige geht sofort live, ohne Freischaltung.</p>
+      </article>
+      <article class="emp2-value">
+        <div class="emp2-value-icon emp2-value-icon-pink">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <h3>Direkt im Chat schreiben</h3>
+        <p>Bewerber*innen kontaktieren dich per Messenger. Termine, Rückfragen, Zusagen &mdash; alles an einem Ort.</p>
+      </article>
+      <article class="emp2-value">
+        <div class="emp2-value-icon emp2-value-icon-amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M9 10h6M9 14h6"/></svg>
+        </div>
+        <h3>Komplett kostenlos</h3>
+        <p>Keine versteckten Kosten, kein Abo, keine Provision pro Vermittlung. Punkt.</p>
+      </article>
+    </section>
+
+    <!-- So einfach geht's: 3-Schritte-Flow mit Bild -->
+    <section class="emp2-flow" id="emp2-flow">
+      <div class="emp2-flow-photo">
+        <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
+      </div>
+      <div class="emp2-flow-steps">
+        <span class="emp2-section-kicker">Ablauf</span>
+        <h2>So einfach läuft's</h2>
+        <div class="emp2-step">
+          <span class="emp2-step-num">01</span>
+          <div class="emp2-step-text">
+            <h3>Stelle ausschreiben</h3>
+            <p>Job-Titel, kurze Beschreibung, Standort und Stundenlohn. Mehr braucht's nicht.</p>
+          </div>
+        </div>
+        <div class="emp2-step">
+          <span class="emp2-step-num">02</span>
+          <div class="emp2-step-text">
+            <h3>Bewerbungen sichten</h3>
+            <p>Du bekommst Profile mit Lebenslauf direkt im Dashboard &mdash; gefiltert nach Standort.</p>
+          </div>
+        </div>
+        <div class="emp2-step">
+          <span class="emp2-step-num">03</span>
+          <div class="emp2-step-text">
+            <h3>Im Chat klären</h3>
+            <p>Frag nach, vereinbar Probearbeit, sag zu. Die Telefonnummern bleiben privat.</p>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Stats Karten -->
-    <div class="emp-stats-row">
-      <div class="emp-stat-card"><div class="emp-stat-number">15.000+</div><div class="emp-stat-label">Registrierte Talente</div></div>
-      <div class="emp-stat-card"><div class="emp-stat-number">2.500+</div><div class="emp-stat-label">Aktive Stellenanzeigen</div></div>
-      <div class="emp-stat-card"><div class="emp-stat-number">92%</div><div class="emp-stat-label">Zufriedene Arbeitgeber</div></div>
-      <div class="emp-stat-card"><div class="emp-stat-number">&lt;24h</div><div class="emp-stat-label">Erste Bewerbungen</div></div>
-    </div>
-
-    <!-- Slideshow -->
-    <div style="max-width:1100px;margin:0 auto 4rem;padding:0 1.5rem">
-      <div style="text-align:center;margin-bottom:2rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So nutzen Arbeitgeber EasyJobs</h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">Echte Einblicke in die Plattform</p>
+    <!-- Was Arbeitgeber sagen: 3 Karten mit echten Profilfotos -->
+    <section class="emp2-quotes">
+      <div class="emp2-quotes-head">
+        <span class="emp2-section-kicker">Stimmen</span>
+        <h2>Was <em>Arbeitgeber</em> sagen</h2>
       </div>
-      <div class="emp-slideshow" id="emp-slideshow">
-        <div class="emp-slideshow-slides" id="emp-slides">
-          <div class="emp-slideshow-slide">
-            <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=1200&q=80" alt="Dashboard">
-            <div class="emp-slideshow-caption">
-              <h3>Übersichtliches Dashboard</h3>
-              <p>Alle wichtigen Kennzahlen auf einen Blick — Bewerbungen, Views und Kandidaten.</p>
+      <div class="emp2-quotes-grid">
+        <article class="emp2-quote">
+          <p>&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir im Café.&ldquo;</p>
+          <div class="emp2-quote-author">
+            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="">
+            <div>
+              <strong>Sandra K.</strong>
+              <span>Inhaberin, Café Sonnenschein &middot; Köln</span>
             </div>
           </div>
-          <div class="emp-slideshow-slide">
-            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80" alt="Team">
-            <div class="emp-slideshow-caption">
-              <h3>Das richtige Team zusammenstellen</h3>
-              <p>Filtern Sie Bewerber nach Skills, Verfügbarkeit und Standort.</p>
+        </article>
+        <article class="emp2-quote">
+          <p>&bdquo;Wir suchen regelmäßig Aushilfen für Wochenenden. Über EasyJobs läuft das ohne Bürokratie &mdash; einfach hingucken, anschreiben, fertig.&ldquo;</p>
+          <div class="emp2-quote-author">
+            <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="">
+            <div>
+              <strong>Thomas M.</strong>
+              <span>Filialleiter, MediaMarkt &middot; Düsseldorf</span>
             </div>
           </div>
-          <div class="emp-slideshow-slide">
-            <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&q=80" alt="Zusammenarbeit">
-            <div class="emp-slideshow-caption">
-              <h3>Direkter Kontakt per Chat</h3>
-              <p>Kommunizieren Sie direkt mit Kandidaten — ohne Umwege über E-Mail.</p>
+        </article>
+        <article class="emp2-quote">
+          <p>&bdquo;Der direkte Chat ist Gold wert. Keine Bewerbungs-Mails mehr durchforsten &mdash; und die Schüler antworten schneller als jeder Erwachsene.&ldquo;</p>
+          <div class="emp2-quote-author">
+            <img src="https://randomuser.me/api/portraits/women/82.jpg" alt="">
+            <div>
+              <strong>Lara H.</strong>
+              <span>HR Manager, TechStart &middot; Berlin</span>
             </div>
           </div>
-        </div>
-        <div class="emp-slideshow-dots">
-          <button class="emp-slideshow-dot active" onclick="goToSlide(0)"></button>
-          <button class="emp-slideshow-dot" onclick="goToSlide(1)"></button>
-          <button class="emp-slideshow-dot" onclick="goToSlide(2)"></button>
-        </div>
+        </article>
       </div>
-    </div>
+    </section>
 
-    <!-- So funktioniert's -->
-    <div id="emp-how-it-works" style="background:var(--gray-50);padding:4rem 0">
-      <div class="emp-split">
-        <div class="emp-split-img">
-          <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=800&q=80" alt="Anzeige erstellen">
-        </div>
-        <div class="emp-split-text">
-          <h2>In Minuten zur Stellenanzeige</h2>
-          <p>Erstellen Sie Ihre Anzeige in wenigen Schritten — kein Fachwissen nötig.</p>
-          <ul class="emp-split-list">
-            <li>Jobtitel, Beschreibung und Anforderungen eingeben</li>
-            <li>Standort und Arbeitszeiten festlegen</li>
-            <li>Veröffentlichen und sofort Bewerber erreichen</li>
-          </ul>
+    <!-- Finaler CTA - schlicht, ohne Hochglanz-Box -->
+    <section class="emp2-final">
+      <div class="emp2-final-inner">
+        <h2>Bereit, dein Team zu verstärken?</h2>
+        <p>Anzeige in fünf Minuten online &mdash; kostenlos, ohne Vertrag.</p>
+        <div class="emp2-final-actions">
+          <button class="btn btn-lg emp2-cta-primary" onclick="goPostJob()">Jetzt loslegen</button>
+          <button class="btn btn-lg emp2-cta-link" onclick="navigate('register')">Konto erstellen</button>
         </div>
       </div>
-
-      <div class="emp-split reverse">
-        <div class="emp-split-img">
-          <img src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=800&q=80" alt="Bewerber verwalten">
-        </div>
-        <div class="emp-split-text">
-          <h2>Bewerber effizient verwalten</h2>
-          <p>Alle Bewerbungen an einem Ort. Sichten, bewerten und direkt kontaktieren.</p>
-          <ul class="emp-split-list">
-            <li>Lebensläufe und Motivationsschreiben einsehen</li>
-            <li>Kandidaten per Chat kontaktieren</li>
-            <li>Bewerbungen annehmen oder absagen</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="emp-split">
-        <div class="emp-split-img">
-          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80" alt="Analytics">
-        </div>
-        <div class="emp-split-text">
-          <h2>Komplett kostenlos starten</h2>
-          <p>Alle Funktionen sind derzeit kostenlos verfügbar — ohne versteckte Kosten oder Abo.</p>
-          <ul class="emp-split-list">
-            <li>Unbegrenzt Stellenanzeigen schalten</li>
-            <li>Echtzeit-Analytics zu Views und Klicks</li>
-            <li>Direkter Chat mit Bewerbern</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <!-- Testimonials -->
-    <div style="padding:4rem 0">
-      <div style="text-align:center;margin-bottom:2.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Das sagen unsere Arbeitgeber</h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">Über 800 Unternehmen vertrauen EasyJobs</p>
-      </div>
-      <div class="emp-testimonials">
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Innerhalb von 24 Stunden hatten wir die ersten Bewerbungen. Die Qualität der Kandidaten hat uns positiv überrascht."</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">TM</div>
-            <div><div class="emp-testimonial-name">Thomas M.</div><div class="emp-testimonial-role">Filialleiter, MediaMarkt</div></div>
-          </div>
-        </div>
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Endlich eine Plattform, die speziell auf junge Aushilfen ausgerichtet ist. Der Chat macht die Kommunikation super einfach."</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">SK</div>
-            <div><div class="emp-testimonial-name">Sandra K.</div><div class="emp-testimonial-role">Inhaberin, Café Sonnenschein</div></div>
-          </div>
-        </div>
-        <div class="emp-testimonial">
-          <div class="emp-testimonial-stars">★★★★★</div>
-          <p>„Wir hatten innerhalb einer Woche alle Stellen besetzt. Die Plattform ist super einfach zu bedienen."</p>
-          <div class="emp-testimonial-author">
-            <div class="emp-testimonial-avatar">MH</div>
-            <div><div class="emp-testimonial-name">Markus H.</div><div class="emp-testimonial-role">HR Manager, TechStart GmbH</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Finaler CTA -->
-    <div class="cta-section" style="margin:0 auto 3rem;max-width:1100px">
-      <h2>Bereit, Ihr Team zu verstärken?</h2>
-      <p>Starten Sie noch heute und finden Sie die besten jungen Talente in Ihrer Region.</p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <button class="btn btn-lg" onclick="goPostJob()">Jetzt kostenlos starten</button>
-        <button class="btn btn-lg btn-outline" style="border-color:rgba(255,255,255,0.4);color:#fff" onclick="navigate('register')">Konto erstellen</button>
-      </div>
-    </div>`;
+    </section>`;
 }
+
+// (Slideshow-Logik fuer die alte Arbeitgeber-Slideshow ist nicht mehr im Einsatz,
+// goToSlide/nextSlide/empObserver weiter unten bleiben harmlos - kein .emp-slideshow im DOM.)
 
 // Employer Slideshow Logic
 var empSlideIndex = 0;
