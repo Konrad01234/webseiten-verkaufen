@@ -761,12 +761,15 @@ function navigateToSection(page, sectionId) {
 // render()-Durchlauf ausblenden. Setzt die .splash-hide-Klasse
 // (opacity:0 + pointer-events:none), nach Abschluss der Transition
 // wird der Node aus dem DOM entfernt.
-let _splashHidden = false;
 function hidePageSplash() {
-  if (_splashHidden) return;
-  _splashHidden = true;
+  // Status ueber window.__splashHidden statt Modul-lokaler Variable,
+  // damit auch die 8s-Failsafe in index.html denselben Zustand lesen/
+  // setzen kann. Sonst fehlt Synchronisation wenn Failsafe den Splash
+  // bereits entfernt hat und render() danach nochmal laeuft.
+  if (window.__splashHidden) return;
   const splash = document.getElementById('page-splash');
-  if (!splash) return;
+  if (!splash) { window.__splashHidden = true; return; }
+  window.__splashHidden = true;
   // Minimale Sichtdauer, damit der Splash nicht nur aufblitzt, wenn
   // der erste render() super schnell kommt (z.B. gecacht).
   const MIN_VISIBLE_MS = 350;
@@ -1130,9 +1133,21 @@ async function register(data) {
 
 async function logout() {
   state.dropdownOpen = false;
+  // ALLES synchron leeren BEVOR navigate/render lauft, damit der
+  // naechste render() keinen Mix aus "User null" + "Chat/Apps noch
+  // vom alten User" sieht. Der SIGNED_OUT-Auth-Handler macht hinterher
+  // das Gleiche nochmal — das ist idempotent und nicht schaedlich.
   try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
   state.user = null;
   state._savedJobs = [];
+  state._appsCache = [];
+  state.chatsLoaded = false;
+  state.applicationsLoaded = false;
+  if (typeof WORKER_CHAT_MESSAGES !== 'undefined') WORKER_CHAT_MESSAGES.length = 0;
+  if (typeof EMPLOYER_CHAT_MESSAGES !== 'undefined') EMPLOYER_CHAT_MESSAGES.length = 0;
+  // Geocoding-Cache behalten (adressen sind nicht user-spezifisch),
+  // Filter-State aber resetten damit User B nicht Adresse von A sieht.
+  state.filters = { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date', address: '' };
   navigate('landing');
 }
 
@@ -4995,10 +5010,17 @@ function validateWizardStep() {
     showToast('Bitte fülle alle Pflichtfelder (*) aus.', 'error');
     return;
   }
-  // PLZ-Spezialvalidierung (step 0): genau 5 Ziffern
+  // PLZ-Spezialvalidierung (step 0): genau 5 Ziffern. Unabhaengig vom
+  // Label-"*"-Heuristik oben — falls das Markup mal refactored wird
+  // und der Wrapper wegfaellt, greift hier trotzdem noch der Check.
   if (step === 0) {
     const plzEl = body.querySelector('#nj-plz');
-    if (plzEl && !/^\d{5}$/.test(plzEl.value.trim())) {
+    if (!plzEl) {
+      // Markup-Regression — Feld existiert nicht. Abbrechen statt durch.
+      showToast('Formular nicht vollständig geladen. Seite neu laden.', 'error');
+      return;
+    }
+    if (!/^\d{5}$/.test((plzEl.value || '').trim())) {
       plzEl.style.border = '2px solid var(--danger)';
       showToast('PLZ muss 5-stellig sein (z.B. 12345).', 'error');
       return;

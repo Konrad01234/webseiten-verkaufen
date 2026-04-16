@@ -2450,12 +2450,15 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
     // Failsafe: falls render() aus irgendeinem Grund nie laeuft
     // (z.B. JS-Error beim Bootstrap), Splash nach 8s trotzdem weg,
     // damit der Nutzer nicht auf einem ewigen Lade-Screen festhaengt.
+    // Setzt window.__splashHidden damit hidePageSplash() im app.js
+    // hinterher nicht nochmal loslaeuft (Synchronisation).
     setTimeout(function(){
       var s = document.getElementById('page-splash');
       if (s && !s.classList.contains('splash-hide')) {
         s.classList.add('splash-hide');
         setTimeout(function(){ try { s.remove(); } catch(_){} }, 500);
       }
+      window.__splashHidden = true;
     }, 8000);
   </script>
   <div id="page-splash" role="status" aria-label="WorkPilot wird geladen" style="
