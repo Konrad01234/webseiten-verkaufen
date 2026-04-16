@@ -2524,7 +2524,30 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
     </div>
   </nav>
 
-  <main id="app"></main>
+  <main id="app">
+    <!-- Initialer Page-Loader: sichtbar ab dem ersten HTML-Parse, wird
+         automatisch ersetzt sobald render() das erste Mal laeuft.
+         Inline-Styles weil style.css evtl. noch nicht da ist. -->
+    <div id="initial-loader" aria-label="Seite wird geladen" role="status" style="
+      min-height: 60vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 1rem;
+      padding: 2rem;">
+      <div style="
+        width: 48px; height: 48px; border-radius: 50%;
+        border: 4px solid #e0f2fe; border-top-color: #0ea5e9;
+        animation: initial-spin 0.9s linear infinite;"></div>
+      <div style="color: #64748b; font-size: 0.9rem; font-weight: 500;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
+        Lädt…
+      </div>
+    </div>
+    <style>
+      @keyframes initial-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) {
+        #initial-loader > div:first-child { animation: none; }
+      }
+    </style>
+  </main>
 
   <footer id="footer" role="contentinfo">
     <div class="footer-container">
