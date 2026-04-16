@@ -4132,42 +4132,51 @@ function renderEmployerLanding() {
       </div>
     </div>
 
-    <!-- MITTELTEIL: alternierende Foto-Reihen mit echten Bildern (anders als Landing's Slideshow) -->
-    <section class="emp3-rows">
-      <div class="emp3-rows-head">
+    <!-- MITTELTEIL: Sticky-Slideshow - gleicher Effekt wie auf der Startseite -->
+    <section class="sp-wrap">
+      <div class="sp-wrap-head">
         <span class="emp3-section-kicker">Was du bekommst</span>
         <h2>Aushilfen, die <em>sofort</em> loslegen</h2>
       </div>
 
-      <article class="emp3-row scroll-reveal">
-        <div class="emp3-row-photo">
-          <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
-        </div>
-        <div class="emp3-row-text">
-          <h3>Bewerbungen mit Profil &amp; Lebenslauf.</h3>
-          <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick &mdash; kein Suchen in PDFs, kein Mail-Anhang.</p>
-        </div>
-      </article>
-
-      <article class="emp3-row emp3-row-reverse scroll-reveal">
-        <div class="emp3-row-photo">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1100&q=80" alt="" loading="lazy">
-        </div>
-        <div class="emp3-row-text">
-          <h3>Junge Aushilfen, schnell bereit.</h3>
-          <p>Schüler und Studenten, die wirklich Lust haben. Schnelle Einarbeitung, motiviert, flexibel &mdash; perfekt für Stoßzeiten, Wochenenden oder den Sommer.</p>
+      <article class="sp-slide" data-i="1">
+        <div class="sp-slide-inner">
+          <div class="sp-slide-media">
+            <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
+          </div>
+          <div class="sp-slide-body">
+            <h3>Bewerbungen mit Profil &amp; Lebenslauf.</h3>
+            <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick &mdash; kein Suchen in PDFs, kein Mail-Anhang.</p>
+          </div>
         </div>
       </article>
 
-      <article class="emp3-row scroll-reveal">
-        <div class="emp3-row-photo">
-          <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1100&q=80" alt="" loading="lazy">
-        </div>
-        <div class="emp3-row-text">
-          <h3>Direkter Chat statt Mail-Hölle.</h3>
-          <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Antwortest du in fünf Minuten, hast du schon den nächsten Bewerber im Boot.</p>
+      <article class="sp-slide" data-i="2">
+        <div class="sp-slide-inner">
+          <div class="sp-slide-media">
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1100&q=80" alt="" loading="lazy">
+          </div>
+          <div class="sp-slide-body">
+            <h3>Junge Aushilfen, schnell bereit.</h3>
+            <p>Schüler und Studenten, die wirklich Lust haben. Schnelle Einarbeitung, motiviert, flexibel &mdash; perfekt für Stoßzeiten, Wochenenden oder den Sommer.</p>
+          </div>
         </div>
       </article>
+
+      <article class="sp-slide" data-i="3">
+        <div class="sp-slide-inner">
+          <div class="sp-slide-media">
+            <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1100&q=80" alt="" loading="lazy">
+          </div>
+          <div class="sp-slide-body">
+            <h3>Direkter Chat statt Mail-Hölle.</h3>
+            <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Antwortest du in fünf Minuten, hast du schon den nächsten Bewerber im Boot.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- End-Spacer, damit Slide 3 kurz stehen bleibt bevor Testimonials kommen -->
+      <div class="sp-end"></div>
     </section>
 
     <!-- STIMMEN: Karten mit echten Profilbildern (gleich wie vorher) -->
