@@ -869,8 +869,23 @@ function render() {
   // Re-attach event listeners
   attachEventListeners();
 
+  // Admin-Link im Footer nur fuer echte Admins einblenden
+  updateFooterAdminLink();
+
   // Fokus wiederherstellen (siehe _captureFocusState weiter oben)
   _restoreFocusState(_focusSnap);
+}
+
+// Blendet den "Admin"-Link im Footer ein/aus basierend auf dem
+// eingeloggten User. Die Admin-Rechte werden serverseitig durch RLS
+// erzwungen (siehe supabase-add-approval.sql), das hier ist nur
+// kosmetisches Verstecken — ein Nicht-Admin der den Link manuell
+// oeffnet bekommt vom Server eh nur Fehlermeldungen.
+function updateFooterAdminLink() {
+  const el = document.getElementById('footer-admin-link');
+  if (!el) return;
+  const show = typeof isCurrentUserAdmin === 'function' && isCurrentUserAdmin();
+  el.style.display = show ? '' : 'none';
 }
 
 function updateNav() {
