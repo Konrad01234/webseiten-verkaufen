@@ -793,6 +793,31 @@ function updateNav() {
   if (mobileProfileBtn) {
     mobileProfileBtn.style.display = state.user ? 'flex' : 'none';
   }
+
+  // Mobile-Menue (Hamburger) je nach Login-Status anpassen.
+  // Eingeloggt: Jobs, Arbeitgeber, Dashboard, Profil, Nachrichten, Abmelden
+  // Ausgeloggt: Jobs, Arbeitgeber, Anmelden, Registrieren
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileMenu) {
+    if (state.user) {
+      const isEmployer = state.user.role === 'employer';
+      const dashPage = isEmployer ? 'employer-dashboard' : 'worker-dashboard';
+      const profilePage = isEmployer ? 'employer-profile' : 'worker-profile';
+      mobileMenu.innerHTML = `
+        <a href="#" onclick="navigate('jobs'); toggleMobileMenu()">Jobs finden</a>
+        <a href="#" onclick="navigate('employer-landing'); toggleMobileMenu()">Für Arbeitgeber</a>
+        <a href="#" onclick="navigate('${dashPage}'); toggleMobileMenu()">Dashboard</a>
+        <a href="#" onclick="navigate('${profilePage}'); toggleMobileMenu()">Profil</a>
+        <a href="#" onclick="navigate('messages'); toggleMobileMenu()">Nachrichten</a>
+        <a href="#" onclick="logout(); toggleMobileMenu()" style="color:var(--gray-500)">Abmelden</a>`;
+    } else {
+      mobileMenu.innerHTML = `
+        <a href="#" onclick="navigate('jobs'); toggleMobileMenu()">Jobs finden</a>
+        <a href="#" onclick="navigate('employer-landing'); toggleMobileMenu()">Für Arbeitgeber</a>
+        <a href="#" onclick="navigate('login'); toggleMobileMenu()">Anmelden</a>
+        <a href="#" onclick="navigate('register'); toggleMobileMenu()">Registrieren</a>`;
+    }
+  }
 }
 
 function mobileProfileNav() {

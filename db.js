@@ -19,7 +19,10 @@
   const sb = window.supabase.createClient(
     window.SUPABASE_CONFIG.url,
     window.SUPABASE_CONFIG.anonKey,
-    { auth: { persistSession: true, autoRefreshToken: true } }
+    // storage: sessionStorage heisst: Session bleibt erhalten solange der
+    // Tab/Browser offen ist (inkl. Reload), wird aber beim Schliessen des
+    // Browsers geloescht -> beim naechsten Besuch muss man sich neu anmelden.
+    { auth: { persistSession: true, autoRefreshToken: true, storage: window.sessionStorage } }
   );
 
   // Convenience: turn a Supabase response into data or throw on error.
