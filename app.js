@@ -2479,14 +2479,14 @@ function renderLanding() {
           <div class="testi-ticker-track">
             ${(() => {
               var list = [
-                { name:'Lena M., 17', role:'Schülerin aus Düsseldorf', photo:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces', text:'„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"', rating:5 },
-                { name:'Tim K., 19', role:'Student aus Köln', photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces', text:'„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."', rating:4.5 },
-                { name:'Sara H., 16', role:'Schülerin aus Essen', photo:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces', text:'„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"', rating:5 },
-                { name:'Jonas P., 18', role:'Schüler aus München', photo:'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&h=200&fit=crop&crop=faces', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
-                { name:'Mia A., 15', role:'Schülerin aus Berlin', photo:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
-                { name:'Niklas R., 20', role:'Student aus Hamburg', photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
-                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', photo:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces', text:"„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit.\"", rating:5 },
-                { name:'David H., 16', role:'Schüler aus Frankfurt', photo:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=faces', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
+                { name:'Lena M., 17', role:'Schülerin aus Düsseldorf', photo:'https://randomuser.me/api/portraits/women/68.jpg', text:'„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"', rating:5 },
+                { name:'Tim K., 19', role:'Student aus Köln', photo:'https://randomuser.me/api/portraits/men/22.jpg', text:'„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."', rating:4.5 },
+                { name:'Sara H., 16', role:'Schülerin aus Essen', photo:'https://randomuser.me/api/portraits/women/44.jpg', text:'„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"', rating:5 },
+                { name:'Jonas P., 18', role:'Schüler aus München', photo:'https://randomuser.me/api/portraits/men/45.jpg', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
+                { name:'Mia A., 15', role:'Schülerin aus Berlin', photo:'https://randomuser.me/api/portraits/women/79.jpg', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
+                { name:'Niklas R., 20', role:'Student aus Hamburg', photo:'https://randomuser.me/api/portraits/men/32.jpg', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
+                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', photo:'https://randomuser.me/api/portraits/women/90.jpg', text:"„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit.\"", rating:5 },
+                { name:'David H., 16', role:'Schüler aus Frankfurt', photo:'https://randomuser.me/api/portraits/men/11.jpg', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
               ];
               var render = function(t) {
                 var pct = (t.rating / 5) * 100;

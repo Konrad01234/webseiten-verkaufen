@@ -652,7 +652,8 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   position: sticky;
   top: 0;
   height: 100vh;
-  min-height: 640px;
+  height: 100svh; /* sicher fuer Mobile Safari mit dynamischer Toolbar */
+  min-height: 580px;
   background: #fff;
   display: flex;
   align-items: center;
@@ -662,8 +663,8 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 /* z-index steigt: spaetere Slides schieben sich ueber frueheste */
 .sp-slide[data-i="1"] { z-index: 1; }
-.sp-slide[data-i="2"] { z-index: 2; box-shadow: 0 -20px 40px rgba(0,0,0,0.06); }
-.sp-slide[data-i="3"] { z-index: 3; box-shadow: 0 -20px 40px rgba(0,0,0,0.06); }
+.sp-slide[data-i="2"] { z-index: 2; box-shadow: 0 -24px 40px rgba(0,0,0,0.08); }
+.sp-slide[data-i="3"] { z-index: 3; box-shadow: 0 -24px 40px rgba(0,0,0,0.08); }
 
 .sp-slide-inner {
   max-width: 1120px; margin: 0 auto; width: 100%;
@@ -733,27 +734,24 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .sp-end { height: 100vh; }
 
 @media (max-width: 880px) {
-  /* Mobile: Slideshow aus - Slides einfach untereinander */
+  /* Mobile: Slideshow bleibt aktiv, nur kompakteres Layout */
   .sp-wrap-head { padding: 3rem 1.25rem 0.5rem; }
   .sp-wrap-head h2 { font-size: 1.65rem; }
   .sp-wrap-sub { font-size: 0.95rem; }
   .sp-slide {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: auto;
-    padding: 2rem 1.25rem 2.5rem;
-    box-shadow: none !important;
+    min-height: 560px;
+    padding: 1.5rem 1rem;
   }
   .sp-slide-inner {
-    grid-template-columns: 1fr; gap: 1.75rem;
+    grid-template-columns: 1fr; gap: 1.25rem;
   }
   .sp-slide-reverse .sp-slide-media,
   .sp-slide-reverse .sp-slide-body { order: unset; }
-  .sp-slide-media { aspect-ratio: 16/11; }
-  .sp-slide-body h3 { font-size: 1.5rem; }
-  .sp-slide-body p { font-size: 0.98rem; }
-  .sp-end { display: none; }
+  .sp-slide-media { aspect-ratio: 16/10; }
+  .sp-slide-body h3 { font-size: 1.35rem; }
+  .sp-slide-body p { font-size: 0.95rem; margin-bottom: 1rem; }
+  .sp-slide-features { margin-top: 0.5rem; gap: 0.4rem; }
+  .sp-slide-feature { font-size: 0.85rem; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */
@@ -2089,9 +2087,9 @@ body:has(.admin-login-wrap) {
   .sp-wrap-head { padding: 2.5rem 1rem 0.25rem !important; }
   .sp-wrap-head h2 { font-size: 1.6rem !important; }
   .sp-wrap-sub { font-size: 0.9rem !important; }
-  .sp-slide { padding: 1.5rem 1rem 2rem !important; }
-  .sp-slide-inner { gap: 1.5rem !important; }
-  .sp-slide-media { aspect-ratio: 16/11 !important; }
+  .sp-slide { padding: 1rem 1rem !important; min-height: 540px !important; }
+  .sp-slide-inner { gap: 1rem !important; }
+  .sp-slide-media { aspect-ratio: 16/10 !important; }
   .sp-slide-body h3 { font-size: 1.35rem !important; }
   .sp-slide-body p { font-size: 0.92rem !important; }
   .sp-slide-badge { bottom: 12px !important; left: 12px !important; padding: 0.45rem 0.7rem 0.45rem 0.55rem !important; }
