@@ -946,6 +946,260 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .eh2-phone-screen { min-height: 220px; }
 }
 
+/* ===== Arbeitgeber Bento-Grid (individueller Mittelteil, nicht wie Landing) ===== */
+.eh-bento {
+  background: #f8fafc;
+  padding: 5rem 1.5rem 5.5rem;
+}
+.eh-bento-head {
+  max-width: 1180px; margin: 0 auto 3rem;
+  text-align: center;
+}
+.eh-bento-head h2 {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 800; letter-spacing: -0.02em; margin: 0;
+  color: var(--gray-900);
+}
+.eh-bento-head h2 em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; color: #1e3a8a; font-weight: 600;
+}
+.eh-bento-grid {
+  max-width: 1180px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: minmax(220px, auto);
+  gap: 1rem;
+}
+.eh-b {
+  background: #fff;
+  border: 1px solid var(--gray-100);
+  border-radius: 20px;
+  padding: 1.75rem;
+  display: flex; flex-direction: column;
+  gap: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.eh-b:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px -16px rgba(15,23,42,0.18);
+}
+.eh-b-tag {
+  display: inline-block; width: fit-content;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: #1e3a8a;
+}
+.eh-b-tag-light { color: rgba(255,255,255,0.85); }
+.eh-b h3 {
+  font-size: 1.3rem; font-weight: 800;
+  letter-spacing: -0.015em; line-height: 1.2;
+  margin: 0 0 0.15rem; color: var(--gray-900);
+  font-family: 'Playfair Display', serif;
+}
+.eh-b p {
+  font-size: 0.92rem; line-height: 1.55;
+  color: var(--gray-600); margin: 0;
+}
+
+/* Grid-Spans */
+.eh-b-big    { grid-column: span 4; grid-row: span 2; }
+.eh-b-type   { grid-column: span 2; justify-content: space-between; }
+.eh-b-chat   { grid-column: span 3; grid-row: span 1; }
+.eh-b-photo  { grid-column: span 3; grid-row: span 2; padding: 0; }
+.eh-b-profile{ grid-column: span 3; grid-row: span 1; }
+.eh-b-type.eh-b-dark { grid-column: span 2; }
+
+/* Kachel 1: Editor-Mockup */
+.eh-b-blue {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #bfdbfe;
+}
+.eh-b-editor {
+  margin-top: auto;
+  background: #fff;
+  border: 1px solid #dbeafe;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 8px 20px -8px rgba(30,58,138,0.15);
+}
+.eh-b-editor-field {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.45rem 0; border-bottom: 1px solid var(--gray-100);
+}
+.eh-b-editor-field:last-of-type { border-bottom: none; }
+.eh-b-editor-field label {
+  font-size: 0.72rem; color: var(--gray-500); font-weight: 500;
+}
+.eh-b-editor-field div {
+  font-size: 0.82rem; color: var(--gray-900); font-weight: 600;
+}
+.eh-b-editor-btn {
+  margin-top: 0.85rem;
+  background: #1e3a8a; color: #fff;
+  text-align: center; padding: 0.6rem;
+  border-radius: 8px; font-size: 0.82rem; font-weight: 700;
+}
+
+/* Kachel 2 + 6: Typo-Statement */
+.eh-b-type-big {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--gray-900);
+  margin: 0.5rem 0;
+}
+.eh-b-type-big em {
+  font-style: italic;
+  color: #1e3a8a;
+}
+.eh-b-dark {
+  background: #0f172a;
+  border-color: #1e293b;
+  color: #fff;
+}
+.eh-b-dark .eh-b-type-big { color: #fff; }
+.eh-b-dark .eh-b-type-big em { color: #93c5fd; }
+.eh-b-dark p { color: #cbd5e1; }
+
+/* Kachel 3: Chat-Bubbles */
+.eh-b-chat-stream {
+  margin-top: auto;
+  display: flex; flex-direction: column; gap: 0.45rem;
+}
+.eh-b-bubble {
+  padding: 0.55rem 0.85rem;
+  border-radius: 14px;
+  font-size: 0.82rem;
+  max-width: 80%;
+  line-height: 1.35;
+}
+.eh-b-bubble-them {
+  background: var(--gray-100); color: var(--gray-800);
+  border-top-left-radius: 4px;
+  align-self: flex-start;
+}
+.eh-b-bubble-you {
+  background: #1e3a8a; color: #fff;
+  border-top-right-radius: 4px;
+  align-self: flex-end;
+}
+
+/* Kachel 4: Foto mit Overlay */
+.eh-b-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.eh-b-photo-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.75rem;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.75) 100%);
+}
+.eh-b-photo-overlay h3 {
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Kachel 5: Profil-Card */
+.eh-b-profile-card {
+  margin-top: auto;
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  padding: 1rem;
+  background: var(--gray-50);
+  border-radius: 12px;
+  border: 1px solid var(--gray-100);
+}
+.eh-b-profile-av {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, #fce7f3, #f9a8d4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.82rem; font-weight: 700; color: var(--gray-800);
+  flex-shrink: 0;
+}
+.eh-b-profile-info { flex: 1; min-width: 0; }
+.eh-b-profile-info > strong {
+  display: block; font-size: 0.9rem; font-weight: 700; color: var(--gray-900);
+}
+.eh-b-profile-info > span {
+  display: block; font-size: 0.75rem; color: var(--gray-500); margin-top: 2px;
+}
+.eh-b-profile-skills {
+  display: flex; gap: 0.35rem; margin-top: 0.55rem; flex-wrap: wrap;
+}
+.eh-b-profile-skills span {
+  background: #eff6ff; color: #1e3a8a;
+  padding: 0.2rem 0.55rem; border-radius: 100px;
+  font-size: 0.7rem; font-weight: 600;
+}
+
+/* ===== Arbeitgeber Final-CTA (editorial, nicht wie cta-fullblock) ===== */
+.eh-cta {
+  background: #fff;
+  padding: 5rem 1.5rem 5.5rem;
+  border-top: 1px solid var(--gray-100);
+}
+.eh-cta-inner {
+  max-width: 1180px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.3fr 1fr;
+  gap: 3rem; align-items: center;
+}
+.eh-cta-text h2 {
+  font-size: clamp(2rem, 3.8vw, 2.8rem);
+  font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.1; margin: 0.75rem 0 1.25rem;
+  color: var(--gray-900);
+}
+.eh-cta-text h2 em {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; color: #1e3a8a; font-weight: 600;
+}
+.eh-cta-text p {
+  font-size: 1.05rem; line-height: 1.6;
+  color: var(--gray-600); margin: 0;
+}
+.eh-cta-actions {
+  display: flex; flex-direction: column; align-items: flex-start;
+  gap: 1rem;
+}
+.eh-cta-link {
+  font-size: 0.88rem; color: var(--gray-500);
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.eh-cta-link:hover { color: var(--gray-800); }
+
+/* Mobile Bento: stacken auf 2 Spalten / 1 Spalte */
+@media (max-width: 960px) {
+  .eh-bento-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: auto;
+  }
+  .eh-b-big    { grid-column: span 2; grid-row: auto; }
+  .eh-b-type   { grid-column: span 1; }
+  .eh-b-chat   { grid-column: span 2; grid-row: auto; }
+  .eh-b-photo  { grid-column: span 2; grid-row: auto; min-height: 260px; }
+  .eh-b-profile{ grid-column: span 2; grid-row: auto; }
+  .eh-b-type.eh-b-dark { grid-column: span 1; }
+}
+@media (max-width: 600px) {
+  .eh-bento { padding: 3rem 1rem; }
+  .eh-bento-head { margin-bottom: 2rem; }
+  .eh-bento-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .eh-b, .eh-b-big, .eh-b-type, .eh-b-chat, .eh-b-profile, .eh-b-type.eh-b-dark {
+    grid-column: span 1;
+  }
+  .eh-b { padding: 1.5rem 1.25rem; }
+  .eh-b h3 { font-size: 1.15rem; }
+
+  .eh-cta { padding: 3rem 1.25rem; }
+  .eh-cta-inner { grid-template-columns: 1fr; gap: 1.75rem; }
+  .eh-cta-text h2 { font-size: 1.85rem; }
+}
+
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */
 .cta-fullblock {
   position: relative; overflow: hidden;

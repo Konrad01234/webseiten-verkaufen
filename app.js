@@ -4920,82 +4920,77 @@ function renderEmployerLanding() {
       </div>
     </section>
 
-    <!-- KASKADEN-SCHRITTE: gleicher Aufbau wie Landing -->
-    <div style="background:var(--gray-50);padding:4rem 0" id="emp-cascade-wrap">
-      <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach läuft's</h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zu neuen Aushilfen</p>
+    <!-- BENTO GRID: 6 unterschiedlich grosse Kacheln (individuelles Layout) -->
+    <section class="eh-bento">
+      <div class="eh-bento-head">
+        <span class="emp3-section-kicker">Warum WorkPilot</span>
+        <h2>Alles an <em>einem</em> Ort.</h2>
       </div>
-      <div class="steps-cascade" id="steps-cascade">
-        <div class="sc-step" data-i="0">
-          <div class="sc-step-circle">1</div>
-          <div class="sc-step-text">
-            <h3>Stelle ausschreiben</h3>
-            <p>Job-Titel, kurze Beschreibung, Standort und Stundenlohn. Mehr braucht's nicht.</p>
+      <div class="eh-bento-grid">
+        <!-- Kachel 1: Gross, mit Mini-Editor-Mockup -->
+        <article class="eh-b eh-b-big eh-b-blue">
+          <span class="eh-b-tag">01 · Ausschreiben</span>
+          <h3>Anzeige in fünf Minuten online.</h3>
+          <p>Titel, Beschreibung, Standort, Stundenlohn &mdash; fertig. Keine Freischaltung, keine Formulare.</p>
+          <div class="eh-b-editor">
+            <div class="eh-b-editor-field"><label>Jobtitel</label><div>Kassierer*in (m/w/d)</div></div>
+            <div class="eh-b-editor-field"><label>Standort</label><div>Köln, Innenstadt</div></div>
+            <div class="eh-b-editor-field"><label>Stundenlohn</label><div>14,50 €</div></div>
+            <div class="eh-b-editor-btn">Anzeige veröffentlichen</div>
           </div>
-        </div>
-        <div class="sc-step" data-i="1">
-          <div class="sc-step-circle">2</div>
-          <div class="sc-step-text">
-            <h3>Bewerbungen sichten</h3>
-            <p>Du bekommst Profile mit Lebenslauf direkt im Dashboard &mdash; gefiltert nach Standort.</p>
+        </article>
+
+        <!-- Kachel 2: Typografie-Statement -->
+        <article class="eh-b eh-b-type">
+          <span class="eh-b-tag">02 · Preis</span>
+          <div class="eh-b-type-big">Kostenlos.<br><em>Für immer.</em></div>
+          <p>Kein Abo, keine Provision, keine Freemium-Falle.</p>
+        </article>
+
+        <!-- Kachel 3: Chat-Bubbles-Mockup -->
+        <article class="eh-b eh-b-chat">
+          <span class="eh-b-tag">03 · Kommunikation</span>
+          <h3>Direkt im Messenger.</h3>
+          <div class="eh-b-chat-stream">
+            <div class="eh-b-bubble eh-b-bubble-them">Hi! Ich hätte Interesse an der Stelle.</div>
+            <div class="eh-b-bubble eh-b-bubble-you">Super. Kannst du Samstag 14 Uhr?</div>
+            <div class="eh-b-bubble eh-b-bubble-them">Passt! ✓</div>
           </div>
-        </div>
-        <div class="sc-step" data-i="2">
-          <div class="sc-step-circle">3</div>
-          <div class="sc-step-text">
-            <h3>Im Chat klären</h3>
-            <p>Frag nach, vereinbar Probearbeit, sag zu. Telefonnummern bleiben privat.</p>
+        </article>
+
+        <!-- Kachel 4: Foto + kurzer Text -->
+        <article class="eh-b eh-b-photo">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="" loading="lazy">
+          <div class="eh-b-photo-overlay">
+            <span class="eh-b-tag eh-b-tag-light">04 · Talente</span>
+            <h3>Junge Aushilfen, sofort bereit.</h3>
           </div>
-        </div>
+        </article>
+
+        <!-- Kachel 5: Profil-Card-Mockup -->
+        <article class="eh-b eh-b-profile">
+          <span class="eh-b-tag">05 · Bewerbungen</span>
+          <h3>Profil statt PDF.</h3>
+          <p>Lebenslauf, Verfügbarkeit und Erfahrung direkt im Dashboard.</p>
+          <div class="eh-b-profile-card">
+            <div class="eh-b-profile-av">LM</div>
+            <div class="eh-b-profile-info">
+              <strong>Lena M., 17</strong>
+              <span>Verfügbar ab Mai &middot; 10 Std/Wo</span>
+              <div class="eh-b-profile-skills">
+                <span>Kasse</span><span>Service</span><span>Englisch</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Kachel 6: Typografie-Statement -->
+        <article class="eh-b eh-b-type eh-b-dark">
+          <span class="eh-b-tag eh-b-tag-light">06 · Flexibilität</span>
+          <div class="eh-b-type-big">Kein Vertrag.<br><em>Keine Laufzeit.</em></div>
+          <p>Schalte Anzeigen wann du willst, pausiere wann du willst.</p>
+        </article>
       </div>
-    </div>
-
-    <!-- MITTELTEIL: Sticky-Slideshow - gleicher Effekt wie auf der Startseite -->
-    <section class="sp-wrap">
-      <div class="sp-wrap-head">
-        <span class="emp3-section-kicker">Was du bekommst</span>
-        <h2>Aushilfen, die <em>sofort</em> loslegen</h2>
-      </div>
-
-      <article class="sp-slide" data-i="1">
-        <div class="sp-slide-inner">
-          <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
-          </div>
-          <div class="sp-slide-body">
-            <h3>Bewerbungen mit Profil &amp; Lebenslauf.</h3>
-            <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick &mdash; kein Suchen in PDFs, kein Mail-Anhang.</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="sp-slide" data-i="2">
-        <div class="sp-slide-inner">
-          <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1100&q=80" alt="" loading="lazy">
-          </div>
-          <div class="sp-slide-body">
-            <h3>Junge Aushilfen, schnell bereit.</h3>
-            <p>Schüler und Studenten, die wirklich Lust haben. Schnelle Einarbeitung, motiviert, flexibel &mdash; perfekt für Stoßzeiten, Wochenenden oder den Sommer.</p>
-          </div>
-        </div>
-      </article>
-
-      <article class="sp-slide" data-i="3">
-        <div class="sp-slide-inner">
-          <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1100&q=80" alt="" loading="lazy">
-          </div>
-          <div class="sp-slide-body">
-            <h3>Direkter Chat statt Mail-Hölle.</h3>
-            <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Antwortest du in fünf Minuten, hast du schon den nächsten Bewerber im Boot.</p>
-          </div>
-        </div>
-      </article>
-
-      <!-- End-Spacer, damit Slide 3 kurz stehen bleibt bevor Testimonials kommen -->
-      <div class="sp-end"></div>
     </section>
 
     <!-- STIMMEN: Karten mit echten Profilbildern (gleich wie vorher) -->
@@ -5038,15 +5033,17 @@ function renderEmployerLanding() {
       </div>
     </section>
 
-    <!-- FINALER CTA: gleicher Style wie Landing -->
-    <section class="cta-fullblock">
-      <div class="cta-fullblock-inner">
-        <span class="cta-fullblock-kicker">Bereit?</span>
-        <h2>Jetzt Anzeige schalten</h2>
-        <p>Dauert keine fünf Minuten. Komplett kostenlos, kein Vertrag, keine Provision.</p>
-        <div class="cta-fullblock-buttons">
-          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt loslegen <span class="cta-arrow">&rarr;</span></button>
-          <button class="btn btn-lg cta-btn-outline" onclick="navigate('register')">Konto erstellen</button>
+    <!-- FINALER CTA: editorial, kein Fullblock-Gradient -->
+    <section class="eh-cta">
+      <div class="eh-cta-inner">
+        <div class="eh-cta-text">
+          <span class="emp3-section-kicker">Los geht's</span>
+          <h2>Dein nächster Mitarbeiter ist <em>einen Klick</em> entfernt.</h2>
+          <p>Anzeige schalten dauert fünf Minuten. Kostenlos, unverbindlich, ohne Kleingedrucktes.</p>
+        </div>
+        <div class="eh-cta-actions">
+          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
+          <a href="#" onclick="navigate('register');return false;" class="eh-cta-link">oder Konto erstellen</a>
         </div>
       </div>
     </section>`;
