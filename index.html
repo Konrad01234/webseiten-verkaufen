@@ -1248,172 +1248,70 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .emp-testimonial-name { font-size: 0.85rem; font-weight: 700; color: var(--gray-800); }
 .emp-testimonial-role { font-size: 0.75rem; color: var(--gray-400); }
 
-/* ===== Arbeitgeber-Landing v2 - editorial, fotogetrieben ===== */
-.emp2-hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  background: #fff;
-  min-height: 88vh;
-  align-items: stretch;
+/* ===== Arbeitgeber-Landing - Mittelteil mit alternierenden Foto-Reihen ===== */
+.emp3-rows {
+  max-width: 1180px; margin: 0 auto;
+  padding: 5rem 1.5rem;
 }
-.emp2-hero-photo {
-  position: relative;
-  background: var(--gray-100);
-  overflow: hidden;
-  min-height: 420px;
+.emp3-rows-head {
+  text-align: center; margin-bottom: 4rem;
 }
-.emp2-hero-photo img {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  object-position: center 30%;
-  display: block;
-}
-.emp2-hero-text {
-  display: flex; flex-direction: column; justify-content: center;
-  padding: 5rem 5rem 5rem 5rem;
-  max-width: 640px;
-}
-.emp2-kicker, .emp2-section-kicker {
+.emp3-section-kicker {
   display: inline-block;
   font-size: 0.72rem; font-weight: 700;
   letter-spacing: 0.16em; text-transform: uppercase;
   color: #1e3a8a;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
-.emp2-hero-text h1 {
-  font-size: clamp(2.4rem, 4.5vw, 3.4rem);
-  font-weight: 800; line-height: 1.05; letter-spacing: -0.02em;
-  margin: 0 0 1.25rem;
+.emp3-rows-head h2 {
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 800; letter-spacing: -0.02em; margin: 0;
   color: var(--gray-900);
 }
-.emp2-hero-text h1 em {
+.emp3-rows-head h2 em {
   font-family: 'Playfair Display', serif;
   font-style: italic; color: #1e3a8a; font-weight: 600;
 }
-.emp2-hero-text > p {
-  font-size: 1.08rem; line-height: 1.6;
-  color: var(--gray-600);
-  margin: 0 0 2rem;
+.emp3-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  margin-bottom: 5rem;
 }
-.emp2-hero-actions {
-  display: flex; gap: 0.75rem; flex-wrap: wrap;
-  margin-bottom: 1.5rem;
-}
-.emp2-cta-primary {
-  background: #1e3a8a !important; color: #fff !important;
-  padding: 0.95rem 1.75rem !important;
-  border-radius: 12px !important;
-  font-weight: 700 !important;
-  border: none !important;
-  font-size: 0.98rem !important;
-  transition: background 0.2s ease, transform 0.2s ease !important;
-}
-.emp2-cta-primary:hover { background: #1e40af !important; transform: translateY(-1px); }
-.emp2-cta-ghost {
-  background: transparent !important; color: var(--gray-700) !important;
-  border: 1.5px solid var(--gray-300) !important;
-  padding: 0.95rem 1.5rem !important;
-  border-radius: 12px !important;
-  font-weight: 600 !important;
-  font-size: 0.98rem !important;
-}
-.emp2-cta-ghost:hover { border-color: var(--gray-500) !important; color: var(--gray-900) !important; background: #fff !important; }
-.emp2-cta-link {
-  background: transparent !important; color: var(--gray-600) !important;
-  border: none !important;
-  padding: 0.95rem 0.5rem !important;
-  font-weight: 600 !important; font-size: 0.95rem !important;
-  text-decoration: underline; text-underline-offset: 4px;
-}
-.emp2-hero-note {
-  font-size: 0.82rem; color: var(--gray-500);
-  margin: 0; font-weight: 500;
-}
-
-/* 3 Werte-Karten */
-.emp2-values {
-  max-width: 1180px; margin: 0 auto;
-  padding: 5rem 1.5rem;
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-}
-.emp2-value {
-  background: #fff;
-  border: 1px solid var(--gray-100);
-  border-radius: 18px;
-  padding: 2rem 1.75rem;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-}
-.emp2-value:hover { border-color: var(--gray-200); transform: translateY(-3px); }
-.emp2-value-icon {
-  width: 48px; height: 48px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1.25rem;
-}
-.emp2-value-icon svg { width: 22px; height: 22px; }
-.emp2-value-icon-blue  { background: #eff6ff; color: #1e3a8a; }
-.emp2-value-icon-pink  { background: #fef2f7; color: #be185d; }
-.emp2-value-icon-amber { background: #fffbeb; color: #b45309; }
-.emp2-value h3 {
-  font-size: 1.18rem; font-weight: 700;
-  letter-spacing: -0.01em; margin: 0 0 0.5rem;
-  color: var(--gray-900);
-}
-.emp2-value p {
-  color: var(--gray-600); font-size: 0.96rem; line-height: 1.6;
-  margin: 0;
-}
-
-/* So einfach laeuft's */
-.emp2-flow {
-  background: var(--gray-50);
-  padding: 5rem 1.5rem;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  max-width: 1180px;
-  margin: 0 auto;
-  align-items: center;
-}
-.emp2-flow-photo {
+.emp3-row:last-child { margin-bottom: 0; }
+.emp3-row-reverse .emp3-row-photo { order: 2; }
+.emp3-row-reverse .emp3-row-text  { order: 1; }
+.emp3-row-photo {
   border-radius: 22px; overflow: hidden;
-  aspect-ratio: 4/5;
+  aspect-ratio: 4/3;
+  background: var(--gray-100);
   box-shadow: 0 24px 60px -20px rgba(15,23,42,0.18);
 }
-.emp2-flow-photo img {
+.emp3-row-photo img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.emp2-flow-steps h2 {
-  font-size: clamp(1.9rem, 3vw, 2.4rem);
-  font-weight: 800; letter-spacing: -0.02em; margin: 0 0 2rem;
-  color: var(--gray-900); line-height: 1.15;
-}
-.emp2-step {
-  display: flex; gap: 1.5rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--gray-200);
-}
-.emp2-step:last-child { border-bottom: none; }
-.emp2-step-num {
-  flex-shrink: 0;
+.emp3-row-text { max-width: 460px; }
+.emp3-row-num {
+  display: inline-block;
   font-family: 'Playfair Display', serif;
   font-style: italic; font-weight: 600;
-  font-size: 1.85rem;
+  font-size: 1.2rem;
   color: #1e3a8a;
-  line-height: 1;
-  min-width: 48px;
+  margin-bottom: 0.6rem;
+  letter-spacing: 0.02em;
 }
-.emp2-step-text h3 {
-  font-size: 1.15rem; font-weight: 700;
-  color: var(--gray-900); margin: 0 0 0.4rem;
+.emp3-row-text h3 {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 800; letter-spacing: -0.02em;
+  line-height: 1.15; margin: 0 0 1rem;
+  color: var(--gray-900);
+  font-family: 'Playfair Display', serif;
 }
-.emp2-step-text p {
-  color: var(--gray-600); font-size: 0.96rem; line-height: 1.6;
+.emp3-row-text p {
+  color: var(--gray-600); font-size: 1.05rem; line-height: 1.65;
   margin: 0;
 }
 
-/* Stimmen / Quotes */
+/* Stimmen / Quotes (auf der Arbeitgeberseite, mit echten Profilbildern) */
 .emp2-quotes {
   max-width: 1180px; margin: 0 auto;
   padding: 5rem 1.5rem;
@@ -1421,6 +1319,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .emp2-quotes-head {
   text-align: center;
   margin-bottom: 3rem;
+}
+.emp2-section-kicker {
+  display: inline-block;
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: #1e3a8a;
+  margin-bottom: 1rem;
 }
 .emp2-quotes-head h2 {
   font-size: clamp(1.9rem, 3vw, 2.4rem);
@@ -1470,66 +1375,22 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   color: var(--gray-500); margin-top: 1px;
 }
 
-/* Finaler CTA */
-.emp2-final {
-  background: #1e3a8a;
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-  color: #fff;
-  padding: 5rem 1.5rem;
-  text-align: center;
-}
-.emp2-final-inner { max-width: 720px; margin: 0 auto; }
-.emp2-final h2 {
-  font-size: clamp(1.9rem, 3vw, 2.4rem);
-  font-weight: 800; letter-spacing: -0.02em;
-  margin: 0 0 1rem;
-  color: #fff;
-}
-.emp2-final p {
-  font-size: 1.05rem; opacity: 0.85;
-  margin: 0 0 2rem;
-}
-.emp2-final-actions {
-  display: flex; gap: 0.75rem;
-  justify-content: center; flex-wrap: wrap;
-}
-.emp2-final .emp2-cta-primary {
-  background: #fff !important; color: #1e3a8a !important;
-}
-.emp2-final .emp2-cta-primary:hover { background: #f1f5f9 !important; }
-.emp2-final .emp2-cta-link {
-  color: rgba(255,255,255,0.85) !important;
-}
-.emp2-final .emp2-cta-link:hover { color: #fff !important; }
-
 @media (max-width: 880px) {
-  .emp2-hero {
+  .emp3-rows { padding: 3rem 1.25rem; }
+  .emp3-rows-head { margin-bottom: 2.5rem; }
+  .emp3-row {
     grid-template-columns: 1fr;
-    min-height: auto;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
   }
-  .emp2-hero-photo {
-    aspect-ratio: 16/10;
-    min-height: 0;
-  }
-  .emp2-hero-text {
-    padding: 2.5rem 1.5rem 3rem;
-    max-width: 100%;
-  }
-  .emp2-values {
-    grid-template-columns: 1fr;
-    padding: 3rem 1.25rem;
-    gap: 1rem;
-  }
-  .emp2-flow {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-    padding: 3rem 1.25rem;
-  }
-  .emp2-flow-photo { aspect-ratio: 16/10; max-height: 360px; }
+  .emp3-row-reverse .emp3-row-photo,
+  .emp3-row-reverse .emp3-row-text { order: unset; }
+  .emp3-row-photo { aspect-ratio: 16/10; }
+  .emp3-row-text h3 { font-size: 1.5rem; }
+  .emp3-row-text p { font-size: 0.98rem; }
   .emp2-quotes { padding: 3rem 1.25rem; }
   .emp2-quotes-grid { grid-template-columns: 1fr; gap: 1rem; }
   .emp2-quote { padding: 1.5rem 1.25rem; }
-  .emp2-final { padding: 3.5rem 1.25rem; }
 }
 
 @media (max-width: 768px) {

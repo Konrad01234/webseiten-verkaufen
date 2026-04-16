@@ -4048,81 +4048,95 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- Hero: junger Mensch bei der Arbeit, Text links -->
-    <section class="emp2-hero">
-      <div class="emp2-hero-photo">
-        <img src="https://images.unsplash.com/photo-1607270788972-66a2989ad7e7?w=1400&q=80" alt="" loading="eager">
+    <!-- HERO: gleiche Struktur wie Landing-Hero, anderes Foto -->
+    <div class="employer-hero" style="min-height:560px">
+      <div class="employer-hero-bg">
+        <img src="https://images.unsplash.com/photo-1607270788972-66a2989ad7e7?w=1400&q=80" alt="">
       </div>
-      <div class="emp2-hero-text">
-        <span class="emp2-kicker">Für Arbeitgeber</span>
-        <h1>Junge Aushilfen,<br><em>direkt</em> erreicht.</h1>
-        <p>Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
-        <div class="emp2-hero-actions">
-          <button class="btn btn-lg emp2-cta-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
-          <button class="btn btn-lg emp2-cta-ghost" onclick="document.getElementById('emp2-flow').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
+      <div class="employer-hero-content slide-up" style="max-width:700px;padding:4rem 2rem">
+        <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">FÜR ARBEITGEBER</div>
+        <h1 style="font-size:3.2rem;line-height:1.12;font-family:'Playfair Display',serif">Junge Talente.<br>Direkt erreichen.</h1>
+        <p style="font-size:1.15rem;margin:1rem 0 2rem;opacity:0.95">Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
+          <button class="btn btn-lg cta-btn-outline" onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
         </div>
-        <p class="emp2-hero-note">Komplett kostenlos &middot; Kein Vertrag &middot; Keine Provision</p>
       </div>
-    </section>
+    </div>
 
-    <!-- 3 Werte-Karten: warum EasyJobs für Arbeitgeber -->
-    <section class="emp2-values">
-      <article class="emp2-value">
-        <div class="emp2-value-icon emp2-value-icon-blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-        </div>
-        <h3>In fünf Minuten online</h3>
-        <p>Titel, Beschreibung, Standort &mdash; fertig. Deine Anzeige geht sofort live, ohne Freischaltung.</p>
-      </article>
-      <article class="emp2-value">
-        <div class="emp2-value-icon emp2-value-icon-pink">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-        <h3>Direkt im Chat schreiben</h3>
-        <p>Bewerber*innen kontaktieren dich per Messenger. Termine, Rückfragen, Zusagen &mdash; alles an einem Ort.</p>
-      </article>
-      <article class="emp2-value">
-        <div class="emp2-value-icon emp2-value-icon-amber">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 7v10M9 10h6M9 14h6"/></svg>
-        </div>
-        <h3>Komplett kostenlos</h3>
-        <p>Keine versteckten Kosten, kein Abo, keine Provision pro Vermittlung. Punkt.</p>
-      </article>
-    </section>
-
-    <!-- So einfach geht's: 3-Schritte-Flow mit Bild -->
-    <section class="emp2-flow" id="emp2-flow">
-      <div class="emp2-flow-photo">
-        <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
+    <!-- KASKADEN-SCHRITTE: gleicher Aufbau wie Landing -->
+    <div style="background:var(--gray-50);padding:4rem 0" id="emp-cascade-wrap">
+      <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
+        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach läuft's</h2>
+        <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zu neuen Aushilfen</p>
       </div>
-      <div class="emp2-flow-steps">
-        <span class="emp2-section-kicker">Ablauf</span>
-        <h2>So einfach läuft's</h2>
-        <div class="emp2-step">
-          <span class="emp2-step-num">01</span>
-          <div class="emp2-step-text">
+      <div class="steps-cascade" id="steps-cascade">
+        <div class="sc-step" data-i="0">
+          <div class="sc-step-circle">1</div>
+          <div class="sc-step-text">
             <h3>Stelle ausschreiben</h3>
             <p>Job-Titel, kurze Beschreibung, Standort und Stundenlohn. Mehr braucht's nicht.</p>
           </div>
         </div>
-        <div class="emp2-step">
-          <span class="emp2-step-num">02</span>
-          <div class="emp2-step-text">
+        <div class="sc-step" data-i="1">
+          <div class="sc-step-circle">2</div>
+          <div class="sc-step-text">
             <h3>Bewerbungen sichten</h3>
             <p>Du bekommst Profile mit Lebenslauf direkt im Dashboard &mdash; gefiltert nach Standort.</p>
           </div>
         </div>
-        <div class="emp2-step">
-          <span class="emp2-step-num">03</span>
-          <div class="emp2-step-text">
+        <div class="sc-step" data-i="2">
+          <div class="sc-step-circle">3</div>
+          <div class="sc-step-text">
             <h3>Im Chat klären</h3>
-            <p>Frag nach, vereinbar Probearbeit, sag zu. Die Telefonnummern bleiben privat.</p>
+            <p>Frag nach, vereinbar Probearbeit, sag zu. Telefonnummern bleiben privat.</p>
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- MITTELTEIL: alternierende Foto-Reihen mit echten Bildern (anders als Landing's Slideshow) -->
+    <section class="emp3-rows">
+      <div class="emp3-rows-head">
+        <span class="emp3-section-kicker">Was du bekommst</span>
+        <h2>Aushilfen, die <em>sofort</em> loslegen</h2>
+      </div>
+
+      <article class="emp3-row">
+        <div class="emp3-row-photo">
+          <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&q=80" alt="" loading="lazy">
+        </div>
+        <div class="emp3-row-text">
+          <span class="emp3-row-num">eins.</span>
+          <h3>Bewerbungen mit Profil &amp; Lebenslauf.</h3>
+          <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick &mdash; kein Suchen in PDFs, kein Mail-Anhang.</p>
+        </div>
+      </article>
+
+      <article class="emp3-row emp3-row-reverse">
+        <div class="emp3-row-photo">
+          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1100&q=80" alt="" loading="lazy">
+        </div>
+        <div class="emp3-row-text">
+          <span class="emp3-row-num">zwei.</span>
+          <h3>Junge Aushilfen, schnell bereit.</h3>
+          <p>Schüler und Studenten, die wirklich Lust haben. Schnelle Einarbeitung, motiviert, flexibel &mdash; perfekt für Stoßzeiten, Wochenenden oder den Sommer.</p>
+        </div>
+      </article>
+
+      <article class="emp3-row">
+        <div class="emp3-row-photo">
+          <img src="https://images.unsplash.com/photo-1611605698335-8b1569810432?w=1100&q=80" alt="" loading="lazy">
+        </div>
+        <div class="emp3-row-text">
+          <span class="emp3-row-num">drei.</span>
+          <h3>Direkter Chat statt Mail-Hölle.</h3>
+          <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Antwortest du in fünf Minuten, hast du schon den nächsten Bewerber im Boot.</p>
+        </div>
+      </article>
     </section>
 
-    <!-- Was Arbeitgeber sagen: 3 Karten mit echten Profilfotos -->
+    <!-- STIMMEN: Karten mit echten Profilbildern (gleich wie vorher) -->
     <section class="emp2-quotes">
       <div class="emp2-quotes-head">
         <span class="emp2-section-kicker">Stimmen</span>
@@ -4162,14 +4176,15 @@ function renderEmployerLanding() {
       </div>
     </section>
 
-    <!-- Finaler CTA - schlicht, ohne Hochglanz-Box -->
-    <section class="emp2-final">
-      <div class="emp2-final-inner">
-        <h2>Bereit, dein Team zu verstärken?</h2>
-        <p>Anzeige in fünf Minuten online &mdash; kostenlos, ohne Vertrag.</p>
-        <div class="emp2-final-actions">
-          <button class="btn btn-lg emp2-cta-primary" onclick="goPostJob()">Jetzt loslegen</button>
-          <button class="btn btn-lg emp2-cta-link" onclick="navigate('register')">Konto erstellen</button>
+    <!-- FINALER CTA: gleicher Style wie Landing -->
+    <section class="cta-fullblock">
+      <div class="cta-fullblock-inner">
+        <span class="cta-fullblock-kicker">Bereit?</span>
+        <h2>Jetzt Anzeige schalten</h2>
+        <p>Dauert keine fünf Minuten. Komplett kostenlos, kein Vertrag, keine Provision.</p>
+        <div class="cta-fullblock-buttons">
+          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt loslegen <span class="cta-arrow">&rarr;</span></button>
+          <button class="btn btn-lg cta-btn-outline" onclick="navigate('register')">Konto erstellen</button>
         </div>
       </div>
     </section>`;
