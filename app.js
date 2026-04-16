@@ -141,6 +141,11 @@ function dbJobToFrontend(row) {
     saves: row.saves || 0,
     reviews: [],
     date: row.created_at,
+    // Alias fuer Legacy-Renderer/Sortierung (renderJobCard, Job-Detail,
+    // getFilteredJobs sort='date'). Ohne diesen Alias waren alle Daten
+    // auf den Jobkarten "Invalid Date" und die Sortierung hat NaN
+    // verglichen.
+    posted: row.created_at,
     active: row.active !== false
   };
 }
@@ -1004,8 +1009,8 @@ function _loadLoginThrottle() {
   try { return JSON.parse(localStorage.getItem(LOGIN_LOCK_KEY) || '{}'); }
   catch (_) { return {}; }
 }
-function _saveLoginThrottle(state) {
-  try { localStorage.setItem(LOGIN_LOCK_KEY, JSON.stringify(state)); }
+function _saveLoginThrottle(data) {
+  try { localStorage.setItem(LOGIN_LOCK_KEY, JSON.stringify(data)); }
   catch (_) { /* quota exceeded → ignore, UX only */ }
 }
 function _lockoutSecondsForCount(n) {
@@ -1173,15 +1178,23 @@ function getActiveJob() {
     a => a.userId === state.user.id && a.status === 'accepted'
   );
   if (!accepted) return null;
+  // Employer-ID fuer die spaetere Bewertung aus dem Job-Datensatz
+  // ziehen — die application-Zeile fuehrt nur job_id, nicht employer_id.
+  const job = (typeof JOBS !== 'undefined') ? JOBS.find(j => j.id === accepted.jobId) : null;
   return {
-    jobId:      accepted.jobId,
-    jobTitle:   accepted.jobTitle,
-    jobCompany: accepted.jobCompany,
-    acceptedAt: accepted.date
+    appId:       accepted.id,
+    jobId:       accepted.jobId,
+    jobTitle:    accepted.jobTitle,
+    jobCompany:  accepted.jobCompany,
+    acceptedAt:  accepted.date,
+    employerId:  job ? job.employerId : null
   };
 }
 // clearActiveJob + completed_jobs are stored in profiles so a worker can
 // finish a job and rate the employer even after the application is gone.
+// Wichtig: zusaetzlich den application-Row auf 'withdrawn' setzen, sonst
+// findet getActiveJob() denselben Job beim naechsten Aufruf wieder und
+// das Dashboard zeigt weiter "aktiven Job".
 async function clearActiveJob() {
   if (!state.user || !window.DB) return;
   const activeJob = getActiveJob();
@@ -1193,14 +1206,20 @@ async function clearActiveJob() {
   state.user.completedJobs = completed;
   try {
     await DB.updateProfile(state.user.id, { completed_jobs: completed });
+    if (activeJob && activeJob.appId && DB.updateApplicationStatus) {
+      await DB.updateApplicationStatus(activeJob.appId, 'withdrawn');
+      // Cache lokal mitziehen damit getActiveJob() sofort null liefert.
+      const cached = (state._appsCache || []).find(a => a.id === activeJob.appId);
+      if (cached) cached.status = 'withdrawn';
+    }
   } catch (e) { console.error('[clearActiveJob]', e); }
 }
 function getCompletedJobs() {
   if (!state.user) return [];
   return Array.isArray(state.user.completedJobs) ? state.user.completedJobs : [];
 }
-function endActiveJob() {
-  clearActiveJob();
+async function endActiveJob() {
+  await clearActiveJob();
   showToast('Job abgeschlossen! Du kannst jetzt eine Bewertung abgeben.');
   render();
 }
@@ -1470,14 +1489,25 @@ async function saveEmployerProfile(btn) {
   if (!state.user || !window.DB) return;
   const page = btn.closest('.dashboard-content');
   const inputs = page ? page.querySelectorAll('input[type=text],input[type=number],input[type=tel],input[type=url],input[type=email],textarea,select') : [];
-  // Only these fields exist in the profiles table; anything else goes
-  // into state.user for this session but isn't persisted yet.
-  const dbFields = new Set(['name', 'company', 'about', 'phone', 'address', 'logo']);
+  // Whitelist der DB-Spalten der profiles-Tabelle (siehe
+  // supabase-schema.sql). Nur diese Felder werden persistiert —
+  // alles andere landet nur in state.user fuer die Session.
+  const dbFields = new Set([
+    'name', 'company', 'about', 'phone', 'address', 'logo',
+    'industry', 'description', 'website', 'founded', 'employees'
+  ]);
   const dbPatch = {};
   inputs.forEach(inp => {
     if (!inp.name) return;
-    state.user[inp.name] = inp.value;
-    if (dbFields.has(inp.name)) dbPatch[inp.name] = inp.value;
+    let val = inp.value;
+    // `founded` ist INT in der DB — leer-String faengt Postgres nicht
+    // ab, also null oder Zahl setzen.
+    if (inp.name === 'founded') {
+      val = val === '' ? null : parseInt(val, 10);
+      if (Number.isNaN(val)) val = null;
+    }
+    state.user[inp.name] = val;
+    if (dbFields.has(inp.name)) dbPatch[inp.name] = val;
   });
   try {
     if (Object.keys(dbPatch).length) {
