@@ -1236,7 +1236,7 @@ function renderApplyStep() {
     footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=1;renderApplyStep()">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' onclick="applyNextStep()">Weiter zur Vorschau</button>';
   } else if (state.applyStep === 3) {
     var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-400);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
     footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=2;renderApplyStep()">Zurück</button><button class="btn btn-primary" onclick="finalSubmitApplication()">Bewerbung absenden</button>';
   }
 }
@@ -2060,16 +2060,16 @@ function renderChatWidget() {
             <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
             <div style="flex:1;min-width:0">
               <div style="font-weight:600;font-size:0.85rem">${escapeHtml(c.partnerName)}</div>
-              <div style="font-size:0.75rem;color:var(--gray-400);margin-bottom:0.1rem">${escapeHtml(c.jobTitle)}</div>
+              <div style="font-size:0.75rem;color:var(--gray-500);margin-bottom:0.1rem">${escapeHtml(c.jobTitle)}</div>
               <div style="font-size:0.8rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:0.7rem;color:var(--gray-400)">${c.time}</div>
+              <div style="font-size:0.7rem;color:var(--gray-500)">${c.time}</div>
               ${c.unread ? '<div class="unread" style="margin-left:auto;margin-top:4px"></div>' : ''}
             </div>
           </div>
         `).join('')}
-        ${chatList.length === 0 ? '<div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">Noch keine Nachrichten</div>' : ''}
+        ${chatList.length === 0 ? '<div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.85rem">Noch keine Nachrichten</div>' : ''}
       </div>`;
   } else {
     const chat = findChat(state.activeChat);
@@ -2327,6 +2327,24 @@ function escapeHtml(text) {
 function escapeAttr(text) {
   if (text == null) return '';
   return String(text).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Erzeugt barrierefreies Markup fuers Firmenlogo. Wenn ein Data-URL-
+// Bild hinterlegt ist → echtes <img> mit alt-Text. Sonst → dekorativer
+// <div> mit Initial, der per aria-hidden vom Screen-Reader ignoriert
+// wird (der Firmenname steht in der Regel direkt daneben als Text).
+// Ersetzt das frueher ueberall inline wiederholte background-image-
+// CSS-Trickserei-Pattern.
+function companyLogoHtml(logo, company, opts) {
+  opts = opts || {};
+  const cls = opts.className || 'job-company-logo';
+  const extraStyle = opts.style || '';
+  const altName = (company == null ? '' : String(company)).trim() || 'Unternehmen';
+  if (logo && typeof logo === 'string' && logo.startsWith('data:')) {
+    return `<img src="${logo}" alt="Logo von ${escapeAttr(altName)}" class="${cls}" style="object-fit:cover;${extraStyle}" loading="lazy">`;
+  }
+  const initial = (altName || '?').charAt(0).toUpperCase();
+  return `<div class="${cls}" aria-hidden="true"${extraStyle ? ` style="${extraStyle}"` : ''}>${escapeHtml(initial)}</div>`;
 }
 
 function censorContactInfo(text) {
@@ -2636,7 +2654,7 @@ function renderLanding() {
     </div>
 
     <div style="padding:2rem 1.5rem 2.5rem;text-align:center;background:#fff">
-      <p style="color:var(--gray-400);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:1.25rem">Vertrauen von über 800 Unternehmen</p>
+      <p style="color:var(--gray-500);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;margin-bottom:1.25rem">Vertrauen von über 800 Unternehmen</p>
       <div class="employer-ticker-wrap">
         <div class="employer-ticker-fade-left"></div>
         <div class="employer-ticker-fade-right"></div>
@@ -3030,13 +3048,15 @@ function renderJobSearch() {
   const jobs = loading ? [] : getFilteredJobs();
   return `
     <div class="page page-wide">
+      <h1 class="sr-only">Jobs finden</h1>
       <div class="search-header">
         <div class="search-bar">
-          <input type="text" placeholder="Job, Unternehmen oder Stichwort..." value="${state.filters.search}" oninput="state.filters.search=this.value;render()">
+          <label for="job-search-input" class="sr-only">Job-Suche</label>
+          <input type="text" id="job-search-input" placeholder="Job, Unternehmen oder Stichwort..." value="${state.filters.search}" oninput="state.filters.search=this.value;render()" aria-label="Nach Jobs suchen">
           <button class="btn btn-primary" onclick="render()">Suchen</button>
         </div>
         <div style="display:flex;align-items:center;gap:1rem">
-          <span class="search-results-count">${loading ? 'Jobs werden geladen…' : jobs.length + ' Jobs gefunden'}</span>
+          <span class="search-results-count" aria-live="polite">${loading ? 'Jobs werden geladen…' : jobs.length + ' Jobs gefunden'}</span>
         </div>
       </div>
       <!-- Mobile: Filter-Toggle-Button mit Counter -->
@@ -3063,8 +3083,8 @@ function renderJobSearch() {
           <h3 style="font-size:1rem;margin-bottom:1rem">Filter</h3>
 
           <div class="filter-section">
-            <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="Straße + PLZ + Stadt (z.B. Hauptstr. 1, 40213 Düsseldorf)" value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
+            <h4 id="addr-filter-heading">Deine Adresse</h4>
+            <input type="text" class="form-input" id="address-filter-input" placeholder="Straße + PLZ + Stadt (z.B. Hauptstr. 1, 40213 Düsseldorf)" value="${state.filters.address || ''}" aria-labelledby="addr-filter-heading" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
             <p style="font-size:0.7rem;color:${state.geoLoading ? 'var(--primary)' : 'var(--gray-400)'};margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem">
               ${state.geoLoading
                 ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation:initial-spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.22-8.56"/></svg> Entfernungen werden berechnet…'
@@ -3100,13 +3120,13 @@ function renderJobSearch() {
           <div class="filter-section">
             <h4>Umkreis: ${state.filters.radius >= 50 ? '50+ km' : state.filters.radius + ' km'}</h4>
             <input type="range" class="range-slider" min="5" max="50" step="5" value="${state.filters.radius}" oninput="state.filters.radius=parseInt(this.value);render()">
-            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-400)">
+            <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500)">
               <span>5 km</span><span>25 km</span><span>50+ km</span>
             </div>
           </div>
 
           <button class="btn btn-primary btn-block" onclick="recomputeDistancesAndRender()">Filter anwenden</button>
-          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};recomputeDistancesAndRender()">Filter zurücksetzen</button>
+          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-500);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};recomputeDistancesAndRender()">Filter zurücksetzen</button>
         </aside>
 
         ${loading ? skeletonJobGrid(6) : `
@@ -3130,7 +3150,7 @@ function renderJobCard(j) {
       ${j.promoted ? '<div class="promoted-badge">&#9733; Hervorgehoben</div>' : ''}
       <div class="job-card-left">
         <div class="job-card-header">
-          <div class="job-company-logo" ${j.companyLogo && j.companyLogo.startsWith('data:') ? `style="background-image:url(${j.companyLogo});background-size:cover;background-position:center"` : ''}>${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
+          ${companyLogoHtml(j.companyLogo, j.company)}
           <div class="job-card-info">
             <h3>${escapeHtml(j.title)}</h3>
             <div class="job-company-name">${escapeHtml(j.company)}</div>
@@ -3433,7 +3453,7 @@ function renderJobDetail() {
               <div>
                 <h1>${escapeHtml(job.title)}</h1>
                 <div class="job-detail-company">
-                  <span class="job-company-logo" style="width:40px;height:40px;${job.companyLogo && job.companyLogo.startsWith('data:') ? `background-image:url(${job.companyLogo});background-size:cover;background-position:center` : ''}">${job.companyLogo && job.companyLogo.startsWith('data:') ? '' : (job.company ? escapeHtml(job.company[0]) : '')}</span>
+                  ${companyLogoHtml(job.companyLogo, job.company, { style: 'width:40px;height:40px;' })}
                   <span style="font-weight:600">${escapeHtml(job.company)}</span>
                 </div>
               </div>
@@ -3464,7 +3484,7 @@ function renderJobDetail() {
             <div style="padding:0 2rem 2rem">
               <h2 style="font-size:1.05rem;margin-bottom:0.75rem;font-weight:600">Bilder</h2>
               <div class="job-images">
-                ${job.images.map(img => `<div class="job-image-placeholder">${img}</div>`).join('')}
+                ${job.images.map((img, i) => `<img src="${img}" alt="Eindruck vom Arbeitsplatz (${i+1} von ${job.images.length})" class="job-image-placeholder" style="object-fit:cover;width:100%;height:auto" loading="lazy">`).join('')}
               </div>
             </div>` : ''}
           <div style="padding:0 2rem 2rem">
@@ -3484,7 +3504,7 @@ function renderJobDetail() {
                 <div class="review-text">${escapeHtml(r.text)}</div>
                 <div class="review-date">${formatDate(r.date)}</div>
               </div>
-            `).join('') : '<p style="font-size:0.85rem;color:var(--gray-400);margin-bottom:1rem">Noch keine Bewertungen.</p>'}
+            `).join('') : '<p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1rem">Noch keine Bewertungen.</p>'}
           </div>
         </div>
 
@@ -3933,7 +3953,7 @@ function renderWorkerProfileView() {
                 <div class="progress-bar" style="height:4px;width:64px">
                   <div class="progress-fill" style="width:${pct}%;background:${pctColor}"></div>
                 </div>
-                <div style="font-size:0.68rem;color:var(--gray-400);margin-top:0.2rem">vollständig</div>
+                <div style="font-size:0.68rem;color:var(--gray-500);margin-top:0.2rem">vollständig</div>
               </div>
             </div>
 
@@ -4048,7 +4068,7 @@ function renderWorkerProfile() {
       <label class="form-label">Suchradius: <strong id="radius-label">${u.radius || 15} km</strong></label>
       <input type="range" class="range-slider" min="5" max="50" step="5" value="${u.radius || 15}"
         oninput="document.getElementById('radius-label').textContent=this.value+' km'">
-      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-400);margin-top:0.25rem">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500);margin-top:0.25rem">
         <span>5 km</span><span>25 km</span><span>50 km</span>
       </div>
     </div>`,
@@ -4117,7 +4137,7 @@ function renderWorkerProfile() {
     `<h3 class="profile-step-title">Skills & Referenzen</h3>
     <p class="profile-step-hint">Zeig Arbeitgebern deine Stärken und bisherigen Erfahrungen.</p>
     <div class="form-group">
-      <label class="form-label">Deine Top-3 Stärken <span style="color:var(--gray-400);font-weight:400;font-size:0.8rem">(max. 3 wählbar)</span></label>
+      <label class="form-label">Deine Top-3 Stärken <span style="color:var(--gray-500);font-weight:400;font-size:0.8rem">(max. 3 wählbar)</span></label>
       <div class="checkbox-group">
         ${SKILLS.map(s => `<label class="checkbox-label"><input type="checkbox" ${u.skills?.includes(s)?'checked':''} onchange="limitSkills(this,3)"> <span>${s}</span></label>`).join('')}
       </div>
@@ -4378,7 +4398,7 @@ function renderApplications() {
               <div class="card" style="cursor:pointer" onclick="navigate('job-detail', {jobId: ${a.job.id}})">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center">
                   <div style="display:flex;align-items:center;gap:1rem">
-                    <div class="job-company-logo" ${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? `style="background-image:url(${a.job.companyLogo});background-size:cover;background-position:center"` : ''}>${a.job.companyLogo && a.job.companyLogo.startsWith('data:') ? '' : (a.job.company ? a.job.company[0] : '')}</div>
+                    ${companyLogoHtml(a.job.companyLogo, a.job.company)}
                     <div>
                       <h3 style="font-size:1rem;margin-bottom:0.25rem">${escapeHtml(a.job.title)}</h3>
                       <div style="font-size:0.85rem;color:var(--gray-500)">${escapeHtml(a.job.company)}</div>
@@ -4386,7 +4406,7 @@ function renderApplications() {
                   </div>
                   <div style="text-align:right">
                     <div class="badge ${a.status==='accepted'?'badge-success':a.status==='reviewing'?'badge-secondary':a.status==='rejected'?'badge-danger':'badge-primary'}">${a.statusText}</div>
-                    <div style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem">${formatDate(a.date)}</div>
+                    <div style="font-size:0.8rem;color:var(--gray-500);margin-top:0.25rem">${formatDate(a.date)}</div>
                   </div>
                 </div>
               </div>
@@ -4866,7 +4886,7 @@ function renderEmployerDashboard() {
               <div class="card">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
                   <div style="display:flex;align-items:center;gap:1rem;flex:1">
-                    <div class="job-company-logo">${j.companyLogo && j.companyLogo.startsWith('data:') ? '' : (j.company ? j.company[0] : '')}</div>
+                    ${companyLogoHtml(j.companyLogo, j.company)}
                     <div>
                       <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${escapeHtml(j.title)}</h3>
                       <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
@@ -4989,7 +5009,7 @@ function renderPostJob() {
       <div style="font-size:3rem;margin-bottom:1rem">&#128274;</div>
       <h2 style="margin-bottom:0.5rem">Account noch nicht freigeschaltet</h2>
       <p style="color:var(--gray-500);margin-bottom:1.5rem">Dein Arbeitgeber-Account muss zuerst von einem Administrator freigeschaltet werden, bevor du Stellenanzeigen veröffentlichen kannst.</p>
-      <p style="color:var(--gray-400);font-size:0.85rem">Du wirst benachrichtigt, sobald dein Account freigegeben wurde.</p>
+      <p style="color:var(--gray-500);font-size:0.85rem">Du wirst benachrichtigt, sobald dein Account freigegeben wurde.</p>
       <button class="btn btn-primary" style="margin-top:1.5rem" onclick="navigate('employer-dashboard')">Zurück zum Dashboard</button>
     </div>`;
   }
@@ -5120,13 +5140,16 @@ function renderWizardStep3() {
     ${imgs.length > 0 ? `
       <p style="color:var(--gray-500);font-size:0.9rem;margin-bottom:1rem">Wähle Bilder aus deinem Unternehmensprofil für diese Anzeige:</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1.5rem">
-        ${imgs.map((img, i) => `
-          <div onclick="toggleJobImage(${i})" style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;background-image:url(${img});background-size:cover;background-position:center;border:3px solid ${state.selectedJobImages.includes(i) ? 'var(--primary)' : 'transparent'}">
-            ${state.selectedJobImages.includes(i) ? '<div style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem">&#10003;</div>' : ''}
-          </div>
-        `).join('')}
+        ${imgs.map((img, i) => {
+          const selected = state.selectedJobImages.includes(i);
+          return `
+          <button type="button" onclick="toggleJobImage(${i})" aria-pressed="${selected}" aria-label="Bild ${i+1}${selected ? ' — ausgewählt' : ''}" style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;background:none;border:3px solid ${selected ? 'var(--primary)' : 'transparent'}">
+            <img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
+            ${selected ? '<div style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem" aria-hidden="true">&#10003;</div>' : ''}
+          </button>`;
+        }).join('')}
       </div>
-      <p style="font-size:0.85rem;color:var(--gray-400)">${state.selectedJobImages.length} Bild${state.selectedJobImages.length !== 1 ? 'er' : ''} ausgewählt</p>
+      <p style="font-size:0.85rem;color:var(--gray-500)">${state.selectedJobImages.length} Bild${state.selectedJobImages.length !== 1 ? 'er' : ''} ausgewählt</p>
     ` : `
       <div class="empty-state" style="padding:2rem">
         <div style="font-size:2rem;margin-bottom:0.75rem">&#128247;</div>
@@ -5164,7 +5187,7 @@ function renderWizardStep5() {
     <div class="job-card" style="cursor:default">
       <div>
         <div class="job-card-header">
-          <div class="job-company-logo"></div>
+          <div class="job-company-logo" aria-hidden="true"></div>
           <div class="job-card-info">
             <h3>Dein Jobtitel</h3>
             <div class="job-company-name">Dein Unternehmen</div>
@@ -5216,9 +5239,9 @@ function renderEmployerProfile() {
           <h2 class="dashboard-title">Unternehmensprofil</h2>
 
           <div class="profile-header-card" style="background:linear-gradient(135deg,#1e40af,#2563eb)">
-            <div class="profile-avatar" style="font-size:1.5rem;cursor:pointer;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" onclick="document.getElementById('company-logo-input').click()" id="company-logo-preview">
-              ${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? '' : (state.user.company?.[0] || state.user.name?.[0] || '?')}
-            </div>
+            <button type="button" class="profile-avatar" style="font-size:1.5rem;cursor:pointer;padding:0;border:none;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" onclick="document.getElementById('company-logo-input').click()" id="company-logo-preview" aria-label="Firmenlogo hochladen">
+              ${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? '' : escapeHtml(state.user.company?.[0] || state.user.name?.[0] || '?')}
+            </button>
             <input type="file" id="company-logo-input" accept="image/*" style="display:none" onchange="handleCompanyLogo(this)">
             <div class="profile-info">
               <h2>${escapeHtml(state.user.company || state.user.name + '\'s Unternehmen')}</h2>
@@ -5267,12 +5290,13 @@ function renderEmployerProfile() {
               <p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1rem">Lade Bilder hoch, die du bei Stellenanzeigen verwenden kannst (z.B. Büro, Team, Arbeitsplatz).</p>
               <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;margin-bottom:1rem" id="company-images-grid">
                 ${(state.user.companyImages || []).map((img, i) => `
-                  <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;background-image:url(${img});background-size:cover;background-position:center">
-                    <button onclick="removeCompanyImage(${i})" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
+                  <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden">
+                    <img src="${img}" alt="Unternehmensbild ${i+1}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
+                    <button onclick="removeCompanyImage(${i})" aria-label="Bild ${i+1} entfernen" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
                   </div>
                 `).join('')}
                 ${(state.user.companyImages || []).length < 6 ? `
-                <div style="aspect-ratio:1;border:2px dashed var(--gray-300);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-400);font-size:0.85rem" onclick="document.getElementById('company-images-input').click()">
+                <div style="aspect-ratio:1;border:2px dashed var(--gray-300);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-500);font-size:0.85rem" onclick="document.getElementById('company-images-input').click()">
                   <div style="font-size:1.5rem">+</div>
                   Bild hinzufügen
                 </div>` : ''}
@@ -5424,7 +5448,7 @@ function renderApplicantProfile() {
                       <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
                       <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
                     </select>
-                    <span style="font-size:0.8rem;color:var(--gray-400)">Beworben auf: <strong>${escapeHtml(a.jobTitle || a.job)}</strong></span>
+                    <span style="font-size:0.8rem;color:var(--gray-500)">Beworben auf: <strong>${escapeHtml(a.jobTitle || a.job)}</strong></span>
                   </div>
                 </div>
                 <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
@@ -5442,7 +5466,7 @@ function renderApplicantProfile() {
           <div class="grid-2">
             <div class="card">
               <div class="card-body">
-                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Stärken</h4>
+                <h4 style="font-size:0.9rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Stärken</h4>
                 ${a.skills.length > 0
                   ? `<div style="display:flex;flex-wrap:wrap;gap:0.375rem">${a.skills.map(s => `<span class="epc-skill-tag">${escapeHtml(s)}</span>`).join('')}</div>`
                   : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
@@ -5451,7 +5475,7 @@ function renderApplicantProfile() {
 
             <div class="card">
               <div class="card-body">
-                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Berufserfahrung</h4>
+                <h4 style="font-size:0.9rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Berufserfahrung</h4>
                 ${a.refs && a.refs.length > 0
                   ? `<ul style="margin:0;padding-left:1.1rem;font-size:0.88rem;line-height:1.8">${a.refs.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>`
                   : `<span class="pv-missing-chip">Noch nicht angegeben</span>`}
@@ -5460,7 +5484,7 @@ function renderApplicantProfile() {
 
             <div class="card">
               <div class="card-body">
-                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Dokumente</h4>
+                <h4 style="font-size:0.9rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Dokumente</h4>
                 <div class="epc-doc-row">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
                   <span style="flex:1;font-size:0.88rem">Lebenslauf</span>
@@ -5476,7 +5500,7 @@ function renderApplicantProfile() {
 
             <div class="card">
               <div class="card-body">
-                <h4 style="font-size:0.9rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Verfügbarkeit</h4>
+                <h4 style="font-size:0.9rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:.05em;margin-bottom:0.75rem">Verfügbarkeit</h4>
                 <div style="font-size:0.88rem">
                   <div style="display:flex;justify-content:space-between;padding:0.25rem 0;border-bottom:1px solid var(--gray-100)">
                     <span style="color:var(--gray-500)">Wochenstunden</span>
@@ -5531,7 +5555,7 @@ function renderChatDetail() {
           <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
             ${state._activeChatLoading === chat.id ? skeletonChatMessages() : ''}
             ${state._activeChatLoading !== chat.id && chat.messages.length === 0 ? `
-              <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
+              <div style="text-align:center;color:var(--gray-500);font-size:0.85rem;padding:2rem">
                 Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
             ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
@@ -5594,7 +5618,7 @@ function renderMessages() {
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
                     <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
-                    <span style="font-size:0.72rem;color:var(--gray-400);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                    <span style="font-size:0.72rem;color:var(--gray-500);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
                   </div>
                   <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
                   <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
@@ -5603,7 +5627,7 @@ function renderMessages() {
               </div>
             `).join('')}
             ${chatList.length === 0 ? `
-              <div style="padding:1.5rem;text-align:center;color:var(--gray-400);font-size:0.85rem">
+              <div style="padding:1.5rem;text-align:center;color:var(--gray-500);font-size:0.85rem">
                 ${isEmployer ? 'Noch keine Bewerbernachrichten.' : 'Noch keine Nachrichten von Arbeitgebern.'}
               </div>` : ''}
           </div>
@@ -5715,7 +5739,7 @@ function renderSupport() {
           <!-- Meine Tickets -->
           <h3 style="margin-bottom:0.75rem">Meine Tickets</h3>
           ${tickets.length === 0 ? `
-            <div class="card" style="padding:2rem;text-align:center;color:var(--gray-400)">
+            <div class="card" style="padding:2rem;text-align:center;color:var(--gray-500)">
               Du hast noch keine Support-Tickets erstellt.
             </div>` : tickets.map(t => {
             const categoryLabels = { bug: 'Technisches Problem', account: 'Konto & Profil', payment: 'Zahlung', job: 'Job & Bewerbung', user: 'Nutzer-Problem', other: 'Sonstiges' };
@@ -5731,7 +5755,7 @@ function renderSupport() {
                   <span style="font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:999px;background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
                 </div>
                 <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.5rem">${escapeHtml(t.message)}</p>
-                <div style="font-size:0.75rem;color:var(--gray-400)">${new Date(t.createdAt).toLocaleString('de-DE')}</div>
+                <div style="font-size:0.75rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</div>
                 ${t.adminReply ? `
                   <div style="margin-top:0.75rem;padding:0.75rem;background:var(--gray-50);border-radius:8px;border-left:3px solid var(--primary)">
                     <div style="font-size:0.75rem;font-weight:600;color:var(--primary);margin-bottom:0.25rem">Antwort vom Support</div>
@@ -5944,7 +5968,7 @@ async function adminLogout() {
 function renderImpressum() {
   return `<div class="page page-narrow" style="padding-top:3rem">
     <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Impressum</h1>
-    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>
+    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:2rem">Angaben gemäß § 5 DDG (Digitale-Dienste-Gesetz)</p>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">Betreiber der Website</h3>
@@ -6002,7 +6026,7 @@ function renderImpressum() {
 function renderDatenschutz() {
   return `<div class="page page-narrow" style="padding-top:3rem">
     <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Datenschutzerklärung</h1>
-    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
+    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">1. Verantwortlicher</h3>
@@ -6081,7 +6105,7 @@ function renderDatenschutz() {
 function renderAGB() {
   return `<div class="page page-narrow" style="padding-top:3rem">
     <h1 style="font-size:2rem;font-weight:800;margin-bottom:0.5rem;font-family:'Playfair Display',serif">Allgemeine Geschäftsbedingungen</h1>
-    <p style="color:var(--gray-400);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
+    <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:2rem">Stand: April 2026</p>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 1 Geltungsbereich und Vertragsgegenstand</h3>
@@ -6226,7 +6250,7 @@ function renderAdminPanel() {
       const color = productColors[product] || '#6366f1';
       return `<div class="admin-hbar-row"><div class="admin-hbar-info"><span class="admin-hbar-dot" style="background:${color}"></span><span class="admin-hbar-name">${product}</span><span class="admin-hbar-count">${info.count}x</span></div><div class="admin-hbar-track"><div class="admin-hbar-fill" style="width:${pct}%;background:${color}"></div></div><div class="admin-hbar-amount">${formatEuro(info.total)}</div></div>`;
     }).join('')
-    : '<div style="text-align:center;padding:2rem;color:var(--gray-400)">Noch keine Verkäufe</div>';
+    : '<div style="text-align:center;padding:2rem;color:var(--gray-500)">Noch keine Verkäufe</div>';
 
   const revenueDonut = buildDonutSVG(
     productEntries.map(([product, info]) => ({ value: info.total, color: productColors[product] || '#6366f1', label: product })),
@@ -6442,7 +6466,7 @@ function renderAdminPanel() {
                   <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminRemoveEmployer('${u.id}')">Entfernen</button>
                 </td>
               </tr>`;
-            }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Arbeitgeber registriert</td></tr>'}
+            }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-500)">Noch keine Arbeitgeber registriert</td></tr>'}
           </tbody>
         </table>
       </div></div>`;
@@ -6490,7 +6514,7 @@ function renderAdminPanel() {
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center">${actionBtn}</td>
               </tr>`;
-            }).join('') || '<tr><td colspan="7" style="padding:2rem;text-align:center;color:var(--gray-400)">Noch keine Benutzer registriert</td></tr>'}
+            }).join('') || '<tr><td colspan="7" style="padding:2rem;text-align:center;color:var(--gray-500)">Noch keine Benutzer registriert</td></tr>'}
           </tbody>
         </table>
       </div></div>
@@ -6529,7 +6553,7 @@ function renderAdminPanel() {
                   </td>
                   <td style="padding:0.65rem 1.25rem">
                     <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
-                    <div style="font-size:0.75rem;color:var(--gray-400)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                    <div style="font-size:0.75rem;color:var(--gray-500)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
                   </td>
                   <td style="padding:0.65rem 1.25rem"><span class="badge">${catLabels[t.category] || t.category}</span></td>
                   <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
@@ -6549,7 +6573,7 @@ function renderAdminPanel() {
                     </div>
                   </td>
                 </tr>`;
-              }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-400)">Keine Support-Tickets vorhanden</td></tr>'}
+              }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-500)">Keine Support-Tickets vorhanden</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -6557,7 +6581,7 @@ function renderAdminPanel() {
       </div><!-- /TAB: Support -->
 
       <!-- Footer -->
-      <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-400);font-size:0.8rem">
+      <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-500);font-size:0.8rem">
         Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull;
         <a href="#" onclick="navigate('admin-panel')" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
       </div>

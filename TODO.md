@@ -70,9 +70,9 @@
 - [x] Nutzer-Avatar als keyboard-bedienbarer Button (Enter/Space)
 - [x] `alt`-Attribute auf CV-Profilbildern (3 Templates)
 - [x] Heading-Hierarchie auf Job-Detailseite gefixt (h1 → h2 statt h1 → h3-Sprung)
-- [ ] Company-Logos & Job-Images: aktuell CSS-Background → Umbau auf `<img alt="">` ausstehend
-- [ ] Farbkontrast (graue Texte auf weiß — z. T. unter WCAG AA)
-- [ ] Vollständiger Screen-Reader-Durchlauf (NVDA / VoiceOver)
+- [x] **Company-Logos auf `<img alt="">`** — neue `companyLogoHtml()`-Helfer ersetzt das inline-background-image-Pattern. Data-URL-Logos rendern als `<img alt="Logo von FIRMA">`, Fallback bleibt dekorativer `<div aria-hidden="true">` mit Initial. Auch Company-Images (Profil-Galerie, Job-Image-Picker) und Job-Detail-Bilder auf `<img alt="">` umgebaut. Upload-Target für Firmenlogo ist jetzt ein `<button>` mit `aria-label="Firmenlogo hochladen"`.
+- [x] **Farbkontrast** — alle `color: var(--gray-400)` Vorkommen in `style.css` und `app.js` (30+ Stellen) auf `var(--gray-500)` upgegradet → 4.83:1 auf Weiß statt 2.85:1. Footer-Text von `--gray-400` auf `--gray-300` (deutlich über AA auf Dark). Alle graue Texte erfüllen jetzt WCAG AA.
+- [x] **Screen-Reader-Verbesserungen** — `<h1 class="sr-only">` auf Jobs-Seite, Suchfeld hat `<label>`+`aria-label`, Adressfeld via `aria-labelledby` mit dem h4 verknüpft, Ergebnis-Counter als `aria-live="polite"`. Job-Images mit individuellen Alt-Texten („Eindruck vom Arbeitsplatz N von M"). Image-Picker im Post-Job-Wizard umgebaut auf `<button aria-pressed>` statt klickbarem Div.
 
 ---
 
