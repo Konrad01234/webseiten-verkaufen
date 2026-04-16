@@ -391,6 +391,8 @@ async function loadChatsForUser() {
             }
             container.push(c);
           });
+          // Badge fuer ungelesene Nachrichten am mobilen Profil-Icon aktualisieren
+          if (typeof updateNav === 'function') updateNav();
         } catch (e) {
           console.error('[loadChatsForUser]', e);
         }
@@ -788,27 +790,37 @@ function updateNav() {
       <button class="btn btn-primary" onclick="navigate('register')">Registrieren</button>`;
   }
 
-  // Show/hide mobile profile icon button
+  // Show/hide mobile profile icon button + Badge fuer ungelesene Nachrichten
   const mobileProfileBtn = document.getElementById('mobile-profile-btn');
   if (mobileProfileBtn) {
     mobileProfileBtn.style.display = state.user ? 'flex' : 'none';
   }
+  const mobileBadge = document.getElementById('mobile-profile-badge');
+  if (mobileBadge) {
+    let unread = 0;
+    if (state.user) {
+      const list = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+      unread = (list || []).filter(c => c && c.unread).length;
+    }
+    if (unread > 0) {
+      mobileBadge.textContent = unread > 9 ? '9+' : String(unread);
+      mobileBadge.hidden = false;
+    } else {
+      mobileBadge.textContent = '';
+      mobileBadge.hidden = true;
+    }
+  }
 
   // Mobile-Menue (Hamburger) je nach Login-Status anpassen.
-  // Eingeloggt: Jobs, Arbeitgeber, Dashboard, Profil, Nachrichten, Abmelden
-  // Ausgeloggt: Jobs, Arbeitgeber, Anmelden, Registrieren
+  // Eingeloggt:  Jobs, Fuer Arbeitgeber, Abmelden (Rest laeuft ueber das
+  //              Profil-Icon rechts oben)
+  // Ausgeloggt:  Jobs, Fuer Arbeitgeber, Anmelden, Registrieren
   const mobileMenu = document.getElementById('mobile-menu');
   if (mobileMenu) {
     if (state.user) {
-      const isEmployer = state.user.role === 'employer';
-      const dashPage = isEmployer ? 'employer-dashboard' : 'worker-dashboard';
-      const profilePage = isEmployer ? 'employer-profile' : 'worker-profile';
       mobileMenu.innerHTML = `
         <a href="#" onclick="navigate('jobs'); toggleMobileMenu()">Jobs finden</a>
         <a href="#" onclick="navigate('employer-landing'); toggleMobileMenu()">Für Arbeitgeber</a>
-        <a href="#" onclick="navigate('${dashPage}'); toggleMobileMenu()">Dashboard</a>
-        <a href="#" onclick="navigate('${profilePage}'); toggleMobileMenu()">Profil</a>
-        <a href="#" onclick="navigate('messages'); toggleMobileMenu()">Nachrichten</a>
         <a href="#" onclick="logout(); toggleMobileMenu()" style="color:var(--gray-500)">Abmelden</a>`;
     } else {
       mobileMenu.innerHTML = `

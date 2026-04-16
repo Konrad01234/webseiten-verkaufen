@@ -111,8 +111,18 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .nav-links a:hover { color: var(--primary); }
 .nav-actions { display: flex; gap: 0.75rem; }
 .mobile-menu-btn { display: none; background: none; border: none; font-size: 1.5rem; cursor: pointer; }
-.mobile-profile-btn { display: none; background: none; border: none; cursor: pointer; color: var(--gray-700); align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.15s; }
+.mobile-profile-btn { display: none; background: none; border: none; cursor: pointer; color: var(--gray-700); align-items: center; justify-content: center; padding: 0.25rem; border-radius: 50%; transition: background 0.15s; position: relative; }
 .mobile-profile-btn:hover { background: var(--gray-100); }
+.mobile-profile-badge {
+  position: absolute; top: -2px; right: -2px;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  background: #ef4444; color: #fff;
+  border-radius: 10px; border: 2px solid #fff;
+  font-size: 10px; font-weight: 700; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-sizing: border-box;
+}
+.mobile-profile-badge[hidden] { display: none; }
 .mobile-menu { display: none; flex-direction: column; padding: 1rem 1.5rem; gap: 0.75rem; border-top: 1px solid var(--gray-200); }
 .mobile-menu.open { display: flex; }
 
@@ -2541,6 +2551,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>
           </svg>
+          <span class="mobile-profile-badge" id="mobile-profile-badge" hidden aria-label="Ungelesene Nachrichten"></span>
         </button>
         <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">&#9776;</button>
       </div>
