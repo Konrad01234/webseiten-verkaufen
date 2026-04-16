@@ -2088,6 +2088,215 @@ body:has(.admin-login-wrap) {
   .sp-block-body h3 { font-size: 1.2rem !important; }
   .cta-fullblock h2 { font-size: 1.5rem !important; }
 }
+
+/* ==========================================================================
+   ACCESSIBILITY: Fokus-Sichtbarkeit (WCAG 2.4.7) + Screenreader-Helfer
+   ========================================================================== */
+:focus { outline: none; }
+a:focus-visible, button:focus-visible, [role="button"]:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #2563eb; outline-offset: 2px; border-radius: 4px;
+}
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+  white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   MOBILE FILTER TOGGLE für Job-Suche (Default: unsichtbar, nur Mobile)
+   ========================================================================== */
+.mobile-filter-toggle {
+  display: none; width: 100%; align-items: center; gap: 0.6rem;
+  padding: 0.85rem 1rem; background: #fff;
+  border: 1px solid var(--gray-200); border-radius: var(--radius);
+  font-weight: 600; font-size: 0.95rem; color: var(--gray-800);
+  cursor: pointer; margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.mobile-filter-toggle:hover { border-color: var(--primary); }
+.mobile-filter-count {
+  background: var(--primary); color: #fff; font-size: 0.72rem;
+  padding: 0.1rem 0.5rem; border-radius: 999px; font-weight: 700;
+  margin-left: 0.25rem;
+}
+
+/* ==========================================================================
+   MOBILE OVERHAUL — schließt Lücke zw. 768px und 480px Queries.
+   Greift auf allen modernen Smartphones (iPhone 12 Mini bis 14 Pro Max,
+   Android 360–414 px). Letzter Block in dieser Datei → höchste Priorität.
+   ========================================================================== */
+@media (max-width: 640px) {
+
+  /* --- Navbar: nur Logo + Hamburger + (eingeloggt) Profil-Icon ----- */
+  #navbar .nav-links { display: none !important; }
+  #navbar .nav-actions { display: none !important; }
+  #navbar .nav-container { gap: 0.5rem; padding: 0.5rem 0.75rem; }
+  #navbar .mobile-nav-btns {
+    display: flex !important; align-items: center; gap: 0.25rem;
+    margin-left: auto;
+  }
+  #navbar .mobile-menu-btn {
+    display: block !important; min-width: 44px; min-height: 44px;
+    font-size: 1.4rem; padding: 0.4rem;
+  }
+  #navbar .mobile-menu a {
+    padding: 0.85rem 0; min-height: 44px; display: flex;
+    align-items: center; font-size: 1rem;
+    border-bottom: 1px solid var(--gray-100);
+  }
+
+  /* --- Globale Spacings ---------------------------------------------- */
+  .page { padding: 1rem 0.75rem; }
+  .page-wide { padding: 1rem 0.75rem; }
+  .container { padding: 0 0.75rem; }
+
+  /* iOS-Zoom-Bug verhindern: Inputs müssen >= 16px sein */
+  input, select, textarea, .form-input, .form-select, .form-textarea,
+  .search-bar input { font-size: 16px !important; }
+
+  /* --- Touch-Targets ------------------------------------------------- */
+  .btn { min-height: 40px; }
+  .btn-sm { min-height: 36px; }
+
+  /* --- Hero / Headings ---------------------------------------------- */
+  .hero h1, h1 { font-size: 1.7rem; line-height: 1.2; }
+  .hero p { font-size: 0.95rem; }
+  .hero-content { max-width: 100%; padding: 0 0.5rem; }
+  h2 { font-size: 1.25rem; }
+
+  /* --- Footer -------------------------------------------------------- */
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .footer-container { padding: 1.5rem 1rem; }
+  .footer-bottom {
+    flex-direction: column; gap: 0.75rem; text-align: center;
+  }
+
+  /* --- Job-Suche: Filter-Drawer (Sidebar standardmäßig versteckt) -- */
+  .mobile-filter-toggle { display: flex; }
+  .search-layout, .page-with-sidebar {
+    grid-template-columns: 1fr !important;
+  }
+  .search-layout .search-sidebar { display: none; }
+  .search-layout.show-mobile-filters .search-sidebar {
+    display: block; position: static !important;
+    width: 100% !important; max-width: 100% !important;
+    top: auto !important; margin-bottom: 1rem;
+  }
+
+  /* --- Job-Detail: Sidebar unter Main ------------------------------ */
+  .job-detail-layout {
+    grid-template-columns: 1fr !important; gap: 1rem;
+  }
+  .job-detail-sidebar {
+    position: static !important; width: 100% !important; margin-top: 0;
+  }
+  .job-detail-header { padding: 1.25rem; }
+  .job-detail-header h1 { font-size: 1.3rem; line-height: 1.3; }
+  .job-detail-body { padding: 1rem 1.25rem; font-size: 0.92rem; }
+  .job-detail-badges { gap: 0.35rem; }
+  .job-detail-badges .badge { font-size: 0.72rem; padding: 0.25rem 0.55rem; }
+
+  /* --- Messages / Chat: 2-Spalten → Stack --------------------------- */
+  .dashboard-layout {
+    grid-template-columns: 1fr !important; gap: 0.75rem;
+  }
+  .wdt-msg-preview { max-width: none; }
+  .chat-messages { max-height: 55vh; }
+
+  /* --- Dashboards / Stats ------------------------------------------- */
+  .dashboard-title { font-size: 1.25rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 0.5rem; }
+  .stat-card { padding: 0.9rem; }
+  .stat-value { font-size: 1.25rem; }
+
+  /* --- Job-Cards im Grid -------------------------------------------- */
+  .jobs-grid { grid-template-columns: 1fr !important; gap: 0.75rem; }
+  .job-card { padding: 1rem; }
+  .job-card h3 { font-size: 1rem; }
+
+  /* --- Modals / Dialoge --------------------------------------------- */
+  .modal { max-width: 95vw !important; max-height: 92vh; margin: 0.5rem; }
+  .modal-header { padding: 0.9rem 1rem; }
+  .modal-body { padding: 1rem; }
+  .modal-footer {
+    padding: 0.75rem 1rem; flex-wrap: wrap; gap: 0.5rem;
+  }
+
+  /* --- Forms -------------------------------------------------------- */
+  .form-row, .form-grid-2, .form-grid-3 {
+    grid-template-columns: 1fr !important; gap: 0.75rem;
+  }
+  .form-label { font-size: 0.85rem; }
+
+  /* --- Admin-Panel --------------------------------------------------- */
+  .admin-kpi-strip {
+    grid-template-columns: 1fr 1fr !important; gap: 0.6rem;
+  }
+  .admin-kpi { padding: 0.75rem; gap: 0.6rem; }
+  .admin-kpi-value { font-size: 1rem; }
+  .admin-kpi-label { font-size: 0.7rem; }
+  .admin-kpi-icon { width: 32px; height: 32px; }
+  .admin-row-2, .admin-row-3 {
+    grid-template-columns: 1fr !important; gap: 0.75rem;
+  }
+  .admin-header {
+    flex-direction: column; align-items: flex-start; gap: 0.75rem;
+  }
+  .admin-header h1 { font-size: 1.2rem !important; }
+  .admin-tabs {
+    overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap;
+  }
+  .admin-tab {
+    flex-shrink: 0; font-size: 0.78rem; padding: 0.5rem 0.75rem;
+  }
+  .admin-chart-card table, .admin-panel table {
+    display: block; overflow-x: auto;
+    -webkit-overflow-scrolling: touch; white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .admin-chart-card table thead, .admin-chart-card table tbody,
+  .admin-chart-card table tr {
+    display: table; width: 100%; table-layout: auto;
+  }
+
+  /* --- Chat-Input ---------------------------------------------------- */
+  .chat-input-area { padding: 0.6rem 0.75rem; gap: 0.5rem; }
+  .chat-input-area input { flex: 1; min-width: 0; }
+
+  /* --- Auth-Cards (Login / Register) -------------------------------- */
+  .auth-page {
+    padding: 0.75rem !important; min-height: calc(100vh - 120px);
+  }
+  .auth-card, .auth-page .auth-card {
+    max-width: 100% !important; width: 100% !important;
+    margin: 0 !important; padding: 1.5rem 1.1rem !important;
+    box-shadow: none; border: 1px solid var(--gray-200);
+  }
+  .auth-card h2 { font-size: 1.3rem; }
+  .auth-card .subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
+  .role-selector { gap: 0.5rem; margin-bottom: 1rem; }
+  .role-option { padding: 0.75rem 0.5rem; }
+  .role-option .role-icon { font-size: 1.25rem; margin-bottom: 0.15rem; }
+  .role-option .role-name { font-size: 0.85rem; }
+  .role-option > div:last-child {
+    font-size: 0.68rem !important; line-height: 1.2;
+  }
+  .h-captcha {
+    transform: scale(0.9); transform-origin: center top;
+  }
+}
+
+@media (max-width: 380px) {
+  #navbar .nav-container { padding: 0.4rem 0.5rem; }
+  .hero h1, h1 { font-size: 1.45rem; }
+  .hero p { font-size: 0.88rem; }
+  .dashboard-title { font-size: 1.1rem; }
+  .job-detail-header h1 { font-size: 1.15rem; }
+  .admin-kpi-value { font-size: 0.9rem; }
+  .stats-grid { grid-template-columns: 1fr !important; }
+}
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <!-- Supabase backend: must load before the app script so window.DB is
