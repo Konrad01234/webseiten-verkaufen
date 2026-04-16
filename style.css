@@ -1855,6 +1855,10 @@ body:has(.admin-login-wrap) { background: linear-gradient(135deg, #0f172a 0%, #1
   .stats-grid { grid-template-columns: 1fr !important; }
 }
 
+/* Globale Spin-Animation fuer kleine Inline-Spinner (z.B. beim
+   Berechnen der Entfernungen auf der Jobs-Seite). */
+@keyframes initial-spin { to { transform: rotate(360deg); } }
+
 /* ===== SKELETON SCREENS =====
    Graue Platzhalter-Flächen mit Shimmer-Animation, die während asynchroner
    Ladevorgänge anstelle des echten Contents angezeigt werden. Wirken

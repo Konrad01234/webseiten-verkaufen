@@ -100,7 +100,9 @@ let state = {
   adminRevenuePeriod: 'daily',
   jobsLoaded: false,
   chatsLoaded: false,
-  applicationsLoaded: false
+  applicationsLoaded: false,
+  geoLoading: false,
+  sessionLoaded: false
 };
 
 // Clear old broken chat data (one-time reset)
@@ -189,9 +191,9 @@ async function loadJobsFromDB() {
 // into the shape the rest of the app expects (id, email, name, role,
 // company). Called on bootstrap and after login/register.
 async function loadUserSession() {
-  if (!window.DB) return;
+  if (!window.DB) { state.sessionLoaded = true; return; }
   const session = await DB.getSession();
-  if (!session || !session.user) { state.user = null; return; }
+  if (!session || !session.user) { state.user = null; state.sessionLoaded = true; return; }
   try {
     const profile = await DB.getProfile(session.user.id);
     if (profile) {
@@ -247,6 +249,8 @@ async function loadUserSession() {
   } catch (e) {
     console.error('[loadUserSession]', e);
     state.user = null;
+  } finally {
+    state.sessionLoaded = true;
   }
 }
 
@@ -490,6 +494,7 @@ async function bootstrap() {
         state._appsCache = [];
         state.chatsLoaded = false;
         state.applicationsLoaded = false;
+        state.sessionLoaded = true;  // Session IST bekannt — eben leer
         WORKER_CHAT_MESSAGES.length = 0;
         EMPLOYER_CHAT_MESSAGES.length = 0;
         if (state._chatListSub) { try { DB.sb.removeChannel(state._chatListSub); } catch (_) {} state._chatListSub = null; }
@@ -670,7 +675,13 @@ function navigate(page, data) {
   // needing a manual page reload.
   if (window.DB) {
     if (page === 'jobs' || page === 'job-detail' || page === 'employer-dashboard') {
-      loadJobsFromDB().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] jobs refresh', e));
+      loadJobsFromDB().then(() => {
+        try { render(); } catch (_) {}
+        // Wenn der Nutzer schon eine Adresse eingegeben hat, Distanzen
+        // fuer die neu geladenen Jobs berechnen (sonst wuerde der
+        // Umkreis-Filter nach jedem Reload nicht mehr greifen).
+        if (state.filters.address) { recomputeDistancesAndRender(); }
+      }).catch(e => console.error('[navigate] jobs refresh', e));
     }
     if (page === 'employer-dashboard' || page === 'applicants' || page === 'worker-dashboard') {
       loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] apps refresh', e));
@@ -691,11 +702,24 @@ function navigate(page, data) {
           console.error('[navigate] chat open', e);
         });
     }
-    // Reload the user profile on dashboard/post pages so changes
-    // made by the admin (e.g. employer approval) take effect
-    // without a full page reload.
-    if (page === 'employer-dashboard' || page === 'worker-dashboard' || page === 'post-job') {
-      loadUserSession().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] session refresh', e));
+    // Reload the user profile on dashboard/profile/post pages so
+    // changes made by the admin (e.g. employer approval) oder
+    // externe Edits ankommen — ohne full page reload. Waehrend des
+    // Refreshs zeigen die Seiten Skeletons (state._profileRefreshing).
+    if (
+      page === 'employer-dashboard' || page === 'worker-dashboard' ||
+      page === 'post-job' ||
+      page === 'worker-profile' || page === 'worker-profile-view' ||
+      page === 'employer-profile'
+    ) {
+      state._profileRefreshing = true;
+      loadUserSession().then(() => {
+        state._profileRefreshing = false;
+        try { render(); } catch (_) {}
+      }).catch(e => {
+        state._profileRefreshing = false;
+        console.error('[navigate] session refresh', e);
+      });
     }
     if (page === 'support' || page === 'admin-panel') {
       loadSupportTicketsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] tickets refresh', e));
@@ -2251,19 +2275,25 @@ function formatDate(dateStr) {
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
 
-// Bekannte Orte mit Koordinaten
+// Bekannte deutsche Orte mit Koordinaten. Dient als schneller Fast-Path
+// fuer die Entfernungsberechnung — fuer unbekannte Orte greift der
+// Nominatim-Fallback (siehe geocodeAddress weiter unten).
 const KNOWN_LOCATIONS = {
+  // NRW — Rhein/Ruhr + Umland (Haupt-Markt)
   'neuss': { lat: 51.1986, lng: 6.6920 },
   'meerbusch': { lat: 51.2583, lng: 6.6917 },
   'düsseldorf': { lat: 51.2277, lng: 6.7735 },
+  'duesseldorf': { lat: 51.2277, lng: 6.7735 },
   'dormagen': { lat: 51.0970, lng: 6.8317 },
   'kaarst': { lat: 51.2292, lng: 6.6205 },
   'grevenbroich': { lat: 51.0883, lng: 6.5883 },
   'korschenbroich': { lat: 51.1900, lng: 6.5167 },
   'jüchen': { lat: 51.1017, lng: 6.5017 },
+  'juechen': { lat: 51.1017, lng: 6.5017 },
   'willich': { lat: 51.2633, lng: 6.5467 },
   'krefeld': { lat: 51.3388, lng: 6.5853 },
   'köln': { lat: 50.9375, lng: 6.9603 },
+  'koeln': { lat: 50.9375, lng: 6.9603 },
   'duisburg': { lat: 51.4344, lng: 6.7623 },
   'essen': { lat: 51.4556, lng: 7.0116 },
   'ratingen': { lat: 51.2970, lng: 6.8493 },
@@ -2273,7 +2303,136 @@ const KNOWN_LOCATIONS = {
   'erkrath': { lat: 51.2237, lng: 6.9107 },
   'mettmann': { lat: 51.2510, lng: 6.9740 },
   'haan': { lat: 51.1930, lng: 7.0130 },
+  'wuppertal': { lat: 51.2562, lng: 7.1508 },
+  'solingen': { lat: 51.1725, lng: 7.0849 },
+  'remscheid': { lat: 51.1789, lng: 7.1934 },
+  'leverkusen': { lat: 51.0459, lng: 6.9884 },
+  'bonn': { lat: 50.7374, lng: 7.0982 },
+  'bochum': { lat: 51.4818, lng: 7.2162 },
+  'dortmund': { lat: 51.5136, lng: 7.4653 },
+  'mülheim': { lat: 51.4267, lng: 6.8825 },
+  'muelheim': { lat: 51.4267, lng: 6.8825 },
+  'oberhausen': { lat: 51.4963, lng: 6.8629 },
+  'gelsenkirchen': { lat: 51.5177, lng: 7.0857 },
+  'mönchengladbach': { lat: 51.1805, lng: 6.4428 },
+  'moenchengladbach': { lat: 51.1805, lng: 6.4428 },
+  'aachen': { lat: 50.7753, lng: 6.0839 },
+  'münster': { lat: 51.9607, lng: 7.6261 },
+  'muenster': { lat: 51.9607, lng: 7.6261 },
+  'bielefeld': { lat: 52.0302, lng: 8.5325 },
+  'paderborn': { lat: 51.7189, lng: 8.7544 },
+  'osnabrück': { lat: 52.2799, lng: 8.0472 },
+  'osnabrueck': { lat: 52.2799, lng: 8.0472 },
+  // Andere deutsche Grossstaedte
+  'berlin': { lat: 52.5200, lng: 13.4050 },
+  'hamburg': { lat: 53.5511, lng: 9.9937 },
+  'münchen': { lat: 48.1351, lng: 11.5820 },
+  'muenchen': { lat: 48.1351, lng: 11.5820 },
+  'frankfurt': { lat: 50.1109, lng: 8.6821 },
+  'stuttgart': { lat: 48.7758, lng: 9.1829 },
+  'leipzig': { lat: 51.3397, lng: 12.3731 },
+  'dresden': { lat: 51.0504, lng: 13.7373 },
+  'hannover': { lat: 52.3759, lng: 9.7320 },
+  'nürnberg': { lat: 49.4521, lng: 11.0767 },
+  'nuernberg': { lat: 49.4521, lng: 11.0767 },
+  'bremen': { lat: 53.0793, lng: 8.8017 },
+  'karlsruhe': { lat: 49.0069, lng: 8.4037 },
+  'mannheim': { lat: 49.4875, lng: 8.4660 },
+  'augsburg': { lat: 48.3705, lng: 10.8978 },
+  'wiesbaden': { lat: 50.0782, lng: 8.2398 },
+  'kiel': { lat: 54.3233, lng: 10.1228 },
+  'rostock': { lat: 54.0887, lng: 12.1434 },
+  'erfurt': { lat: 50.9848, lng: 11.0299 },
+  'freiburg': { lat: 47.9990, lng: 7.8421 },
+  'heidelberg': { lat: 49.3988, lng: 8.6724 },
+  'mainz': { lat: 49.9929, lng: 8.2473 },
+  'saarbrücken': { lat: 49.2402, lng: 6.9969 },
+  'saarbruecken': { lat: 49.2402, lng: 6.9969 },
+  'kassel': { lat: 51.3127, lng: 9.4797 },
+  'magdeburg': { lat: 52.1205, lng: 11.6276 },
+  'chemnitz': { lat: 50.8278, lng: 12.9214 },
+  'lübeck': { lat: 53.8655, lng: 10.6866 },
+  'luebeck': { lat: 53.8655, lng: 10.6866 },
+  'oldenburg': { lat: 53.1435, lng: 8.2146 },
+  'göttingen': { lat: 51.5413, lng: 9.9158 },
+  'goettingen': { lat: 51.5413, lng: 9.9158 },
+  'potsdam': { lat: 52.3906, lng: 13.0645 },
+  'koblenz': { lat: 50.3569, lng: 7.5890 },
+  'trier': { lat: 49.7490, lng: 6.6371 },
+  'ulm': { lat: 48.4011, lng: 9.9876 },
+  'regensburg': { lat: 49.0134, lng: 12.1016 },
+  'würzburg': { lat: 49.7913, lng: 9.9534 },
+  'wuerzburg': { lat: 49.7913, lng: 9.9534 },
 };
+
+// ===== GEOCODING =====
+// Wandelt eine Adresseingabe in {lat, lng}. Erst KNOWN_LOCATIONS
+// (Substring-Match), dann localStorage-Cache, dann Nominatim (OSM).
+// Nominatim-Policy: max 1 Request/Sekunde + Referer/User-Agent.
+// Cache-Hits sind synchron schnell (Promise resolved sofort).
+const GEO_CACHE_KEY = 'jj_geocode_cache_v1';
+let _geoCache = null;
+function _loadGeoCache() {
+  if (_geoCache) return _geoCache;
+  try { _geoCache = JSON.parse(localStorage.getItem(GEO_CACHE_KEY) || '{}'); }
+  catch { _geoCache = {}; }
+  return _geoCache;
+}
+function _saveGeoCache() {
+  try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(_geoCache || {})); }
+  catch (_) { /* quota or private mode — ignore */ }
+}
+function _normalizeAddress(addr) {
+  return String(addr || '').toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
+let _lastNominatimCall = 0;
+const _inflightGeo = new Map();
+async function _nominatimGeocode(addr) {
+  // Rate-limit (1 Request pro 1100 ms gemaess Nominatim usage policy)
+  const wait = Math.max(0, 1100 - (Date.now() - _lastNominatimCall));
+  if (wait > 0) await new Promise(r => setTimeout(r, wait));
+  _lastNominatimCall = Date.now();
+  // Wenn die Adresse keine Stadt/Land enthaelt, bisschen aufhuebschen
+  const q = /deutschland|germany/i.test(addr) ? addr : addr + ', Deutschland';
+  const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=de&q=' + encodeURIComponent(q);
+  try {
+    const res = await fetch(url, { headers: { 'Accept-Language': 'de' } });
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (!Array.isArray(data) || !data.length) return null;
+    return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
+  } catch (_) {
+    return null;
+  }
+}
+
+async function geocodeAddress(addr) {
+  const key = _normalizeAddress(addr);
+  if (!key) return null;
+  const cache = _loadGeoCache();
+  // Cache-Hit (inkl. negative cache fuer nicht-findbar)
+  if (key in cache) return cache[key];
+  // Fast-Path: bekannter Ort in Substring
+  for (const city in KNOWN_LOCATIONS) {
+    if (key.includes(city)) {
+      cache[key] = KNOWN_LOCATIONS[city];
+      _saveGeoCache();
+      return cache[key];
+    }
+  }
+  // Deduplizieren: parallele Calls fuer die gleiche Adresse teilen sich
+  // einen einzigen Nominatim-Request.
+  if (_inflightGeo.has(key)) return _inflightGeo.get(key);
+  const p = _nominatimGeocode(key).then(coords => {
+    cache[key] = coords;  // coords kann null sein → negatives Caching
+    _saveGeoCache();
+    _inflightGeo.delete(key);
+    return coords;
+  });
+  _inflightGeo.set(key, p);
+  return p;
+}
 
 function haversineDistance(lat1, lng1, lat2, lng2) {
   var R = 6371;
@@ -2285,29 +2444,53 @@ function haversineDistance(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-function updateJobDistances() {
-  var addr = (state.filters.address || '').toLowerCase().trim();
-  var coords = null;
-  // Suche nach bekanntem Ort in der eingegebenen Adresse
-  for (var ort in KNOWN_LOCATIONS) {
-    if (addr.includes(ort)) { coords = KNOWN_LOCATIONS[ort]; break; }
+// Async: Wandelt die User-Adresse UND alle eindeutigen Job-Staedte
+// in Koordinaten um und berechnet die Entfernung fuer jeden Job.
+// Dadurch funktioniert der Umkreis-Filter jetzt fuer beliebige
+// deutsche Adressen, nicht nur die hart-kodierten aus KNOWN_LOCATIONS.
+// Cache (localStorage) sorgt dafuer, dass bekannte Adressen ohne
+// API-Call aufgeloest werden.
+async function updateJobDistances() {
+  var addr = (state.filters.address || '').trim();
+  if (!addr) {
+    JOBS.forEach(function(j) { j.distance = 0; });
+    return;
   }
-  // Auch PLZ erkennen
-  if (!coords) {
-    var plzMatch = addr.match(/\b(41\d{3}|406\d{2}|402\d{2})\b/);
-    if (plzMatch) {
-      var plz = plzMatch[1];
-      if (plz.startsWith('414') || plz.startsWith('415')) coords = KNOWN_LOCATIONS['neuss'];
-      else if (plz.startsWith('406')) coords = KNOWN_LOCATIONS['meerbusch'];
-      else if (plz.startsWith('402')) coords = KNOWN_LOCATIONS['düsseldorf'];
-    }
+  // User-Koordinaten holen (Cache/KNOWN_LOCATIONS/Nominatim)
+  const userCoords = await geocodeAddress(addr);
+  if (!userCoords) {
+    // Adresse nicht aufloesbar → distance = 0, Filter greift nicht
+    JOBS.forEach(function(j) { j.distance = 0; });
+    return;
   }
+  // Alle einzigartigen Job-Staedte in Koordinaten wandeln.
+  // Parallel ist OK — die geocodeAddress-Funktion serialisiert
+  // Nominatim intern, identische Keys teilen sich einen Request.
+  const uniqueCities = Array.from(new Set(JOBS.map(function(j){ return j.city; }).filter(Boolean)));
+  const pairs = await Promise.all(uniqueCities.map(async function(city) {
+    return [city, await geocodeAddress(city)];
+  }));
+  const cityCoords = Object.fromEntries(pairs);
   JOBS.forEach(function(j) {
-    if (coords && j.lat && j.lng) {
-      j.distance = Math.round(haversineDistance(coords.lat, coords.lng, j.lat, j.lng) * 10) / 10;
+    const jc = cityCoords[j.city];
+    if (jc) {
+      j.lat = jc.lat;
+      j.lng = jc.lng;
+      j.distance = Math.round(haversineDistance(userCoords.lat, userCoords.lng, jc.lat, jc.lng) * 10) / 10;
     } else {
       j.distance = 0;
     }
+  });
+}
+
+// Wrapper fuer UI-Handler: setzt ein Loading-Flag, ruft render() fuer
+// sofortiges Feedback, triggert geocoding und rendert am Ende neu.
+function recomputeDistancesAndRender() {
+  state.geoLoading = true;
+  try { render(); } catch (_) {}
+  updateJobDistances().finally(function() {
+    state.geoLoading = false;
+    try { render(); } catch (_) {}
   });
 }
 
@@ -2722,6 +2905,49 @@ function skeletonTableRows(count) {
   return `<div role="status" aria-label="Wird geladen" aria-live="polite">${row.repeat(n)}</div>`;
 }
 
+// Skeleton fuer Profil-Ansichten (Worker-ProfileView / Employer-Profile).
+// Bildet grob die spaetere Struktur nach: Header-Karte mit Avatar und
+// Name/Meta-Zeilen, dann 2-3 Inhalts-Karten.
+function skeletonProfilePage() {
+  return `
+    <div role="status" aria-label="Profil wird geladen" aria-live="polite" style="max-width:900px;margin:0 auto">
+      <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem">
+        <div style="display:flex;gap:1rem;align-items:flex-start">
+          <div class="skeleton" style="width:80px;height:80px;border-radius:50%;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div class="skeleton skeleton-title" style="width:45%;height:1.3rem"></div>
+            <div class="skeleton skeleton-text" style="width:60%"></div>
+            <div class="skeleton skeleton-text" style="width:40%"></div>
+            <div class="skeleton skeleton-text" style="width:55%"></div>
+          </div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem">
+        <div class="skeleton skeleton-title" style="width:25%"></div>
+        <div class="skeleton skeleton-text" style="width:90%"></div>
+        <div class="skeleton skeleton-text" style="width:80%"></div>
+        <div class="skeleton skeleton-text" style="width:70%"></div>
+        <div style="display:flex;gap:0.4rem;margin-top:0.8rem;flex-wrap:wrap">
+          <div class="skeleton skeleton-tag"></div>
+          <div class="skeleton skeleton-tag" style="width:80px"></div>
+          <div class="skeleton skeleton-tag" style="width:50px"></div>
+          <div class="skeleton skeleton-tag" style="width:70px"></div>
+        </div>
+      </div>
+      <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem">
+        <div class="skeleton skeleton-title" style="width:30%"></div>
+        <div class="skeleton skeleton-text" style="width:85%"></div>
+        <div class="skeleton skeleton-text" style="width:75%"></div>
+      </div>
+    </div>`;
+}
+
+// Hilfs-Check: laufen wir gerade in einer Phase, wo Profil-Daten
+// nicht vertrauenswuerdig sind (Session unbekannt oder Refresh laeuft)?
+function isProfileLoading() {
+  return !state.sessionLoaded || !!state._profileRefreshing;
+}
+
 function renderJobSearch() {
   const loading = !state.jobsLoaded;
   const jobs = loading ? [] : getFilteredJobs();
@@ -2761,8 +2987,12 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Meerbusch, Düsseldorf..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;var _cp=this.selectionStart;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){updateJobDistances();render();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(_cp,_cp);}},50);},800)">
-            <p style="font-size:0.7rem;color:var(--gray-400);margin-top:0.3rem">${state.filters.address ? 'Entfernungen werden berechnet' : 'Gib deinen Ort ein für genaue Entfernungen'}</p>
+            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Berlin, 80331, Frankfurt..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;var _cp=this.selectionStart;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){recomputeDistancesAndRender();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(_cp,_cp);}},50);},800)">
+            <p style="font-size:0.7rem;color:${state.geoLoading ? 'var(--primary)' : 'var(--gray-400)'};margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem">
+              ${state.geoLoading
+                ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation:initial-spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.22-8.56"/></svg> Entfernungen werden berechnet…'
+                : (state.filters.address ? 'Entfernungen berechnet ✓' : 'Gib deinen Ort ein für genaue Entfernungen')}
+            </p>
           </div>
 
           <div class="filter-section">
@@ -2798,8 +3028,8 @@ function renderJobSearch() {
             </div>
           </div>
 
-          <button class="btn btn-primary btn-block" onclick="updateJobDistances();render()">Filter anwenden</button>
-          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};updateJobDistances();render()">Filter zurücksetzen</button>
+          <button class="btn btn-primary btn-block" onclick="recomputeDistancesAndRender()">Filter anwenden</button>
+          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};recomputeDistancesAndRender()">Filter zurücksetzen</button>
         </aside>
 
         ${loading ? skeletonJobGrid(6) : `
@@ -3544,7 +3774,26 @@ function renderWorkerSidebar(active) {
 }
 
 function renderWorkerProfileView() {
+  if (!state.sessionLoaded) {
+    // Sidebar-Platzhalter + Profil-Skeleton
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${renderWorkerSidebar('profile-view')}
+          <div class="dashboard-content">${skeletonProfilePage()}</div>
+        </div>
+      </div>`;
+  }
   if (!state.user) return renderLogin();
+  if (state._profileRefreshing) {
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${renderWorkerSidebar('profile-view')}
+          <div class="dashboard-content">${skeletonProfilePage()}</div>
+        </div>
+      </div>`;
+  }
   const u = state.user;
   const pct = calcProfilePct();
   const pctColor = pct < 40 ? 'var(--danger)' : pct < 75 ? '#f59e0b' : 'var(--success)';
@@ -4733,7 +4982,25 @@ function renderWizardStep5() {
 }
 
 function renderEmployerProfile() {
+  if (!state.sessionLoaded) {
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${renderEmployerSidebar('profile')}
+          <div class="dashboard-content">${skeletonProfilePage()}</div>
+        </div>
+      </div>`;
+  }
   if (!state.user || state.user.role !== 'employer') return renderLogin();
+  if (state._profileRefreshing) {
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${renderEmployerSidebar('profile')}
+          <div class="dashboard-content">${skeletonProfilePage()}</div>
+        </div>
+      </div>`;
+  }
   return `
     <div class="page">
       <div class="dashboard-layout">

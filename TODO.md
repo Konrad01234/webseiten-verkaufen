@@ -54,7 +54,7 @@
   - Bewerbung angenommen/abgelehnt → Mail an Bewerber
   - Umsetzung: Supabase Edge Function + Resend/SendGrid oder Supabase SMTP
 - [x] **Employer-Approval-Workflow UI fertiggestellt** — prominente „Wartet auf Freischaltung"-Karte oben im Admin-Panel (gelber Alarm-Banner, Freischalten-/Ablehnen-Buttons). Status-Badge im Employer-Dashboard war schon da.
-- [ ] **Geofilter / Suchradius** vervollständigen (aktuell teilweise implementiert)
+- [x] **Geofilter / Suchradius** vervollständigt — `updateJobDistances()` jetzt async, geocoded User-Adresse UND alle Job-Städte via Nominatim (OSM) mit localStorage-Cache + Rate-Limit (1 req/s). KNOWN_LOCATIONS auf ~70 deutsche Städte erweitert (Fast-Path ohne API-Call). UI-Feedback via Spinner + „Entfernungen werden berechnet…" beim Tippen. Ersetzt die hart-kodierte Düsseldorf/Neuss-PLZ-Logik.
 
 ### SEO
 - [x] **JSON-LD JobPosting** für Google for Jobs — *Commit f393f91*
