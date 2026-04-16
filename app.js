@@ -99,7 +99,8 @@ let state = {
   adminTab: 'besucher',
   adminRevenuePeriod: 'daily',
   jobsLoaded: false,
-  chatsLoaded: false
+  chatsLoaded: false,
+  applicationsLoaded: false
 };
 
 // Clear old broken chat data (one-time reset)
@@ -300,7 +301,7 @@ function dbAppToFrontend(row) {
 // a worker, or the ones for their jobs as an employer) into a local
 // cache so the synchronous renderers can keep working.
 async function loadApplicationsForUser() {
-  if (!state.user || !window.DB) { state._appsCache = []; return; }
+  if (!state.user || !window.DB) { state._appsCache = []; state.applicationsLoaded = true; return; }
   try {
     const rows = state.user.role === 'employer'
       ? await DB.getApplicationsForEmployer(state.user.id)
@@ -309,6 +310,8 @@ async function loadApplicationsForUser() {
   } catch (e) {
     console.error('[loadApplicationsForUser]', e);
     state._appsCache = [];
+  } finally {
+    state.applicationsLoaded = true;
   }
 }
 
@@ -449,37 +452,44 @@ function subscribeToApplicationUpdates() {
     .subscribe();
 }
 
+// Hilfs-Utility: Nutzer-spezifische Daten im Hintergrund laden, jeweils
+// mit einem re-render wenn sie da sind. Dadurch sieht der Nutzer sofort
+// die Seite (mit Skeletons) statt auf Daten zu warten.
+function _loadUserDataInBackground() {
+  if (!state.user) return;
+  loadSavedJobsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[bg] savedJobs', e));
+  loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[bg] apps', e));
+  loadChatsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[bg] chats', e));
+  try { subscribeToChatList(); } catch (e) { console.error('[bg] chatSub', e); }
+  try { subscribeToApplicationUpdates(); } catch (e) { console.error('[bg] appsSub', e); }
+}
+
 // Bootstrap: restore session + jobs, then render. Runs once on page
 // load and again whenever Supabase fires SIGNED_IN / SIGNED_OUT.
+// Wichtig: wir awaiten NICHT die Daten-Loads vor dem ersten render(),
+// sondern lassen sie im Hintergrund laufen. Der Nutzer sieht sofort
+// die Seite (mit Skeleton-Platzhaltern wo nötig) statt einer weißen
+// Fläche oder einem blockierten Spinner.
 async function bootstrap() {
   if (window.DB) {
     try {
+      // Session ist synchron billig (aus Cookie/localStorage), awaiten
+      // damit nav/avatar sofort stimmen.
       await loadUserSession();
-      if (state.user) {
-        await loadSavedJobsForUser();
-        await loadApplicationsForUser();
-        await loadChatsForUser();
-        subscribeToChatList();
-        subscribeToApplicationUpdates();
-      }
-      subscribeToJobUpdates();
+      _loadUserDataInBackground();
+      try { subscribeToJobUpdates(); } catch (e) { console.error('[bootstrap] jobsSub', e); }
     } catch (e) { console.error('[bootstrap] session', e); }
     DB.onAuthChange(async (event) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         await loadUserSession();
-        if (state.user) {
-          await loadSavedJobsForUser();
-          await loadApplicationsForUser();
-          await loadChatsForUser();
-          subscribeToChatList();
-          subscribeToApplicationUpdates();
-        }
-        subscribeToJobUpdates();
+        _loadUserDataInBackground();
+        try { subscribeToJobUpdates(); } catch (e) { console.error('[auth] jobsSub', e); }
       } else if (event === 'SIGNED_OUT') {
         state.user = null;
         state._savedJobs = [];
         state._appsCache = [];
         state.chatsLoaded = false;
+        state.applicationsLoaded = false;
         WORKER_CHAT_MESSAGES.length = 0;
         EMPLOYER_CHAT_MESSAGES.length = 0;
         if (state._chatListSub) { try { DB.sb.removeChannel(state._chatListSub); } catch (_) {} state._chatListSub = null; }
@@ -492,7 +502,9 @@ async function bootstrap() {
   } else {
     console.warn('[bootstrap] window.DB not loaded - running in offline mode');
   }
-  try { await loadJobsFromDB(); } catch (e) { console.error('[bootstrap] jobs', e); }
+  // Jobs im Hintergrund laden — kein await, damit das erste render()
+  // sofort passiert und die Skeleton-Platzhalter sichtbar werden.
+  loadJobsFromDB().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[bootstrap] jobs', e));
   try { render(); } catch (e) { console.error('[bootstrap] render', e); }
 }
 
@@ -933,15 +945,12 @@ async function login(email, password) {
   }
   // Success → reset the failure counter for this email.
   clearFailedLogins(cleanEmail);
-  // Step 2: Load session + data (each in its own try-catch so a
-  // failure in e.g. loadChatsForUser doesn't block the whole login)
+  // Step 2: Load session synchron (billig — nur Cookie-Lookup).
+  // Alle anderen Loads laufen im Hintergrund, damit das Dashboard
+  // sofort gerendert wird (mit Skeletons wo nötig).
   try { await loadUserSession(); } catch (e) { console.error('[login] loadUserSession', e); }
   if (state.user) {
-    try { await loadSavedJobsForUser(); } catch (e) { console.error('[login] savedJobs', e); }
-    try { await loadApplicationsForUser(); } catch (e) { console.error('[login] apps', e); }
-    try { await loadChatsForUser(); } catch (e) { console.error('[login] chats', e); }
-    try { subscribeToChatList(); } catch (e) { console.error('[login] chatSub', e); }
-    try { subscribeToApplicationUpdates(); } catch (e) { console.error('[login] appsSub', e); }
+    _loadUserDataInBackground();
   }
   try { subscribeToJobUpdates(); } catch (e) { console.error('[login] jobsSub', e); }
   // Step 3: Navigate to the dashboard
@@ -979,13 +988,10 @@ async function register(data) {
     return;
   }
   // Step 2: signUp also signs in immediately (when email confirmation is off).
+  // Session synchron laden, Rest im Hintergrund (Skeletons übernehmen).
   try { await loadUserSession(); } catch (e) { console.error('[register] loadUserSession', e); }
   if (state.user) {
-    try { await loadSavedJobsForUser(); } catch (e) { console.error('[register] savedJobs', e); }
-    try { await loadApplicationsForUser(); } catch (e) { console.error('[register] apps', e); }
-    try { await loadChatsForUser(); } catch (e) { console.error('[register] chats', e); }
-    try { subscribeToChatList(); } catch (e) { console.error('[register] chatSub', e); }
-    try { subscribeToApplicationUpdates(); } catch (e) { console.error('[register] appsSub', e); }
+    _loadUserDataInBackground();
   }
   try { subscribeToJobUpdates(); } catch (e) { console.error('[register] jobsSub', e); }
   if (state.user) {
@@ -3881,7 +3887,7 @@ function renderSavedJobs() {
 
 function renderApplications() {
   if (!state.user) return renderLogin();
-  const loading = !state.jobsLoaded;
+  const loading = !state.jobsLoaded || !state.applicationsLoaded;
   const appJobIds = loading ? [] : getUserApps();
   const allApps = loading ? [] : getAllApplications();
   const myApps = appJobIds.map(jobId => {
