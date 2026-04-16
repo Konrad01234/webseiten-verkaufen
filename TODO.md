@@ -25,7 +25,7 @@
   - Namentliche Nennung Betreiber, Supabase als Auftragsverarbeiter, hCaptcha, Cookies
   - Datei: `app.js` → `renderDatenschutz()`
 - [x] **AGB: „Boost-Pakete"-Erwähnung entfernt**, durch „Kostenfreiheit"-Abschnitt ersetzt — `app.js` → `renderAGB()` + Datenschutz § 8 mitgefixt
-- [ ] **Admin-E-Mails anpassen** in `app.js` (aktuell `kwg.range@web.de`, `jojo102009@icloud.com`)
+- [x] **Admin-E-Mails bestätigt** — `kwg.range@web.de` und `jojo102009@icloud.com` sind die echten Admin-Adressen (kein Platzhalter). Genutzt in `app.js:497`, `supabase-security-hardening.sql`, `supabase-add-approval.sql`.
 
 ### Datenbank-Migrations
 - [x] Im Supabase SQL Editor eingespielt (von User bestätigt 2026-04-15):
@@ -54,7 +54,7 @@
   - Bewerbung angenommen/abgelehnt → Mail an Bewerber
   - Umsetzung: Supabase Edge Function + Resend/SendGrid oder Supabase SMTP
 - [x] **Employer-Approval-Workflow UI fertiggestellt** — prominente „Wartet auf Freischaltung"-Karte oben im Admin-Panel (gelber Alarm-Banner, Freischalten-/Ablehnen-Buttons). Status-Badge im Employer-Dashboard war schon da.
-- [ ] **Geofilter / Suchradius** vervollständigen (aktuell teilweise implementiert)
+- [x] **Geofilter / Suchradius** vervollständigt — `updateJobDistances()` jetzt async, geocoded User-Adresse UND alle Job-Städte via Nominatim (OSM) mit localStorage-Cache + Rate-Limit (1 req/s). KNOWN_LOCATIONS auf ~70 deutsche Städte erweitert (Fast-Path ohne API-Call). UI-Feedback via Spinner + „Entfernungen werden berechnet…" beim Tippen. Ersetzt die hart-kodierte Düsseldorf/Neuss-PLZ-Logik.
 
 ### SEO
 - [x] **JSON-LD JobPosting** für Google for Jobs — *Commit f393f91*
@@ -83,7 +83,7 @@
 - [x] **Mobile-Overhaul v2** — globaler `@media (max-width: 640px)`-Block in `style.css` schließt die Lücke zwischen den 768px/480px-Queries. Gefixt: Nav (Desktop-Links auf Mobile versteckt, nur Hamburger), iOS-Input-Zoom (16px erzwungen), Job-Suche Sidebar stacked, Job-Detail stacked, Admin-Panel KPI/Tabellen scrollable, Chat-/Messages-Layout stacked, Touch-Targets ≥ 40px, Hero/Headings kleiner, Footer 2-spaltig.
 - [x] **Mobile-Filter-Drawer** auf Jobs-Seite — Filter sind auf Mobile eingeklappt, Toggle-Button oben zeigt Anzahl aktiver Filter. Spart Scroll-Weg bis zum ersten Job-Ergebnis.
 - [x] **Register-Seite Mobile** — Inline `max-width:500px` entfernt, Role-Selector-Karten kompakter, hCaptcha-Widget skaliert, Paddings reduziert.
-- [ ] Ladeanimationen/Skeleton-Screens einheitlich
+- [x] **Skeleton-Screens** — Shimmer-Platzhalter in Job-Suche, Bewerbungen, Nachrichten-Liste und Chat-Detail. CSS-Utilities (`skeleton`, `skeleton-job-card`, `skeleton-chat-row`, `skeleton-msg-bubble`) in `style.css` + Template-Funktionen `skeletonJobCard/Grid/ChatRow/ChatList/ChatMessages` in `app.js`. Berücksichtigt `prefers-reduced-motion`. Neue State-Flag `state.chatsLoaded` + `state._activeChatLoading` für Chat-Detail.
 
 ### Features
 - [ ] Stripe-Integration für Boost-Pakete (falls Monetarisierung kommt)
