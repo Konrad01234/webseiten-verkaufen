@@ -715,6 +715,27 @@ function navigateToSection(page, sectionId) {
   window.scrollTo(0, 0);
 }
 
+// Splash-Screen (aus index.html) nach dem ersten erfolgreichen
+// render()-Durchlauf ausblenden. Setzt die .splash-hide-Klasse
+// (opacity:0 + pointer-events:none), nach Abschluss der Transition
+// wird der Node aus dem DOM entfernt.
+let _splashHidden = false;
+function hidePageSplash() {
+  if (_splashHidden) return;
+  _splashHidden = true;
+  const splash = document.getElementById('page-splash');
+  if (!splash) return;
+  // Minimale Sichtdauer, damit der Splash nicht nur aufblitzt, wenn
+  // der erste render() super schnell kommt (z.B. gecacht).
+  const MIN_VISIBLE_MS = 350;
+  const shownAt = window.__splashShownAt || performance.now();
+  const wait = Math.max(0, MIN_VISIBLE_MS - (performance.now() - shownAt));
+  setTimeout(() => {
+    splash.classList.add('splash-hide');
+    setTimeout(() => { try { splash.remove(); } catch (_) {} }, 500);
+  }, wait);
+}
+
 function render() {
   const app = document.getElementById('app');
   updateNav();
@@ -756,6 +777,12 @@ function render() {
 
   const renderFn = pages[state.currentPage] || renderLanding;
   app.innerHTML = renderFn();
+
+  // Splash-Screen beim ersten Render ausblenden. Der Splash liegt
+  // ausserhalb von #app und wird daher nicht durch app.innerHTML
+  // ueberschrieben - wir muessen ihn aktiv ausblenden sobald die
+  // erste echte Seite gezeichnet ist.
+  hidePageSplash();
 
   // JSON-LD (schema.org/JobPosting) für Google for Jobs pflegen:
   // auf der Job-Detailseite einfügen, auf allen anderen Seiten entfernen.

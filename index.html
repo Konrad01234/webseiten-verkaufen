@@ -2492,6 +2492,84 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
   <script src="db.js?v=1"></script>
 </head>
 <body>
+  <!-- ===== PAGE SPLASH =====
+       Vollflaechiger Loader der Nav + Content + Footer ueberdeckt,
+       bis bootstrap()/render() den ersten Frame zeichnet. Verhindert
+       den "FOUC"-Moment in dem fuer ein paar Millisekunden nur der
+       Footer oder ein halbfertiges Layout sichtbar ist.
+       Inline-Styles + inline-@keyframes damit der Splash auch dann
+       korrekt aussieht, wenn style.css noch nicht geladen ist. -->
+  <script>
+    window.__splashShownAt = performance.now();
+    // Failsafe: falls render() aus irgendeinem Grund nie laeuft
+    // (z.B. JS-Error beim Bootstrap), Splash nach 8s trotzdem weg,
+    // damit der Nutzer nicht auf einem ewigen Lade-Screen festhaengt.
+    setTimeout(function(){
+      var s = document.getElementById('page-splash');
+      if (s && !s.classList.contains('splash-hide')) {
+        s.classList.add('splash-hide');
+        setTimeout(function(){ try { s.remove(); } catch(_){} }, 500);
+      }
+    }, 8000);
+  </script>
+  <div id="page-splash" role="status" aria-label="EasyJobs wird geladen" style="
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 1.25rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    transition: opacity 0.4s ease;">
+    <!-- Logo: 'JJ'-Icon + Schriftzug untereinander, deutlich groesser als in der Nav -->
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+      animation: splash-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);">
+      <div style="
+        width: 88px; height: 88px; border-radius: 22px;
+        background: #0ea5e9; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; font-weight: 800;
+        box-shadow: 0 10px 30px rgba(14, 165, 233, 0.35);
+        animation: splash-pulse 1.6s ease-in-out infinite;">
+        JJ
+      </div>
+      <div style="font-size: 1.6rem; font-weight: 700; color: #0f172a; letter-spacing: -0.01em;">
+        EasyJobs
+      </div>
+    </div>
+
+    <!-- Drei Dots als dezenter Lade-Indikator -->
+    <div style="display: flex; gap: 0.35rem; margin-top: 0.25rem;" aria-hidden="true">
+      <span style="width:7px;height:7px;border-radius:50%;background:#0ea5e9;animation:splash-dots 1.2s ease-in-out infinite; animation-delay:0s;"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#0ea5e9;animation:splash-dots 1.2s ease-in-out infinite; animation-delay:0.15s;"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#0ea5e9;animation:splash-dots 1.2s ease-in-out infinite; animation-delay:0.3s;"></span>
+    </div>
+
+    <style>
+      @keyframes splash-pop {
+        0% { opacity: 0; transform: scale(0.6); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      @keyframes splash-pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(14, 165, 233, 0.35); }
+        50%      { transform: scale(1.06); box-shadow: 0 14px 40px rgba(14, 165, 233, 0.5); }
+      }
+      @keyframes splash-dots {
+        0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+        40%           { opacity: 1;   transform: scale(1.15); }
+      }
+      #page-splash.splash-hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #page-splash *, #page-splash {
+          animation: none !important;
+          transition: opacity 0.2s linear !important;
+        }
+      }
+    </style>
+  </div>
+
   <nav id="navbar" aria-label="Hauptnavigation">
     <div class="nav-container">
       <a href="#" class="logo" onclick="navigate('landing')" aria-label="EasyJobs Startseite">
@@ -2524,30 +2602,7 @@ input:focus-visible, select:focus-visible, textarea:focus-visible,
     </div>
   </nav>
 
-  <main id="app">
-    <!-- Initialer Page-Loader: sichtbar ab dem ersten HTML-Parse, wird
-         automatisch ersetzt sobald render() das erste Mal laeuft.
-         Inline-Styles weil style.css evtl. noch nicht da ist. -->
-    <div id="initial-loader" aria-label="Seite wird geladen" role="status" style="
-      min-height: 60vh; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 1rem;
-      padding: 2rem;">
-      <div style="
-        width: 48px; height: 48px; border-radius: 50%;
-        border: 4px solid #e0f2fe; border-top-color: #0ea5e9;
-        animation: initial-spin 0.9s linear infinite;"></div>
-      <div style="color: #64748b; font-size: 0.9rem; font-weight: 500;
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;">
-        Lädt…
-      </div>
-    </div>
-    <style>
-      @keyframes initial-spin { to { transform: rotate(360deg); } }
-      @media (prefers-reduced-motion: reduce) {
-        #initial-loader > div:first-child { animation: none; }
-      }
-    </style>
-  </main>
+  <main id="app"></main>
 
   <footer id="footer" role="contentinfo">
     <div class="footer-container">
