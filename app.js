@@ -4687,8 +4687,8 @@ function renderEmployerLanding() {
         <h1 style="font-size:3.2rem;line-height:1.12;font-family:'Playfair Display',serif">Junge Talente.<br>Direkt erreichen.</h1>
         <p style="font-size:1.15rem;margin:1rem 0 2rem;opacity:0.95">Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
         <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
-          <button class="btn btn-lg cta-btn-outline" onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
+          <button onclick="goPostJob()" style="background:#ef4444;color:#fff;border:none;padding:1rem 2.25rem;border-radius:100px;font-weight:700;font-size:0.9rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(239,68,68,0.3);transition:transform 0.2s,box-shadow 0.2s" onmouseover="this.style.transform='translateY(-1px)';this.style.boxShadow='0 6px 20px rgba(239,68,68,0.4)'" onmouseout="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(239,68,68,0.3)'">Jetzt Anzeige schalten</button>
+          <button onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})" style="background:#0f172a;color:#fff;border:none;padding:1rem 2.25rem;border-radius:100px;font-weight:700;font-size:0.9rem;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:transform 0.2s,background 0.2s" onmouseover="this.style.transform='translateY(-1px)';this.style.background='#1e293b'" onmouseout="this.style.transform='';this.style.background='#0f172a'">So funktioniert's</button>
         </div>
       </div>
     </div>
