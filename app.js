@@ -762,8 +762,38 @@ function hidePageSplash() {
   }, wait);
 }
 
+// Merkt sich vor einem re-render welches Input-/Textarea-Element den
+// Fokus hatte und wo der Cursor steht — nach dem innerHTML-Wipe wird
+// der Fokus auf das gleich-IDed Element wiederhergestellt. Ohne das
+// verliert der Nutzer beim Tippen ins Adress-Filterfeld bei jedem
+// async-Render (z.B. Geocoding fertig) seinen Fokus und muss neu
+// klicken. Funktioniert fuer alle Felder, nicht nur das Adressfeld.
+function _captureFocusState() {
+  const el = document.activeElement;
+  if (!el || !el.id) return null;
+  const tag = el.tagName;
+  if (tag !== 'INPUT' && tag !== 'TEXTAREA') return null;
+  return {
+    id: el.id,
+    start: typeof el.selectionStart === 'number' ? el.selectionStart : null,
+    end:   typeof el.selectionEnd   === 'number' ? el.selectionEnd   : null
+  };
+}
+function _restoreFocusState(snap) {
+  if (!snap) return;
+  const el = document.getElementById(snap.id);
+  if (!el) return;
+  try {
+    el.focus({ preventScroll: true });
+    if (snap.start != null && typeof el.setSelectionRange === 'function') {
+      el.setSelectionRange(snap.start, snap.end != null ? snap.end : snap.start);
+    }
+  } catch (_) { /* setSelectionRange kann bei type="number" werfen */ }
+}
+
 function render() {
   const app = document.getElementById('app');
+  const _focusSnap = _captureFocusState();
   updateNav();
 
   const pages = {
@@ -838,6 +868,9 @@ function render() {
 
   // Re-attach event listeners
   attachEventListeners();
+
+  // Fokus wiederherstellen (siehe _captureFocusState weiter oben)
+  _restoreFocusState(_focusSnap);
 }
 
 function updateNav() {
@@ -2999,7 +3032,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Berlin, 80331, Frankfurt..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;var _cp=this.selectionStart;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(function(){recomputeDistancesAndRender();setTimeout(function(){var el=document.getElementById('address-filter-input');if(el){el.focus();el.setSelectionRange(_cp,_cp);}},50);},800)">
+            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Berlin, 80331, Frankfurt..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
             <p style="font-size:0.7rem;color:${state.geoLoading ? 'var(--primary)' : 'var(--gray-400)'};margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem">
               ${state.geoLoading
                 ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation:initial-spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.22-8.56"/></svg> Entfernungen werden berechnet…'
