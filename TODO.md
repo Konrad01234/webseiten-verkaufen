@@ -25,7 +25,7 @@
   - Namentliche Nennung Betreiber, Supabase als Auftragsverarbeiter, hCaptcha, Cookies
   - Datei: `app.js` → `renderDatenschutz()`
 - [x] **AGB: „Boost-Pakete"-Erwähnung entfernt**, durch „Kostenfreiheit"-Abschnitt ersetzt — `app.js` → `renderAGB()` + Datenschutz § 8 mitgefixt
-- [ ] **Admin-E-Mails anpassen** in `app.js` (aktuell `kwg.range@web.de`, `jojo102009@icloud.com`)
+- [x] **Admin-E-Mails bestätigt** — `kwg.range@web.de` und `jojo102009@icloud.com` sind die echten Admin-Adressen (kein Platzhalter). Genutzt in `app.js:497`, `supabase-security-hardening.sql`, `supabase-add-approval.sql`.
 
 ### Datenbank-Migrations
 - [x] Im Supabase SQL Editor eingespielt (von User bestätigt 2026-04-15):
