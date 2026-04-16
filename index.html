@@ -615,14 +615,20 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .testi-card { width: 280px; }
   .testi-ticker-fade { width: 60px; }
 }
-/* ===== Feature Spotlight "Darum EasyJobs" — 3 gestapelte Bloecke ===== */
+/* ===== Feature Spotlight "Darum EasyJobs" — Slideshow-Effekt ===== */
+/* Jeder Slide klebt per sticky am oberen Rand, z-index steigt -> der
+   naechste Slide schiebt sich von unten ueber den vorherigen. */
 .sp-wrap {
+  position: relative;
   background: #fff;
-  padding: 5rem 1.5rem 2rem;
 }
 .sp-wrap-head {
-  max-width: 720px; margin: 0 auto 3rem;
   text-align: center;
+  padding: 4.5rem 1.5rem 1rem;
+  max-width: 720px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 0;
 }
 .sp-wrap-head h2 {
   font-size: clamp(2rem, 4vw, 2.6rem); font-weight: 800;
@@ -637,91 +643,112 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   font-size: 1.05rem; font-weight: 500;
 }
 
-.sp-block {
-  max-width: 1120px; margin: 0 auto;
+.sp-slide {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  min-height: 640px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+/* z-index steigt: spaetere Slides schieben sich ueber frueheste */
+.sp-slide[data-i="1"] { z-index: 1; }
+.sp-slide[data-i="2"] { z-index: 2; box-shadow: 0 -20px 40px rgba(0,0,0,0.06); }
+.sp-slide[data-i="3"] { z-index: 3; box-shadow: 0 -20px 40px rgba(0,0,0,0.06); }
+
+.sp-slide-inner {
+  max-width: 1120px; margin: 0 auto; width: 100%;
   display: grid; grid-template-columns: 1.05fr 1fr;
   gap: 4.5rem; align-items: center;
-  min-height: 85vh;
-  padding: 3rem 0;
-  opacity: 0; transform: translateY(48px);
-  transition: opacity 0.75s ease, transform 0.75s cubic-bezier(.2,.8,.2,1);
 }
-.sp-block.visible {
-  opacity: 1; transform: translateY(0);
-}
-.sp-block-reverse .sp-block-media { order: 2; }
-.sp-block-reverse .sp-block-body  { order: 1; }
+.sp-slide-reverse .sp-slide-media { order: 2; }
+.sp-slide-reverse .sp-slide-body  { order: 1; }
 
-.sp-block-media {
+.sp-slide-media {
   position: relative; overflow: hidden; border-radius: 24px;
   aspect-ratio: 5/4; background: var(--gray-100);
   box-shadow: 0 20px 50px rgba(0,0,0,0.12);
 }
-.sp-block-media img {
+.sp-slide-media img {
   width: 100%; height: 100%; object-fit: cover; display: block;
 }
-.sp-block-badge {
+.sp-slide-badge {
   position: absolute; bottom: 18px; left: 18px; z-index: 2;
   background: rgba(255,255,255,0.95); backdrop-filter: blur(8px);
   padding: 0.55rem 0.85rem 0.55rem 0.7rem; border-radius: 14px;
   display: flex; align-items: center; gap: 0.6rem;
   box-shadow: 0 6px 20px rgba(0,0,0,0.12);
 }
-.sp-block-badge-icon {
+.sp-slide-badge-icon {
   width: 28px; height: 28px; border-radius: 8px;
   background: #1e3a8a; color: #fff;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
-.sp-block-badge-icon svg { width: 14px; height: 14px; }
-.sp-block-badge-text strong {
+.sp-slide-badge-icon svg { width: 14px; height: 14px; }
+.sp-slide-badge-text strong {
   display: block; font-size: 0.82rem; font-weight: 700;
   color: var(--gray-900); line-height: 1;
 }
-.sp-block-badge-text span {
+.sp-slide-badge-text span {
   display: block; font-size: 0.7rem; color: var(--gray-500); margin-top: 2px;
 }
 
-.sp-block-body { max-width: 480px; }
-.sp-block-num {
+.sp-slide-body { max-width: 480px; }
+.sp-slide-num {
   display: inline-block; font-family: 'Playfair Display', serif;
   font-style: italic; font-size: 1.1rem; color: #1e3a8a;
   margin-bottom: 0.75rem; letter-spacing: 0.02em;
 }
-.sp-block-body h3 {
+.sp-slide-body h3 {
   font-size: clamp(1.75rem, 3vw, 2.2rem); font-weight: 800;
   letter-spacing: -0.02em; line-height: 1.15; margin: 0 0 1rem;
   color: var(--gray-900); font-family: 'Playfair Display', serif;
 }
-.sp-block-body p {
+.sp-slide-body p {
   color: var(--gray-600); font-size: 1.05rem; line-height: 1.65;
   margin: 0 0 1.5rem;
 }
-.sp-block-features {
+.sp-slide-features {
   display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.25rem;
 }
-.sp-block-feature {
+.sp-slide-feature {
   display: flex; align-items: center; gap: 0.65rem;
   font-size: 0.95rem; color: var(--gray-700); font-weight: 500;
 }
-.sp-block-feature svg {
+.sp-slide-feature svg {
   flex-shrink: 0; width: 18px; height: 18px; color: #1e3a8a;
 }
 
+/* Extra-Raum am Ende, damit Slide 3 voll 100vh Pin-Zeit bekommt */
+.sp-end { height: 100vh; }
+
 @media (max-width: 880px) {
-  .sp-wrap { padding: 3rem 1.25rem 1rem; }
-  .sp-wrap-head { margin-bottom: 1.5rem; }
+  /* Mobile: Slideshow aus - Slides einfach untereinander */
+  .sp-wrap-head { padding: 3rem 1.25rem 0.5rem; }
   .sp-wrap-head h2 { font-size: 1.65rem; }
   .sp-wrap-sub { font-size: 0.95rem; }
-  .sp-block {
-    grid-template-columns: 1fr; gap: 1.75rem;
-    min-height: auto; padding: 2rem 0 2.5rem;
+  .sp-slide {
+    position: relative;
+    top: auto;
+    height: auto;
+    min-height: auto;
+    padding: 2rem 1.25rem 2.5rem;
+    box-shadow: none !important;
   }
-  .sp-block-reverse .sp-block-media,
-  .sp-block-reverse .sp-block-body { order: unset; }
-  .sp-block-media { aspect-ratio: 16/11; }
-  .sp-block-body h3 { font-size: 1.5rem; }
-  .sp-block-body p { font-size: 0.98rem; }
+  .sp-slide-inner {
+    grid-template-columns: 1fr; gap: 1.75rem;
+  }
+  .sp-slide-reverse .sp-slide-media,
+  .sp-slide-reverse .sp-slide-body { order: unset; }
+  .sp-slide-media { aspect-ratio: 16/11; }
+  .sp-slide-body h3 { font-size: 1.5rem; }
+  .sp-slide-body p { font-size: 0.98rem; }
+  .sp-end { display: none; }
 }
 
 /* CTA Full-Block — keine Ränder, keine Box-in-Box */
@@ -2054,16 +2081,17 @@ body:has(.admin-login-wrap) {
   .sc-step-text p { font-size: 0.88rem !important; }
 
   /* Feature Spotlight ("Darum EasyJobs") */
-  .sp-wrap { padding: 2.5rem 1rem 0.5rem !important; }
+  .sp-wrap-head { padding: 2.5rem 1rem 0.25rem !important; }
   .sp-wrap-head h2 { font-size: 1.6rem !important; }
   .sp-wrap-sub { font-size: 0.9rem !important; }
-  .sp-block { gap: 1.5rem !important; padding: 1.5rem 0 2rem !important; }
-  .sp-block-media { aspect-ratio: 16/11 !important; }
-  .sp-block-body h3 { font-size: 1.35rem !important; }
-  .sp-block-body p { font-size: 0.92rem !important; }
-  .sp-block-badge { bottom: 12px !important; left: 12px !important; padding: 0.45rem 0.7rem 0.45rem 0.55rem !important; }
-  .sp-block-badge-text strong { font-size: 0.78rem !important; }
-  .sp-block-badge-text span { font-size: 0.65rem !important; }
+  .sp-slide { padding: 1.5rem 1rem 2rem !important; }
+  .sp-slide-inner { gap: 1.5rem !important; }
+  .sp-slide-media { aspect-ratio: 16/11 !important; }
+  .sp-slide-body h3 { font-size: 1.35rem !important; }
+  .sp-slide-body p { font-size: 0.92rem !important; }
+  .sp-slide-badge { bottom: 12px !important; left: 12px !important; padding: 0.45rem 0.7rem 0.45rem 0.55rem !important; }
+  .sp-slide-badge-text strong { font-size: 0.78rem !important; }
+  .sp-slide-badge-text span { font-size: 0.65rem !important; }
 
   /* Testimonial Ticker */
   .testi-ticker-fade { width: 40px !important; }
@@ -2085,7 +2113,7 @@ body:has(.admin-login-wrap) {
 @media (max-width: 380px) {
   .employer-hero h1 { font-size: 1.9rem !important; }
   .sp-wrap-head h2 { font-size: 1.35rem !important; }
-  .sp-block-body h3 { font-size: 1.2rem !important; }
+  .sp-slide-body h3 { font-size: 1.2rem !important; }
   .cta-fullblock h2 { font-size: 1.5rem !important; }
 }
 
