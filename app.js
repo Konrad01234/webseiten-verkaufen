@@ -670,6 +670,17 @@ function switchRevenueView(period) {
 function navigate(page, data) {
   state.currentPage = page;
   state.pageData = data;
+  // Jobs-Seite: Filter-Adresse automatisch aus dem User-Profil
+  // vorbelegen, damit der Nutzer seine Adresse nicht zweimal eingeben
+  // muss. Greift nur wenn das Filterfeld noch leer ist (nicht explizit
+  // geleert vom User).
+  if (page === 'jobs' && state.user && state.user.address && !state.filters.address) {
+    state.filters.address = state.user.address;
+    // Distanzen fuer existierende Jobs sofort berechnen im Hintergrund
+    if (JOBS && JOBS.length) {
+      setTimeout(function(){ if (typeof recomputeDistancesAndRender === 'function') recomputeDistancesAndRender(); }, 0);
+    }
+  }
   render();
   window.scrollTo(0, 0);
   // Auto-refresh relevant data when navigating to key pages.
@@ -1493,7 +1504,8 @@ async function publishJob() {
     company: state.user.company || state.user.name || 'Unternehmen',
     companyLogo: state.user.companyLogo || null,
     location: nj.location || 'Berlin',
-    city: (nj.location || 'Berlin').split(',').pop().trim(),
+    // Stadt: bevorzugt das explizite Feld, fallback auf split auf Komma
+    city: nj.city || (nj.location || 'Berlin').split(',').pop().replace(/^\d{5}\s*/, '').trim(),
     salary: nj.salary || 'Nach Vereinbarung',
     hours: nj.hours || 'Flexible',
     category: nj.category || 'Sonstiges',
@@ -2523,16 +2535,21 @@ async function updateJobDistances() {
     JOBS.forEach(function(j) { j.distance = 0; });
     return;
   }
-  // Alle einzigartigen Job-Staedte in Koordinaten wandeln.
-  // Parallel ist OK — die geocodeAddress-Funktion serialisiert
-  // Nominatim intern, identische Keys teilen sich einen Request.
-  const uniqueCities = Array.from(new Set(JOBS.map(function(j){ return j.city; }).filter(Boolean)));
-  const pairs = await Promise.all(uniqueCities.map(async function(city) {
-    return [city, await geocodeAddress(city)];
+  // Pro Job die praeziseste verfuegbare Adresse nehmen: j.location
+  // enthaelt idealerweise Strasse + PLZ + Stadt (wenn der Arbeitgeber
+  // alles ausgefuellt hat). Faellt zurueck auf j.city wenn nicht.
+  // Dedupliziert wird auf dem Key-String, nicht auf der Stadt — so
+  // bekommt jede einzigartige Firmenadresse eigene Koordinaten.
+  const jobKeys = JOBS.map(function(j){
+    return (j.location && j.location.trim()) ? j.location.trim() : (j.city || '');
+  });
+  const uniqueKeys = Array.from(new Set(jobKeys.filter(Boolean)));
+  const pairs = await Promise.all(uniqueKeys.map(async function(key) {
+    return [key, await geocodeAddress(key)];
   }));
-  const cityCoords = Object.fromEntries(pairs);
-  JOBS.forEach(function(j) {
-    const jc = cityCoords[j.city];
+  const keyCoords = Object.fromEntries(pairs);
+  JOBS.forEach(function(j, idx) {
+    const jc = keyCoords[jobKeys[idx]];
     if (jc) {
       j.lat = jc.lat;
       j.lng = jc.lng;
@@ -3047,7 +3064,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="z.B. Neuss, Berlin, 80331, Frankfurt..." value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
+            <input type="text" class="form-input" id="address-filter-input" placeholder="Straße + PLZ + Stadt (z.B. Hauptstr. 1, 40213 Düsseldorf)" value="${state.filters.address || ''}" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
             <p style="font-size:0.7rem;color:${state.geoLoading ? 'var(--primary)' : 'var(--gray-400)'};margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem">
               ${state.geoLoading
                 ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation:initial-spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.22-8.56"/></svg> Entfernungen werden berechnet…'
@@ -4002,13 +4019,30 @@ function renderWorkerProfile() {
   const total = PROFILE_STEPS.length;
   const u = state.user;
 
+  // Bestehende Freitext-Adresse heuristisch zerlegen, damit User die
+  // ihre Adresse schon mal gespeichert haben die 3 Felder vorbelegt sehen.
+  const parsedAddr = parseAddressParts(u.address || '');
+  const streetInit = u.street || parsedAddr.street;
+  const plzInit    = u.plz    || parsedAddr.plz;
+  const cityInit   = u.city   || parsedAddr.city;
+
   const stepContent = [
     // ── Schritt 0: Adresse ──
     `<h3 class="profile-step-title">Adresse & Umkreis</h3>
-    <p class="profile-step-hint">Damit wir dir passende Jobs in deiner Nähe zeigen können.</p>
+    <p class="profile-step-hint">Damit wir dir passende Jobs in deiner Nähe zeigen können. Straße und PLZ sind <strong>Pflicht</strong> für genaue Entfernungsberechnung.</p>
     <div class="form-group">
-      <label class="form-label">Deine Adresse</label>
-      <input type="text" id="ps-address" class="form-input" placeholder="Musterstraße 1, 10115 Berlin" value="${escapeAttr(u.address || '')}">
+      <label class="form-label" for="ps-street">Straße & Hausnummer *</label>
+      <input type="text" id="ps-street" class="form-input" placeholder="Musterstraße 1" value="${escapeAttr(streetInit)}" required>
+    </div>
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:0.75rem">
+      <div class="form-group">
+        <label class="form-label" for="ps-plz">PLZ *</label>
+        <input type="text" id="ps-plz" class="form-input" placeholder="12345" inputmode="numeric" pattern="\\d{5}" maxlength="5" value="${escapeAttr(plzInit)}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="ps-city">Stadt *</label>
+        <input type="text" id="ps-city" class="form-input" placeholder="Berlin" value="${escapeAttr(cityInit)}" required>
+      </div>
     </div>
     <div class="form-group">
       <label class="form-label">Suchradius: <strong id="radius-label">${u.radius || 15} km</strong></label>
@@ -4147,13 +4181,79 @@ function renderWorkerProfile() {
               ? `<button class="btn btn-outline" onclick="saveProfileStep();state.profileStep=Math.max(0,state.profileStep-1);render()">← Zurück</button>`
               : `<button class="btn btn-outline" onclick="navigate('worker-dashboard')">← Dashboard</button>`}
             ${step < total-1
-              ? `<button class="btn btn-primary" onclick="saveProfileStep();state.profileStep=Math.min(${total-1},state.profileStep+1);render()">Weiter →</button>`
-              : `<button class="btn btn-primary" onclick="saveProfileStep();showToast('Profil gespeichert!');navigate('worker-dashboard')">✓ Profil speichern</button>`}
+              ? `<button class="btn btn-primary" onclick="nextProfileStep()">Weiter →</button>`
+              : `<button class="btn btn-primary" onclick="finishProfileSetup()">✓ Profil speichern</button>`}
           </div>
 
         </div>
       </div>
     </div>`;
+}
+
+// Zerlegt einen Freitext wie "Musterstr. 1, 12345 Berlin" in
+// { street, plz, city } nach der Regel: PLZ = erste 5-stellige Zahl,
+// street = alles davor, city = alles danach (ohne die PLZ selbst).
+// Funktioniert gut fuer deutsche Standard-Formate, schlaegt bei
+// exotischen Eingaben (z.B. "Berlin 12345 Hauptstr.") leer fehl.
+function parseAddressParts(str) {
+  const out = { street: '', plz: '', city: '' };
+  if (!str) return out;
+  const plzMatch = String(str).match(/\b(\d{5})\b/);
+  if (plzMatch) {
+    out.plz = plzMatch[1];
+    out.street = String(str).slice(0, plzMatch.index).replace(/[,\s]+$/, '').trim();
+    out.city = String(str).slice(plzMatch.index + 5).replace(/^[,\s]+/, '').trim();
+  } else {
+    // Kein PLZ → best-effort split am letzten Komma
+    const parts = String(str).split(',').map(function(s){ return s.trim(); });
+    if (parts.length > 1) {
+      out.street = parts.slice(0, -1).join(', ');
+      out.city = parts[parts.length - 1];
+    } else {
+      out.street = String(str).trim();
+    }
+  }
+  return out;
+}
+
+// Prueft VOR dem Save ob alle Pflichtfelder des aktuellen Schritts
+// gueltig sind. Gibt true zurueck wenn ja, zeigt sonst einen Fehler-
+// Toast und gibt false zurueck.
+function validateProfileStep() {
+  const step = state.profileStep;
+  if (step === 0) {
+    const street = (document.getElementById('ps-street') || {}).value;
+    const plz    = (document.getElementById('ps-plz')    || {}).value;
+    const city   = (document.getElementById('ps-city')   || {}).value;
+    const vStreet = (street || '').trim();
+    const vPlz    = (plz    || '').trim();
+    const vCity   = (city   || '').trim();
+    if (!vStreet || !vPlz || !vCity) {
+      showToast('Bitte Straße, PLZ und Stadt ausfüllen.', 'error');
+      return false;
+    }
+    if (!/^\d{5}$/.test(vPlz)) {
+      showToast('PLZ muss 5-stellig sein (z.B. 12345).', 'error');
+      return false;
+    }
+  }
+  return true;
+}
+
+// Wrapper: saveProfileStep + advance nur wenn validate ok.
+function nextProfileStep() {
+  if (!validateProfileStep()) return;
+  saveProfileStep();
+  const total = (typeof PROFILE_STEPS !== 'undefined' ? PROFILE_STEPS.length : 8);
+  state.profileStep = Math.min(total - 1, state.profileStep + 1);
+  render();
+}
+
+function finishProfileSetup() {
+  if (!validateProfileStep()) return;
+  saveProfileStep();
+  showToast('Profil gespeichert!');
+  navigate('worker-dashboard');
 }
 
 async function saveProfileStep() {
@@ -4162,9 +4262,21 @@ async function saveProfileStep() {
   const step = state.profileStep;
   const patch = {};
   if (step === 0) {
-    const addr   = document.getElementById('ps-address');
+    const street = document.getElementById('ps-street');
+    const plz    = document.getElementById('ps-plz');
+    const city   = document.getElementById('ps-city');
     const radius = document.querySelector('.range-slider');
-    if (addr && addr.value.trim()) { u.address = addr.value.trim(); patch.address = u.address; }
+    const vStreet = street ? street.value.trim() : '';
+    const vPlz    = plz    ? plz.value.trim()    : '';
+    const vCity   = city   ? city.value.trim()   : '';
+    // Nur zusammensetzen wenn Street + PLZ + City vorhanden sind;
+    // sonst stuermt Nominatim mit Teildaten ab auf Stadtebene.
+    if (vStreet && /^\d{5}$/.test(vPlz) && vCity) {
+      const full = vStreet + ', ' + vPlz + ' ' + vCity;
+      u.street = vStreet; u.plz = vPlz; u.city = vCity;
+      u.address = full;
+      patch.address = full;
+    }
     if (radius) u.radius = parseInt(radius.value);
   }
   if (step === 3) {
@@ -4833,6 +4945,15 @@ function validateWizardStep() {
     showToast('Bitte fülle alle Pflichtfelder (*) aus.', 'error');
     return;
   }
+  // PLZ-Spezialvalidierung (step 0): genau 5 Ziffern
+  if (step === 0) {
+    const plzEl = body.querySelector('#nj-plz');
+    if (plzEl && !/^\d{5}$/.test(plzEl.value.trim())) {
+      plzEl.style.border = '2px solid var(--danger)';
+      showToast('PLZ muss 5-stellig sein (z.B. 12345).', 'error');
+      return;
+    }
+  }
   // Persist wizard inputs into state.newJob so publishJob() can read
   // them on Step 4 even though the Step 0/1 DOM inputs are gone.
   if (body && step === 0) {
@@ -4840,7 +4961,14 @@ function validateWizardStep() {
     const selects = body.querySelectorAll('select.form-select');
     if (selects[0]) state.newJob.category = selects[0].value;
     if (selects[1]) state.newJob.type = selects[1].value;
-    state.newJob.location = body.querySelector('input[placeholder*="Stra"]')?.value || '';
+    // Adresse aus 3 Einzelfeldern zusammensetzen → Format das sowohl
+    // Nominatim als auch getFilteredJobs (splits auf Komma fuer city)
+    // sauber verarbeiten koennen.
+    const _street = body.querySelector('#nj-street')?.value.trim() || '';
+    const _plz    = body.querySelector('#nj-plz')?.value.trim()    || '';
+    const _city   = body.querySelector('#nj-city')?.value.trim()   || '';
+    state.newJob.location = _street + ', ' + _plz + ' ' + _city;
+    state.newJob.city = _city;
     state.newJob.salary = body.querySelector('input[placeholder*="12,50"]')?.value || '';
     state.newJob.hours = body.querySelector('input[placeholder*="Std/Woche"]')?.value || '';
   }
@@ -4925,8 +5053,18 @@ function renderWizardStep1() {
       </div>
     </div>
     <div class="form-group">
-      <label class="form-label">Arbeitsort / Adresse *</label>
-      <input type="text" class="form-input" placeholder="Straße, PLZ, Stadt" value="Musterstraße 1, 10115 Berlin">
+      <label class="form-label">Straße & Hausnummer *</label>
+      <input type="text" id="nj-street" class="form-input" placeholder="Musterstraße 1" value="">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">PLZ *</label>
+        <input type="text" id="nj-plz" class="form-input" placeholder="12345" inputmode="numeric" pattern="\\d{5}" maxlength="5" value="">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Stadt *</label>
+        <input type="text" id="nj-city" class="form-input" placeholder="Berlin" value="">
+      </div>
     </div>
     <div class="form-row">
       <div class="form-group">
