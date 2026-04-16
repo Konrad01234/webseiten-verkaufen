@@ -98,7 +98,8 @@ let state = {
   dropdownOpen: false,
   adminTab: 'besucher',
   adminRevenuePeriod: 'daily',
-  jobsLoaded: false
+  jobsLoaded: false,
+  chatsLoaded: false
 };
 
 // Clear old broken chat data (one-time reset)
@@ -391,6 +392,7 @@ async function loadChatsForUser() {
             }
             container.push(c);
           });
+          state.chatsLoaded = true;
         } catch (e) {
           console.error('[loadChatsForUser]', e);
         }
@@ -477,6 +479,7 @@ async function bootstrap() {
         state.user = null;
         state._savedJobs = [];
         state._appsCache = [];
+        state.chatsLoaded = false;
         WORKER_CHAT_MESSAGES.length = 0;
         EMPLOYER_CHAT_MESSAGES.length = 0;
         if (state._chatListSub) { try { DB.sb.removeChannel(state._chatListSub); } catch (_) {} state._chatListSub = null; }
@@ -665,7 +668,16 @@ function navigate(page, data) {
     }
     // When opening a specific chat, load its messages from the DB
     if (page === 'chat' && data && data.chatId) {
-      openChatById(data.chatId).then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] chat open', e));
+      state._activeChatLoading = data.chatId;
+      openChatById(data.chatId)
+        .then(() => {
+          if (state._activeChatLoading === data.chatId) state._activeChatLoading = null;
+          try { render(); } catch (_) {}
+        })
+        .catch(e => {
+          if (state._activeChatLoading === data.chatId) state._activeChatLoading = null;
+          console.error('[navigate] chat open', e);
+        });
     }
     // Reload the user profile on dashboard/post pages so changes
     // made by the admin (e.g. employer approval) take effect
@@ -2604,8 +2616,82 @@ scDomObserver.observe(document.getElementById('app'), { childList: true, subtree
 // Initial auch direkt prüfen
 scSetup();
 
+// ===== SKELETON SCREENS =====
+// Erzeugen Lade-Platzhalter in der Form der späteren Inhalte. Werden
+// in render-Funktionen eingeblendet solange der asynchrone DB-Call
+// noch läuft. Markup ist rein CSS-basiert (siehe style.css → SKELETON).
+
+function skeletonJobCard() {
+  return `
+    <div class="skeleton-job-card" aria-hidden="true">
+      <div class="skeleton skeleton-avatar"></div>
+      <div class="skeleton-job-body">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-text" style="width:40%"></div>
+        <div class="skeleton-job-meta">
+          <div class="skeleton skeleton-text" style="width:55%"></div>
+          <div class="skeleton skeleton-text" style="width:35%"></div>
+          <div class="skeleton skeleton-text" style="width:45%"></div>
+        </div>
+        <div class="skeleton-job-tags">
+          <div class="skeleton skeleton-tag"></div>
+          <div class="skeleton skeleton-tag" style="width:80px"></div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function skeletonJobGrid(count) {
+  const n = count || 5;
+  return `<div class="jobs-grid" role="status" aria-label="Jobs werden geladen" aria-live="polite">`
+    + Array.from({ length: n }, skeletonJobCard).join('')
+    + `</div>`;
+}
+
+function skeletonChatRow() {
+  return `
+    <div class="skeleton-chat-row" aria-hidden="true">
+      <div class="skeleton skeleton-avatar-round"></div>
+      <div class="skeleton-chat-body">
+        <div class="skeleton skeleton-text" style="width:30%;height:0.8rem"></div>
+        <div class="skeleton skeleton-text" style="width:50%"></div>
+        <div class="skeleton skeleton-text" style="width:70%"></div>
+      </div>
+    </div>`;
+}
+
+function skeletonChatList(count) {
+  const n = count || 4;
+  return `<div class="card" style="max-width:620px" role="status" aria-label="Nachrichten werden geladen" aria-live="polite">`
+    + Array.from({ length: n }, skeletonChatRow).join('')
+    + `</div>`;
+}
+
+function skeletonChatMessages() {
+  return `
+    <div role="status" aria-label="Nachrichten werden geladen" aria-live="polite" style="display:flex;flex-direction:column;gap:0.625rem;max-width:620px">
+      <div class="skeleton skeleton-msg-bubble left"></div>
+      <div class="skeleton skeleton-msg-bubble right"></div>
+      <div class="skeleton skeleton-msg-bubble left" style="width:65%"></div>
+      <div class="skeleton skeleton-msg-bubble right" style="width:40%"></div>
+    </div>`;
+}
+
+function skeletonTableRows(count) {
+  const n = count || 5;
+  const row = `
+    <div class="skeleton-table-row" aria-hidden="true">
+      <div class="skeleton skeleton-text" style="margin:0"></div>
+      <div class="skeleton skeleton-text" style="margin:0;width:70%"></div>
+      <div class="skeleton skeleton-text" style="margin:0;width:50%"></div>
+      <div class="skeleton skeleton-tag" style="width:70px"></div>
+    </div>`;
+  return `<div role="status" aria-label="Wird geladen" aria-live="polite">${row.repeat(n)}</div>`;
+}
+
 function renderJobSearch() {
-  const jobs = getFilteredJobs();
+  const loading = !state.jobsLoaded;
+  const jobs = loading ? [] : getFilteredJobs();
   return `
     <div class="page page-wide">
       <div class="search-header">
@@ -2614,7 +2700,7 @@ function renderJobSearch() {
           <button class="btn btn-primary" onclick="render()">Suchen</button>
         </div>
         <div style="display:flex;align-items:center;gap:1rem">
-          <span class="search-results-count">${jobs.length} Jobs gefunden</span>
+          <span class="search-results-count">${loading ? 'Jobs werden geladen…' : jobs.length + ' Jobs gefunden'}</span>
         </div>
       </div>
       <!-- Mobile: Filter-Toggle-Button mit Counter -->
@@ -2683,6 +2769,7 @@ function renderJobSearch() {
           <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};updateJobDistances();render()">Filter zurücksetzen</button>
         </aside>
 
+        ${loading ? skeletonJobGrid(6) : `
         <div class="jobs-grid">
           ${jobs.map(j => renderJobCard(j)).join('')}
           ${jobs.length === 0 ? `
@@ -2691,7 +2778,7 @@ function renderJobSearch() {
               <h3>Keine Jobs gefunden</h3>
               <p>Versuche andere Filter oder erweitere deinen Suchradius.</p>
             </div>` : ''}
-        </div>
+        </div>`}
       </div>
     </div>`;
 }
@@ -3794,13 +3881,26 @@ function renderSavedJobs() {
 
 function renderApplications() {
   if (!state.user) return renderLogin();
-  const appJobIds = getUserApps();
-  const allApps = getAllApplications();
+  const loading = !state.jobsLoaded;
+  const appJobIds = loading ? [] : getUserApps();
+  const allApps = loading ? [] : getAllApplications();
   const myApps = appJobIds.map(jobId => {
     const job = JOBS.find(j => j.id === jobId);
     const appData = allApps.find(a => a.userId === state.user.id && a.jobId === jobId);
     return { job, status: appData?.status || 'new', statusText: appData?.statusText || 'Gesendet', date: appData?.date || new Date().toISOString().split('T')[0] };
   }).filter(a => a.job);
+  if (loading) {
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${renderWorkerSidebar('applications')}
+          <div class="dashboard-content">
+            <h2 class="dashboard-title">Meine Bewerbungen</h2>
+            ${skeletonJobGrid(3)}
+          </div>
+        </div>
+      </div>`;
+  }
   return `
     <div class="page">
       <div class="dashboard-layout">
@@ -4922,11 +5022,12 @@ function renderChatDetail() {
 
           <!-- Nachrichten -->
           <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
-            ${chat.messages.length === 0 ? `
+            ${state._activeChatLoading === chat.id ? skeletonChatMessages() : ''}
+            ${state._activeChatLoading !== chat.id && chat.messages.length === 0 ? `
               <div style="text-align:center;color:var(--gray-400);font-size:0.85rem;padding:2rem">
                 Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
-            ${chat.messages.map(m => `
+            ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
               <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
                 <div style="max-width:72%;padding:0.6rem 0.85rem;border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};font-size:0.88rem;line-height:1.45">
                   ${escapeHtml(m.text)}
@@ -4953,8 +5054,23 @@ function renderChatDetail() {
 function renderMessages() {
   if (!state.user) return renderLogin();
   const isEmployer = state.user.role === 'employer';
-  const chatList = getChatList();
+  const loading = !state.chatsLoaded;
+  const chatList = loading ? [] : getChatList();
   const unreadCount = chatList.filter(c => c.unread).length;
+  if (loading) {
+    return `
+      <div class="page">
+        <div class="dashboard-layout">
+          ${isEmployer ? renderEmployerSidebar('messages') : renderWorkerSidebar('messages')}
+          <div class="dashboard-content">
+            <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem">
+              <h2 class="dashboard-title" style="margin-bottom:0;font-size:1.25rem">Nachrichten</h2>
+            </div>
+            ${skeletonChatList(4)}
+          </div>
+        </div>
+      </div>`;
+  }
   return `
     <div class="page">
       <div class="dashboard-layout">

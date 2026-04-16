@@ -83,7 +83,7 @@
 - [x] **Mobile-Overhaul v2** — globaler `@media (max-width: 640px)`-Block in `style.css` schließt die Lücke zwischen den 768px/480px-Queries. Gefixt: Nav (Desktop-Links auf Mobile versteckt, nur Hamburger), iOS-Input-Zoom (16px erzwungen), Job-Suche Sidebar stacked, Job-Detail stacked, Admin-Panel KPI/Tabellen scrollable, Chat-/Messages-Layout stacked, Touch-Targets ≥ 40px, Hero/Headings kleiner, Footer 2-spaltig.
 - [x] **Mobile-Filter-Drawer** auf Jobs-Seite — Filter sind auf Mobile eingeklappt, Toggle-Button oben zeigt Anzahl aktiver Filter. Spart Scroll-Weg bis zum ersten Job-Ergebnis.
 - [x] **Register-Seite Mobile** — Inline `max-width:500px` entfernt, Role-Selector-Karten kompakter, hCaptcha-Widget skaliert, Paddings reduziert.
-- [ ] Ladeanimationen/Skeleton-Screens einheitlich
+- [x] **Skeleton-Screens** — Shimmer-Platzhalter in Job-Suche, Bewerbungen, Nachrichten-Liste und Chat-Detail. CSS-Utilities (`skeleton`, `skeleton-job-card`, `skeleton-chat-row`, `skeleton-msg-bubble`) in `style.css` + Template-Funktionen `skeletonJobCard/Grid/ChatRow/ChatList/ChatMessages` in `app.js`. Berücksichtigt `prefers-reduced-motion`. Neue State-Flag `state.chatsLoaded` + `state._activeChatLoading` für Chat-Detail.
 
 ### Features
 - [ ] Stripe-Integration für Boost-Pakete (falls Monetarisierung kommt)
