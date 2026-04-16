@@ -2479,21 +2479,21 @@ function renderLanding() {
           <div class="testi-ticker-track">
             ${(() => {
               var list = [
-                { name:'Lena M., 17', role:'Schülerin aus Düsseldorf', initials:'LM', color:'linear-gradient(135deg,#f472b6,#ec4899)', text:'„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"', rating:5 },
-                { name:'Tim K., 19', role:'Student aus Köln', initials:'TK', color:'linear-gradient(135deg,#60a5fa,#3b82f6)', text:'„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."', rating:4.5 },
-                { name:'Sara H., 16', role:'Schülerin aus Essen', initials:'SH', color:'linear-gradient(135deg,#fbbf24,#f59e0b)', text:'„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"', rating:5 },
-                { name:'Jonas P., 18', role:'Schüler aus München', initials:'JP', color:'linear-gradient(135deg,#34d399,#10b981)', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
-                { name:'Mia A., 15', role:'Schülerin aus Berlin', initials:'MA', color:'linear-gradient(135deg,#a78bfa,#8b5cf6)', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
-                { name:'Niklas R., 20', role:'Student aus Hamburg', initials:'NR', color:'linear-gradient(135deg,#f87171,#ef4444)', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
-                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', initials:'LK', color:'linear-gradient(135deg,#22d3ee,#06b6d4)', text:"„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit.\"", rating:5 },
-                { name:'David H., 16', role:'Schüler aus Frankfurt', initials:'DH', color:'linear-gradient(135deg,#fb923c,#f97316)', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
+                { name:'Lena M., 17', role:'Schülerin aus Düsseldorf', photo:'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces', text:'„Ich hab meinen ersten Ferienjob innerhalb von 2 Tagen gefunden. Die Bewerbung war super einfach!"', rating:5 },
+                { name:'Tim K., 19', role:'Student aus Köln', photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces', text:'„Endlich eine Plattform für junge Leute. Keine komplizierten Formulare, alles läuft über den Chat."', rating:4.5 },
+                { name:'Sara H., 16', role:'Schülerin aus Essen', photo:'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces', text:'„Der Lebenslauf-Builder hat mir sehr geholfen. Mein erster richtiger Lebenslauf — richtig professionell!"', rating:5 },
+                { name:'Jonas P., 18', role:'Schüler aus München', photo:'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=200&h=200&fit=crop&crop=faces', text:'„Mein Chef hat sich innerhalb von ein paar Stunden gemeldet. Super schnell und unkompliziert."', rating:4 },
+                { name:'Mia A., 15', role:'Schülerin aus Berlin', photo:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces', text:'„Ich wollte neben der Schule was verdienen — nach 3 Tagen hatte ich meinen ersten Nachhilfejob."', rating:5 },
+                { name:'Niklas R., 20', role:'Student aus Hamburg', photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces', text:'„Perfekt für meinen Sommerjob. Alles läuft über die App, keine E-Mail-Hölle mehr."', rating:4.5 },
+                { name:'Lina K., 17', role:'Schülerin aus Stuttgart', photo:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop&crop=faces', text:"„Ich fand's mega, dass man ohne Anschreiben direkt zusagen konnte. Das spart so viel Zeit.\"", rating:5 },
+                { name:'David H., 16', role:'Schüler aus Frankfurt', photo:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=faces', text:'„Endlich Jobs in meiner Nähe ohne lange Anfahrt. Die Standort-Suche ist richtig praktisch."', rating:4 }
               ];
               var render = function(t) {
                 var pct = (t.rating / 5) * 100;
                 return '<div class="testi-card">' +
                   '<span class="testi-stars"><span class="testi-stars-bg">★★★★★</span><span class="testi-stars-fill" style="--rating:' + pct + '%">★★★★★</span></span>' +
                   '<p>' + t.text + '</p>' +
-                  '<div class="testi-author"><div class="testi-avatar" style="background:' + t.color + '">' + t.initials + '</div><div><div class="testi-name">' + t.name + '</div><div class="testi-role">' + t.role + '</div></div></div>' +
+                  '<div class="testi-author"><div class="testi-avatar"><img src="' + t.photo + '" alt="" loading="lazy"></div><div><div class="testi-name">' + t.name + '</div><div class="testi-role">' + t.role + '</div></div></div>' +
                 '</div>';
               };
               // Einmal die Liste + Duplikat für nahtlosen Loop
