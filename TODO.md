@@ -80,7 +80,9 @@
 
 ### Design
 - [ ] Dark Mode
-- [x] **Mobile-Overhaul** — globaler `@media (max-width: 640px)`-Block in `style.css` schließt die Lücke zwischen den 768px/480px-Queries. Gefixt: Nav (Desktop-Links auf Mobile versteckt, nur Hamburger), iOS-Input-Zoom (16px erzwungen), Job-Suche Sidebar stacked, Job-Detail stacked, Admin-Panel KPI/Tabellen scrollable, Chat-/Messages-Layout stacked, Touch-Targets ≥ 40px, Hero/Headings kleiner, Footer 2-spaltig.
+- [x] **Mobile-Overhaul v2** — globaler `@media (max-width: 640px)`-Block in `style.css` schließt die Lücke zwischen den 768px/480px-Queries. Gefixt: Nav (Desktop-Links auf Mobile versteckt, nur Hamburger), iOS-Input-Zoom (16px erzwungen), Job-Suche Sidebar stacked, Job-Detail stacked, Admin-Panel KPI/Tabellen scrollable, Chat-/Messages-Layout stacked, Touch-Targets ≥ 40px, Hero/Headings kleiner, Footer 2-spaltig.
+- [x] **Mobile-Filter-Drawer** auf Jobs-Seite — Filter sind auf Mobile eingeklappt, Toggle-Button oben zeigt Anzahl aktiver Filter. Spart Scroll-Weg bis zum ersten Job-Ergebnis.
+- [x] **Register-Seite Mobile** — Inline `max-width:500px` entfernt, Role-Selector-Karten kompakter, hCaptcha-Widget skaliert, Paddings reduziert.
 - [ ] Ladeanimationen/Skeleton-Screens einheitlich
 
 ### Features

@@ -1588,6 +1588,37 @@ body:has(.admin-login-wrap) { background: linear-gradient(135deg, #0f172a 0%, #1
 }
 
 /* ==========================================================================
+   MOBILE FILTER TOGGLE für Job-Suche
+   Desktop: unsichtbar. Mobile: aufklappbarer Filter-Button oben.
+   ========================================================================== */
+.mobile-filter-toggle {
+  display: none;
+  width: 100%;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: #fff;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--gray-800);
+  cursor: pointer;
+  margin-bottom: 1rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.mobile-filter-toggle:hover { border-color: var(--primary); }
+.mobile-filter-count {
+  background: var(--primary);
+  color: #fff;
+  font-size: 0.72rem;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-left: 0.25rem;
+}
+
+/* ==========================================================================
    MOBILE OVERHAUL (640px und kleiner)
    --------------------------------------------------------------------------
    Schließt die Lücke zwischen den bestehenden 768px- und 480px-Queries und
@@ -1653,12 +1684,20 @@ body:has(.admin-login-wrap) { background: linear-gradient(135deg, #0f172a 0%, #1
     text-align: center;
   }
 
-  /* --- Job-Suche: Filter-Sidebar stacken --------------------------- */
+  /* --- Job-Suche: Filter-Sidebar stacken + einklappbar ------------- */
+  .mobile-filter-toggle { display: flex; }
   .search-layout,
   .page-with-sidebar {
     grid-template-columns: 1fr !important;
   }
-  .search-sidebar {
+  /* Auf Mobile ist die Sidebar standardmäßig versteckt, bis der User
+     sie via Filter-Toggle-Button öffnet. Spart Scroll-Weg bis zum
+     ersten Job-Ergebnis. */
+  .search-layout .search-sidebar {
+    display: none;
+  }
+  .search-layout.show-mobile-filters .search-sidebar {
+    display: block;
     position: static !important;
     width: 100% !important;
     max-width: 100% !important;
@@ -1778,12 +1817,31 @@ body:has(.admin-login-wrap) { background: linear-gradient(135deg, #0f172a 0%, #1
   }
   .chat-input-area input { flex: 1; min-width: 0; }
 
-  /* --- Auth-Cards voll breit --------------------------------------- */
+  /* --- Auth-Cards (Login / Register) voll breit -------------------- */
+  .auth-page {
+    padding: 0.75rem !important;
+    min-height: calc(100vh - 120px);
+  }
   .auth-card, .auth-page .auth-card {
     max-width: 100% !important;
-    margin: 1rem 0.5rem !important;
-    padding: 1.5rem 1.25rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1.5rem 1.1rem !important;
+    box-shadow: none;
+    border: 1px solid var(--gray-200);
   }
+  .auth-card h2 { font-size: 1.3rem; }
+  .auth-card .subtitle { font-size: 0.85rem; margin-bottom: 1rem; }
+
+  /* Rolle-Auswahl: kleinere Karten, damit nebeneinander ins Handy passen */
+  .role-selector { gap: 0.5rem; margin-bottom: 1rem; }
+  .role-option { padding: 0.75rem 0.5rem; }
+  .role-option .role-icon { font-size: 1.25rem; margin-bottom: 0.15rem; }
+  .role-option .role-name { font-size: 0.85rem; }
+  .role-option > div:last-child { font-size: 0.68rem !important; line-height: 1.2; }
+
+  /* hCaptcha-Widget transform scale, falls es zu breit wird */
+  .h-captcha { transform: scale(0.9); transform-origin: center top; }
 }
 
 /* Extra kleine Geräte (iPhone SE, 360 px) */

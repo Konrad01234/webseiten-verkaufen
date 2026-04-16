@@ -2628,8 +2628,27 @@ function renderJobSearch() {
           <span class="search-results-count">${jobs.length} Jobs gefunden</span>
         </div>
       </div>
-      <div class="search-layout">
-        <aside class="search-sidebar">
+      <!-- Mobile: Filter-Toggle-Button mit Counter -->
+      ${(() => {
+        const f = state.filters || {};
+        const activeCount =
+          (f.category ? 1 : 0) +
+          (f.city ? 1 : 0) +
+          (f.address ? 1 : 0) +
+          ((f.hours || []).length > 0 ? 1 : 0) +
+          (f.radius < 50 ? 1 : 0) +
+          (f.type ? 1 : 0);
+        const isOpen = !!state.mobileFiltersOpen;
+        return `
+        <button class="mobile-filter-toggle" onclick="state.mobileFiltersOpen=!state.mobileFiltersOpen;render()" aria-expanded="${isOpen}" aria-controls="search-sidebar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          <span>Filter${activeCount > 0 ? ` <span class="mobile-filter-count">${activeCount}</span>` : ''}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-left:auto;transition:transform 0.2s;transform:rotate(${isOpen ? '180deg' : '0deg'})"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>`;
+      })()}
+
+      <div class="search-layout ${state.mobileFiltersOpen ? 'show-mobile-filters' : ''}">
+        <aside class="search-sidebar" id="search-sidebar">
           <h3 style="font-size:1rem;margin-bottom:1rem">Filter</h3>
 
           <div class="filter-section">
@@ -3121,7 +3140,7 @@ function renderLogin() {
 function renderRegister() {
   return `
     <div class="auth-page">
-      <div class="auth-card fade-in" style="max-width:500px">
+      <div class="auth-card fade-in">
         <h2>Konto erstellen</h2>
         <p class="subtitle">Registriere dich kostenlos und leg los.</p>
         <form onsubmit="event.preventDefault(); submitRegister(this)">
