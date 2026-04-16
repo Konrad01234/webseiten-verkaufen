@@ -2511,8 +2511,8 @@ function renderLanding() {
         <h2>Worauf wartest du?</h2>
         <p>Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
         <div class="cta-fullblock-buttons">
-          <button class="btn btn-lg cta-btn-primary" onclick="navigate('register')">Jetzt loslegen <span class="cta-arrow">→</span></button>
-          <button class="btn btn-lg cta-btn-outline" onclick="navigate('jobs')">Jobs ansehen</button>
+          <button class="btn btn-lg cta-btn-primary" onclick="navigate('jobs')">Jobs entdecken <span class="cta-arrow">→</span></button>
+          <button class="btn btn-lg cta-btn-outline" onclick="navigate('employer-landing')">Für Arbeitgeber</button>
         </div>
       </div>
     </section>`;
