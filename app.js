@@ -187,6 +187,16 @@ async function loadJobsFromDB() {
     JOBS.length = 0;
     rows.forEach(r => JOBS.push(dbJobToFrontend(r)));
     state.jobsLoaded = true;
+    // Tote Refs in savedJobs aufraeumen (Job wurde geloescht oder
+    // per Cron inaktiv gesetzt). Sonst zeigt der "Gespeicherte Jobs"-
+    // Zaehler weiter die alte Zahl obwohl die Jobs weg sind.
+    if (Array.isArray(state._savedJobs) && state._savedJobs.length) {
+      const valid = new Set(JOBS.map(j => j.id));
+      const cleaned = state._savedJobs.filter(id => valid.has(id));
+      if (cleaned.length !== state._savedJobs.length) {
+        state._savedJobs = cleaned;
+      }
+    }
   } catch (e) {
     console.error('[loadJobsFromDB]', e);
   }
@@ -673,6 +683,17 @@ function switchRevenueView(period) {
 
 // ===== NAVIGATION =====
 function navigate(page, data) {
+  // Chat-Realtime-Subscription aufraeumen wenn wir den Chat-Detail
+  // verlassen. Ohne diesen Cleanup haengt der Subscription-Callback
+  // weiter an einem `chatId` das der Nutzer nicht mehr sieht, mutiert
+  // `chat.messages` im Hintergrund und triggert render()-Calls fuer
+  // Seiten auf denen der Chat gar nicht mehr angezeigt wird.
+  const leavingChat = state.currentPage === 'chat' && page !== 'chat';
+  if (leavingChat && window.DB && window.DB.sb && state._chatSub) {
+    try { window.DB.sb.removeChannel(state._chatSub); } catch (_) {}
+    state._chatSub = null;
+    state.activeChat = null;
+  }
   state.currentPage = page;
   state.pageData = data;
   // Jobs-Seite: Filter-Adresse automatisch aus dem User-Profil
@@ -1240,10 +1261,33 @@ async function endActiveJob() {
 }
 function getPendingAppCount() {
   const allApps = getAllApplications();
-  return allApps.filter(a => a.userId === state.user?.id && a.status !== 'rejected' && a.status !== 'accepted').length;
+  // 'withdrawn' darf NICHT mitzaehlen — sonst wird ein Worker nach 3x
+  // zurueckgezogenen Bewerbungen permanent blockiert.
+  return allApps.filter(a =>
+    a.userId === state.user?.id &&
+    a.status !== 'rejected' &&
+    a.status !== 'accepted' &&
+    a.status !== 'withdrawn'
+  ).length;
 }
 
 function submitApplication(jobId) {
+  if (!state.user) { navigate('login'); return; }
+  // Kein Bewerben auf eigenen Job. Admins + Employer haben keine
+  // Worker-Rolle, aber sicherheitshalber auch ausschliessen.
+  if (state.user.role !== 'worker') {
+    showToast('Nur Arbeitnehmer können sich bewerben.', 'error');
+    return;
+  }
+  const job = JOBS.find(j => j.id === jobId);
+  if (job && job.employerId === state.user.id) {
+    showToast('Du kannst dich nicht auf deinen eigenen Job bewerben.', 'error');
+    return;
+  }
+  if (job && job.active === false) {
+    showToast('Dieser Job ist nicht mehr aktiv.', 'error');
+    return;
+  }
   const apps = getUserApps();
   if (apps.includes(jobId)) { showToast('Du hast dich bereits beworben!', 'info'); return; }
   if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
@@ -1605,13 +1649,40 @@ async function submitReview(btn) {
   if (!stars) { showToast('Bitte wähle eine Bewertung (1-5 Sterne).', 'error'); return; }
   if (!text) { showToast('Bitte schreibe einen kurzen Text.', 'error'); return; }
 
-  // Determine reviewed employer: prefer the active job, else the most recent completed
-  const referenceJob = activeJob || completedJobs[completedJobs.length - 1];
+  // Determine reviewed employer: prefer the most recent COMPLETED job.
+  // Aktive Jobs sollten nicht bewertet werden (Retourkutschen-Risiko);
+  // die DB-Policy aus supabase-hardening-v2.sql laesst INSERT nur
+  // wenn die Bewerbung status='accepted' ODER 'withdrawn' hat.
+  const referenceJob = completedJobs[completedJobs.length - 1] || activeJob;
   const reviewedEmployerId = referenceJob && referenceJob.employerId;
   if (!reviewedEmployerId) {
     showToast('Konnte den Arbeitgeber der Bewertung nicht ermitteln.', 'error');
     return;
   }
+  // Self-Review verhindern (clientseitig; DB-Constraint
+  // reviews_no_self faengt es zusaetzlich ab, falls hier umgangen).
+  if (reviewedEmployerId === state.user.id) {
+    showToast('Du kannst dich nicht selbst bewerten.', 'error');
+    return;
+  }
+  // Dedup clientseitig: hat dieser Worker diesen Employer fuer diesen
+  // Job schon bewertet? Der DB-Unique-Index verhindert es auch
+  // serverseitig, aber hier kriegt der User eine freundliche Meldung
+  // statt eines Postgres-23505-Errors.
+  try {
+    if (DB.sb && referenceJob.jobId) {
+      const existing = await DB.sb.from('reviews')
+        .select('id')
+        .eq('reviewer_id', state.user.id)
+        .eq('reviewed_id', reviewedEmployerId)
+        .eq('job_id', referenceJob.jobId)
+        .limit(1);
+      if (!existing.error && existing.data && existing.data.length > 0) {
+        showToast('Du hast diesen Arbeitgeber für diesen Job bereits bewertet.', 'info');
+        return;
+      }
+    }
+  } catch (_) { /* Check ist optional, falls er failt gehen wir weiter und lassen die DB entscheiden. */ }
   try {
     await DB.createReview({
       reviewerId: state.user.id,
@@ -1623,7 +1694,13 @@ async function submitReview(btn) {
     showToast('Bewertung abgegeben! Danke für dein Feedback.');
   } catch (e) {
     console.error('[submitReview]', e);
-    showToast('Bewertung konnte nicht gespeichert werden: ' + (e.message || ''), 'error');
+    // Unique-Violation freundlich formulieren
+    const msg = (e && e.message) || '';
+    if (/duplicate|23505|unique/i.test(msg)) {
+      showToast('Du hast diesen Arbeitgeber für diesen Job bereits bewertet.', 'info');
+    } else {
+      showToast('Bewertung konnte nicht gespeichert werden: ' + msg, 'error');
+    }
     return;
   }
   card.querySelector('textarea').value = '';
@@ -1723,7 +1800,16 @@ function readImageFileAsDataURL(file, cb) {
 // properties.
 function setPreviewBackground(preview, dataUrl) {
   if (!preview) return;
-  preview.style.backgroundImage = 'url("' + dataUrl.replace(/"/g, '%22') + '")';
+  // Nur sichere Schemes erlauben (data:image/, https://, http://).
+  // Verhindert dass manipulierter state.cvPhoto (z.B. javascript:)
+  // ins CSS injiziert wird wo er als url() ausgewertet werden koennte.
+  const url = String(dataUrl || '');
+  const safe = /^(data:image\/(png|jpeg|jpg|gif|webp|svg\+xml);|https?:\/\/)/i.test(url);
+  if (!safe) {
+    console.warn('[setPreviewBackground] unsafe URL blocked:', url.slice(0, 40));
+    return;
+  }
+  preview.style.backgroundImage = 'url("' + url.replace(/"/g, '%22') + '")';
   preview.style.backgroundSize = 'cover';
   preview.style.backgroundPosition = 'center';
   preview.innerHTML = '';
@@ -1907,7 +1993,7 @@ function downloadCV() {
   const data = getCVData();
   const template = getSelectedTemplate();
   const html = buildCVHTML(data, template);
-  const fullHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lebenslauf - ${data.vorname} ${data.nachname}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#fff;}@media print{body{padding:0;}}</style></head><body>${html}</body></html>`;
+  const fullHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Lebenslauf - ${escapeHtml(data.vorname || '')} ${escapeHtml(data.nachname || '')}</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>body{margin:0;padding:2rem;background:#fff;}@media print{body{padding:0;}}</style></head><body>${html}</body></html>`;
   const blob = new Blob([fullHTML], { type: 'text/html' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -2160,6 +2246,22 @@ async function updateApplicantStatus(applicantId, newStatus) {
   const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
   const jobTitle = a.jobTitle || a.job;
 
+  // Richtungs-Validierung: endgueltige Entscheidungen (accepted/rejected)
+  // nicht rueckwaerts abwickeln, sonst verwirrt das Worker und die
+  // Invariants (activeJob, completedJobs) kippen.
+  const oldStatus = a.status;
+  const TERMINAL = new Set(['accepted', 'rejected']);
+  if (TERMINAL.has(oldStatus) && newStatus !== oldStatus) {
+    if (!confirm('Dieser Status wurde bereits endgueltig entschieden ('
+      + (statusTexts[oldStatus] || oldStatus)
+      + '). Wirklich auf "'
+      + (statusTexts[newStatus] || newStatus)
+      + '" zuruecksetzen?')) {
+      render();  // select-Element zurueck auf alten Wert
+      return;
+    }
+  }
+
   if (isReal && window.DB) {
     try {
       await DB.updateApplicationStatus(applicantId, newStatus);
@@ -2195,7 +2297,13 @@ async function updateApplicantStatus(applicantId, newStatus) {
         await DB.sendMessage(chat.id, state.user.id, msg);
         await loadChatsForUser();
       } catch (e) {
+        // Auto-Nachricht fehlgeschlagen, aber der Status-Update war
+        // erfolgreich. Vorher: stumm geschluckt → Employer denkt alles
+        // geschickt, Worker bekommt nichts. Jetzt: sichtbarer Toast
+        // mit Hinweis dass er manuell nachfassen muss.
         console.error('[updateApplicantStatus] chat', e);
+        const statusLabel = statusTexts[newStatus] || newStatus;
+        showToast('Status auf "' + statusLabel + '" gesetzt, aber die Automatik-Nachricht konnte nicht gesendet werden. Bitte manuell im Chat.', 'error');
       }
     } else {
       // Mock fallback: keep old local push so the seed demo still works
@@ -2625,10 +2733,19 @@ async function updateJobDistances() {
 
 // Wrapper fuer UI-Handler: setzt ein Loading-Flag, ruft render() fuer
 // sofortiges Feedback, triggert geocoding und rendert am Ende neu.
+// Deduplication: bei schnellem Tippen koennen mehrere Laeufe parallel
+// laufen. Wir merken uns den "run-token" und ignorieren ueberholte
+// Ergebnisse. Letzter-Start-gewinnt.
+let _geoRunToken = 0;
 function recomputeDistancesAndRender() {
+  const myToken = ++_geoRunToken;
   state.geoLoading = true;
   try { render(); } catch (_) {}
   updateJobDistances().finally(function() {
+    // Wenn inzwischen ein neuer Lauf gestartet wurde: nichts tun,
+    // der neuere gewinnt. Das verhindert, dass nach Adress-Wechsel
+    // kurz die Distanzen der vorherigen Adresse erscheinen.
+    if (myToken !== _geoRunToken) return;
     state.geoLoading = false;
     try { render(); } catch (_) {}
   });
@@ -2642,7 +2759,10 @@ function toggleHoursFilter(h) {
 }
 
 function getFilteredJobs() {
-  let jobs = [...JOBS];
+  // Inaktive Jobs (active=false) gar nicht erst anzeigen — die
+  // Auto-Archivierung via Cron setzt active=false nach X Tagen,
+  // wir wollen keine Leichen in der Suche.
+  let jobs = JOBS.filter(j => j.active !== false);
   const f = state.filters;
   if (f.search) {
     const s = f.search.toLowerCase();
@@ -3149,7 +3269,7 @@ function renderJobSearch() {
             <h4>Stadt</h4>
             <select class="form-select" onchange="state.filters.city=this.value;render()">
               <option value="">Alle Städte</option>
-              ${[...new Set(JOBS.map(j => j.city))].sort().map(c => `<option value="${c}" ${state.filters.city===c?'selected':''}>${c}</option>`).join('')}
+              ${[...new Set(JOBS.map(j => j.city).filter(Boolean))].sort().map(c => `<option value="${escapeAttr(c)}" ${state.filters.city===c?'selected':''}>${escapeHtml(c)}</option>`).join('')}
             </select>
           </div>
 
@@ -3204,20 +3324,20 @@ function renderJobCard(j) {
         <div class="job-card-meta">
           <span class="job-meta-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            ${j.city}${j.distance > 0 ? ' (' + j.distance + ' km)' : ''}
+            ${escapeHtml(j.city)}${j.distance > 0 ? ' (' + j.distance + ' km)' : ''}
           </span>
           <span class="job-meta-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            ${j.hours}
+            ${escapeHtml(j.hours)}
           </span>
           <span class="job-meta-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            ${j.salary}
+            ${escapeHtml(j.salary)}
           </span>
         </div>
         <div class="job-card-tags">
-          <span class="badge badge-primary">${j.type}</span>
-          ${j.tags.slice(0,3).map(t => `<span class="tag">${t}</span>`).join('')}
+          <span class="badge badge-primary">${escapeHtml(j.type)}</span>
+          ${j.tags.slice(0,3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
         </div>
         <div class="job-card-date">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -3510,10 +3630,10 @@ function renderJobDetail() {
               </div>
             </div>
             <div class="job-detail-badges">
-              <span class="badge badge-primary">${job.type}</span>
-              <span class="badge badge-gray">${job.location}</span>
-              <span class="badge badge-gray">${job.hours}</span>
-              <span class="badge badge-success">${job.salary}</span>
+              <span class="badge badge-primary">${escapeHtml(job.type)}</span>
+              <span class="badge badge-gray">${escapeHtml(job.location)}</span>
+              <span class="badge badge-gray">${escapeHtml(job.hours)}</span>
+              <span class="badge badge-success">${escapeHtml(job.salary)}</span>
             </div>
             <div style="margin-top:1rem;display:flex;gap:1.5rem;font-size:0.8rem;color:var(--gray-500)">
               <span>Hochgeladen: ${formatDate(job.posted)}</span>
@@ -3557,13 +3677,24 @@ function renderJobDetail() {
           <div class="card">
             <div class="card-body">
               ${(() => {
-                const isWorker = state.user && state.user.role !== 'employer';
+                // Nur echte Worker duerfen bewerben (nicht Admin/Employer).
+                const isWorker = state.user && state.user.role === 'worker';
+                const isOwnJob = state.user && job.employerId === state.user.id;
+                const jobInactive = job.active === false;
                 const alreadyApplied = isWorker && getUserApps().includes(job.id);
                 const hasActiveJob = isWorker && getActiveJob();
                 const maxApps = isWorker && !alreadyApplied && getPendingAppCount() >= 3;
-                const disabled = alreadyApplied || hasActiveJob || maxApps;
-                const label = !isWorker ? 'Anmelden zum Bewerben' : alreadyApplied ? '✓ Beworben' : hasActiveJob ? 'Du hast bereits einen aktiven Job' : maxApps ? 'Max. 3 Bewerbungen erreicht' : 'Jetzt bewerben';
-                const action = !isWorker ? `navigate('login')` : `submitApplication(${job.id})`;
+                const disabled = isOwnJob || jobInactive || alreadyApplied || hasActiveJob || maxApps;
+                const label =
+                  isOwnJob ? 'Eigene Stelle' :
+                  jobInactive ? 'Nicht mehr aktiv' :
+                  !state.user ? 'Anmelden zum Bewerben' :
+                  !isWorker ? 'Nur für Arbeitnehmer' :
+                  alreadyApplied ? '✓ Beworben' :
+                  hasActiveJob ? 'Du hast bereits einen aktiven Job' :
+                  maxApps ? 'Max. 3 Bewerbungen erreicht' :
+                  'Jetzt bewerben';
+                const action = !state.user ? `navigate('login')` : `submitApplication(${job.id})`;
                 return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${action}" ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
               })()}
 
@@ -4223,7 +4354,7 @@ function renderWorkerProfile() {
           <!-- Schritt-Indikatoren -->
           <div class="profile-step-indicators">
             ${PROFILE_STEPS.map((s,i) => `
-              <div class="psi-item ${i===step?'active':''} ${i<step?'done':''}" onclick="saveProfileStep();state.profileStep=${i};render()">
+              <div class="psi-item ${i===step?'active':''} ${i<step?'done':''}" onclick="gotoProfileStep(${i})">
                 <div class="psi-dot">
                   ${i < step
                     ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
@@ -4243,7 +4374,7 @@ function renderWorkerProfile() {
           <!-- Navigation -->
           <div class="profile-step-nav">
             ${step > 0
-              ? `<button class="btn btn-outline" onclick="saveProfileStep();state.profileStep=Math.max(0,state.profileStep-1);render()">← Zurück</button>`
+              ? `<button class="btn btn-outline" onclick="gotoProfileStep(Math.max(0,state.profileStep-1))">← Zurück</button>`
               : `<button class="btn btn-outline" onclick="navigate('worker-dashboard')">← Dashboard</button>`}
             ${step < total-1
               ? `<button class="btn btn-primary" onclick="nextProfileStep()">Weiter →</button>`
@@ -4306,19 +4437,36 @@ function validateProfileStep() {
 }
 
 // Wrapper: saveProfileStep + advance nur wenn validate ok.
-function nextProfileStep() {
+// WICHTIG: saveProfileStep ist async und liest den aktuellen Step-DOM.
+// Wenn wir nicht awaiten, kann der Nutzer parallel weiterklicken und
+// saveProfileStep liest dann das DOM eines anderen Schritts → partial/
+// vertauschte Daten in der DB.
+async function nextProfileStep() {
   if (!validateProfileStep()) return;
-  saveProfileStep();
+  await saveProfileStep();
   const total = (typeof PROFILE_STEPS !== 'undefined' ? PROFILE_STEPS.length : 8);
   state.profileStep = Math.min(total - 1, state.profileStep + 1);
   render();
 }
 
-function finishProfileSetup() {
+async function finishProfileSetup() {
   if (!validateProfileStep()) return;
-  saveProfileStep();
+  await saveProfileStep();
   showToast('Profil gespeichert!');
   navigate('worker-dashboard');
+}
+
+// Gleicher Race-Fix fuer die Sidebar-/Zurueck-Buttons: beide awaiten
+// jetzt saveProfileStep bevor sie den Step wechseln. Aus dem onclick
+// rufen wir die Wrapper statt inline "saveProfileStep();render()".
+async function gotoProfileStep(targetStep) {
+  // Beim Springen zu einem anderen Step ist der aktuelle Step u.U.
+  // noch nicht valide (User klickt seitwaerts). Trotzdem speichern
+  // was da ist — saveProfileStep schreibt nur Felder die nicht leer
+  // sind, keine Uebertragung nach validate noetig fuer Zurueck-Pfad.
+  await saveProfileStep();
+  state.profileStep = targetStep;
+  render();
 }
 
 async function saveProfileStep() {

@@ -45,8 +45,12 @@
       await sb.from('profiles').upsert({
         id: res.data.user.id,
         email, name, role,
-        company: company || null,
-        approved: true
+        company: company || null
+        // `approved` bewusst NICHT mitsenden. Der auto_approve_workers-
+        // Trigger (supabase-security-hardening.sql) setzt approved=true
+        // fuer jedes neue Profil in derselben Transaction. Client soll
+        // das nicht bestimmen, sonst koennte jemand approved=true
+        // schicken auch wenn das Geschaeftsziel eines Tages Opt-In ist.
       }, { onConflict: 'id' });
     }
     return res.data;
@@ -132,11 +136,24 @@
   }
 
   async function incrementJobMetric(id, field) {
-    // Atomic increment via RPC would be cleaner, but for now we read-modify-write.
-    const job = await getJob(id);
-    if (!job) return;
-    const patch = {}; patch[field] = (job[field] || 0) + 1;
-    await sb.from('jobs').update(patch).eq('id', id);
+    // Atomar via Postgres-Funktion (definiert in
+    // supabase-hardening-v2.sql). Loest die race condition in der
+    // alten read-modify-write-Variante: zwei parallele Calls zu derselben
+    // Job-ID haben beide den alten Wert gelesen und N+1 geschrieben,
+    // eine Zaehlung ging verloren.
+    try {
+      const res = await sb.rpc('job_increment_metric', { job_id_in: id, field_name: field });
+      if (res.error) throw res.error;
+      return;
+    } catch (e) {
+      // Fallback fuer den Fall dass die Migration noch nicht eingespielt
+      // wurde — liefert immerhin einen Zaehlerstand statt gar nichts.
+      console.warn('[incrementJobMetric] RPC fehlgeschlagen, fallback auf read-modify-write:', e && e.message);
+      const job = await getJob(id);
+      if (!job) return;
+      const patch = {}; patch[field] = (job[field] || 0) + 1;
+      await sb.from('jobs').update(patch).eq('id', id);
+    }
   }
 
   // -----------------------------------------------------------------
