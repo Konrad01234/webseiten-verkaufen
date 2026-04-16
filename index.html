@@ -661,10 +661,23 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   box-sizing: border-box;
   overflow: hidden;
 }
-/* z-index steigt: spaetere Slides schieben sich ueber frueheste */
+/* Innerer Content: wird per JS gescaliert/gefadet - weich animieren */
+.sp-slide-inner {
+  will-change: transform, opacity;
+  transform-origin: center top;
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+}
+/* z-index steigt: spaetere Slides schieben sich ueber frueheste.
+   Rundung oben + stark gebundener Schatten lassen neue Slides wie
+   "aufgeschlagene Karten" wirken. */
 .sp-slide[data-i="1"] { z-index: 1; }
-.sp-slide[data-i="2"] { z-index: 2; box-shadow: 0 -24px 40px rgba(0,0,0,0.08); }
-.sp-slide[data-i="3"] { z-index: 3; box-shadow: 0 -24px 40px rgba(0,0,0,0.08); }
+.sp-slide[data-i="2"], .sp-slide[data-i="3"] {
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+  box-shadow: 0 -28px 60px -12px rgba(15, 23, 42, 0.18);
+}
+.sp-slide[data-i="2"] { z-index: 2; }
+.sp-slide[data-i="3"] { z-index: 3; }
 
 .sp-slide-inner {
   max-width: 1120px; margin: 0 auto; width: 100%;
