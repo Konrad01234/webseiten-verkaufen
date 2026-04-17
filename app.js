@@ -249,6 +249,9 @@ async function loadUserSession() {
       };
     } else {
       // Fallback: profile row missing, build minimum from auth user_metadata.
+      // Array-Felder muessen initialisiert sein - sonst crashen Funktionen
+      // wie removeRef()/splice oder .map() auf undefined, wenn ein Nutzer
+      // ohne Profil-Row diese UI-Pfade trifft.
       const md = session.user.user_metadata || {};
       state.user = {
         id: session.user.id,
@@ -257,7 +260,12 @@ async function loadUserSession() {
         role: md.role || 'worker',
         company: md.company || null,
         approved: true,
-        profileComplete: 20
+        profileComplete: 20,
+        skills: [],
+        refs: [],
+        companyImages: [],
+        images: [],
+        completedJobs: []
       };
     }
   } catch (e) {
@@ -3903,6 +3911,7 @@ function addRef() {
 }
 
 function removeRef(i) {
+  if (!state.user || !Array.isArray(state.user.refs)) return;
   state.user.refs.splice(i, 1);
   if (!state.user.refs.length) state.user.hasRefs = false;
   render();
