@@ -1067,8 +1067,15 @@ async function register(data) {
     else if (/password/i.test(msg)) showErr('Passwort ungültig: ' + msg);
     else showErr('Registrierung fehlgeschlagen: ' + msg);
     console.error('[register]', e);
+    // Captcha-Widget zuruecksetzen, der Token ist serverseitig invalidiert
+    // und Wiederverwendung wuerde beim naechsten Submit abgelehnt.
+    try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
     return;
   }
+  // Captcha-Token ist nach erfolgreichem signUp bei Supabase "verbraucht" -
+  // Widget resetten, damit bei einem erneuten Submit (z.B. sofortige
+  // Nach-Registrierung) ein frischer Token geholt wird.
+  try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
   // Step 2: signUp also signs in immediately (when email confirmation is off).
   // Session synchron laden, Rest im Hintergrund (Skeletons übernehmen).
   try { await loadUserSession(); } catch (e) { console.error('[register] loadUserSession', e); }
@@ -3699,31 +3706,6 @@ function selectRole(el, role) {
     companyField.style.display = role === 'employer' ? 'block' : 'none';
     companyField.querySelector('input').required = role === 'employer';
   }
-}
-
-function submitRegister(form) {
-  const data = {
-    role: form.role.value,
-    name: form.firstName.value + ' ' + form.lastName.value,
-    email: form.email.value,
-    password: form.password.value
-  };
-  if (data.role === 'employer') {
-    data.company = form.company.value;
-  }
-  // Wenn hCaptcha aktiviert ist, Token vom Widget abholen
-  if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-    try {
-      const token = window.hcaptcha.getResponse();
-      if (!token) {
-        const err = document.getElementById('register-error');
-        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
-        return;
-      }
-      data.captchaToken = token;
-    } catch (e) { console.error('[hcaptcha]', e); }
-  }
-  register(data);
 }
 
 // ===== WORKER PAGES =====
@@ -6929,13 +6911,26 @@ if (typeof registerAction === 'function') {
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
+    // Wenn hCaptcha konfiguriert ist, Token direkt vom Widget abholen.
+    // Frueher wurde window.hcaptchaToken gelesen - das wird aber nirgendwo
+    // gesetzt, also ging IMMER null an Supabase -> Captcha wirkungslos.
+    var captchaToken = null;
+    if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
+      try { captchaToken = window.hcaptcha.getResponse() || null; }
+      catch (e) { console.error('[hcaptcha]', e); }
+      if (!captchaToken) {
+        const err = document.getElementById('register-error');
+        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+        return;
+      }
+    }
     register({
       name: (fn + ' ' + ln).trim(),
       email: form.email.value,
       password: form.password.value,
       role: form.role?.value || 'worker',
       company: form.company?.value || null,
-      captchaToken: window.hcaptchaToken || null
+      captchaToken: captchaToken
     });
   });
 
