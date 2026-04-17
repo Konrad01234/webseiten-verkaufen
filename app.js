@@ -1704,7 +1704,12 @@ function setPreviewBackground(preview, dataUrl) {
 
 // Versucht Storage-Upload, fällt bei Fehler auf base64 zurück. Liefert
 // in beiden Fällen eine Browser-anzeigbare URL (entweder data: oder https:).
+// Die Validierung (3 MB max, nur Bild-MIME) passiert HIER, damit alle Call-Sites
+// automatisch geschuetzt sind - vorher konnte ein Nutzer eine 100 MB ZIP in
+// den base64-Fallback werfen und den Tab zum Absturz bringen.
 async function uploadImageWithFallback(file) {
+  const vErr = validateImageFile(file);
+  if (vErr) throw new Error(vErr);
   if (window.IMAGE_BUCKET && window.DB && DB.uploadImage) {
     try {
       const { url } = await DB.uploadImage(file);
@@ -1726,7 +1731,10 @@ async function handleCVPhoto(input) {
     const url = await uploadImageWithFallback(input.files[0]);
     state.cvPhoto = url;
     setPreviewBackground(document.getElementById('cv-photo-preview'), url);
-  } catch (e) { console.error('[handleCVPhoto]', e); showToast('Foto konnte nicht geladen werden.', 'error'); }
+  } catch (e) {
+    console.error('[handleCVPhoto]', e);
+    showToast(e.message || 'Foto konnte nicht geladen werden.', 'error');
+  }
 }
 
 async function handleCompanyLogo(input) {
@@ -1740,7 +1748,10 @@ async function handleCompanyLogo(input) {
       catch (err) { console.error('[handleCompanyLogo] persist', err); }
     }
     showToast('Logo hochgeladen!');
-  } catch (e) { console.error('[handleCompanyLogo]', e); showToast('Logo-Upload fehlgeschlagen.', 'error'); }
+  } catch (e) {
+    console.error('[handleCompanyLogo]', e);
+    showToast(e.message || 'Logo-Upload fehlgeschlagen.', 'error');
+  }
 }
 
 async function handleCompanyImage(input) {
@@ -1756,7 +1767,10 @@ async function handleCompanyImage(input) {
     }
     showToast('Bild hochgeladen!');
     render();
-  } catch (e) { console.error('[handleCompanyImage]', e); showToast('Bild-Upload fehlgeschlagen.', 'error'); }
+  } catch (e) {
+    console.error('[handleCompanyImage]', e);
+    showToast(e.message || 'Bild-Upload fehlgeschlagen.', 'error');
+  }
 }
 
 function removeCompanyImage(index) {
