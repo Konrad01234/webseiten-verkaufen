@@ -1304,18 +1304,18 @@ function renderApplyStep() {
   var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var jobTitle = job ? job.title : 'Job'; var company = job ? job.company : '';
   if (si) { si.innerHTML = [1,2,3].map(function(s){ return '<div style="display:flex;align-items:center;gap:0.4rem"><div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;' + (s<state.applyStep?'background:#2563eb;color:#fff':s===state.applyStep?'background:var(--primary);color:#fff':'background:var(--gray-200);color:var(--gray-500)') + '">' + (s<state.applyStep?'✓':s) + '</div><span style="font-size:0.75rem;color:' + (s===state.applyStep?'var(--primary)':'var(--gray-400)') + ';font-weight:' + (s===state.applyStep?'600':'400') + '">' + (s===1?'Anschreiben':s===2?'Lebenslauf':'Vorschau') + '</span></div>' + (s<3?'<div style="flex:1;height:2px;background:var(--gray-200);margin:0 0.25rem"><div style="height:100%;background:var(--primary);width:' + (s<state.applyStep?'100%':'0%') + '"></div></div>':''); }).join(''); }
   if (state.applyStep === 1) {
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="generate" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="skip" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'generate\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" onclick="selectMotivationMethod(\'skip\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
     if (state.applyMotivationMethod) renderMotivationDetail();
-    footer.innerHTML = '<button class="btn btn-outline" data-action="closeApplyModal">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' data-action="applyNextStep">Weiter</button>';
+    footer.innerHTML = '<button class="btn btn-outline" onclick="closeApplyModal()">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' onclick="applyNextStep()">Weiter</button>';
   } else if (state.applyStep === 2) {
     var hasCV = state.user && state.user.cvUploaded;
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Lebenslauf</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">Füge deinen Lebenslauf hinzu</p><div style="display:flex;flex-direction:column;gap:0.75rem">' + (hasCV ? '<div class="card apply-option ' + (state.applyCVMethod==='existing'?'apply-option-active':'') + '" data-action="selectCVMethod" data-method="existing" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Vorhandenen Lebenslauf verwenden</strong><div style="font-size:0.8rem;color:var(--gray-500)">' + (state.user.cvFileName||'Lebenslauf (Builder)') + '</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='existing'?'checked':'') + '></div></div>' : '') + '<div class="card apply-option ' + (state.applyCVMethod==='upload'?'apply-option-active':'') + '" data-action="selectCVMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder Bild</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyCVMethod==='create'?'apply-option-active':'') + '" data-action="selectCVMethod" data-method="create" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(249,115,22,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Jetzt einen erstellen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Mit unserem Lebenslauf-Builder</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='create'?'checked':'') + '></div></div></div><div id="cv-detail" style="margin-top:1rem"></div>';
-    if (state.applyCVMethod === 'upload') { document.getElementById('cv-detail').innerHTML = '<div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" data-action="triggerFileInput" data-target-id="apply-cv-file"><input type="file" id="apply-cv-file" accept=".pdf,.doc,.docx,.jpg,.png" style="display:none" data-on-change="handleApplyCVFile">' + (state.applyCVFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyCVFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um eine Datei hochzuladen</div>') + '</div>'; }
-    footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="1">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' data-action="applyNextStep">Weiter zur Vorschau</button>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Lebenslauf</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">Füge deinen Lebenslauf hinzu</p><div style="display:flex;flex-direction:column;gap:0.75rem">' + (hasCV ? '<div class="card apply-option ' + (state.applyCVMethod==='existing'?'apply-option-active':'') + '" onclick="selectCVMethod(\'existing\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Vorhandenen Lebenslauf verwenden</strong><div style="font-size:0.8rem;color:var(--gray-500)">' + (state.user.cvFileName||'Lebenslauf (Builder)') + '</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='existing'?'checked':'') + '></div></div>' : '') + '<div class="card apply-option ' + (state.applyCVMethod==='upload'?'apply-option-active':'') + '" onclick="selectCVMethod(\'upload\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder Bild</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyCVMethod==='create'?'apply-option-active':'') + '" onclick="selectCVMethod(\'create\')" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(249,115,22,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Jetzt einen erstellen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Mit unserem Lebenslauf-Builder</div></div><input type="radio" name="cm" ' + (state.applyCVMethod==='create'?'checked':'') + '></div></div></div><div id="cv-detail" style="margin-top:1rem"></div>';
+    if (state.applyCVMethod === 'upload') { document.getElementById('cv-detail').innerHTML = '<div style="border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" onclick="document.getElementById(\'apply-cv-file\').click()"><input type="file" id="apply-cv-file" accept=".pdf,.doc,.docx,.jpg,.png" style="display:none" onchange="handleApplyCVFile(this)">' + (state.applyCVFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyCVFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um eine Datei hochzuladen</div>') + '</div>'; }
+    footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=1;renderApplyStep()">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' onclick="applyNextStep()">Weiter zur Vorschau</button>';
   } else if (state.applyStep === 3) {
     var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
     body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
-    footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="2">Zurück</button><button class="btn btn-primary" data-action="finalSubmitApplication">Bewerbung absenden</button>';
+    footer.innerHTML = '<button class="btn btn-outline" onclick="state.applyStep=2;renderApplyStep()">Zurück</button><button class="btn btn-primary" onclick="finalSubmitApplication()">Bewerbung absenden</button>';
   }
 }
 function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate' || m === 'upload') renderMotivationDetail(); }
@@ -1416,12 +1416,12 @@ function renderMotivationDetail() {
       '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Hast du schon Erfahrungen gesammelt? (Praktika, Jobs, Ehrenamt)</label><textarea id="motiv-erfahrung" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich habe ein Schulpraktikum bei einem Bäcker gemacht und helfe ehrenamtlich im Sportverein"></textarea></div>' +
       '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken (mit Komma trennen)</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit, Pünktlichkeit"></div>' +
       '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Ab wann bist du verfügbar?</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags ab 14 Uhr"></div>' +
-      '<button class="btn btn-primary" data-action="generateMotivationText" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
-      '<textarea id="motiv-result" class="form-textarea" rows="18" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" data-on-change="setApplyMotivation">' + (state.applyMotivation||'') + '</textarea>' +
+      '<button class="btn btn-primary" onclick="generateMotivationText()" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
+      '<textarea id="motiv-result" class="form-textarea" rows="18" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" onchange="state.applyMotivation=this.value">' + (state.applyMotivation||'') + '</textarea>' +
     '</div>';
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivation;
   } else if (state.applyMotivationMethod === 'upload') {
-    d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" data-action="triggerFileInput" data-target-id="apply-motivation-file"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" data-on-change="handleApplyMotivationFile">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
+    d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" onclick="document.getElementById(\'apply-motivation-file\').click()"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" onchange="handleApplyMotivationFile(this)">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivationFile;
   } else { d.innerHTML = ''; }
 }
@@ -2070,11 +2070,11 @@ function showShareMenu(url, text) {
   const encoded = encodeURIComponent(text + ' ' + url);
   const encodedUrl = encodeURIComponent(url);
   const html = `
-    <div id="share-menu" role="dialog" aria-modal="true" aria-label="Job teilen" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;display:flex;align-items:center;justify-content:center;padding:1rem" data-action="closeOverlay">
+    <div id="share-menu" role="dialog" aria-modal="true" aria-label="Job teilen" style="position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9998;display:flex;align-items:center;justify-content:center;padding:1rem" onclick="if(event.target===this)this.remove()">
       <div style="background:#fff;border-radius:12px;padding:1.25rem;max-width:360px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25)">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
           <strong style="font-size:1.05rem">Job teilen</strong>
-          <button class="close-btn" data-action="closeShareMenu" aria-label="Schließen">&times;</button>
+          <button class="close-btn" onclick="document.getElementById('share-menu').remove()" aria-label="Schließen">&times;</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:0.5rem">
           <a href="https://wa.me/?text=${encoded}" target="_blank" rel="noopener noreferrer" class="btn btn-block" style="background:#25D366;color:#fff;text-align:center;justify-content:center;display:flex;align-items:center;gap:0.5rem">
@@ -2089,7 +2089,7 @@ function showShareMenu(url, text) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
             X / Twitter
           </a>
-          <button class="btn btn-block btn-outline" data-action="copyJobLink" data-url="${escapeAttr(url)}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem">
+          <button class="btn btn-block btn-outline" onclick="copyJobLink('${url.replace(/'/g,"\\'")}')" style="display:flex;align-items:center;justify-content:center;gap:0.5rem">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
             Link kopieren
           </button>
@@ -2187,7 +2187,7 @@ function renderChatWidget() {
     content.innerHTML = `
       <div class="chat-list">
         ${chatList.map(c => `
-          <div class="chat-list-item" data-action="openChat" data-chat-id="${c.id}">
+          <div class="chat-list-item" onclick="openChat(${c.id})">
             <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem">${c.partnerInitials}</div>
             <div style="flex:1;min-width:0">
               <div style="font-weight:600;font-size:0.85rem">${escapeHtml(c.partnerName)}</div>
@@ -2207,7 +2207,7 @@ function renderChatWidget() {
     if (!chat) { state.activeChat = null; return renderChatWidget(); }
     content.innerHTML = `
       <div style="padding:0.5rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:0.5rem">
-        <button data-action="closeChatDetail" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
+        <button onclick="state.activeChat=null;renderChatWidget()" style="background:none;border:none;cursor:pointer;font-size:1.1rem">&#8592;</button>
         <strong style="font-size:0.85rem">${escapeHtml(chat.partnerName)}</strong>
       </div>
       <div class="chat-messages" style="flex:1;overflow-y:auto;padding:0.75rem">
@@ -2220,8 +2220,8 @@ function renderChatWidget() {
       </div>
       <div class="chat-input-area">
         <label for="chat-input" class="sr-only">Nachricht schreiben</label>
-        <input type="text" placeholder="Nachricht..." id="chat-input" data-on-keydown="chatInputEnter" aria-label="Nachricht schreiben">
-        <button data-action="sendChatMessage">→</button>
+        <input type="text" placeholder="Nachricht..." id="chat-input" onkeydown="if(event.key==='Enter')sendChatMessage()" aria-label="Nachricht schreiben">
+        <button onclick="sendChatMessage()">→</button>
       </div>`;
   }
 }
@@ -2803,8 +2803,8 @@ function renderLanding() {
         <h1 style="font-size:3.2rem;line-height:1.12;font-family:'Playfair Display',serif">Dein erster Job.<br>Ohne Stress.</h1>
         <p style="font-size:1.15rem;opacity:0.92;margin-bottom:2rem;line-height:1.7;max-width:550px">Minijobs, Ferienjobs und Praktika in deiner Nähe. Bewirb dich mit einem Klick.</p>
         <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <button class="btn btn-lg" style="background:#fff;color:#1d4ed8;font-size:1rem;padding:0.875rem 2.5rem" data-action="nav" data-page="jobs">Jobs entdecken</button>
-          <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1rem;padding:0.875rem 2rem" data-action="nav" data-page="employer-landing">Für Arbeitgeber</button>
+          <button class="btn btn-lg" style="background:#fff;color:#1d4ed8;font-size:1rem;padding:0.875rem 2.5rem" onclick="navigate('jobs')">Jobs entdecken</button>
+          <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1rem;padding:0.875rem 2rem" onclick="navigate('employer-landing')">Für Arbeitgeber</button>
         </div>
       </div>
     </div>
@@ -3024,8 +3024,8 @@ function renderLanding() {
         <h2>Worauf wartest du?</h2>
         <p>Tausende Schüler haben hier ihren ersten Job gefunden. Du bist als Nächstes dran.</p>
         <div class="cta-fullblock-buttons">
-          <button class="btn btn-lg cta-btn-primary" data-action="nav" data-page="jobs">Jobs entdecken <span class="cta-arrow">→</span></button>
-          <button class="btn btn-lg cta-btn-outline" data-action="nav" data-page="employer-landing">Für Arbeitgeber</button>
+          <button class="btn btn-lg cta-btn-primary" onclick="navigate('jobs')">Jobs entdecken <span class="cta-arrow">→</span></button>
+          <button class="btn btn-lg cta-btn-outline" onclick="navigate('employer-landing')">Für Arbeitgeber</button>
         </div>
       </div>
     </section>`;
@@ -3217,8 +3217,8 @@ function renderJobSearch() {
       <div class="search-header">
         <div class="search-bar">
           <label for="job-search-input" class="sr-only">Job-Suche</label>
-          <input type="text" id="job-search-input" placeholder="Job, Unternehmen oder Stichwort..." value="${state.filters.search}" data-on-input="searchFilter" aria-label="Nach Jobs suchen">
-          <button class="btn btn-primary" data-action="render">Suchen</button>
+          <input type="text" id="job-search-input" placeholder="Job, Unternehmen oder Stichwort..." value="${state.filters.search}" oninput="state.filters.search=this.value;render()" aria-label="Nach Jobs suchen">
+          <button class="btn btn-primary" onclick="render()">Suchen</button>
         </div>
         <div style="display:flex;align-items:center;gap:1rem">
           <span class="search-results-count" aria-live="polite">${loading ? 'Jobs werden geladen…' : jobs.length + ' Jobs gefunden'}</span>
@@ -3236,7 +3236,7 @@ function renderJobSearch() {
           (f.type ? 1 : 0);
         const isOpen = !!state.mobileFiltersOpen;
         return `
-        <button class="mobile-filter-toggle" data-action="toggleMobileFilters" aria-expanded="${isOpen}" aria-controls="search-sidebar">
+        <button class="mobile-filter-toggle" onclick="state.mobileFiltersOpen=!state.mobileFiltersOpen;render()" aria-expanded="${isOpen}" aria-controls="search-sidebar">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
           <span>Filter${activeCount > 0 ? ` <span class="mobile-filter-count">${activeCount}</span>` : ''}</span>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="margin-left:auto;transition:transform 0.2s;transform:rotate(${isOpen ? '180deg' : '0deg'})"><polyline points="6 9 12 15 18 9"/></svg>
@@ -3249,7 +3249,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4 id="addr-filter-heading">Deine Adresse</h4>
-            <input type="text" class="form-input" id="address-filter-input" placeholder="Straße + PLZ + Stadt (z.B. Hauptstr. 1, 40213 Düsseldorf)" value="${state.filters.address || ''}" aria-labelledby="addr-filter-heading" data-on-input="addressFilter" data-on-keydown="addressFilterEnter">
+            <input type="text" class="form-input" id="address-filter-input" placeholder="Straße + PLZ + Stadt (z.B. Hauptstr. 1, 40213 Düsseldorf)" value="${state.filters.address || ''}" aria-labelledby="addr-filter-heading" oninput="state.filters.address=this.value;clearTimeout(window._addrTimer);window._addrTimer=setTimeout(recomputeDistancesAndRender,800)" onkeydown="if(event.key==='Enter'){event.preventDefault();clearTimeout(window._addrTimer);recomputeDistancesAndRender();}">
             <p style="font-size:0.7rem;color:${state.geoLoading ? 'var(--primary)' : 'var(--gray-400)'};margin-top:0.3rem;display:flex;align-items:center;gap:0.35rem">
               ${state.geoLoading
                 ? '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" style="animation:initial-spin 0.8s linear infinite"><path d="M21 12a9 9 0 11-6.22-8.56"/></svg> Entfernungen werden berechnet…'
@@ -3259,7 +3259,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Kategorie</h4>
-            <select class="form-select" data-on-change="setFilterCategory">
+            <select class="form-select" onchange="state.filters.category=this.value;render()">
               <option value="">Alle Kategorien</option>
               ${CATEGORIES.map(c => `<option value="${c.name}" ${state.filters.category===c.name?'selected':''}>${c.icon} ${c.name} (${c.count})</option>`).join('')}
             </select>
@@ -3267,7 +3267,7 @@ function renderJobSearch() {
 
           <div class="filter-section">
             <h4>Stadt</h4>
-            <select class="form-select" data-on-change="setFilterCity">
+            <select class="form-select" onchange="state.filters.city=this.value;render()">
               <option value="">Alle Städte</option>
               ${[...new Set(JOBS.map(j => j.city).filter(Boolean))].sort().map(c => `<option value="${escapeAttr(c)}" ${state.filters.city===c?'selected':''}>${escapeHtml(c)}</option>`).join('')}
             </select>
@@ -3277,21 +3277,21 @@ function renderJobSearch() {
             <h4>Stunden pro Woche</h4>
             <div style="display:flex;flex-wrap:wrap;gap:0.4rem">
               ${[6,7,8,9,10,11,12].map(h => `<label style="display:flex;align-items:center;gap:0.3rem;font-size:0.85rem;cursor:pointer">
-                <input type="checkbox" ${state.filters.hours.includes(h)?'checked':''} data-on-change="toggleHoursFilter" data-hours="${h}"> ${h}
+                <input type="checkbox" ${state.filters.hours.includes(h)?'checked':''} onchange="toggleHoursFilter(${h})"> ${h}
               </label>`).join('')}
             </div>
           </div>
 
           <div class="filter-section">
             <h4>Umkreis: ${state.filters.radius >= 50 ? '50+ km' : state.filters.radius + ' km'}</h4>
-            <input type="range" class="range-slider" min="5" max="50" step="5" value="${state.filters.radius}" data-on-input="setFilterRadius">
+            <input type="range" class="range-slider" min="5" max="50" step="5" value="${state.filters.radius}" oninput="state.filters.radius=parseInt(this.value);render()">
             <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500)">
               <span>5 km</span><span>25 km</span><span>50+ km</span>
             </div>
           </div>
 
-          <button class="btn btn-primary btn-block" data-action="applyFilters">Filter anwenden</button>
-          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-500);margin-top:0.25rem" data-action="resetFilters">Filter zurücksetzen</button>
+          <button class="btn btn-primary btn-block" onclick="recomputeDistancesAndRender()">Filter anwenden</button>
+          <button class="btn btn-ghost btn-block" style="font-size:0.8rem;color:var(--gray-500);margin-top:0.25rem" onclick="state.filters={search:'',category:'',type:'',radius:50,hours:[],city:'',sort:'date',address:''};recomputeDistancesAndRender()">Filter zurücksetzen</button>
         </aside>
 
         ${loading ? skeletonJobGrid(6) : `
@@ -3311,7 +3311,7 @@ function renderJobSearch() {
 function renderJobCard(j) {
   const saved = state.savedJobs.includes(j.id);
   return `
-    <div class="job-card ${j.promoted ? 'promoted' : ''}" data-action="navToJob" data-job-id="${j.id}">
+    <div class="job-card ${j.promoted ? 'promoted' : ''}" onclick="navigate('job-detail', {jobId: ${j.id}})">
       ${j.promoted ? '<div class="promoted-badge">&#9733; Hervorgehoben</div>' : ''}
       <div class="job-card-left">
         <div class="job-card-header">
@@ -3355,7 +3355,7 @@ function renderJobCard(j) {
             ${j.views || 0}
           </div>
         </div>
-        <button class="save-btn ${saved ? 'saved' : ''}" data-action="toggleSaveJob" data-job-id="${j.id}" title="${saved ? 'Gespeichert' : 'Speichern'}" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}">
+        <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${j.id}, event)" title="${saved ? 'Gespeichert' : 'Speichern'}" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="${saved ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
       </div>
@@ -3610,7 +3610,7 @@ function renderJobDetail() {
   const saved = state.savedJobs.includes(job.id);
   return `
     <div class="page">
-      <button class="btn btn-ghost mb-2" data-action="nav" data-page="jobs">&#8592; Zurück zur Suche</button>
+      <button class="btn btn-ghost mb-2" onclick="navigate('jobs')">&#8592; Zurück zur Suche</button>
       <div class="job-detail-layout">
         <div class="job-detail-main">
           <div class="job-detail-header">
@@ -3623,10 +3623,10 @@ function renderJobDetail() {
                 </div>
               </div>
               <div style="display:flex;gap:0.5rem;align-items:center">
-                <button class="save-btn" data-action="shareJob" data-job-id="${job.id}" style="font-size:1.25rem;background:none;border:none;cursor:pointer;padding:0.35rem" aria-label="Job teilen" title="Job teilen">
+                <button class="save-btn" onclick="shareJob(${job.id})" style="font-size:1.25rem;background:none;border:none;cursor:pointer;padding:0.35rem" aria-label="Job teilen" title="Job teilen">
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
                 </button>
-                <button class="save-btn ${saved ? 'saved' : ''}" data-action="toggleSaveJob" data-job-id="${job.id}" style="font-size:1.5rem" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '♥' : '♡'}</span></button>
+                <button class="save-btn ${saved ? 'saved' : ''}" onclick="toggleSaveJob(${job.id})" style="font-size:1.5rem" aria-label="${saved ? 'Job entfernen' : 'Job speichern'}" aria-pressed="${saved}"><span aria-hidden="true">${saved ? '♥' : '♡'}</span></button>
               </div>
             </div>
             <div class="job-detail-badges">
@@ -3694,10 +3694,8 @@ function renderJobDetail() {
                   hasActiveJob ? 'Du hast bereits einen aktiven Job' :
                   maxApps ? 'Max. 3 Bewerbungen erreicht' :
                   'Jetzt bewerben';
-                const dataAction = !state.user
-                  ? 'data-action="nav" data-page="login"'
-                  : `data-action="submitApplication" data-job-id="${job.id}"`;
-                return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" ${dataAction} ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
+                const action = !state.user ? `navigate('login')` : `submitApplication(${job.id})`;
+                return `<button class="btn btn-primary btn-block btn-lg" id="apply-btn-${job.id}" onclick="${action}" ${disabled ? 'disabled style="opacity:0.6;cursor:not-allowed"' : ''}>${label}</button>`;
               })()}
 
               <div style="margin-top:1.5rem">
@@ -3730,7 +3728,7 @@ function renderLogin() {
       <div class="auth-card fade-in">
         <h2>Willkommen zurück!</h2>
         <p class="subtitle">Melde dich an, um fortzufahren.</p>
-        <form data-on-submit="loginForm">
+        <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
@@ -3743,10 +3741,10 @@ function renderLogin() {
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:0.75rem">
-          <a href="#" data-action="showForgotPassword" style="color:var(--gray-600)">Passwort vergessen?</a>
+          <a href="#" onclick="event.preventDefault();showForgotPassword()" style="color:var(--gray-600)">Passwort vergessen?</a>
         </p>
         <div class="auth-divider">oder</div>
-        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" data-action="nav" data-page="register" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
+        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" onclick="navigate('register')" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
       </div>
     </div>`;
 }
@@ -3757,16 +3755,16 @@ function renderRegister() {
       <div class="auth-card fade-in">
         <h2>Konto erstellen</h2>
         <p class="subtitle">Registriere dich kostenlos und leg los.</p>
-        <form data-on-submit="registerForm">
+        <form onsubmit="event.preventDefault(); submitRegister(this)">
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
-              <div class="role-option selected" data-action="selectRole" data-role="worker" data-role="worker">
+              <div class="role-option selected" onclick="selectRole(this, 'worker')" data-role="worker">
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
-              <div class="role-option" data-action="selectRole" data-role="employer" data-role="employer">
+              <div class="role-option" onclick="selectRole(this, 'employer')" data-role="employer">
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
@@ -3800,7 +3798,7 @@ function renderRegister() {
           ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
         </form>
-        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" data-action="nav" data-page="login" style="color:var(--primary);font-weight:600">Anmelden</a></p>
+        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
       </div>
     </div>`;
 }
@@ -3899,8 +3897,8 @@ function renderWorkerDashboard() {
                   </div>
                 </div>
                 <div style="display:flex;gap:0.5rem;flex-shrink:0">
-                  ${job ? `<button class="btn btn-sm btn-outline" data-action="navToJob" data-job-id="${job.id}">Details</button>` : ''}
-                  <button class="btn btn-sm btn-primary" style="background:var(--danger);border-color:var(--danger)" data-action="confirmEndActiveJob">Job beenden</button>
+                  ${job ? `<button class="btn btn-sm btn-outline" onclick="navigate('job-detail',{jobId:${job.id}})">Details</button>` : ''}
+                  <button class="btn btn-sm btn-primary" style="background:var(--danger);border-color:var(--danger)" onclick="if(confirm('Möchtest du diesen Job wirklich beenden?')) endActiveJob()">Job beenden</button>
                 </div>
               </div>
             </div>`;
@@ -3910,7 +3908,7 @@ function renderWorkerDashboard() {
           <div class="worker-dash-grid">
 
             <!-- Nachrichten -->
-            <div class="worker-dash-tile" data-action="nav" data-page="messages">
+            <div class="worker-dash-tile" onclick="navigate('messages')">
               <div class="wdt-header">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 <span>Nachrichten</span>
@@ -3928,14 +3926,14 @@ function renderWorkerDashboard() {
             </div>
 
             <!-- Gespeicherte Jobs -->
-            <div class="worker-dash-tile" data-action="nav" data-page="saved-jobs">
+            <div class="worker-dash-tile" onclick="navigate('saved-jobs')">
               <div class="wdt-header">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 <span>Gespeicherte Jobs</span>
                 <span class="wdt-badge">${state.savedJobs.length}</span>
               </div>
               ${saved.length > 0 ? saved.map(j => `
-                <div class="wdt-job-row" data-action="navToJob" data-job-id="${j.id}">
+                <div class="wdt-job-row" onclick="event.stopPropagation();navigate('job-detail',{jobId:${j.id}})">
                   <div class="wdt-job-logo">${escapeHtml(j.company?.[0])}</div>
                   <div class="wdt-job-info">
                     <div class="wdt-job-title">${escapeHtml(j.title)}</div>
@@ -3954,12 +3952,12 @@ function renderWorkerDashboard() {
               </div>
               <p class="wdt-cv-hint">${state.user.cvUploaded ? 'Dein Lebenslauf ist für Arbeitgeber sichtbar.' : 'Lade deinen Lebenslauf hoch damit Arbeitgeber dich finden.'}</p>
               <div style="display:flex;gap:0.5rem;flex-direction:column;margin-top:0.75rem">
-                <button class="btn btn-primary btn-sm" data-action="nav" data-page="cv-builder">
+                <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();navigate('cv-builder')">
                   ${state.user.cvUploaded ? 'Lebenslauf bearbeiten' : 'Lebenslauf erstellen'}
                 </button>
                 <label class="btn btn-outline btn-sm" style="cursor:pointer;text-align:center">
                   PDF hochladen
-                  <input type="file" accept=".pdf,.doc,.docx" style="display:none" data-on-change="handleUploadCV">
+                  <input type="file" accept=".pdf,.doc,.docx" style="display:none" onchange="uploadCV(this)">
                 </label>
               </div>
             </div>
@@ -3978,7 +3976,7 @@ function renderWorkerDashboard() {
             </div>
             <div class="pprogress-steps-row">
               ${todo.map(s => `
-                <div class="pprogress-step-pill" ${s.page ? `data-action="navToSection" data-page="${s.page}" data-section="${s.section||''}"` : ''}>
+                <div class="pprogress-step-pill" onclick="${s.page ? `navigateToSection('${s.page}','${s.section||''}')` : ''}">
                   <span class="pprogress-step-dot"></span>
                   <span>${s.label}</span>
                   <span class="pprogress-step-pct">+${s.pct}%</span>
@@ -4032,18 +4030,18 @@ function renderWorkerSidebar(active) {
   return `
     <div class="dashboard-sidebar">
       <nav class="sidebar-nav">
-        <a href="#" class="${active==='dashboard'?'active':''}" data-action="nav" data-page="worker-dashboard">Dashboard</a>
-        <a href="#" class="${active==='profile-view'?'active':''}" data-action="nav" data-page="worker-profile-view">Mein Profil</a>
-        <a href="#" class="${active==='saved'?'active':''}" data-action="nav" data-page="saved-jobs">Gespeicherte Jobs</a>
-        <a href="#" class="${active==='applications'?'active':''}" data-action="nav" data-page="applications">Bewerbungen</a>
-        <a href="#" class="${active==='cv'?'active':''}" data-action="nav" data-page="cv-builder">Lebenslauf</a>
+        <a href="#" class="${active==='dashboard'?'active':''}" onclick="navigate('worker-dashboard')">Dashboard</a>
+        <a href="#" class="${active==='profile-view'?'active':''}" onclick="navigate('worker-profile-view')">Mein Profil</a>
+        <a href="#" class="${active==='saved'?'active':''}" onclick="navigate('saved-jobs')">Gespeicherte Jobs</a>
+        <a href="#" class="${active==='applications'?'active':''}" onclick="navigate('applications')">Bewerbungen</a>
+        <a href="#" class="${active==='cv'?'active':''}" onclick="navigate('cv-builder')">Lebenslauf</a>
         <div class="divider"></div>
-        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten</a>
-        <a href="#" class="${active==='reviews'?'active':''}" data-action="nav" data-page="reviews">Bewertungen</a>
+        <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='reviews'?'active':''}" onclick="navigate('reviews')">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
       <nav class="sidebar-nav">
-        <a href="#" class="${active==='support'?'active':''}" data-action="nav" data-page="support" style="font-size:0.82rem;opacity:0.6">Support</a>
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')" style="font-size:0.82rem;opacity:0.6">Support</a>
       </nav>
     </div>`;
 }
@@ -4081,7 +4079,7 @@ function renderWorkerProfileView() {
   const refs      = u.refs       || [];
 
   const missingTag = (label, step) =>
-    `<span class="pv-missing-chip" data-action="gotoProfileAndNav" data-step="${step}">+ ${label} hinzufügen</span>`;
+    `<span class="pv-missing-chip" onclick="state.profileStep=${step};navigate('worker-profile')">+ ${label} hinzufügen</span>`;
 
   return `
     <div class="page">
@@ -4093,7 +4091,7 @@ function renderWorkerProfileView() {
           <div class="pv-banner">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
             So sieht dein Profil für Arbeitgeber aus
-            <button class="btn btn-sm btn-outline" style="margin-left:auto" data-action="gotoProfileStep" data-step="0" data-then-nav="worker-profile">
+            <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.profileStep=0;navigate('worker-profile')">
               Profil bearbeiten
             </button>
           </div>
@@ -4183,7 +4181,7 @@ function renderWorkerProfileView() {
                        <span>${escapeHtml(u.cvFileName || 'Lebenslauf')}</span>`
                     : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                        <span>Kein Lebenslauf</span>
-                       <button class="pv-edit-btn" data-action="gotoProfileStep" data-step="1" data-then-nav="worker-profile">Hochladen</button>`}
+                       <button class="pv-edit-btn" onclick="state.profileStep=1;navigate('worker-profile')">Hochladen</button>`}
                 </div>
                 <div class="epc-doc-row ${u.docsUploaded ? 'ok' : 'missing'}">
                   ${u.docsUploaded
@@ -4191,7 +4189,7 @@ function renderWorkerProfileView() {
                        <span>Zeugnis hochgeladen</span>`
                     : `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-300)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                        <span>Kein Zeugnis</span>
-                       <button class="pv-edit-btn" data-action="gotoProfileStep" data-step="2" data-then-nav="worker-profile">Hochladen</button>`}
+                       <button class="pv-edit-btn" onclick="state.profileStep=2;navigate('worker-profile')">Hochladen</button>`}
                 </div>
               </div>
             </div>
@@ -4245,7 +4243,7 @@ function renderWorkerProfile() {
     <div class="form-group">
       <label class="form-label">Suchradius: <strong id="radius-label">${u.radius || 15} km</strong></label>
       <input type="range" class="range-slider" min="5" max="50" step="5" value="${u.radius || 15}"
-        data-on-input="radiusLabel">
+        oninput="document.getElementById('radius-label').textContent=this.value+' km'">
       <div style="display:flex;justify-content:space-between;font-size:0.75rem;color:var(--gray-500);margin-top:0.25rem">
         <span>5 km</span><span>25 km</span><span>50 km</span>
       </div>
@@ -4258,10 +4256,10 @@ function renderWorkerProfile() {
       <div class="upload-success-bar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         <span>${escapeHtml(u.cvFileName || 'Lebenslauf hochgeladen')}</span>
-        <button class="btn btn-sm btn-outline" style="margin-left:auto" data-action="clearUserFlag">Entfernen</button>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.cvUploaded=false;render()">Entfernen</button>
       </div>
       <p style="margin-top:1rem;font-size:0.85rem;color:var(--gray-500);text-align:center">
-        <a href="#" data-action="nav" data-page="cv-builder" style="color:var(--primary);font-weight:600">Mit dem Builder bearbeiten</a>
+        <a href="#" onclick="navigate('cv-builder')" style="color:var(--primary);font-weight:600">Mit dem Builder bearbeiten</a>
       </p>` : `
       <div class="cv-upload-area">
         <div class="cv-upload-option">
@@ -4269,12 +4267,12 @@ function renderWorkerProfile() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <span>PDF hochladen</span>
             <small>PDF oder DOC, max. 5 MB</small>
-            <input type="file" accept=".pdf,.doc,.docx" style="display:none" data-on-change="handleUploadCV">
+            <input type="file" accept=".pdf,.doc,.docx" style="display:none" onchange="uploadCV(this)">
           </label>
         </div>
         <div class="cv-upload-divider">oder</div>
         <div class="cv-upload-option">
-          <button class="cv-upload-btn" data-action="nav" data-page="cv-builder">
+          <button class="cv-upload-btn" onclick="navigate('cv-builder')">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
             <span>Mit Builder erstellen</span>
             <small>Vorlage ausfüllen & fertig</small>
@@ -4289,7 +4287,7 @@ function renderWorkerProfile() {
       <div class="upload-success-bar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         <span>Dokument hochgeladen</span>
-        <button class="btn btn-sm btn-outline" style="margin-left:auto" data-action="clearUserFlag">Entfernen</button>
+        <button class="btn btn-sm btn-outline" style="margin-left:auto" onclick="state.user.docsUploaded=false;render()">Entfernen</button>
       </div>` : `
       <div class="cv-upload-area">
         <div class="cv-upload-option">
@@ -4297,7 +4295,7 @@ function renderWorkerProfile() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
             <span>Datei hochladen</span>
             <small>PDF, JPG oder PNG</small>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none" data-on-change="handleDocScanned">
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" multiple style="display:none" onchange="docScanned(this)">
           </label>
         </div>
         <div class="cv-upload-divider">oder</div>
@@ -4306,7 +4304,7 @@ function renderWorkerProfile() {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             <span>Mit Kamera scannen</span>
             <small>Direkt fotografieren</small>
-            <input type="file" accept="image/*" capture="environment" style="display:none" data-on-change="handleDocScanned">
+            <input type="file" accept="image/*" capture="environment" style="display:none" onchange="docScanned(this)">
           </label>
         </div>
       </div>`}`,
@@ -4317,7 +4315,7 @@ function renderWorkerProfile() {
     <div class="form-group">
       <label class="form-label">Deine Top-3 Stärken <span style="color:var(--gray-500);font-weight:400;font-size:0.8rem">(max. 3 wählbar)</span></label>
       <div class="checkbox-group">
-        ${SKILLS.map(s => `<label class="checkbox-label"><input type="checkbox" ${u.skills?.includes(s)?'checked':''} data-on-change="limitSkills"> <span>${s}</span></label>`).join('')}
+        ${SKILLS.map(s => `<label class="checkbox-label"><input type="checkbox" ${u.skills?.includes(s)?'checked':''} onchange="limitSkills(this,3)"> <span>${s}</span></label>`).join('')}
       </div>
     </div>
     <div class="form-group" style="margin-top:1.25rem">
@@ -4326,10 +4324,10 @@ function renderWorkerProfile() {
         ${(u.refs||[]).map((r,i) => `
           <div style="display:flex;align-items:center;gap:0.5rem;padding:0.55rem 0.75rem;background:var(--gray-50);border-radius:8px;margin-bottom:0.4rem;font-size:0.88rem">
             <span style="flex:1">${escapeHtml(r)}</span>
-            <button class="btn btn-sm btn-ghost" data-action="removeRef" data-index="${i}">✕</button>
+            <button class="btn btn-sm btn-ghost" onclick="removeRef(${i})">✕</button>
           </div>`).join('')}
       </div>
-      <button class="btn btn-outline btn-sm" data-action="addRef">+ Referenz hinzufügen</button>
+      <button class="btn btn-outline btn-sm" onclick="addRef()">+ Referenz hinzufügen</button>
     </div>
     <div class="form-group" style="margin-top:1.25rem">
       <label class="form-label">Wochenstunden</label>
@@ -4356,7 +4354,7 @@ function renderWorkerProfile() {
           <!-- Schritt-Indikatoren -->
           <div class="profile-step-indicators">
             ${PROFILE_STEPS.map((s,i) => `
-              <div class="psi-item ${i===step?'active':''} ${i<step?'done':''}" data-action="gotoProfileStep" data-step="${i}">
+              <div class="psi-item ${i===step?'active':''} ${i<step?'done':''}" onclick="gotoProfileStep(${i})">
                 <div class="psi-dot">
                   ${i < step
                     ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`
@@ -4376,11 +4374,11 @@ function renderWorkerProfile() {
           <!-- Navigation -->
           <div class="profile-step-nav">
             ${step > 0
-              ? `<button class="btn btn-outline" data-action="prevProfileStep">← Zurück</button>`
-              : `<button class="btn btn-outline" data-action="nav" data-page="worker-dashboard">← Dashboard</button>`}
+              ? `<button class="btn btn-outline" onclick="gotoProfileStep(Math.max(0,state.profileStep-1))">← Zurück</button>`
+              : `<button class="btn btn-outline" onclick="navigate('worker-dashboard')">← Dashboard</button>`}
             ${step < total-1
-              ? `<button class="btn btn-primary" data-action="nextProfileStep">Weiter →</button>`
-              : `<button class="btn btn-primary" data-action="finishProfileSetup">✓ Profil speichern</button>`}
+              ? `<button class="btn btn-primary" onclick="nextProfileStep()">Weiter →</button>`
+              : `<button class="btn btn-primary" onclick="finishProfileSetup()">✓ Profil speichern</button>`}
           </div>
 
         </div>
@@ -4540,7 +4538,7 @@ function renderSavedJobs() {
               <div class="empty-state-icon"></div>
               <h3>Keine gespeicherten Jobs</h3>
               <p>Speichere interessante Jobs, um sie später wiederzufinden.</p>
-              <button class="btn btn-primary" data-action="nav" data-page="jobs">Jobs entdecken</button>
+              <button class="btn btn-primary" onclick="navigate('jobs')">Jobs entdecken</button>
             </div>
           `}
         </div>
@@ -4590,7 +4588,7 @@ function renderApplications() {
           ${myApps.length > 0 ? `
           <div class="jobs-grid">
             ${myApps.map(a => `
-              <div class="card" style="cursor:pointer" data-action="navToJob" data-job-id="${a.job.id}">
+              <div class="card" style="cursor:pointer" onclick="navigate('job-detail', {jobId: ${a.job.id}})">
                 <div class="card-body" style="display:flex;justify-content:space-between;align-items:center">
                   <div style="display:flex;align-items:center;gap:1rem">
                     ${companyLogoHtml(a.job.companyLogo, a.job.company)}
@@ -4611,7 +4609,7 @@ function renderApplications() {
             <div style="font-size:3rem;margin-bottom:1rem">&#128196;</div>
             <h3>Noch keine Bewerbungen</h3>
             <p style="color:var(--gray-500);margin-bottom:1.5rem">Finde passende Jobs und bewirb dich mit einem Klick.</p>
-            <button class="btn btn-primary" data-action="nav" data-page="jobs">Jobs finden</button>
+            <button class="btn btn-primary" onclick="navigate('jobs')">Jobs finden</button>
           </div>`}
         </div>
       </div>
@@ -4630,7 +4628,7 @@ function renderCVBuilder() {
           <div style="margin-bottom:1.5rem">
             <h3 style="font-size:1.05rem;margin-bottom:0.75rem">Vorlage wählen</h3>
             <div class="cv-templates">
-              <div class="cv-template selected" data-template="modern" data-action="selectCvTemplate">
+              <div class="cv-template selected" data-template="modern" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
                   <div style="display:flex;height:100%">
                     <div style="width:34%;background:#1e3a5f;color:#fff;padding:4% 4%;display:flex;flex-direction:column">
@@ -4677,7 +4675,7 @@ function renderCVBuilder() {
                 </div>
                 <div class="cv-template-name">Modern</div>
               </div>
-              <div class="cv-template" data-template="classic" data-action="selectCvTemplate">
+              <div class="cv-template" data-template="classic" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;padding:4% 5%;font-family:Georgia,serif;background:#fff">
                   <div style="display:flex;align-items:center;gap:3%;border-bottom:1.5px double #111;padding-bottom:2%;margin-bottom:2.5%">
                     <div style="width:14%;aspect-ratio:1;border-radius:2px;background:var(--gray-100);border:1px dashed var(--gray-300)"></div>
@@ -4704,7 +4702,7 @@ function renderCVBuilder() {
                 </div>
                 <div class="cv-template-name">Klassisch</div>
               </div>
-              <div class="cv-template" data-template="creative" data-action="selectCvTemplate">
+              <div class="cv-template" data-template="creative" onclick="document.querySelectorAll('.cv-template').forEach(el=>el.classList.remove('selected'));this.classList.add('selected')">
                 <div class="cv-preview" style="overflow:hidden;font-family:Inter,sans-serif;padding:0">
                   <div style="background:linear-gradient(135deg,#3b82f6,#93c5fd);padding:3% 5%;display:flex;align-items:center;gap:3%;color:#fff">
                     <div style="width:15%;aspect-ratio:1;border-radius:50%;background:rgba(255,255,255,0.15);border:1px dashed rgba(255,255,255,0.3)"></div>
@@ -4749,8 +4747,8 @@ function renderCVBuilder() {
 
               <!-- Foto-Upload -->
               <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;padding-bottom:1.5rem;border-bottom:1px solid var(--gray-200)">
-                <div id="cv-photo-preview" data-action="triggerFileInput" data-target-id="cv-photo-input" style="width:80px;height:80px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--gray-300);overflow:hidden;flex-shrink:0;transition:all 0.2s;${state.cvPhoto ? 'background-image:url('+state.cvPhoto+');background-size:cover;background-position:center;border-style:solid;border-color:var(--primary)' : ''}">${state.cvPhoto ? '' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'}</div>
-                <input type="file" id="cv-photo-input" accept="image/*" style="display:none" data-on-change="handleCVPhoto">
+                <div id="cv-photo-preview" onclick="document.getElementById('cv-photo-input').click()" style="width:80px;height:80px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px dashed var(--gray-300);overflow:hidden;flex-shrink:0;transition:all 0.2s;${state.cvPhoto ? 'background-image:url('+state.cvPhoto+');background-size:cover;background-position:center;border-style:solid;border-color:var(--primary)' : ''}" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='${state.cvPhoto ? 'var(--primary)' : 'var(--gray-300)'}'">${state.cvPhoto ? '' : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>'}</div>
+                <input type="file" id="cv-photo-input" accept="image/*" style="display:none" onchange="handleCVPhoto(this)">
                 <div>
                   <div style="font-weight:600;font-size:0.95rem">Bewerbungsfoto</div>
                   <div style="font-size:0.8rem;color:var(--gray-500)">Klicke auf den Kreis, um ein Foto hochzuladen</div>
@@ -4819,13 +4817,13 @@ function renderCVBuilder() {
               </div>
             </div>
             <div class="card-footer" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem">
-              <button class="btn btn-outline" data-action="previewCV">Vorschau anzeigen</button>
+              <button class="btn btn-outline" onclick="previewCV()">Vorschau anzeigen</button>
               <div style="display:flex;gap:0.5rem">
-                <button class="btn btn-outline" data-action="downloadCV">
+                <button class="btn btn-outline" onclick="downloadCV()">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.3rem"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                   Herunterladen
                 </button>
-                <button class="btn btn-primary" data-action="addCVToProfile">
+                <button class="btn btn-primary" onclick="addCVToProfile()">
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.3rem"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   Zum Profil hinzufügen
                 </button>
@@ -4850,8 +4848,8 @@ function renderEmployerLanding() {
           <h1>Junge Talente.<br>Direkt erreichen.</h1>
           <p>Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
           <div class="eh2-buttons">
-            <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten</button>
-            <button class="btn btn-lg cta-btn-outline" data-action="scrollToSection" data-target="emp-cascade-wrap">So funktioniert's</button>
+            <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten</button>
+            <button class="btn btn-lg cta-btn-outline" onclick="document.getElementById('emp-cascade-wrap').scrollIntoView({behavior:'smooth'})">So funktioniert's</button>
           </div>
         </div>
         <div class="eh2-visual">
@@ -5044,8 +5042,8 @@ function renderEmployerLanding() {
           <p>Anzeige schalten dauert fünf Minuten. Kostenlos, unverbindlich, ohne Kleingedrucktes.</p>
         </div>
         <div class="eh-cta-actions">
-          <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
-          <a href="#" data-action="nav" data-page="register" class="eh-cta-link">oder Konto erstellen</a>
+          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
+          <a href="#" onclick="navigate('register');return false;" class="eh-cta-link">oder Konto erstellen</a>
         </div>
       </div>
     </section>`;
@@ -5098,7 +5096,7 @@ function renderEmployerDashboard() {
               <h2 class="dashboard-title" style="margin-bottom:0.15rem">Willkommen, ${escapeHtml(state.user.name?.split(' ')[0])}!</h2>
               <p style="font-size:0.85rem;color:var(--gray-500);margin:0">${state.user.company ? escapeHtml(state.user.company) + ' – ' : ''}Verwalte deine Stellenanzeigen und Bewerbungen</p>
             </div>
-            <button class="btn btn-employer" data-action="goPostJob" ${!state.user.approved ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>+ Neue Anzeige schalten</button>
+            <button class="btn btn-employer" onclick="goPostJob()" ${!state.user.approved ? 'disabled style="opacity:0.5;cursor:not-allowed"' : ''}>+ Neue Anzeige schalten</button>
           </div>
 
           ${!state.user.approved ? `
@@ -5153,7 +5151,7 @@ function renderEmployerDashboard() {
                   </div>
                   <div style="display:flex;align-items:center;gap:0.5rem">
                     <span class="badge badge-success">Aktiv</span>
-                    <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" data-action="deletePostedJob" data-job-id="${j.id}">Löschen</button>
+                    <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="event.stopPropagation();deletePostedJob('${j.id}')">Löschen</button>
                   </div>
                 </div>
               </div>
@@ -5163,7 +5161,7 @@ function renderEmployerDashboard() {
             <div style="font-size:3rem;margin-bottom:1rem">&#9962;</div>
             <h3>Noch keine Anzeigen</h3>
             <p style="color:var(--gray-500);margin-bottom:1.5rem">Schalte deine erste Stellenanzeige und finde passende Mitarbeiter.</p>
-            <button class="btn btn-employer" data-action="goPostJob">+ Erste Anzeige erstellen</button>
+            <button class="btn btn-employer" onclick="goPostJob()">+ Erste Anzeige erstellen</button>
           </div>`}
         </div>
       </div>
@@ -5174,17 +5172,17 @@ function renderEmployerSidebar(active) {
   return `
     <div class="dashboard-sidebar">
       <nav class="sidebar-nav">
-        <a href="#" class="${active==='dashboard'?'active':''}" data-action="nav" data-page="employer-dashboard">Dashboard</a>
-        <a href="#" class="${active==='post'?'active':''}" data-action="goPostJob">Anzeige schalten</a>
-        <a href="#" class="${active==='applicants'?'active':''}" data-action="nav" data-page="applicants">Bewerber</a>
-        <a href="#" class="${active==='profile'?'active':''}" data-action="nav" data-page="employer-profile">Unternehmensprofil</a>
+        <a href="#" class="${active==='dashboard'?'active':''}" onclick="navigate('employer-dashboard')">Dashboard</a>
+        <a href="#" class="${active==='post'?'active':''}" onclick="goPostJob()">Anzeige schalten</a>
+        <a href="#" class="${active==='applicants'?'active':''}" onclick="navigate('applicants')">Bewerber</a>
+        <a href="#" class="${active==='profile'?'active':''}" onclick="navigate('employer-profile')">Unternehmensprofil</a>
         <div class="divider"></div>
-        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten</a>
-        <a href="#" class="${active==='reviews'?'active':''}" data-action="nav" data-page="reviews">Bewertungen</a>
+        <a href="#" class="${active==='messages'?'active':''}" onclick="navigate('messages')">Nachrichten</a>
+        <a href="#" class="${active==='reviews'?'active':''}" onclick="navigate('reviews')">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
       <nav class="sidebar-nav">
-        <a href="#" class="${active==='support'?'active':''}" data-action="nav" data-page="support" style="font-size:0.82rem;opacity:0.6">Support</a>
+        <a href="#" class="${active==='support'?'active':''}" onclick="navigate('support')" style="font-size:0.82rem;opacity:0.6">Support</a>
       </nav>
     </div>`;
 }
@@ -5273,7 +5271,7 @@ function renderPostJob() {
       <h2 style="margin-bottom:0.5rem">Account noch nicht freigeschaltet</h2>
       <p style="color:var(--gray-500);margin-bottom:1.5rem">Dein Arbeitgeber-Account muss zuerst von einem Administrator freigeschaltet werden, bevor du Stellenanzeigen veröffentlichen kannst.</p>
       <p style="color:var(--gray-500);font-size:0.85rem">Du wirst benachrichtigt, sobald dein Account freigegeben wurde.</p>
-      <button class="btn btn-primary" style="margin-top:1.5rem" data-action="nav" data-page="employer-dashboard">Zurück zum Dashboard</button>
+      <button class="btn btn-primary" style="margin-top:1.5rem" onclick="navigate('employer-dashboard')">Zurück zum Dashboard</button>
     </div>`;
   }
   const step = state.wizardStep;
@@ -5302,12 +5300,12 @@ function renderPostJob() {
 
       <div class="wizard-footer">
         ${step === 0
-          ? `<button class="btn btn-outline" data-action="nav" data-page="employer-dashboard">&#8592; Dashboard</button>`
-          : `<button class="btn btn-outline" data-action="prevWizardStep">&#8592; Zurück</button>`}
+          ? `<button class="btn btn-outline" onclick="navigate('employer-dashboard')">&#8592; Dashboard</button>`
+          : `<button class="btn btn-outline" onclick="state.wizardStep=Math.max(0,state.wizardStep-1);render()">&#8592; Zurück</button>`}
         ${step < 4 ? `
-          <button class="btn btn-primary" data-action="validateWizardStep">Weiter &#8594;</button>
+          <button class="btn btn-primary" onclick="validateWizardStep()">Weiter &#8594;</button>
         ` : `
-          <button class="btn btn-success btn-lg" data-action="publishJob">✓ Veröffentlichen</button>
+          <button class="btn btn-success btn-lg" onclick="publishJob()">✓ Veröffentlichen</button>
         `}
       </div>
     </div>`;
@@ -5366,7 +5364,7 @@ function renderWizardStep1() {
         <strong style="font-size:0.9rem">KI-Unterstützung</strong>
       </div>
       <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.75rem">Lass die KI deine Stellenanzeige basierend auf den Grundinfos vorgenerieren.</p>
-      <button class="btn btn-primary btn-sm" id="ai-gen-btn" data-action="aiGenerateJob">Mit KI generieren</button>
+      <button class="btn btn-primary btn-sm" id="ai-gen-btn" onclick="aiGenerateJob(this)">Mit KI generieren</button>
     </div>`;
 }
 
@@ -5406,7 +5404,7 @@ function renderWizardStep3() {
         ${imgs.map((img, i) => {
           const selected = state.selectedJobImages.includes(i);
           return `
-          <button type="button" data-action="toggleJobImage" data-index="${i}" aria-pressed="${selected}" aria-label="Bild ${i+1}${selected ? ' — ausgewählt' : ''}" style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;background:none;border:3px solid ${selected ? 'var(--primary)' : 'transparent'}">
+          <button type="button" onclick="toggleJobImage(${i})" aria-pressed="${selected}" aria-label="Bild ${i+1}${selected ? ' — ausgewählt' : ''}" style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;padding:0;background:none;border:3px solid ${selected ? 'var(--primary)' : 'transparent'}">
             <img src="${img}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
             ${selected ? '<div style="position:absolute;top:6px;right:6px;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.85rem" aria-hidden="true">&#10003;</div>' : ''}
           </button>`;
@@ -5418,7 +5416,7 @@ function renderWizardStep3() {
         <div style="font-size:2rem;margin-bottom:0.75rem">&#128247;</div>
         <h3 style="font-size:1rem">Keine Bilder vorhanden</h3>
         <p style="color:var(--gray-500);font-size:0.85rem;margin-bottom:1rem">Lade zuerst Bilder in deinem Unternehmensprofil hoch.</p>
-        <button class="btn btn-outline btn-sm" data-action="nav" data-page="employer-profile">Zum Profil</button>
+        <button class="btn btn-outline btn-sm" onclick="navigate('employer-profile')">Zum Profil</button>
       </div>
     `}`;
 }
@@ -5502,10 +5500,10 @@ function renderEmployerProfile() {
           <h2 class="dashboard-title">Unternehmensprofil</h2>
 
           <div class="profile-header-card" style="background:linear-gradient(135deg,#1e40af,#2563eb)">
-            <button type="button" class="profile-avatar" style="font-size:1.5rem;cursor:pointer;padding:0;border:none;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" data-action="triggerFileInput" data-target-id="company-logo-input" id="company-logo-preview" aria-label="Firmenlogo hochladen">
+            <button type="button" class="profile-avatar" style="font-size:1.5rem;cursor:pointer;padding:0;border:none;${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? `background-image:url(${state.user.companyLogo});background-size:cover;background-position:center;` : ''}" onclick="document.getElementById('company-logo-input').click()" id="company-logo-preview" aria-label="Firmenlogo hochladen">
               ${state.user.companyLogo && state.user.companyLogo.startsWith('data:') ? '' : escapeHtml(state.user.company?.[0] || state.user.name?.[0] || '?')}
             </button>
-            <input type="file" id="company-logo-input" accept="image/*" style="display:none" data-on-change="handleCompanyLogo">
+            <input type="file" id="company-logo-input" accept="image/*" style="display:none" onchange="handleCompanyLogo(this)">
             <div class="profile-info">
               <h2>${escapeHtml(state.user.company || state.user.name + '\'s Unternehmen')}</h2>
               <p>Klicke auf das Logo um es zu ändern</p>
@@ -5555,16 +5553,16 @@ function renderEmployerProfile() {
                 ${(state.user.companyImages || []).map((img, i) => `
                   <div style="position:relative;aspect-ratio:1;border-radius:var(--radius-sm);overflow:hidden">
                     <img src="${img}" alt="Unternehmensbild ${i+1}" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">
-                    <button data-action="removeCompanyImage" data-index="${i}" aria-label="Bild ${i+1} entfernen" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
+                    <button onclick="removeCompanyImage(${i})" aria-label="Bild ${i+1} entfernen" style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.6);color:#fff;border:none;cursor:pointer;font-size:0.8rem;display:flex;align-items:center;justify-content:center">&#10005;</button>
                   </div>
                 `).join('')}
                 ${(state.user.companyImages || []).length < 6 ? `
-                <div style="aspect-ratio:1;border:2px dashed var(--gray-300);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-500);font-size:0.85rem" data-action="triggerFileInput" data-target-id="company-images-input">
+                <div style="aspect-ratio:1;border:2px dashed var(--gray-300);border-radius:var(--radius-sm);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-500);font-size:0.85rem" onclick="document.getElementById('company-images-input').click()">
                   <div style="font-size:1.5rem">+</div>
                   Bild hinzufügen
                 </div>` : ''}
               </div>
-              <input type="file" id="company-images-input" accept="image/*" style="display:none" data-on-change="handleCompanyImage">
+              <input type="file" id="company-images-input" accept="image/*" style="display:none" onchange="handleCompanyImage(this)">
             </div>
 
             <div class="profile-section">
@@ -5583,7 +5581,7 @@ function renderEmployerProfile() {
           </div>
 
           <div style="margin-top:1.5rem;text-align:right">
-            <button class="btn btn-primary btn-lg" data-action="saveEmployerProfile">✓ Profil speichern</button>
+            <button class="btn btn-primary btn-lg" onclick="saveEmployerProfile(this)">✓ Profil speichern</button>
           </div>
         </div>
       </div>
@@ -5608,10 +5606,10 @@ function renderApplicants() {
           <h2 class="dashboard-title">Bewerber verwalten</h2>
 
           <div class="tabs">
-            <button class="tab ${!state.applicantFilter || state.applicantFilter==='all' ? 'active' : ''}" data-action="setApplicantFilter" data-filter="all">Alle (${allApplicants.length})</button>
-            <button class="tab ${state.applicantFilter==='new' ? 'active' : ''}" data-action="setApplicantFilter" data-filter="new">Neu (${allApplicants.filter(a=>a.status==='new').length})</button>
-            <button class="tab ${state.applicantFilter==='reviewing' ? 'active' : ''}" data-action="setApplicantFilter" data-filter="reviewing">In Prüfung (${allApplicants.filter(a=>a.status==='reviewing').length})</button>
-            <button class="tab ${state.applicantFilter==='accepted' ? 'active' : ''}" data-action="setApplicantFilter" data-filter="accepted">Eingeladen (${allApplicants.filter(a=>a.status==='accepted').length})</button>
+            <button class="tab ${!state.applicantFilter || state.applicantFilter==='all' ? 'active' : ''}" onclick="state.applicantFilter='all';render()">Alle (${allApplicants.length})</button>
+            <button class="tab ${state.applicantFilter==='new' ? 'active' : ''}" onclick="state.applicantFilter='new';render()">Neu (${allApplicants.filter(a=>a.status==='new').length})</button>
+            <button class="tab ${state.applicantFilter==='reviewing' ? 'active' : ''}" onclick="state.applicantFilter='reviewing';render()">In Prüfung (${allApplicants.filter(a=>a.status==='reviewing').length})</button>
+            <button class="tab ${state.applicantFilter==='accepted' ? 'active' : ''}" onclick="state.applicantFilter='accepted';render()">Eingeladen (${allApplicants.filter(a=>a.status==='accepted').length})</button>
           </div>
 
           <div class="card">
@@ -5646,7 +5644,7 @@ function renderApplicants() {
                     <td>${escapeHtml(a.jobTitle || a.job)}</td>
                     <td>${(a.skills || []).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(' ')}</td>
                     <td>
-                      <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
+                      <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" onchange="updateApplicantStatus(${a.id}, this.value)">
                         <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
                         <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
                         <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
@@ -5656,10 +5654,10 @@ function renderApplicants() {
                     <td>${formatDate(a.date)}</td>
                     <td>
                       <div style="display:flex;gap:0.375rem;flex-wrap:wrap">
-                        <button class="btn btn-sm btn-outline" data-action="navToApplicant" data-applicant-id="${a.id}">Profil</button>
-                        ${a.motivation || a.motivationFileName ? '<button class="btn btn-sm btn-outline" data-action="openApplicationDoc" data-app-id="' + a.id + '" data-doc-type="motivation" title="Motivationsschreiben öffnen" style="color:#2563eb;border-color:#2563eb">Anschreiben</button>' : ''}
-                        <button class="btn btn-sm btn-outline" data-action="openApplicationDoc" data-app-id="${a.id}" data-doc-type="cv" title="Lebenslauf öffnen" style="color:#6366f1;border-color:#6366f1">Lebenslauf</button>
-                        <button class="btn btn-sm btn-primary" data-action="openApplicantChat" data-app-id="${a.id}">Nachricht</button>
+                        <button class="btn btn-sm btn-outline" onclick="navigate('applicant-profile', {applicantId: ${a.id}})">Profil</button>
+                        ${a.motivation || a.motivationFileName ? '<button class="btn btn-sm btn-outline" onclick="openApplicationDoc(' + a.id + ',\'motivation\')" title="Motivationsschreiben öffnen" style="color:#2563eb;border-color:#2563eb">Anschreiben</button>' : ''}
+                        <button class="btn btn-sm btn-outline" onclick="openApplicationDoc(${a.id},'cv')" title="Lebenslauf öffnen" style="color:#6366f1;border-color:#6366f1">Lebenslauf</button>
+                        <button class="btn btn-sm btn-primary" onclick="openApplicantChat(${a.id})">Nachricht</button>
                       </div>
                     </td>
                   </tr>`;
@@ -5686,7 +5684,7 @@ function renderApplicantProfile() {
         <div class="dashboard-content">
 
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
-            <button class="btn btn-sm btn-outline" data-action="nav" data-page="applicants">&#8592; Zurück</button>
+            <button class="btn btn-sm btn-outline" onclick="navigate('applicants')">&#8592; Zurück</button>
             <h2 class="dashboard-title" style="margin:0">Bewerberprofil</h2>
           </div>
 
@@ -5705,7 +5703,7 @@ function renderApplicantProfile() {
                     ${a.age ? a.age + ' Jahre &bull; ' : ''}${escapeHtml(a.city)} &bull; max. ${a.weeklyHours || '?'} Std./Woche
                   </div>
                   <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                    <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
+                    <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" onchange="updateApplicantStatus(${a.id}, this.value)">
                       <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
                       <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
                       <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
@@ -5714,7 +5712,7 @@ function renderApplicantProfile() {
                     <span style="font-size:0.8rem;color:var(--gray-500)">Beworben auf: <strong>${escapeHtml(a.jobTitle || a.job)}</strong></span>
                   </div>
                 </div>
-                <button class="btn btn-primary" data-action="openApplicantChat" data-app-id="${a.id}">
+                <button class="btn btn-primary" onclick="openApplicantChat(${a.id})">
                   <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.4rem;vertical-align:-2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
                   Nachricht senden
                 </button>
@@ -5779,7 +5777,7 @@ function renderApplicantProfile() {
           </div>
 
           <div style="text-align:center;margin-top:1.5rem">
-            <button class="btn btn-primary btn-lg" data-action="openApplicantChat" data-app-id="${a.id}">
+            <button class="btn btn-primary btn-lg" onclick="openApplicantChat(${a.id})">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:0.5rem;vertical-align:-2px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
               ${escapeHtml((a.name||'').split(' ')[0])} anschreiben
             </button>
@@ -5806,7 +5804,7 @@ function renderChatDetail() {
 
           <!-- Chat-Kopfzeile -->
           <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)">
-            <button class="btn btn-sm btn-outline" data-action="nav" data-page="messages">&#8592; Zurück</button>
+            <button class="btn btn-sm btn-outline" onclick="navigate('messages')">&#8592; Zurück</button>
             <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
             <div>
               <strong style="font-size:0.95rem">${escapeHtml(chat.partnerName)}</strong>
@@ -5834,8 +5832,8 @@ function renderChatDetail() {
           <!-- Eingabezeile -->
           <div style="display:flex;gap:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200);max-width:620px">
             <label for="chat-input" class="sr-only">Nachricht schreiben</label>
-            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" data-on-keydown="chatInputEnter" aria-label="Nachricht schreiben">
-            <button class="btn btn-primary" data-action="sendChatMessage">Senden</button>
+            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" onkeydown="if(event.key==='Enter')sendChatMessage()" aria-label="Nachricht schreiben">
+            <button class="btn btn-primary" onclick="sendChatMessage()">Senden</button>
           </div>
 
         </div>
@@ -5876,7 +5874,7 @@ function renderMessages() {
           </div>
           <div class="card" style="max-width:620px">
             ${chatList.map(c => `
-              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" data-on-hover="chatItem"  data-action="navToChat" data-chat-id="${c.id}">
+              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--gray-50)'" onmouseout="this.style.background='transparent'" onclick="navigate('chat',{chatId:${c.id}})">
                 <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
                 <div style="flex:1;min-width:0">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
@@ -5995,7 +5993,7 @@ function renderSupport() {
                 <label class="form-label">Nachricht</label>
                 <textarea id="support-message" class="form-input" rows="5" placeholder="Beschreibe dein Problem so genau wie möglich..."></textarea>
               </div>
-              <button class="btn btn-primary" data-action="submitSupportTicket" style="align-self:flex-start">Ticket absenden</button>
+              <button class="btn btn-primary" onclick="submitSupportTicket()" style="align-self:flex-start">Ticket absenden</button>
             </div>
           </div>
 
@@ -6046,8 +6044,8 @@ function renderReviews() {
           </div>
 
           <div class="tabs">
-            <button class="tab ${!state.reviewTab || state.reviewTab==='received' ? 'active' : ''}" data-action="setReviewTab" data-tab="received">Erhaltene Bewertungen</button>
-            <button class="tab ${state.reviewTab==='given' ? 'active' : ''}" data-action="setReviewTab" data-tab="given">Abgegebene Bewertungen</button>
+            <button class="tab ${!state.reviewTab || state.reviewTab==='received' ? 'active' : ''}" onclick="state.reviewTab='received';render()">Erhaltene Bewertungen</button>
+            <button class="tab ${state.reviewTab==='given' ? 'active' : ''}" onclick="state.reviewTab='given';render()">Abgegebene Bewertungen</button>
           </div>
 
           <div class="rating-display" style="margin-bottom:1.5rem;padding:1.5rem;background:#fff;border-radius:var(--radius);border:1px solid var(--gray-200)">
@@ -6097,14 +6095,14 @@ function renderReviews() {
                 <div class="form-group">
                   <label class="form-label">Bewertung</label>
                   <div class="stars" style="font-size:1.75rem" id="rating-stars">
-                    ${[1,2,3,4,5].map(i => `<span class="star" data-action="setRating" data-rating="${i}" data-rating="${i}">&#9734;</span>`).join('')}
+                    ${[1,2,3,4,5].map(i => `<span class="star" onclick="setRating(${i})" data-rating="${i}">&#9734;</span>`).join('')}
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="form-label">Dein Feedback</label>
                   <textarea class="form-textarea" placeholder="Beschreibe deine Erfahrung..."></textarea>
                 </div>
-                <button class="btn btn-primary" data-action="submitReview">Bewertung absenden</button>
+                <button class="btn btn-primary" onclick="submitReview(this)">Bewertung absenden</button>
               </div>
             </div>`;
           })()}
@@ -6421,7 +6419,7 @@ function renderAGB() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 7 Datenschutz</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Der Schutz personenbezogener Daten ist uns wichtig. Einzelheiten zur Verarbeitung personenbezogener Daten entnehmen Sie bitte unserer <a href="#" data-action="nav" data-page="datenschutz" style="color:var(--primary);font-weight:600">Datenschutzerklärung</a>.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">Der Schutz personenbezogener Daten ist uns wichtig. Einzelheiten zur Verarbeitung personenbezogener Daten entnehmen Sie bitte unserer <a href="#" onclick="navigate('datenschutz')" style="color:var(--primary);font-weight:600">Datenschutzerklärung</a>.</p>
     </div>
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
@@ -6529,8 +6527,8 @@ function renderAdminPanel() {
         </div>
         <div style="display:flex;gap:0.5rem;align-items:center">
           <span class="admin-live-dot"></span><span style="font-size:0.8rem;color:var(--success);font-weight:600">Live</span>
-          <button class="btn btn-outline" data-action="nav" data-page="admin-panel" style="font-size:0.85rem;margin-left:0.75rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Aktualisieren</button>
-          <button class="btn btn-ghost" data-action="adminLogout" style="color:var(--danger);font-size:0.85rem">Abmelden</button>
+          <button class="btn btn-outline" onclick="navigate('admin-panel')" style="font-size:0.85rem;margin-left:0.75rem"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px"><path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg> Aktualisieren</button>
+          <button class="btn btn-ghost" onclick="adminLogout()" style="color:var(--danger);font-size:0.85rem">Abmelden</button>
         </div>
       </div>
 
@@ -6578,8 +6576,8 @@ function renderAdminPanel() {
                     <td style="padding:0.8rem 1.25rem;color:var(--gray-500)">${escapeHtml(u.email || '—')}</td>
                     <td style="padding:0.8rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
                     <td style="padding:0.8rem 1.25rem;text-align:center;white-space:nowrap">
-                      <button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.78rem;font-weight:600;padding:0.45rem 0.9rem;margin-right:0.3rem" data-action="adminToggleApproval" data-user-id="${u.id}" data-approve="true">✓ Freischalten</button>
-                      <button class="btn btn-sm btn-ghost" style="font-size:0.78rem;color:var(--danger)" data-action="adminRemoveEmployer" data-user-id="${u.id}">Ablehnen</button>
+                      <button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.78rem;font-weight:600;padding:0.45rem 0.9rem;margin-right:0.3rem" onclick="adminToggleApproval('${u.id}', true)">✓ Freischalten</button>
+                      <button class="btn btn-sm btn-ghost" style="font-size:0.78rem;color:var(--danger)" onclick="adminRemoveEmployer('${u.id}')">Ablehnen</button>
                     </td>
                   </tr>`;
                 }).join('')}
@@ -6591,19 +6589,19 @@ function renderAdminPanel() {
 
       <!-- Tab Navigation -->
       <div class="admin-tabs">
-        <button class="admin-tab ${!state.adminTab || state.adminTab === 'besucher' ? 'active' : ''}" data-action="switchAdminTab" data-tab="besucher">
+        <button class="admin-tab ${!state.adminTab || state.adminTab === 'besucher' ? 'active' : ''}" onclick="switchAdminTab('besucher')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
           Besucher
         </button>
-        <button class="admin-tab ${state.adminTab === 'umsatz' ? 'active' : ''}" data-action="switchAdminTab" data-tab="umsatz">
+        <button class="admin-tab ${state.adminTab === 'umsatz' ? 'active' : ''}" onclick="switchAdminTab('umsatz')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
           Umsatz
         </button>
-        <button class="admin-tab ${state.adminTab === 'benutzer' ? 'active' : ''}" data-action="switchAdminTab" data-tab="benutzer">
+        <button class="admin-tab ${state.adminTab === 'benutzer' ? 'active' : ''}" onclick="switchAdminTab('benutzer')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Benutzer
         </button>
-        <button class="admin-tab ${state.adminTab === 'support' ? 'active' : ''}" data-action="switchAdminTab" data-tab="support">
+        <button class="admin-tab ${state.adminTab === 'support' ? 'active' : ''}" onclick="switchAdminTab('support')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           Support
           ${getSupportTickets().filter(t => t.status === 'open').length > 0 ? '<span class="admin-tab-badge">' + getSupportTickets().filter(t => t.status === 'open').length + '</span>' : ''}
@@ -6666,10 +6664,10 @@ function renderAdminPanel() {
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
             <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
             <div class="admin-rev-tabs">
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" data-action="switchRevenueView" data-period="daily">Täglich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" data-action="switchRevenueView" data-period="monthly">Monatlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" data-action="switchRevenueView" data-period="yearly">Jährlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" data-action="switchRevenueView" data-period="alltime">Gesamt</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" onclick="switchRevenueView('daily')">Täglich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" onclick="switchRevenueView('monthly')">Monatlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" onclick="switchRevenueView('yearly')">Jährlich</button>
+              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" onclick="switchRevenueView('alltime')">Gesamt</button>
             </div>
           </div>
           <div style="display:flex;gap:2rem;margin-bottom:1rem">
@@ -6702,7 +6700,7 @@ function renderAdminPanel() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
           <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Arbeitgeber</h4>
           <span class="badge badge-warning" style="margin-left:auto">${employers.length} gesamt</span>
-          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" data-action="adminRefreshProfiles">Neu laden</button>
+          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" onclick="adminRefreshProfiles()">Neu laden</button>
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
           <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
@@ -6724,9 +6722,9 @@ function renderAdminPanel() {
                 <td style="padding:0.65rem 1.25rem;color:var(--gray-500);font-size:0.78rem">${escapeHtml(created)}</td>
                 <td style="padding:0.65rem 1.25rem;text-align:center;white-space:nowrap">
                   ${u.approved !== false
-                    ? `<button class="btn btn-sm" style="background:#f97316;color:#fff;font-size:0.75rem;margin-right:0.25rem" data-action="adminToggleApproval" data-user-id="${u.id}" data-approve="false">Sperren</button>`
-                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem;margin-right:0.25rem" data-action="adminToggleApproval" data-user-id="${u.id}" data-approve="true">Entsperren</button>`}
-                  <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" data-action="adminRemoveEmployer" data-user-id="${u.id}">Entfernen</button>
+                    ? `<button class="btn btn-sm" style="background:#f97316;color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
+                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem;margin-right:0.25rem" onclick="adminToggleApproval('${u.id}', true)">Entsperren</button>`}
+                  <button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminRemoveEmployer('${u.id}')">Entfernen</button>
                 </td>
               </tr>`;
             }).join('') || '<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--gray-500)">Noch keine Arbeitgeber registriert</td></tr>'}
@@ -6741,7 +6739,7 @@ function renderAdminPanel() {
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
           <h4 style="margin:0;font-size:0.95rem;font-weight:700">Alle Benutzer</h4>
           <span class="badge badge-info" style="margin-left:auto">${(state._allProfilesCache || []).length} gesamt</span>
-          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" data-action="adminRefreshProfiles">Neu laden</button>
+          <button class="btn btn-sm btn-outline" style="margin-left:0.5rem;font-size:0.75rem" onclick="adminRefreshProfiles()">Neu laden</button>
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:0.9rem">
           <thead><tr style="background:var(--gray-50);border-top:1px solid var(--gray-100);border-bottom:1px solid var(--gray-200)">
@@ -6765,8 +6763,8 @@ function renderAdminPanel() {
                     : '<span class="badge badge-warning">Ausstehend</span>');
               const actionBtn = u.role === 'employer'
                 ? (u.approved
-                    ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" data-action="adminToggleApproval" data-user-id="${u.id}" data-approve="false">Sperren</button>`
-                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" data-action="adminToggleApproval" data-user-id="${u.id}" data-approve="true">Freischalten</button>`)
+                    ? `<button class="btn btn-sm" style="background:var(--danger);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', false)">Sperren</button>`
+                    : `<button class="btn btn-sm" style="background:var(--success);color:#fff;font-size:0.75rem" onclick="adminToggleApproval('${u.id}', true)">Freischalten</button>`)
                 : '';
               return `<tr class="admin-table-row">
                 <td style="padding:0.65rem 1.25rem"><div style="display:flex;align-items:center;gap:0.75rem"><div style="width:32px;height:32px;border-radius:50%;background:${avatarColor};color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;flex-shrink:0">${escapeHtml(initials)}</div><span style="font-weight:600">${escapeHtml(u.name || '-')}</span></div></td>
@@ -6810,7 +6808,7 @@ function renderAdminPanel() {
                 const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
                 const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
                 return `
-                <tr class="admin-table-row" style="cursor:pointer" data-action="toggleTicketDetail" data-ticket-id="${t.id}">
+                <tr class="admin-table-row" style="cursor:pointer" onclick="document.getElementById('ticket-detail-${t.id}').style.display=document.getElementById('ticket-detail-${t.id}').style.display==='none'?'table-row':'none'">
                   <td style="padding:0.65rem 1.25rem">
                     <span style="font-size:0.75rem;font-weight:600;padding:0.2rem 0.6rem;border-radius:999px;background:${statusColors[t.status]}20;color:${statusColors[t.status]}">${statusLabels[t.status]}</span>
                   </td>
@@ -6822,8 +6820,8 @@ function renderAdminPanel() {
                   <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
                   <td style="padding:0.65rem 1.25rem;font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
                   <td style="padding:0.65rem 1.25rem;text-align:center">
-                    <button class="btn btn-sm btn-outline" data-action="adminUpdateTicketStatus" data-ticket-id="${t.id}" data-status="in-progress" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
-                    <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" data-action="adminUpdateTicketStatus" data-ticket-id="${t.id}" data-status="closed" ${t.status==='closed'?'disabled':''}>Erledigt</button>
+                    <button class="btn btn-sm btn-outline" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'in-progress')" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
+                    <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" onclick="event.stopPropagation();adminUpdateTicketStatus(${t.id},'closed')" ${t.status==='closed'?'disabled':''}>Erledigt</button>
                   </td>
                 </tr>
                 <tr id="ticket-detail-${t.id}" style="display:none">
@@ -6832,7 +6830,7 @@ function renderAdminPanel() {
                     ${t.adminReply ? `<div style="padding:0.5rem 0.75rem;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #6366f1;margin-bottom:0.75rem"><strong style="font-size:0.78rem;color:#818cf8">Deine Antwort:</strong><p style="font-size:0.85rem;margin:0.25rem 0 0;color:#cbd5e1">${escapeHtml(t.adminReply)}</p></div>` : ''}
                     <div style="display:flex;gap:0.5rem;align-items:flex-end">
                       <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${t.adminReply || ''}</textarea>
-                      <button class="btn btn-primary btn-sm" data-action="adminReplyTicket" data-ticket-id="${t.id}">Antworten</button>
+                      <button class="btn btn-primary btn-sm" onclick="event.stopPropagation();adminReplyTicket(${t.id})">Antworten</button>
                     </div>
                   </td>
                 </tr>`;
@@ -6846,7 +6844,7 @@ function renderAdminPanel() {
       <!-- Footer -->
       <div style="text-align:center;padding:1.5rem 0 2.5rem;color:var(--gray-500);font-size:0.8rem">
         Letzte Aktualisierung: ${new Date().toLocaleString('de-DE')} &bull;
-        <a href="#" data-action="nav" data-page="admin-panel" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
+        <a href="#" onclick="navigate('admin-panel')" style="color:var(--primary);text-decoration:none;font-weight:500">Jetzt aktualisieren</a>
       </div>
     </div>`;
 }
@@ -7132,52 +7130,4 @@ if (typeof registerAction === 'function') {
       captchaToken: window.hcaptchaToken || null
     });
   });
-
-  // ── Zusaetzliche Actions (aus Batch-Konvertierung) ──
-  registerAction('addCVToProfile', () => addCVToProfile());
-  registerAction('addRef', () => addRef());
-  registerAction('adminLogout', () => logout());
-  registerAction('adminRefreshProfiles', () => { if (typeof loadAllProfilesForAdmin==='function') loadAllProfilesForAdmin().then(() => render()); });
-  registerAction('adminUpdateTicketStatus', (el) => { if (typeof adminUpdateTicketStatus==='function') adminUpdateTicketStatus(parseInt(el.dataset.ticketId), el.dataset.status); });
-  registerAction('clearUserFlag', () => { if (state.user) { state.user.cvUploaded = false; state.user.docsUploaded = false; render(); } });
-  registerAction('closeChatDetail', () => { state.activeChat = null; if (typeof renderChatWidget==='function') renderChatWidget(); });
-  registerAction('closeOverlay', (el, e) => { if (e.target === el) el.remove(); });
-  registerAction('closeShareMenu', () => { var m = document.getElementById('share-menu'); if (m) m.remove(); });
-  registerAction('confirmEndActiveJob', () => { if (confirm('Möchtest du diesen Job wirklich beenden?')) endActiveJob(); });
-  registerAction('copyJobLink', (el) => { if (typeof copyJobLink==='function') copyJobLink(el.dataset.url || location.href); });
-  registerAction('downloadCV', () => downloadCV());
-  registerAction('finalSubmitApplication', () => finalSubmitApplication());
-  registerAction('generateMotivationText', () => generateMotivationText());
-  registerAction('goPostJobAndToggleDropdown', () => { state.dropdownOpen = false; goPostJob(); });
-  registerAction('gotoProfileAndNav', (el) => { state.profileStep = parseInt(el.dataset.step) || 0; navigate('worker-profile'); });
-  registerAction('logoutAndClose', () => { state.dropdownOpen = false; logout(); });
-  registerAction('navAndToggleDropdown', (el) => { state.dropdownOpen = false; navigate(el.dataset.page); });
-  registerAction('navToApplicant', (el) => navigate('applicant-profile', { applicantId: parseInt(el.dataset.applicantId) }));
-  registerAction('navToSection', (el) => navigateToSection(el.dataset.page, el.dataset.section));
-  registerAction('openApplicationDoc', (el) => openApplicationDoc(parseInt(el.dataset.appId), el.dataset.docType));
-  registerAction('prevProfileStep', () => gotoProfileStep(Math.max(0, state.profileStep - 1)));
-  registerAction('previewCV', () => previewCV());
-  registerAction('removeCompanyImage', (el) => removeCompanyImage(parseInt(el.dataset.index)));
-  registerAction('removeRef', (el) => removeRef(parseInt(el.dataset.index)));
-  registerAction('scrollToSection', (el) => { var t = document.getElementById(el.dataset.target); if (t) t.scrollIntoView({ behavior: 'smooth' }); });
-  registerAction('setApplicantFilter', (el) => { state.applicantFilter = el.dataset.filter === 'all' ? null : el.dataset.filter; render(); });
-  registerAction('setRating', (el) => setRating(parseInt(el.dataset.rating)));
-  registerAction('setReviewTab', (el) => { state.reviewTab = el.dataset.tab; render(); });
-  registerAction('toggleJobImage', (el) => toggleJobImage(parseInt(el.dataset.index)));
-  registerAction('toggleTicketDetail', (el) => { var r = document.getElementById('ticket-detail-' + el.dataset.ticketId); if (r) r.style.display = r.style.display === 'none' ? 'table-row' : 'none'; });
-
-  // ── Zusaetzliche Change-Actions ──
-  registerChange('handleApplyCVFile', (el) => handleApplyCVFile(el));
-  registerChange('handleApplyMotivationFile', (el) => handleApplyMotivationFile(el));
-  registerChange('handleCVPhoto', (el) => handleCVPhoto(el));
-  registerChange('handleCompanyImage', (el) => handleCompanyImage(el));
-  registerChange('handleCompanyLogo', (el) => handleCompanyLogo(el));
-  registerChange('handleDocScanned', (el) => docScanned(el));
-  registerChange('handleUploadCV', (el) => uploadCV(el));
-  registerChange('limitSkills', (el) => limitSkills(el, 3));
-  registerChange('setApplyMotivation', (el) => { state.applyMotivation = el.value; });
-  registerChange('toggleHoursFilter', (el) => toggleHoursFilter(parseInt(el.dataset.hours)));
-  registerChange('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value));
-
-  registerInput('radiusLabel', (el) => { var l = document.getElementById('radius-label'); if (l) l.textContent = el.value + ' km'; });
 }
