@@ -3612,12 +3612,12 @@ function renderRegister() {
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
-              <div class="role-option selected" data-action="selectRole" data-role="worker" data-role="worker">
+              <div class="role-option selected" data-action="selectRole" data-role="worker">
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
-              <div class="role-option" data-action="selectRole" data-role="employer" data-role="employer">
+              <div class="role-option" data-action="selectRole" data-role="employer">
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
@@ -6827,7 +6827,7 @@ if (typeof registerAction === 'function') {
   registerAction('gotoProfileStep', (el) => gotoProfileStep(parseInt(el.dataset.step)));
   registerAction('nextProfileStep', () => nextProfileStep());
   registerAction('finishProfileSetup', () => finishProfileSetup());
-  registerAction('selectRole', (el) => selectRole(el.dataset.role));
+  registerAction('selectRole', (el) => selectRole(el, el.dataset.role));
 
   // Filters
   registerAction('toggleMobileFilters', () => { state.mobileFiltersOpen = !state.mobileFiltersOpen; render(); });
@@ -6906,7 +6906,7 @@ if (typeof registerAction === 'function') {
       name: (fn + ' ' + ln).trim(),
       email: form.email.value,
       password: form.password.value,
-      role: state.selectedRole || 'worker',
+      role: form.role?.value || 'worker',
       company: form.company?.value || null,
       captchaToken: window.hcaptchaToken || null
     });
