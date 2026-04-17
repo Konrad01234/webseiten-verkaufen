@@ -542,8 +542,12 @@ function isCurrentUserAdmin() {
 }
 
 // ===== ANALYTICS TRACKING =====
+function readVisits() {
+  try { return JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]'); }
+  catch { return []; }
+}
 function trackVisit() {
-  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const visits = readVisits();
   const now = new Date().toISOString();
   const userRole = state.user ? state.user.role : 'guest';
   const userId = state.user ? state.user.id : 'anon_' + (sessionStorage.getItem('jj_anon_id') || (() => { const id = Date.now(); sessionStorage.setItem('jj_anon_id', id); return id; })());
@@ -556,7 +560,7 @@ function trackVisit() {
 }
 
 function getAnalyticsData() {
-  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const visits = readVisits();
   const allUsers = state._allProfilesCache || [];
   state._adminTotalJobs = (typeof JOBS !== 'undefined' && JOBS) ? JOBS.length : 0;
   state._adminTotalApps = (state._appsCache || []).length;
@@ -6848,7 +6852,7 @@ if (typeof registerAction === 'function') {
   registerAction('addCVToProfile', () => addCVToProfile());
   registerAction('addRef', () => addRef());
   registerAction('adminLogout', () => logout());
-  registerAction('adminRefreshProfiles', () => { if (typeof loadAllProfilesForAdmin==='function') loadAllProfilesForAdmin().then(() => render()); });
+  registerAction('adminRefreshProfiles', () => adminRefreshProfiles());
   registerAction('adminUpdateTicketStatus', (el) => { if (typeof adminUpdateTicketStatus==='function') adminUpdateTicketStatus(parseInt(el.dataset.ticketId), el.dataset.status); });
   registerAction('clearUserFlag', () => { if (state.user) { state.user.cvUploaded = false; state.user.docsUploaded = false; render(); } });
   registerAction('closeChatDetail', () => { state.activeChat = null; if (typeof renderChatWidget==='function') renderChatWidget(); });
