@@ -249,6 +249,9 @@ async function loadUserSession() {
       };
     } else {
       // Fallback: profile row missing, build minimum from auth user_metadata.
+      // Array-Felder muessen initialisiert sein - sonst crashen Funktionen
+      // wie removeRef()/splice oder .map() auf undefined, wenn ein Nutzer
+      // ohne Profil-Row diese UI-Pfade trifft.
       const md = session.user.user_metadata || {};
       state.user = {
         id: session.user.id,
@@ -257,7 +260,12 @@ async function loadUserSession() {
         role: md.role || 'worker',
         company: md.company || null,
         approved: true,
-        profileComplete: 20
+        profileComplete: 20,
+        skills: [],
+        refs: [],
+        companyImages: [],
+        images: [],
+        completedJobs: []
       };
     }
   } catch (e) {
@@ -1067,8 +1075,15 @@ async function register(data) {
     else if (/password/i.test(msg)) showErr('Passwort ungültig: ' + msg);
     else showErr('Registrierung fehlgeschlagen: ' + msg);
     console.error('[register]', e);
+    // Captcha-Widget zuruecksetzen, der Token ist serverseitig invalidiert
+    // und Wiederverwendung wuerde beim naechsten Submit abgelehnt.
+    try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
     return;
   }
+  // Captcha-Token ist nach erfolgreichem signUp bei Supabase "verbraucht" -
+  // Widget resetten, damit bei einem erneuten Submit (z.B. sofortige
+  // Nach-Registrierung) ein frischer Token geholt wird.
+  try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
   // Step 2: signUp also signs in immediately (when email confirmation is off).
   // Session synchron laden, Rest im Hintergrund (Skeletons übernehmen).
   try { await loadUserSession(); } catch (e) { console.error('[register] loadUserSession', e); }
@@ -1697,7 +1712,12 @@ function setPreviewBackground(preview, dataUrl) {
 
 // Versucht Storage-Upload, fällt bei Fehler auf base64 zurück. Liefert
 // in beiden Fällen eine Browser-anzeigbare URL (entweder data: oder https:).
+// Die Validierung (3 MB max, nur Bild-MIME) passiert HIER, damit alle Call-Sites
+// automatisch geschuetzt sind - vorher konnte ein Nutzer eine 100 MB ZIP in
+// den base64-Fallback werfen und den Tab zum Absturz bringen.
 async function uploadImageWithFallback(file) {
+  const vErr = validateImageFile(file);
+  if (vErr) throw new Error(vErr);
   if (window.IMAGE_BUCKET && window.DB && DB.uploadImage) {
     try {
       const { url } = await DB.uploadImage(file);
@@ -1719,7 +1739,10 @@ async function handleCVPhoto(input) {
     const url = await uploadImageWithFallback(input.files[0]);
     state.cvPhoto = url;
     setPreviewBackground(document.getElementById('cv-photo-preview'), url);
-  } catch (e) { console.error('[handleCVPhoto]', e); showToast('Foto konnte nicht geladen werden.', 'error'); }
+  } catch (e) {
+    console.error('[handleCVPhoto]', e);
+    showToast(e.message || 'Foto konnte nicht geladen werden.', 'error');
+  }
 }
 
 async function handleCompanyLogo(input) {
@@ -1733,7 +1756,10 @@ async function handleCompanyLogo(input) {
       catch (err) { console.error('[handleCompanyLogo] persist', err); }
     }
     showToast('Logo hochgeladen!');
-  } catch (e) { console.error('[handleCompanyLogo]', e); showToast('Logo-Upload fehlgeschlagen.', 'error'); }
+  } catch (e) {
+    console.error('[handleCompanyLogo]', e);
+    showToast(e.message || 'Logo-Upload fehlgeschlagen.', 'error');
+  }
 }
 
 async function handleCompanyImage(input) {
@@ -1749,7 +1775,10 @@ async function handleCompanyImage(input) {
     }
     showToast('Bild hochgeladen!');
     render();
-  } catch (e) { console.error('[handleCompanyImage]', e); showToast('Bild-Upload fehlgeschlagen.', 'error'); }
+  } catch (e) {
+    console.error('[handleCompanyImage]', e);
+    showToast(e.message || 'Bild-Upload fehlgeschlagen.', 'error');
+  }
 }
 
 function removeCompanyImage(index) {
@@ -3701,31 +3730,6 @@ function selectRole(el, role) {
   }
 }
 
-function submitRegister(form) {
-  const data = {
-    role: form.role.value,
-    name: form.firstName.value + ' ' + form.lastName.value,
-    email: form.email.value,
-    password: form.password.value
-  };
-  if (data.role === 'employer') {
-    data.company = form.company.value;
-  }
-  // Wenn hCaptcha aktiviert ist, Token vom Widget abholen
-  if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-    try {
-      const token = window.hcaptcha.getResponse();
-      if (!token) {
-        const err = document.getElementById('register-error');
-        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
-        return;
-      }
-      data.captchaToken = token;
-    } catch (e) { console.error('[hcaptcha]', e); }
-  }
-  register(data);
-}
-
 // ===== WORKER PAGES =====
 
 function getProfileSteps() {
@@ -3907,6 +3911,7 @@ function addRef() {
 }
 
 function removeRef(i) {
+  if (!state.user || !Array.isArray(state.user.refs)) return;
   state.user.refs.splice(i, 1);
   if (!state.user.refs.length) state.user.hasRefs = false;
   render();
@@ -5790,19 +5795,29 @@ async function loadSupportTicketsForUser() {
     } else {
       rows = await DB.listSupportTickets(state.user.id);
     }
-    state._supportTicketsCache = (rows || []).map(r => ({
-      id: r.id,
-      userId: r.user_id,
-      userName: state.user.name || '',
-      userEmail: state.user.email || '',
-      userRole: state.user.role || '',
-      category: r.category,
-      subject: r.subject,
-      message: r.message,
-      status: r.status,
-      adminReply: r.admin_reply,
-      createdAt: r.created_at
-    }));
+    // Ersteller-Profil pro Ticket auflösen, statt einfach state.user.* zu
+    // kopieren. In der Admin-Liste hat sonst jedes Ticket den Namen des
+    // gerade eingeloggten Admins getragen, unabhaengig davon wer's wirklich
+    // eingereicht hat.
+    const profiles = state._allProfilesCache || [];
+    state._supportTicketsCache = (rows || []).map(r => {
+      let creator = null;
+      if (state.user && r.user_id === state.user.id) creator = state.user;
+      else creator = profiles.find(p => p.id === r.user_id) || null;
+      return {
+        id: r.id,
+        userId: r.user_id,
+        userName: (creator && creator.name) || '',
+        userEmail: (creator && creator.email) || '',
+        userRole: (creator && creator.role) || '',
+        category: r.category,
+        subject: r.subject,
+        message: r.message,
+        status: r.status,
+        adminReply: r.admin_reply,
+        createdAt: r.created_at
+      };
+    });
   } catch (e) {
     console.error('[loadSupportTicketsForUser]', e);
     state._supportTicketsCache = [];
@@ -5973,7 +5988,7 @@ function renderReviews() {
                 <div class="form-group">
                   <label class="form-label">Bewertung</label>
                   <div class="stars" style="font-size:1.75rem" id="rating-stars">
-                    ${[1,2,3,4,5].map(i => `<span class="star" data-action="setRating" data-rating="${i}" data-rating="${i}">&#9734;</span>`).join('')}
+                    ${[1,2,3,4,5].map(i => `<span class="star" data-action="setRating" data-rating="${i}">&#9734;</span>`).join('')}
                   </div>
                 </div>
                 <div class="form-group">
@@ -6616,7 +6631,7 @@ function renderAdminPanel() {
                   </td>
                   <td style="padding:0.65rem 1.25rem">
                     <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
-                    <div style="font-size:0.75rem;color:var(--gray-500)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                    <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(t.userEmail)} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
                   </td>
                   <td style="padding:0.65rem 1.25rem"><span class="badge">${catLabels[t.category] || t.category}</span></td>
                   <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
@@ -6631,7 +6646,7 @@ function renderAdminPanel() {
                     <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
                     ${t.adminReply ? `<div style="padding:0.5rem 0.75rem;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #6366f1;margin-bottom:0.75rem"><strong style="font-size:0.78rem;color:#818cf8">Deine Antwort:</strong><p style="font-size:0.85rem;margin:0.25rem 0 0;color:#cbd5e1">${escapeHtml(t.adminReply)}</p></div>` : ''}
                     <div style="display:flex;gap:0.5rem;align-items:flex-end">
-                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${t.adminReply || ''}</textarea>
+                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${escapeHtml(t.adminReply || '')}</textarea>
                       <button class="btn btn-primary btn-sm" data-action="adminReplyTicket" data-ticket-id="${t.id}">Antworten</button>
                     </div>
                   </td>
@@ -6929,13 +6944,26 @@ if (typeof registerAction === 'function') {
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
+    // Wenn hCaptcha konfiguriert ist, Token direkt vom Widget abholen.
+    // Frueher wurde window.hcaptchaToken gelesen - das wird aber nirgendwo
+    // gesetzt, also ging IMMER null an Supabase -> Captcha wirkungslos.
+    var captchaToken = null;
+    if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
+      try { captchaToken = window.hcaptcha.getResponse() || null; }
+      catch (e) { console.error('[hcaptcha]', e); }
+      if (!captchaToken) {
+        const err = document.getElementById('register-error');
+        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+        return;
+      }
+    }
     register({
       name: (fn + ' ' + ln).trim(),
       email: form.email.value,
       password: form.password.value,
       role: form.role?.value || 'worker',
       company: form.company?.value || null,
-      captchaToken: window.hcaptchaToken || null
+      captchaToken: captchaToken
     });
   });
 
