@@ -6998,3 +6998,136 @@ document.addEventListener('click', (e) => {
     if (menu) menu.classList.remove('open');
   }
 });
+
+// ===== EVENT-DELEGATION: Action-Registrierungen =====
+// Diese Registrierungen verbinden data-action Attribute im HTML mit
+// den entsprechenden Funktionen. Schrittweise werden alle inline
+// onclick="..." Handler hierher migriert.
+
+if (typeof registerAction === 'function') {
+  // Navigation
+  registerAction('nav', (el) => {
+    const page = el.dataset.page;
+    const args = el.dataset.args ? JSON.parse(el.dataset.args) : undefined;
+    navigate(page, args);
+  });
+  registerAction('navAndClose', (el) => {
+    navigate(el.dataset.page);
+    toggleMobileMenu();
+  });
+  registerAction('navToJob', (el) => {
+    navigate('job-detail', { jobId: parseInt(el.dataset.jobId) });
+  });
+
+  // Auth
+  registerAction('logout', () => logout());
+  registerAction('toggleDropdown', () => toggleDropdown());
+  registerAction('toggleMobileMenu', () => toggleMobileMenu());
+  registerAction('mobileProfileNav', () => mobileProfileNav());
+  registerAction('goPostJob', () => goPostJob());
+  registerAction('dismissCookie', (el) => dismissCookieBanner(el.dataset.persist === 'true'));
+  registerAction('showForgotPassword', () => showForgotPassword());
+  registerAction('openAdminPanel', () => openAdminPanel());
+
+  // Jobs
+  registerAction('render', () => render());
+  registerAction('toggleSaveJob', (el, e) => { e.stopPropagation(); toggleSaveJob(parseInt(el.dataset.jobId)); });
+  registerAction('shareJob', (el) => shareJob(parseInt(el.dataset.jobId)));
+  registerAction('submitApplication', (el) => submitApplication(parseInt(el.dataset.jobId)));
+
+  // Chat
+  registerAction('sendChatMessage', () => sendChatMessage());
+  registerAction('openChat', (el) => openChat(parseInt(el.dataset.chatId)));
+  registerAction('navToChat', (el) => navigate('chat', { chatId: parseInt(el.dataset.chatId) }));
+
+  // Profile
+  registerAction('gotoProfileStep', (el) => gotoProfileStep(parseInt(el.dataset.step)));
+  registerAction('nextProfileStep', () => nextProfileStep());
+  registerAction('finishProfileSetup', () => finishProfileSetup());
+  registerAction('selectRole', (el) => selectRole(el.dataset.role));
+
+  // Filters
+  registerAction('toggleMobileFilters', () => { state.mobileFiltersOpen = !state.mobileFiltersOpen; render(); });
+  registerAction('resetFilters', () => {
+    state.filters = { search: '', category: '', type: '', radius: 50, hours: [], city: '', sort: 'date', address: '' };
+    recomputeDistancesAndRender();
+  });
+  registerAction('applyFilters', () => recomputeDistancesAndRender());
+  registerAction('toggleHoursFilter', (el) => toggleHoursFilter(parseInt(el.dataset.hours)));
+
+  // Admin
+  registerAction('switchAdminTab', (el) => { state.adminTab = el.dataset.tab; render(); });
+  registerAction('switchRevenueView', (el) => { state.adminRevenuePeriod = el.dataset.period; render(); });
+  registerAction('adminToggleApproval', (el) => adminToggleApproval(el.dataset.userId, el.dataset.approve === 'true'));
+  registerAction('adminRemoveEmployer', (el) => adminRemoveEmployer(el.dataset.userId));
+  registerAction('adminReplyTicket', (el) => adminReplyTicket(parseInt(el.dataset.ticketId)));
+
+  // Apply-Modal
+  registerAction('openApplyModal', () => openApplyModal());
+  registerAction('closeApplyModal', () => closeApplyModal());
+  registerAction('applyNextStep', () => applyNextStep());
+  registerAction('setApplyStep', (el) => { state.applyStep = parseInt(el.dataset.step); renderApplyStep(); });
+  registerAction('selectMotivationMethod', (el) => selectMotivationMethod(el.dataset.method));
+  registerAction('selectCVMethod', (el) => selectCVMethod(el.dataset.method));
+
+  // Employer
+  registerAction('saveEmployerProfile', (el) => saveEmployerProfile(el));
+  registerAction('deletePostedJob', (el) => deletePostedJob(parseInt(el.dataset.jobId)));
+  registerAction('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value || el.dataset.status));
+  registerAction('openApplicantChat', (el) => openApplicantChat(parseInt(el.dataset.appId)));
+
+  // Reviews + Support
+  registerAction('submitReview', (el) => submitReview(el));
+  registerAction('submitSupportTicket', () => submitSupportTicket());
+  registerAction('endActiveJob', () => endActiveJob());
+
+  // Chat widget
+  registerAction('toggleChat', () => toggleChat());
+
+  // Misc
+  registerAction('selectCvTemplate', (el) => {
+    document.querySelectorAll('.cv-template').forEach(t => t.classList.remove('selected'));
+    el.closest('.cv-template')?.classList.add('selected') || el.classList.add('selected');
+  });
+  registerAction('triggerFileInput', (el) => {
+    const target = document.getElementById(el.dataset.targetId);
+    if (target) target.click();
+  });
+  registerAction('aiGenerateJob', (el) => aiGenerateJob(el));
+  registerAction('validateWizardStep', () => validateWizardStep());
+  registerAction('prevWizardStep', () => { state.wizardStep = Math.max(0, state.wizardStep - 1); render(); });
+  registerAction('publishJob', () => publishJob());
+
+  // Change/Input/Keydown registrations
+  registerChange('setFilterCategory', (el) => { state.filters.category = el.value; render(); });
+  registerChange('setFilterCity', (el) => { state.filters.city = el.value; render(); });
+  registerChange('setFilterRadius', (el) => { state.filters.radius = parseInt(el.value); render(); });
+
+  registerInput('searchFilter', (el) => { state.filters.search = el.value; render(); });
+  registerInput('addressFilter', (el) => {
+    state.filters.address = el.value;
+    clearTimeout(window._addrTimer);
+    window._addrTimer = setTimeout(recomputeDistancesAndRender, 800);
+  });
+
+  registerKeydown('addressFilterEnter', (el, e) => {
+    if (e.key === 'Enter') { e.preventDefault(); clearTimeout(window._addrTimer); recomputeDistancesAndRender(); }
+  });
+  registerKeydown('chatInputEnter', (el, e) => {
+    if (e.key === 'Enter') sendChatMessage();
+  });
+
+  registerSubmit('loginForm', (form) => login(form.email.value, form.password.value));
+  registerSubmit('registerForm', (form) => {
+    var fn = form.firstName?.value || '';
+    var ln = form.lastName?.value || '';
+    register({
+      name: (fn + ' ' + ln).trim(),
+      email: form.email.value,
+      password: form.password.value,
+      role: state.selectedRole || 'worker',
+      company: form.company?.value || null,
+      captchaToken: window.hcaptchaToken || null
+    });
+  });
+}

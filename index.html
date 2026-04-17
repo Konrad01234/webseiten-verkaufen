@@ -79,34 +79,34 @@
 
   <nav id="navbar" aria-label="Hauptnavigation">
     <div class="nav-container">
-      <a href="#" class="logo" onclick="navigate('landing')" aria-label="WorkPilot Startseite">
+      <a href="#" class="logo" data-action="nav" data-page="landing" aria-label="WorkPilot Startseite">
         <span class="logo-icon" aria-hidden="true">JJ</span>
         <span class="logo-text">WorkPilot</span>
       </a>
       <div class="nav-links">
-        <a href="#" onclick="navigate('jobs')">Jobs finden</a>
-        <a href="#" onclick="navigate('employer-landing')">Für Arbeitgeber</a>
+        <a href="#" data-action="nav" data-page="jobs">Jobs finden</a>
+        <a href="#" data-action="nav" data-page="employer-landing">Für Arbeitgeber</a>
       </div>
       <div class="nav-actions" id="nav-actions">
-        <button class="btn btn-outline" onclick="navigate('login')">Anmelden</button>
-        <button class="btn btn-primary" onclick="navigate('register')">Registrieren</button>
+        <button class="btn btn-outline" data-action="nav" data-page="login">Anmelden</button>
+        <button class="btn btn-primary" data-action="nav" data-page="register">Registrieren</button>
       </div>
       <div class="mobile-nav-btns">
-        <button class="mobile-profile-btn" id="mobile-profile-btn" onclick="mobileProfileNav()" style="display:none" aria-label="Zum Profil">
+        <button class="mobile-profile-btn" id="mobile-profile-btn" data-action="mobileProfileNav" style="display:none" aria-label="Zum Profil">
           <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
             <circle cx="12" cy="7" r="4"/>
           </svg>
           <span class="mobile-profile-badge" id="mobile-profile-badge" hidden aria-label="Ungelesene Nachrichten"></span>
         </button>
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">&#9776;</button>
+        <button class="mobile-menu-btn" data-action="toggleMobileMenu" aria-label="Menü öffnen" aria-expanded="false" aria-controls="mobile-menu">&#9776;</button>
       </div>
     </div>
     <div class="mobile-menu" id="mobile-menu">
-      <a href="#" onclick="navigate('jobs'); toggleMobileMenu()">Jobs finden</a>
-      <a href="#" onclick="navigate('employer-landing'); toggleMobileMenu()">Für Arbeitgeber</a>
-      <a href="#" onclick="navigate('login'); toggleMobileMenu()">Anmelden</a>
-      <a href="#" onclick="navigate('register'); toggleMobileMenu()">Registrieren</a>
+      <a href="#" data-action="navAndClose" data-page="jobs">Jobs finden</a>
+      <a href="#" data-action="navAndClose" data-page="employer-landing">Für Arbeitgeber</a>
+      <a href="#" data-action="navAndClose" data-page="login">Anmelden</a>
+      <a href="#" data-action="navAndClose" data-page="register">Registrieren</a>
     </div>
   </nav>
 
@@ -129,28 +129,28 @@
         </div>
         <div class="footer-col">
           <h4>Arbeitnehmer</h4>
-          <a href="#" onclick="navigate('jobs')">Jobs finden</a>
-          <a href="#" onclick="navigate('register')">Konto erstellen</a>
-          <a href="#" onclick="navigate('cv-builder')">Lebenslauf Builder</a>
+          <a href="#" data-action="nav" data-page="jobs">Jobs finden</a>
+          <a href="#" data-action="nav" data-page="register">Konto erstellen</a>
+          <a href="#" data-action="nav" data-page="cv-builder">Lebenslauf Builder</a>
         </div>
         <div class="footer-col">
           <h4>Arbeitgeber</h4>
-          <a href="#" onclick="navigate('employer-landing')">Anzeige schalten</a>
-          <a href="#" onclick="navigate('register')">Konto erstellen</a>
+          <a href="#" data-action="nav" data-page="employer-landing">Anzeige schalten</a>
+          <a href="#" data-action="nav" data-page="register">Konto erstellen</a>
         </div>
         <div class="footer-col">
           <h4>Unternehmen</h4>
-          <a href="#" onclick="navigate('support')">Kontakt</a>
-          <a href="#" onclick="navigate('support')">Hilfe & Support</a>
+          <a href="#" data-action="nav" data-page="support">Kontakt</a>
+          <a href="#" data-action="nav" data-page="support">Hilfe & Support</a>
         </div>
       </div>
       <div class="footer-bottom">
         <span>&copy; 2026 WorkPilot. Alle Rechte vorbehalten. <span style="opacity:0.3;font-size:0.65rem">v12.04-chat</span></span>
         <div class="footer-bottom-links">
-          <a href="#" onclick="navigate('impressum')">Impressum</a>
-          <a href="#" onclick="navigate('datenschutz')">Datenschutz</a>
-          <a href="#" onclick="navigate('agb')">AGB</a>
-          <a href="#" id="footer-admin-link" onclick="openAdminPanel()" style="opacity:0.4;display:none">Admin</a>
+          <a href="#" data-action="nav" data-page="impressum">Impressum</a>
+          <a href="#" data-action="nav" data-page="datenschutz">Datenschutz</a>
+          <a href="#" data-action="nav" data-page="agb">AGB</a>
+          <a href="#" id="footer-admin-link" data-action="openAdminPanel" style="opacity:0.4;display:none">Admin</a>
         </div>
       </div>
     </div>
@@ -158,11 +158,11 @@
 
 
   <!-- Bewerbungs-Modal -->
-  <div class="modal-overlay" id="apply-modal" onclick="if(event.target===this)closeApplyModal()" role="dialog" aria-modal="true" aria-labelledby="apply-modal-title">
+  <div class="modal-overlay" id="apply-modal" data-action="closeApplyModal" role="dialog" aria-modal="true" aria-labelledby="apply-modal-title">
     <div class="modal" style="max-width:620px">
       <div class="modal-header">
         <h3 id="apply-modal-title">Bewerbung</h3>
-        <button class="close-btn" onclick="closeApplyModal()" aria-label="Modal schließen">&times;</button>
+        <button class="close-btn" data-action="closeApplyModal" aria-label="Modal schließen">&times;</button>
       </div>
       <div style="padding:1rem 1.5rem 0.5rem">
         <div id="apply-step-indicator" style="display:flex;align-items:center;gap:0.25rem"></div>
@@ -182,13 +182,14 @@
       <div style="flex:1;min-width:240px">
         <strong style="display:block;margin-bottom:0.4rem;color:#1a1a2e;font-size:0.95rem">🍪 Cookies</strong>
         <p style="font-size:0.82rem;color:#4b5563;margin:0;line-height:1.55">
-          Wir speichern technisch notwendige Cookies für deine Login-Sitzung. <strong>Keine Tracking- oder Werbe-Cookies.</strong> Details in der <a href="#" onclick="event.preventDefault();navigate('datenschutz');dismissCookieBanner(true)" style="color:#2563eb;text-decoration:underline">Datenschutzerklärung</a>.
+          Wir speichern technisch notwendige Cookies für deine Login-Sitzung. <strong>Keine Tracking- oder Werbe-Cookies.</strong> Details in der <a href="#" data-action="nav" data-page="datenschutz" style="color:#2563eb;text-decoration:underline">Datenschutzerklärung</a>.
         </p>
       </div>
-      <button onclick="dismissCookieBanner(true)" class="btn btn-primary" style="padding:0.65rem 1.5rem;flex-shrink:0">Verstanden</button>
+      <button data-action="dismissCookie" data-persist="true" class="btn btn-primary" style="padding:0.65rem 1.5rem;flex-shrink:0">Verstanden</button>
     </div>
   </div>
 
+  <script src="actions.js?v=1"></script>
   <script src="app.js?v=1" defer></script>
 </body>
 </html>
