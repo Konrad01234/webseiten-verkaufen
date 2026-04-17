@@ -6969,6 +6969,16 @@ if (typeof registerAction === 'function') {
   registerChange('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value));
 
   registerInput('radiusLabel', (el) => { var l = document.getElementById('radius-label'); if (l) l.textContent = el.value + ' km'; });
+  // Range-Slider auf der Jobs-Seite. HTML nutzt data-on-input damit waehrend
+  // des Drags live gefiltert wird; registerChange alleine hat nie gefeuert,
+  // weil das HTML-Attribut data-on-change dort gar nicht steht -> Slider war
+  // komplett wirkungslos.
+  registerInput('setFilterRadius', (el) => { state.filters.radius = parseInt(el.value); render(); });
+  // Avatar im Nav ist als role="button" tabindex="0" ausgelegt; ohne Keydown-
+  // Handler geht aber kein Enter/Space -> Tastatur-Nutzer kamen nicht ins Menue.
+  registerKeydown('avatarKeydown', (el, e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleDropdown(); }
+  });
   registerInput('updatePasswordChecklist', (el) => updatePasswordChecklist(el.value));
 }
 
