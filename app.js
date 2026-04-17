@@ -5786,19 +5786,29 @@ async function loadSupportTicketsForUser() {
     } else {
       rows = await DB.listSupportTickets(state.user.id);
     }
-    state._supportTicketsCache = (rows || []).map(r => ({
-      id: r.id,
-      userId: r.user_id,
-      userName: state.user.name || '',
-      userEmail: state.user.email || '',
-      userRole: state.user.role || '',
-      category: r.category,
-      subject: r.subject,
-      message: r.message,
-      status: r.status,
-      adminReply: r.admin_reply,
-      createdAt: r.created_at
-    }));
+    // Ersteller-Profil pro Ticket auflösen, statt einfach state.user.* zu
+    // kopieren. In der Admin-Liste hat sonst jedes Ticket den Namen des
+    // gerade eingeloggten Admins getragen, unabhaengig davon wer's wirklich
+    // eingereicht hat.
+    const profiles = state._allProfilesCache || [];
+    state._supportTicketsCache = (rows || []).map(r => {
+      let creator = null;
+      if (state.user && r.user_id === state.user.id) creator = state.user;
+      else creator = profiles.find(p => p.id === r.user_id) || null;
+      return {
+        id: r.id,
+        userId: r.user_id,
+        userName: (creator && creator.name) || '',
+        userEmail: (creator && creator.email) || '',
+        userRole: (creator && creator.role) || '',
+        category: r.category,
+        subject: r.subject,
+        message: r.message,
+        status: r.status,
+        adminReply: r.admin_reply,
+        createdAt: r.created_at
+      };
+    });
   } catch (e) {
     console.error('[loadSupportTicketsForUser]', e);
     state._supportTicketsCache = [];
@@ -6612,7 +6622,7 @@ function renderAdminPanel() {
                   </td>
                   <td style="padding:0.65rem 1.25rem">
                     <div style="font-weight:600;font-size:0.85rem">${escapeHtml(t.userName)}</div>
-                    <div style="font-size:0.75rem;color:var(--gray-500)">${t.userEmail} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
+                    <div style="font-size:0.75rem;color:var(--gray-500)">${escapeHtml(t.userEmail)} &bull; ${t.userRole === 'employer' ? 'AG' : 'AN'}</div>
                   </td>
                   <td style="padding:0.65rem 1.25rem"><span class="badge">${catLabels[t.category] || t.category}</span></td>
                   <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
@@ -6627,7 +6637,7 @@ function renderAdminPanel() {
                     <p style="font-size:0.88rem;margin-bottom:0.75rem;white-space:pre-wrap">${escapeHtml(t.message)}</p>
                     ${t.adminReply ? `<div style="padding:0.5rem 0.75rem;background:rgba(255,255,255,0.04);border-radius:8px;border-left:3px solid #6366f1;margin-bottom:0.75rem"><strong style="font-size:0.78rem;color:#818cf8">Deine Antwort:</strong><p style="font-size:0.85rem;margin:0.25rem 0 0;color:#cbd5e1">${escapeHtml(t.adminReply)}</p></div>` : ''}
                     <div style="display:flex;gap:0.5rem;align-items:flex-end">
-                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${t.adminReply || ''}</textarea>
+                      <textarea id="reply-${t.id}" class="form-input" rows="2" placeholder="Antwort schreiben..." style="flex:1;font-size:0.85rem">${escapeHtml(t.adminReply || '')}</textarea>
                       <button class="btn btn-primary btn-sm" data-action="adminReplyTicket" data-ticket-id="${t.id}">Antworten</button>
                     </div>
                   </td>
