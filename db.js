@@ -159,14 +159,51 @@
   // -----------------------------------------------------------------
   // APPLICATIONS
   // -----------------------------------------------------------------
-  async function applyToJob(jobId, workerId, message) {
-    const res = await sb.from('applications').insert({
-      job_id: jobId, worker_id: workerId, message: message || null
-    }).select().single();
+  async function applyToJob(jobId, workerId, message, motivationFile) {
+    const row = {
+      job_id: jobId,
+      worker_id: workerId,
+      message: message || null,
+      motivation_file_path: motivationFile && motivationFile.path ? motivationFile.path : null,
+      motivation_file_name: motivationFile && motivationFile.name ? motivationFile.name : null
+    };
+    const res = await sb.from('applications').insert(row).select().single();
     if (res.error) throw res.error;
     // Bump the count on the job
     await incrementJobMetric(jobId, 'applications_count');
     return res.data;
+  }
+
+  // Upload a PDF/DOC/TXT into the private "documents" bucket under
+  // applications/<worker_uid>/<timestamp>-<safe_name>. Returns { path, name }
+  // so the caller can persist it on the applications row.
+  async function uploadApplicationDocument(file) {
+    const bucket = window.DOCUMENTS_BUCKET;
+    if (!bucket) throw new Error('DOCUMENTS_BUCKET nicht konfiguriert');
+    if (!file) throw new Error('Keine Datei');
+    const session = await getSession();
+    if (!session || !session.user) throw new Error('Nicht eingeloggt');
+    const uid = session.user.id;
+    const safeName = (file.name || 'motivation.pdf').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `applications/${uid}/${Date.now()}-${safeName}`;
+    const res = await sb.storage.from(bucket).upload(path, file, {
+      cacheControl: '3600',
+      upsert: false,
+      contentType: file.type || 'application/octet-stream'
+    });
+    if (res.error) throw res.error;
+    return { path, name: file.name || safeName };
+  }
+
+  // Generate a short-lived signed URL so the worker or employer can
+  // open a stored document. RLS on the bucket makes sure only the two
+  // parties of an application can call this successfully.
+  async function createSignedDocumentUrl(path, expirySec) {
+    const bucket = window.DOCUMENTS_BUCKET;
+    if (!bucket || !path) return null;
+    const res = await sb.storage.from(bucket).createSignedUrl(path, expirySec || 600);
+    if (res.error) throw res.error;
+    return res.data && res.data.signedUrl;
   }
 
   async function getApplicationsForWorker(workerId) {
@@ -341,6 +378,7 @@
     // support
     createSupportTicket, listSupportTickets,
     // storage (optional)
-    uploadImage, getPublicImageUrl
+    uploadImage, getPublicImageUrl,
+    uploadApplicationDocument, createSignedDocumentUrl
   };
 })();

@@ -38,6 +38,7 @@
 - [x] In Supabase Storage public bucket „images" angelegt ✅
 - [ ] RLS-Policies nach Einspielen prüfen (Smoke-Test: Jobs posten, Bewerbung senden)
 - [ ] **`supabase-hardening-v2.sql` einspielen** — schliesst 6 Security-Luecken aus dem Code-Audit (Email-Spoofing → Admin, Storage-Pfad-Hijacking, Worker-Status-Escalation, UPDATE-ohne-WITH-CHECK, Review-Dedup, atomic Job-Metric-Increment). **Pflicht vor Go-Live.**
+- [ ] **`supabase-add-application-files.sql` einspielen** + privaten Bucket „documents" im Dashboard anlegen (Public: OFF). Fügt Spalten `motivation_file_path` + `motivation_file_name` auf `applications` hinzu und setzt RLS so, dass nur Bewerber + zugehöriger Arbeitgeber die PDF lesen dürfen. Ohne dieses SQL + Bucket schlägt der Upload-Versuch mit Toast-Fehler fehl.
 
 ### Deployment
 - [ ] Eigene Domain einrichten (aktuell vermutlich nur `*.pages.dev`)

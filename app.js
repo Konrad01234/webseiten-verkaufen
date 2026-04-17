@@ -309,7 +309,8 @@ function dbAppToFrontend(row) {
     statusText: statusTexts[row.status] || 'Neu',
     date: (row.created_at || '').slice(0, 10),
     motivation: row.message || null,
-    motivationFileName: null,
+    motivationFilePath: row.motivation_file_path || null,
+    motivationFileName: row.motivation_file_name || null,
     cvMethod: null,
     cvFileName: null
   };
@@ -1248,7 +1249,14 @@ function renderMotivationDetail() {
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivationFile;
   } else { d.innerHTML = ''; }
 }
-function handleApplyMotivationFile(input) { if (input.files && input.files[0]) { state.applyMotivationFile = { name: input.files[0].name }; renderMotivationDetail(); } }
+function handleApplyMotivationFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var f = input.files[0];
+  var maxBytes = 10 * 1024 * 1024;
+  if (f.size > maxBytes) { showToast('Datei zu groß (max. 10 MB).', 'error'); input.value = ''; return; }
+  state.applyMotivationFile = f;
+  renderMotivationDetail();
+}
 function handleApplyCVFile(input) { if (input.files && input.files[0]) { state.applyCVFile = { name: input.files[0].name }; renderApplyStep(); } }
 function selectCVMethod(m) { state.applyCVMethod = m; if (m === 'create') { closeApplyModal(); navigate('cv-builder'); showToast('Erstelle deinen Lebenslauf und bewirb dich danach erneut!', 'info'); return; } renderApplyStep(); }
 function applyNextStep() { state.applyStep++; renderApplyStep(); }
@@ -1265,8 +1273,26 @@ async function finalSubmitApplication() {
     return;
   }
 
+  // Upload motivation document (if any) to the private bucket BEFORE
+  // inserting the application row, so the DB always references a file
+  // that actually exists in storage.
+  let motivationUpload = null;
+  if (state.applyMotivationMethod === 'upload' && state.applyMotivationFile instanceof File) {
+    if (!window.DOCUMENTS_BUCKET || typeof DB.uploadApplicationDocument !== 'function') {
+      showToast('Datei-Upload ist noch nicht konfiguriert. Bitte ohne Anschreiben bewerben oder Support kontaktieren.', 'error');
+      return;
+    }
+    try {
+      motivationUpload = await DB.uploadApplicationDocument(state.applyMotivationFile);
+    } catch (e) {
+      console.error('[finalSubmitApplication] upload failed', e);
+      showToast('Datei konnte nicht hochgeladen werden: ' + (e.message || ''), 'error');
+      return;
+    }
+  }
+
   try {
-    await DB.applyToJob(jobId, state.user.id, null);
+    await DB.applyToJob(jobId, state.user.id, null, motivationUpload);
     // Refresh the cache so the worker dashboard / getUserApps pick it up
     await loadApplicationsForUser();
     closeApplyModal();
@@ -1286,13 +1312,27 @@ async function finalSubmitApplication() {
   }
 }
 
-function openApplicationDoc(appId, docType) {
+async function openApplicationDoc(appId, docType) {
   // Read from the Supabase-backed apps cache (loaded by
   // loadApplicationsForUser). Falls back to a string-equality lookup
   // because UUIDs and integers can both legitimately appear here.
   var allApps = state._appsCache || [];
   var app = allApps.find(function(a) { return a.id === appId || String(a.id) === String(appId); });
   if (!app) { showToast('Bewerbung nicht gefunden', 'error'); return; }
+
+  // If the motivation is an uploaded document, fetch a signed URL
+  // from the private bucket and open the actual file instead of
+  // rendering a placeholder preview.
+  if (docType === 'motivation' && app.motivationFilePath && window.DB && typeof DB.createSignedDocumentUrl === 'function') {
+    try {
+      const url = await DB.createSignedDocumentUrl(app.motivationFilePath, 600);
+      if (url) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
+    } catch (e) {
+      console.error('[openApplicationDoc] signed url', e);
+      showToast('Datei konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
+      return;
+    }
+  }
 
   var win = window.open('', '_blank');
   if (!win) { showToast('Popup wurde blockiert. Bitte erlaube Popups für diese Seite.', 'error'); return; }
@@ -6868,7 +6908,7 @@ if (typeof registerAction === 'function') {
   registerAction('navAndToggleDropdown', (el) => { state.dropdownOpen = false; navigate(el.dataset.page); });
   registerAction('navToApplicant', (el) => navigate('applicant-profile', { applicantId: parseInt(el.dataset.applicantId) }));
   registerAction('navToSection', (el) => navigateToSection(el.dataset.page, el.dataset.section));
-  registerAction('openApplicationDoc', (el) => openApplicationDoc(parseInt(el.dataset.appId), el.dataset.docType));
+  registerAction('openApplicationDoc', (el) => openApplicationDoc(el.dataset.appId, el.dataset.docType));
   registerAction('prevProfileStep', () => gotoProfileStep(Math.max(0, state.profileStep - 1)));
   registerAction('previewCV', () => previewCV());
   registerAction('removeCompanyImage', (el) => removeCompanyImage(parseInt(el.dataset.index)));
