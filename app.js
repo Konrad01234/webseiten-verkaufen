@@ -1046,7 +1046,11 @@ async function register(data) {
   if (!window.DB) { showErr('Backend nicht geladen - bitte Seite neu laden.'); return; }
   const cleanEmail = (data.email || '').trim().toLowerCase();
   if (!cleanEmail || !data.password) { showErr('E-Mail und Passwort sind erforderlich.'); return; }
-  if (data.password.length < 6) { showErr('Passwort muss mindestens 6 Zeichen lang sein.'); return; }
+  const pwRules = validatePasswordRules(data.password);
+  if (!pwRules.length || !pwRules.lower || !pwRules.upper || !pwRules.digit) {
+    showErr('Passwort muss mindestens 8 Zeichen lang sein und einen Klein- und Großbuchstaben sowie eine Zahl enthalten.');
+    return;
+  }
   // Step 1: Create account
   try {
     await DB.signUp({
@@ -3640,8 +3644,14 @@ function renderRegister() {
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" required minlength="8">
+            <label class="form-label" for="reg-password">Passwort</label>
+            <input type="password" name="password" id="reg-password" class="form-input" placeholder="Passwort eingeben" required minlength="8" data-on-input="updatePasswordChecklist" autocomplete="new-password">
+            <ul class="pw-checklist" id="pw-checklist" aria-live="polite">
+              <li data-rule="length"><span class="pw-check-icon" aria-hidden="true">○</span>Mindestens 8 Zeichen</li>
+              <li data-rule="lower"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Kleinbuchstabe (a–z)</li>
+              <li data-rule="upper"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Großbuchstabe (A–Z)</li>
+              <li data-rule="digit"><span class="pw-check-icon" aria-hidden="true">○</span>Eine Zahl (0–9)</li>
+            </ul>
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
@@ -6947,4 +6957,27 @@ if (typeof registerAction === 'function') {
   registerChange('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value));
 
   registerInput('radiusLabel', (el) => { var l = document.getElementById('radius-label'); if (l) l.textContent = el.value + ' km'; });
+  registerInput('updatePasswordChecklist', (el) => updatePasswordChecklist(el.value));
+}
+
+// Live-Feedback fuer das Registrierungs-Passwort. Haeltet die Anforderungs-
+// Checkliste in Sync mit dem aktuellen Input-Wert.
+function validatePasswordRules(pw) {
+  return {
+    length: (pw || '').length >= 8,
+    lower: /[a-z]/.test(pw || ''),
+    upper: /[A-Z]/.test(pw || ''),
+    digit: /\d/.test(pw || '')
+  };
+}
+function updatePasswordChecklist(pw) {
+  const list = document.getElementById('pw-checklist');
+  if (!list) return;
+  const rules = validatePasswordRules(pw);
+  list.querySelectorAll('li[data-rule]').forEach(li => {
+    const ok = !!rules[li.dataset.rule];
+    li.classList.toggle('pw-check-ok', ok);
+    const icon = li.querySelector('.pw-check-icon');
+    if (icon) icon.textContent = ok ? '✓' : '○';
+  });
 }
