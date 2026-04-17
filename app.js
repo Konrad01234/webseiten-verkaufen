@@ -1090,9 +1090,20 @@ async function logout() {
   // vom alten User" sieht. Der SIGNED_OUT-Auth-Handler macht hinterher
   // das Gleiche nochmal — das ist idempotent und nicht schaedlich.
   try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
+  // Realtime-Chat-Subscription schliessen, sonst liefert sie Messages
+  // in einen (dann null-en) state.user rein und koennte sogar Daten
+  // in den Speicher des naechsten Logins blenden.
+  if (state._chatSub) {
+    try { DB.sb.removeChannel(state._chatSub); } catch (_) {}
+    state._chatSub = null;
+  }
+  state.activeChat = null;
   state.user = null;
   state._savedJobs = [];
   state._appsCache = [];
+  // Admin-Profil-Cache loeschen: enthaelt Emails/Namen aller User, darf
+  // nicht ueber Login-Wechsel hinweg stehenbleiben.
+  state._allProfilesCache = [];
   state.chatsLoaded = false;
   state.applicationsLoaded = false;
   if (typeof WORKER_CHAT_MESSAGES !== 'undefined') WORKER_CHAT_MESSAGES.length = 0;
@@ -1587,16 +1598,20 @@ async function addCVToProfile() {
   if (!state.user) { navigate('login'); return; }
   if (!window.DB) { showToast('Backend nicht geladen.', 'error'); return; }
   const cvData = getCVData();
-  state.user.cvData = cvData;
-  state.user.cvUploaded = true;
-  state.user.cvFileName = 'Lebenslauf (Builder)';
   try {
     await DB.updateProfile(state.user.id, {
       cv_data: cvData,
       cv_uploaded: true,
       cv_file_name: 'Lebenslauf (Builder)'
     });
+    // State erst NACH erfolgreicher DB-Persistierung aktualisieren, sonst
+    // zeigt die UI nach einem DB-Fehler dauerhaft einen gruenen Haken
+    // der beim naechsten Reload verschwindet.
+    state.user.cvData = cvData;
+    state.user.cvUploaded = true;
+    state.user.cvFileName = 'Lebenslauf (Builder)';
     showToast('Lebenslauf wurde deinem Profil hinzugefügt!');
+    render();
   } catch (e) {
     console.error('[addCVToProfile]', e);
     showToast('Lebenslauf konnte nicht gespeichert werden.', 'error');
