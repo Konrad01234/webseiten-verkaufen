@@ -1753,23 +1753,6 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   .emp-split-img { height: 250px; }
 }
 .employer-hero p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; max-width: 600px; margin-left: auto; margin-right: auto; }
-.pricing-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; max-width: 1000px; margin: 3rem auto; }
-.pricing-card {
-  background: #fff; border-radius: var(--radius-lg); padding: 2rem;
-  border: 2px solid var(--gray-200); text-align: center; color: var(--gray-900);
-}
-.pricing-card.featured { border-color: var(--primary); position: relative; transform: scale(1.05); }
-.pricing-card.featured::before {
-  content: 'Beliebt'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  background: var(--primary); color: #fff; padding: 0.2rem 1rem; border-radius: 20px;
-  font-size: 0.75rem; font-weight: 700;
-}
-.pricing-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-.pricing-price { font-size: 2.5rem; font-weight: 800; color: var(--primary); margin: 1rem 0; }
-.pricing-price span { font-size: 1rem; font-weight: 400; color: var(--gray-500); }
-.pricing-features { list-style: none; margin-bottom: 1.5rem; text-align: left; }
-.pricing-features li { padding: 0.375rem 0; font-size: 0.9rem; color: var(--gray-600); }
-.pricing-features li::before { content: '✓ '; color: var(--success); font-weight: 700; }
 
 /* ===== REVIEWS ===== */
 .review-card {
@@ -1837,8 +1820,6 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1024px) {
   .features-grid, .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
-  .pricing-cards { grid-template-columns: 1fr; max-width: 400px; }
-  .pricing-card.featured { transform: none; }
   .search-layout { grid-template-columns: 1fr; }
   .search-sidebar { position: static; }
   .job-detail-layout { grid-template-columns: 1fr; }
@@ -2380,26 +2361,6 @@ body:has(.admin-login-wrap) {
 .admin-bar-value { font-size: 0.8rem; font-weight: 800; color: var(--gray-700); }
 .admin-bar-label { font-size: 0.7rem; color: var(--gray-500); white-space: nowrap; font-weight: 500; }
 
-/* Horizontal Bars (Umsatz pro Produkt) */
-.admin-hbar-row { margin-bottom: 1rem; }
-.admin-hbar-info {
-  display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;
-}
-.admin-hbar-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-.admin-hbar-name { font-size: 0.85rem; color: var(--gray-700); font-weight: 500; }
-.admin-hbar-count { font-size: 0.75rem; color: var(--gray-500); margin-left: auto; }
-.admin-hbar-track {
-  width: 100%; height: 10px; background: var(--gray-100); border-radius: 100px; overflow: hidden;
-}
-.admin-hbar-fill {
-  height: 100%; border-radius: 100px; min-width: 4px;
-  animation: adminHBarGrow 0.8s ease-out both;
-}
-@keyframes adminHBarGrow { from { width: 0 !important; } }
-.admin-hbar-amount {
-  font-size: 0.8rem; font-weight: 700; color: var(--gray-800); margin-top: 0.2rem;
-}
-
 /* Mini-Stat inline */
 .admin-mini-stat { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; }
 .admin-mini-stat span { font-size: 0.7rem; color: var(--gray-500); }
@@ -2454,21 +2415,6 @@ body:has(.admin-login-wrap) {
 .admin-panel .btn-outline:hover { background: var(--gray-50); color: var(--gray-900); border-color: var(--gray-300); }
 .admin-panel .btn-outline:disabled { opacity: 0.4; }
 
-/* Revenue Period Tabs */
-.admin-rev-tabs {
-  display: flex; gap: 0.25rem; background: var(--gray-100); border-radius: 10px; padding: 3px;
-}
-.admin-rev-tab {
-  padding: 0.4rem 0.85rem; border-radius: 8px; border: none; background: transparent;
-  font-size: 0.8rem; font-weight: 600; color: var(--gray-500); cursor: pointer;
-  transition: all 0.2s;
-}
-.admin-rev-tab:hover { color: var(--gray-700); }
-.admin-rev-tab.active {
-  background: #fff; color: #15803d;
-  box-shadow: 0 1px 3px rgba(15,23,42,0.08);
-}
-
 /* Admin Login Page */
 .admin-login-wrap { padding-top: 4rem; min-height: 100vh; }
 .admin-login-wrap .card {
@@ -2511,8 +2457,6 @@ body:has(.admin-login-wrap) {
   .admin-donut-row { flex-direction: column; gap: 1rem; }
   .admin-bar-chart { height: 140px; gap: 0.35rem; }
   .admin-kpi-value { font-size: 1.1rem; }
-  .admin-rev-tabs { flex-wrap: wrap; }
-  .admin-rev-tab { font-size: 0.7rem; padding: 0.35rem 0.6rem; }
   .admin-panel { padding: 1rem 0.75rem; }
 }
 

@@ -24,3 +24,10 @@ window.HCAPTCHA_SITE_KEY = '0e0c0f20-4954-49c4-82cc-3f922daed460';
 // Bildern ineffizient). Sobald du im Supabase-Dashboard einen public
 // bucket "images" anlegst, hier 'images' eintragen:
 window.IMAGE_BUCKET = 'images';
+
+// PRIVATER Storage-Bucket für Bewerbungs-Dokumente (Motivationsschreiben
+// als PDF/DOC/TXT). Muss im Dashboard mit Public: OFF angelegt werden,
+// dann supabase-add-application-files.sql einspielen. Ohne gesetzten
+// Bucket fällt das Upload-Feld zurück auf "nicht verfügbar" und gibt
+// einen Toast.
+window.DOCUMENTS_BUCKET = 'documents';

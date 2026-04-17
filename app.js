@@ -30,7 +30,7 @@ const TESTIMONIALS = [
   },
   {
     name: 'Mia Hofmann', role: 'Schülerin, 16 Jahre – Gymnasium Berlin',
-    text: 'Die KI hat mir bei meinem Motivationsschreiben geholfen. Das hat sich wirklich professionell angehört und ich habe den Job bekommen!',
+    text: 'Ich habe meinen ersten Minijob als Nachhilfe-Lehrerin über WorkPilot gefunden. Die Bewerbung ging schnell und der Chat mit dem Arbeitgeber war super unkompliziert.',
     rating: 5, initials: 'MH'
   },
   {
@@ -97,7 +97,6 @@ let state = {
   newJob: {},
   dropdownOpen: false,
   adminTab: 'besucher',
-  adminRevenuePeriod: 'daily',
   jobsLoaded: false,
   chatsLoaded: false,
   applicationsLoaded: false,
@@ -310,7 +309,8 @@ function dbAppToFrontend(row) {
     statusText: statusTexts[row.status] || 'Neu',
     date: (row.created_at || '').slice(0, 10),
     motivation: row.message || null,
-    motivationFileName: null,
+    motivationFilePath: row.motivation_file_path || null,
+    motivationFileName: row.motivation_file_name || null,
     cvMethod: null,
     cvFileName: null
   };
@@ -543,8 +543,12 @@ function isCurrentUserAdmin() {
 }
 
 // ===== ANALYTICS TRACKING =====
+function readVisits() {
+  try { return JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]'); }
+  catch { return []; }
+}
 function trackVisit() {
-  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
+  const visits = readVisits();
   const now = new Date().toISOString();
   const userRole = state.user ? state.user.role : 'guest';
   const userId = state.user ? state.user.id : 'anon_' + (sessionStorage.getItem('jj_anon_id') || (() => { const id = Date.now(); sessionStorage.setItem('jj_anon_id', id); return id; })());
@@ -556,14 +560,8 @@ function trackVisit() {
   }
 }
 
-// trackPurchase entfernt — war nur für Boost-Features die ebenfalls weg sind.
-
 function getAnalyticsData() {
-  const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
-  // Purchases bleibt localStorage — tote Feature-Spalte (kein Bezahl-Modus).
-  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  // ECHTE Daten aus Supabase: User aus profiles-Cache, Jobs aus JOBS-Array,
-  // Bewerbungen aus apps-Cache.
+  const visits = readVisits();
   const allUsers = state._allProfilesCache || [];
   state._adminTotalJobs = (typeof JOBS !== 'undefined' && JOBS) ? JOBS.length : 0;
   state._adminTotalApps = (state._appsCache || []).length;
@@ -585,15 +583,6 @@ function getAnalyticsData() {
   const visitsThisWeek = [...new Set(visits.filter(v => new Date(v.timestamp) >= weekStart).map(v => v.userId))].length;
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const visitsThisMonth = [...new Set(visits.filter(v => new Date(v.timestamp) >= monthStart).map(v => v.userId))].length;
-  const revenue = {}; let totalRevenue = 0;
-  purchases.forEach(p => {
-    if (!revenue[p.product]) revenue[p.product] = { count: 0, total: 0 };
-    revenue[p.product].count++; revenue[p.product].total += p.price; totalRevenue += p.price;
-  });
-  const purchasesToday = purchases.filter(p => new Date(p.timestamp) >= todayStart);
-  const revenueToday = purchasesToday.reduce((sum, p) => sum + p.price, 0);
-  const purchasesThisMonth = purchases.filter(p => new Date(p.timestamp) >= monthStart);
-  const revenueThisMonth = purchasesThisMonth.reduce((sum, p) => sum + p.price, 0);
   const last7Days = [];
   for (let i = 6; i >= 0; i--) {
     const day = new Date(todayStart); day.setDate(day.getDate() - i);
@@ -605,47 +594,9 @@ function getAnalyticsData() {
     online: { total: uniqueOnline.length, ...onlineByRole },
     users: { total: totalUsers, employers, workers },
     visits: { today: visitsToday, thisWeek: visitsThisWeek, thisMonth: visitsThisMonth, last7Days },
-    revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
-    purchases: { total: purchases.length, today: purchasesToday.length },
     jobs: { total: state._adminTotalJobs || 0 },
     applications: { total: state._adminTotalApps || 0 }
   };
-}
-
-function getRevenueTimeline(period) {
-  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const bars = [];
-  if (period === 'daily') {
-    for (let i = 13; i >= 0; i--) {
-      const day = new Date(todayStart); day.setDate(day.getDate() - i);
-      const nextDay = new Date(day); nextDay.setDate(nextDay.getDate() + 1);
-      const dayP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= day && d < nextDay; });
-      bars.push({ label: day.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), total: dayP.reduce((s, p) => s + p.price, 0), count: dayP.length });
-    }
-  } else if (period === 'monthly') {
-    for (let i = 11; i >= 0; i--) {
-      const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const nextM = new Date(m.getFullYear(), m.getMonth() + 1, 1);
-      const mP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= m && d < nextM; });
-      bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: mP.reduce((s, p) => s + p.price, 0), count: mP.length });
-    }
-  } else if (period === 'yearly') {
-    for (let i = 4; i >= 0; i--) {
-      const y = now.getFullYear() - i;
-      const yStart = new Date(y, 0, 1); const yEnd = new Date(y + 1, 0, 1);
-      const yP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= yStart && d < yEnd; });
-      bars.push({ label: '' + y, total: yP.reduce((s, p) => s + p.price, 0), count: yP.length });
-    }
-  } else {
-    const byMonth = {};
-    purchases.forEach(p => { const d = new Date(p.timestamp); const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); if (!byMonth[key]) byMonth[key] = { total: 0, count: 0 }; byMonth[key].total += p.price; byMonth[key].count++; });
-    const sortedKeys = Object.keys(byMonth).sort();
-    if (sortedKeys.length === 0) { for (let i = 5; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: 0, count: 0 }); } }
-    else { sortedKeys.forEach(key => { const [y, m] = key.split('-'); const d = new Date(parseInt(y), parseInt(m) - 1, 1); bars.push({ label: d.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: byMonth[key].total, count: byMonth[key].count }); }); }
-  }
-  return bars;
 }
 
 function switchAdminTab(tab) {
@@ -655,30 +606,6 @@ function switchAdminTab(tab) {
   document.querySelector('.admin-tab[onclick*="' + tab + '"]').classList.add('active');
   const content = document.getElementById('admin-tab-' + tab);
   if (content) content.classList.add('active');
-}
-
-function switchRevenueView(period) {
-  state.adminRevenuePeriod = period;
-  const container = document.getElementById('admin-revenue-timeline');
-  if (!container) return;
-  const bars = getRevenueTimeline(period);
-  const maxVal = Math.max(...bars.map(b => b.total), 1);
-  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
-  const periodTotal = bars.reduce((s, b) => s + b.total, 0);
-  const periodCount = bars.reduce((s, b) => s + b.count, 0);
-  const gradients = ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8','#1e40af','#1e40af','#1e3a8a','#0d9488','#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8'];
-  document.querySelectorAll('.admin-rev-tab').forEach(btn => { btn.classList.toggle('active', btn.dataset.period === period); });
-  const sumEl = document.getElementById('admin-revenue-period-sum');
-  if (sumEl) sumEl.textContent = formatEuro(periodTotal);
-  const countEl = document.getElementById('admin-revenue-period-count');
-  if (countEl) countEl.textContent = periodCount + ' Bestellungen';
-  const chart = document.getElementById('admin-revenue-bars');
-  if (chart) {
-    chart.innerHTML = bars.map((b, i) => {
-      const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
-      return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#1d4ed8">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-    }).join('');
-  }
 }
 
 // ===== NAVIGATION =====
@@ -1199,10 +1126,6 @@ function getUserApps() {
     .filter(a => a.userId === state.user.id)
     .map(a => a.jobId);
 }
-// Legacy no-op: applications are now persisted via DB.applyToJob and
-// refreshed via loadApplicationsForUser(). Kept so older call sites don't
-// crash if they still reference it.
-function saveUserApps(_apps) { /* no-op */ }
 
 // ===== AKTIVER JOB SYSTEM =====
 // Derived from the worker's accepted applications so no extra DB writes
@@ -1293,7 +1216,7 @@ function submitApplication(jobId) {
   if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
   const pendingCount = getPendingAppCount();
   if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben. Warte auf eine Antwort oder ziehe eine zurück.', 'error'); return; }
-  state.applyJobId = jobId; state.applyStep = 1; state.applyMotivation = ''; state.applyMotivationFile = null; state.applyCVFile = null; state.applyCVMethod = null; state.applyMotivationMethod = null;
+  state.applyJobId = jobId; state.applyStep = 1; state.applyMotivationFile = null; state.applyCVFile = null; state.applyCVMethod = null; state.applyMotivationMethod = null;
   openApplyModal();
 }
 function openApplyModal() { var m = document.getElementById('apply-modal'); if (m) m.classList.add('open'); renderApplyStep(); }
@@ -1304,7 +1227,7 @@ function renderApplyStep() {
   var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var jobTitle = job ? job.title : 'Job'; var company = job ? job.company : '';
   if (si) { si.innerHTML = [1,2,3].map(function(s){ return '<div style="display:flex;align-items:center;gap:0.4rem"><div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;' + (s<state.applyStep?'background:#2563eb;color:#fff':s===state.applyStep?'background:var(--primary);color:#fff':'background:var(--gray-200);color:var(--gray-500)') + '">' + (s<state.applyStep?'✓':s) + '</div><span style="font-size:0.75rem;color:' + (s===state.applyStep?'var(--primary)':'var(--gray-400)') + ';font-weight:' + (s===state.applyStep?'600':'400') + '">' + (s===1?'Anschreiben':s===2?'Lebenslauf':'Vorschau') + '</span></div>' + (s<3?'<div style="flex:1;height:2px;background:var(--gray-200);margin:0 0.25rem"><div style="height:100%;background:var(--primary);width:' + (s<state.applyStep?'100%':'0%') + '"></div></div>':''); }).join(''); }
   if (state.applyStep === 1) {
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="generate" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="skip" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="skip" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
     if (state.applyMotivationMethod) renderMotivationDetail();
     footer.innerHTML = '<button class="btn btn-outline" data-action="closeApplyModal">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' data-action="applyNextStep">Weiter</button>';
   } else if (state.applyStep === 2) {
@@ -1314,118 +1237,26 @@ function renderApplyStep() {
     footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="1">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' data-action="applyNextStep">Weiter zur Vorschau</button>';
   } else if (state.applyStep === 3) {
     var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
     footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="2">Zurück</button><button class="btn btn-primary" data-action="finalSubmitApplication">Bewerbung absenden</button>';
   }
 }
-function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate' || m === 'upload') renderMotivationDetail(); }
-function generateMotivationText() {
-  var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-  var name = document.getElementById('motiv-name')?.value?.trim() || state.user?.name || 'Max Mustermann';
-  var alter = document.getElementById('motiv-alter')?.value?.trim() || '';
-  var schule = document.getElementById('motiv-schule')?.value?.trim() || '';
-  var staerken = document.getElementById('motiv-staerken')?.value?.trim() || '';
-  var motivation = document.getElementById('motiv-warum')?.value?.trim() || '';
-  var verfuegbar = document.getElementById('motiv-verfuegbar')?.value?.trim() || '';
-  var erfahrung = document.getElementById('motiv-erfahrung')?.value?.trim() || '';
-  var jobTitle = job ? job.title : 'die ausgeschriebene Stelle';
-  var firma = job ? job.company : 'Ihr Unternehmen';
-  var branche = job ? (job.category || '') : '';
-  var ort = job ? (job.city || '') : '';
-
-  var text = name + '\n' + (ort || 'Musterstadt') + '\n\n';
-  text += 'An\n' + firma + '\n' + (ort ? ort : '') + '\n\n';
-  text += 'Bewerbung als ' + jobTitle + '\n\n';
-  text += 'Sehr geehrte Damen und Herren,\n\n';
-
-  // Einleitung - ausgeschmückt
-  text += 'mit großer Begeisterung habe ich Ihre Stellenanzeige als ' + jobTitle + ' bei ' + firma + ' gelesen. ';
-  if (branche) {
-    text += 'Der Bereich ' + branche + ' fasziniert mich schon seit längerer Zeit, und ich bin überzeugt, dass ' + firma + ' genau das richtige Unternehmen ist, um erste wertvolle Berufserfahrungen zu sammeln. ';
-  }
-  text += 'Hiermit möchte ich mich bei Ihnen um diese Stelle bewerben und Ihnen zeigen, warum ich die richtige Wahl für Ihr Team bin.\n\n';
-
-  // Persönliche Vorstellung - ausgeschmückt
-  text += 'Zu meiner Person: Mein Name ist ' + name;
-  if (alter) text += ' und ich bin ' + alter + ' Jahre alt';
-  text += '. ';
-  if (schule) {
-    text += 'Derzeit besuche ich ' + schule + ', wo ich neben meiner schulischen Ausbildung großen Wert darauf lege, praktische Erfahrungen zu sammeln und mich persönlich weiterzuentwickeln. ';
-  }
-  text += 'Ich bin eine aufgeschlossene und lernbereite Person, die sich schnell in neue Aufgabenbereiche einarbeiten kann.\n\n';
-
-  // Motivation - ausgeschmückt
-  if (motivation) {
-    text += 'Was mich besonders an dieser Stelle begeistert: ' + motivation + '. ';
-    text += 'Ich sehe in dieser Tätigkeit nicht nur eine Möglichkeit, Geld zu verdienen, sondern vor allem die Chance, mich in einem professionellen Umfeld weiterzuentwickeln und einen echten Beitrag zu Ihrem Team zu leisten. ';
-    if (branche) {
-      text += 'Die Arbeit im Bereich ' + branche + ' reizt mich, weil ich hier meine Interessen mit praktischer Berufserfahrung verbinden kann.';
-    }
-    text += '\n\n';
-  }
-
-  // Erfahrungen - ausgeschmückt
-  if (erfahrung) {
-    text += 'Bereits in der Vergangenheit konnte ich wertvolle Erfahrungen sammeln: ' + erfahrung + '. ';
-    text += 'Diese Erfahrungen haben mir gezeigt, wie wichtig Verantwortungsbewusstsein, Teamarbeit und eine zuverlässige Arbeitsweise sind. Ich bin sicher, dass ich diese Qualitäten auch bei Ihnen erfolgreich einbringen kann.\n\n';
-  }
-
-  // Stärken - ausgeschmückt
-  if (staerken) {
-    var staerkenArr = staerken.split(',').map(function(s){return s.trim();}).filter(Boolean);
-    text += 'Meine persönlichen Stärken liegen insbesondere in den Bereichen ';
-    if (staerkenArr.length === 1) {
-      text += staerkenArr[0];
-    } else if (staerkenArr.length === 2) {
-      text += staerkenArr[0] + ' und ' + staerkenArr[1];
-    } else {
-      text += staerkenArr.slice(0, -1).join(', ') + ' sowie ' + staerkenArr[staerkenArr.length - 1];
-    }
-    text += '. ';
-    text += 'Ich bin davon überzeugt, dass diese Eigenschaften für die Position als ' + jobTitle + ' von großem Vorteil sind. ';
-    text += 'Darüber hinaus zeichne ich mich durch eine schnelle Auffassungsgabe und die Bereitschaft aus, auch über die gewohnten Aufgaben hinaus Verantwortung zu übernehmen.\n\n';
-  }
-
-  // Verfügbarkeit und Schluss - ausgeschmückt
-  text += 'Was meine zeitliche Verfügbarkeit betrifft: Ich bin ' + (verfuegbar ? 'ab ' + verfuegbar + ' einsatzbereit' : 'zeitlich flexibel einsetzbar') + ' und kann mich gut an verschiedene Arbeitszeiten anpassen. ';
-  text += 'Zuverlässigkeit und Pünktlichkeit sind für mich selbstverständlich.\n\n';
-
-  text += 'Ich würde mich sehr freuen, wenn Sie mir die Gelegenheit geben würden, mich in einem persönlichen Gespräch bei Ihnen vorzustellen. ';
-  text += 'Gerne möchte ich Sie davon überzeugen, dass ich mit meiner Motivation, meinem Engagement und meiner Lernbereitschaft eine Bereicherung für Ihr Team sein werde.\n\n';
-
-  text += 'Über eine positive Rückmeldung würde ich mich sehr freuen.\n\n';
-  text += 'Mit freundlichen Grüßen\n' + name;
-
-  state.applyMotivation = text;
-  var ta = document.getElementById('motiv-result');
-  if (ta) { ta.value = text; ta.style.display = 'block'; }
-  var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = false;
-}
+function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'upload') renderMotivationDetail(); }
 function renderMotivationDetail() {
   var d = document.getElementById('motivation-detail'); if (!d) return;
-  if (state.applyMotivationMethod === 'generate') {
-    var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-    d.innerHTML = '<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem">' +
-      '<p style="font-size:0.8rem;color:var(--gray-500);margin:0">Fülle die Felder aus – wir erstellen daraus ein ausführliches, professionelles Motivationsschreiben:</p>' +
-      '<div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
-        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein vollständiger Name</label><input type="text" id="motiv-name" class="form-input" value="' + (state.user?.name||'') + '" placeholder="Vor- und Nachname"></div>' +
-        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Alter</label><input type="text" id="motiv-alter" class="form-input" placeholder="z.B. 16"></div>' +
-      '</div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Schule / Ausbildung</label><input type="text" id="motiv-schule" class="form-input" placeholder="z.B. Gymnasium München, 10. Klasse"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Warum möchtest du diesen Job? Was interessiert dich daran?</label><textarea id="motiv-warum" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich finde den Kontakt mit Kunden spannend und möchte lernen, wie ein Geschäft funktioniert"></textarea></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Hast du schon Erfahrungen gesammelt? (Praktika, Jobs, Ehrenamt)</label><textarea id="motiv-erfahrung" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich habe ein Schulpraktikum bei einem Bäcker gemacht und helfe ehrenamtlich im Sportverein"></textarea></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken (mit Komma trennen)</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit, Pünktlichkeit"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Ab wann bist du verfügbar?</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags ab 14 Uhr"></div>' +
-      '<button class="btn btn-primary" data-action="generateMotivationText" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
-      '<textarea id="motiv-result" class="form-textarea" rows="18" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" data-on-change="setApplyMotivation">' + (state.applyMotivation||'') + '</textarea>' +
-    '</div>';
-    var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivation;
-  } else if (state.applyMotivationMethod === 'upload') {
+  if (state.applyMotivationMethod === 'upload') {
     d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" data-action="triggerFileInput" data-target-id="apply-motivation-file"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" data-on-change="handleApplyMotivationFile">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivationFile;
   } else { d.innerHTML = ''; }
 }
-function handleApplyMotivationFile(input) { if (input.files && input.files[0]) { state.applyMotivationFile = { name: input.files[0].name }; renderMotivationDetail(); } }
+function handleApplyMotivationFile(input) {
+  if (!input.files || !input.files[0]) return;
+  var f = input.files[0];
+  var maxBytes = 10 * 1024 * 1024;
+  if (f.size > maxBytes) { showToast('Datei zu groß (max. 10 MB).', 'error'); input.value = ''; return; }
+  state.applyMotivationFile = f;
+  renderMotivationDetail();
+}
 function handleApplyCVFile(input) { if (input.files && input.files[0]) { state.applyCVFile = { name: input.files[0].name }; renderApplyStep(); } }
 function selectCVMethod(m) { state.applyCVMethod = m; if (m === 'create') { closeApplyModal(); navigate('cv-builder'); showToast('Erstelle deinen Lebenslauf und bewirb dich danach erneut!', 'info'); return; } renderApplyStep(); }
 function applyNextStep() { state.applyStep++; renderApplyStep(); }
@@ -1442,8 +1273,26 @@ async function finalSubmitApplication() {
     return;
   }
 
+  // Upload motivation document (if any) to the private bucket BEFORE
+  // inserting the application row, so the DB always references a file
+  // that actually exists in storage.
+  let motivationUpload = null;
+  if (state.applyMotivationMethod === 'upload' && state.applyMotivationFile instanceof File) {
+    if (!window.DOCUMENTS_BUCKET || typeof DB.uploadApplicationDocument !== 'function') {
+      showToast('Datei-Upload ist noch nicht konfiguriert. Bitte ohne Anschreiben bewerben oder Support kontaktieren.', 'error');
+      return;
+    }
+    try {
+      motivationUpload = await DB.uploadApplicationDocument(state.applyMotivationFile);
+    } catch (e) {
+      console.error('[finalSubmitApplication] upload failed', e);
+      showToast('Datei konnte nicht hochgeladen werden: ' + (e.message || ''), 'error');
+      return;
+    }
+  }
+
   try {
-    await DB.applyToJob(jobId, state.user.id, state.applyMotivation || null);
+    await DB.applyToJob(jobId, state.user.id, null, motivationUpload);
     // Refresh the cache so the worker dashboard / getUserApps pick it up
     await loadApplicationsForUser();
     closeApplyModal();
@@ -1463,13 +1312,27 @@ async function finalSubmitApplication() {
   }
 }
 
-function openApplicationDoc(appId, docType) {
+async function openApplicationDoc(appId, docType) {
   // Read from the Supabase-backed apps cache (loaded by
   // loadApplicationsForUser). Falls back to a string-equality lookup
   // because UUIDs and integers can both legitimately appear here.
   var allApps = state._appsCache || [];
   var app = allApps.find(function(a) { return a.id === appId || String(a.id) === String(appId); });
   if (!app) { showToast('Bewerbung nicht gefunden', 'error'); return; }
+
+  // If the motivation is an uploaded document, fetch a signed URL
+  // from the private bucket and open the actual file instead of
+  // rendering a placeholder preview.
+  if (docType === 'motivation' && app.motivationFilePath && window.DB && typeof DB.createSignedDocumentUrl === 'function') {
+    try {
+      const url = await DB.createSignedDocumentUrl(app.motivationFilePath, 600);
+      if (url) { window.open(url, '_blank', 'noopener,noreferrer'); return; }
+    } catch (e) {
+      console.error('[openApplicationDoc] signed url', e);
+      showToast('Datei konnte nicht geöffnet werden: ' + (e.message || ''), 'error');
+      return;
+    }
+  }
 
   var win = window.open('', '_blank');
   if (!win) { showToast('Popup wurde blockiert. Bitte erlaube Popups für diese Seite.', 'error'); return; }
@@ -1615,26 +1478,6 @@ async function publishJob() {
     console.error('[publishJob]', e);
     showToast('Veröffentlichen fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
   }
-}
-
-// ===== KI GENERIEREN =====
-function aiGenerateJob(btn) {
-  btn.textContent = 'Wird generiert…';
-  btn.disabled = true;
-  const examples = [
-    { tasks: 'Kundenberatung und Kassentätigkeit\nWareneinräumen und Regalpflege\nSauberhalten des Verkaufsbereichs', req: 'Freundliches Auftreten\nZuverlässigkeit und Pünktlichkeit', benefits: 'Flexible Arbeitszeiten\nFahrgeld\nMitarbeiterrabatte' },
-    { tasks: 'Unterstützung des Teams im Tagesgeschäft\nBearbeitung von Kundenanfragen\nAllgemeine Bürotätigkeiten', req: 'Gute Kommunikationsfähigkeit\nMS-Office Grundkenntnisse', benefits: 'Moderne Arbeitsumgebung\nJobticket\nSocial Events' },
-  ];
-  const ex = examples[Math.floor(Math.random() * examples.length)];
-  setTimeout(() => {
-    const textareas = document.querySelectorAll('.wizard-content textarea');
-    if (textareas[0]) textareas[0].value = ex.tasks;
-    if (textareas[1]) textareas[1].value = ex.req;
-    if (textareas[2]) textareas[2].value = ex.benefits;
-    btn.textContent = '✓ Generiert';
-    btn.disabled = false;
-    showToast('KI hat die Stellenanzeige vorgeneriert!');
-  }, 1200);
 }
 
 // ===== BEWERTUNG ABSENDEN =====
@@ -2169,7 +2012,6 @@ function loadUserChats() {
   // to be synchronous. Results land when render() is called again.
   if (window.DB) { loadChatsForUser(); }
 }
-function saveUserChats() { /* no-op: chats are persisted server-side */ }
 function getChatList() {
   if (!state.user) return [];
   return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
@@ -2881,7 +2723,7 @@ function renderLanding() {
           <div class="sc-step-circle">3</div>
           <div class="sc-step-text">
             <h3>Bewerben & starten</h3>
-            <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
+            <p>Ein Klick, fertig. Profil und Anschreiben hochladen, Rest läuft über den Chat.</p>
           </div>
         </div>
       </div>
@@ -2940,7 +2782,7 @@ function renderLanding() {
             <h3>Bewerben in einem Wisch.</h3>
             <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen &mdash; dann ein Klick pro Job.</p>
             <div class="sp-slide-features">
-              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-Motivationsschreiben</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Motivationsschreiben als PDF hochladen</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf-Builder inklusive</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Status jederzeit im Dashboard</div>
             </div>
@@ -5358,15 +5200,6 @@ function renderWizardStep1() {
         <label class="form-label">Arbeitszeit</label>
         <input type="text" class="form-input" placeholder="z.B. 10-15 Std/Woche" value="10-15 Std/Woche">
       </div>
-    </div>
-
-    <div style="background:rgba(79,70,229,0.05);border:1px solid rgba(79,70,229,0.15);border-radius:var(--radius-sm);padding:1rem;margin-top:1rem">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
-        <span>KI</span>
-        <strong style="font-size:0.9rem">KI-Unterstützung</strong>
-      </div>
-      <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.75rem">Lass die KI deine Stellenanzeige basierend auf den Grundinfos vorgenerieren.</p>
-      <button class="btn btn-primary btn-sm" id="ai-gen-btn" data-action="aiGenerateJob">Mit KI generieren</button>
     </div>`;
 }
 
@@ -6113,10 +5946,6 @@ function renderReviews() {
     </div>`;
 }
 
-// Boost-Code wurde komplett entfernt — aktuell keine kostenpflichtigen
-// Features. Wenn später Stripe integriert wird, kann der Code aus
-// der Git-Historie wiederhergestellt werden.
-
 function setRating(n) {
   document.querySelectorAll('#rating-stars .star').forEach((s, i) => {
     s.innerHTML = i < n ? '&#9733;' : '&#9734;';
@@ -6387,7 +6216,7 @@ function renderAGB() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 3 Leistungen der Plattform</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) <strong>Für Arbeitnehmer</strong> bietet die Plattform: Erstellung eines Nutzerprofils, Jobsuche mit Filteroptionen, Ein-Klick-Bewerbung, automatische Erstellung von Motivationsschreiben, Lebenslauf-Builder, Chat-Kommunikation mit Arbeitgebern.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) <strong>Für Arbeitnehmer</strong> bietet die Plattform: Erstellung eines Nutzerprofils, Jobsuche mit Filteroptionen, Ein-Klick-Bewerbung, Upload von Motivationsschreiben, Lebenslauf-Builder, Chat-Kommunikation mit Arbeitgebern.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) <strong>Für Arbeitgeber</strong> bietet die Plattform: Veröffentlichung von Stellenanzeigen, Verwaltung von Bewerbungen, Chat-Kommunikation mit Bewerbern und Analyse-Dashboard.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Die Nutzung der Plattform ist für Arbeitnehmer und Arbeitgeber vollständig kostenlos.</p>
     </div>
@@ -6483,8 +6312,6 @@ function buildDonutSVG(segments, size, strokeWidth, centerLabel, centerSub) {
 
 function renderAdminPanel() {
   const data = getAnalyticsData();
-  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
-  const formatEuroShort = (n) => n >= 1000 ? (n/1000).toFixed(1).replace('.',',') + 'k EUR' : n.toFixed(2).replace('.',',') + ' EUR';
 
   const onlineDonut = buildDonutSVG([
     { value: data.online.employer, color: '#f97316', label: 'Arbeitgeber' },
@@ -6504,22 +6331,6 @@ function renderAdminPanel() {
     return `<div class="admin-bar-col"><div class="admin-bar-value">${d.count}</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:${pct}%;background:${barColors[i]};animation-delay:${i * 0.08}s"></div></div><div class="admin-bar-label">${d.date.split(',')[0]}</div></div>`;
   }).join('');
 
-  const productEntries = Object.entries(data.revenue.byProduct);
-  const maxProductRevenue = productEntries.length > 0 ? Math.max(...productEntries.map(([,i]) => i.total), 1) : 1;
-  const productColors = { 'Standard Boost (7 Tage)': '#f97316', 'Standard Boost (30 Tage)': '#2563eb', 'Premium Boost (14 Tage)': '#8b5cf6' };
-  const revenueChart = productEntries.length > 0
-    ? productEntries.map(([product, info]) => {
-      const pct = (info.total / maxProductRevenue) * 100;
-      const color = productColors[product] || '#6366f1';
-      return `<div class="admin-hbar-row"><div class="admin-hbar-info"><span class="admin-hbar-dot" style="background:${color}"></span><span class="admin-hbar-name">${product}</span><span class="admin-hbar-count">${info.count}x</span></div><div class="admin-hbar-track"><div class="admin-hbar-fill" style="width:${pct}%;background:${color}"></div></div><div class="admin-hbar-amount">${formatEuro(info.total)}</div></div>`;
-    }).join('')
-    : '<div style="text-align:center;padding:2rem;color:var(--gray-500)">Noch keine Verkäufe</div>';
-
-  const revenueDonut = buildDonutSVG(
-    productEntries.map(([product, info]) => ({ value: info.total, color: productColors[product] || '#6366f1', label: product })),
-    140, 18, formatEuroShort(data.revenue.total), 'Umsatz'
-  );
-
   return `
     <div class="page-wide admin-panel" style="padding-top:2rem">
       <div class="admin-header">
@@ -6538,8 +6349,6 @@ function renderAdminPanel() {
       <div class="admin-kpi-strip">
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
       </div>
 
       <!-- Ausstehende Arbeitgeber-Freischaltungen (nur anzeigen wenn es welche gibt) -->
@@ -6595,10 +6404,6 @@ function renderAdminPanel() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
           Besucher
         </button>
-        <button class="admin-tab ${state.adminTab === 'umsatz' ? 'active' : ''}" data-action="switchAdminTab" data-tab="umsatz">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          Umsatz
-        </button>
         <button class="admin-tab ${state.adminTab === 'benutzer' ? 'active' : ''}" data-action="switchAdminTab" data-tab="benutzer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Benutzer
@@ -6639,54 +6444,6 @@ function renderAdminPanel() {
             </div>
           </div>
           <div class="admin-bar-chart">${chartBars}</div>
-        </div></div>
-      </div>
-
-      <!-- TAB: Umsatz -->
-      <div class="admin-tab-content ${state.adminTab === 'umsatz' ? 'active' : ''}" id="admin-tab-umsatz">
-        <div class="admin-row-2">
-          <div class="card admin-chart-card"><div class="card-body">
-            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
-            <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#2563eb"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
-            </div></div>
-          </div></div>
-          <div class="card admin-chart-card"><div class="card-body">
-            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Umsatz pro Produkt</h4>
-            <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#2563eb">${formatEuro(data.revenue.today)}</strong></div>
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#2563eb">${formatEuro(data.revenue.thisMonth)}</strong></div>
-            </div>
-            ${revenueChart}
-          </div></div>
-        </div>
-        <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-top:1.5rem"><div class="card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
-            <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
-            <div class="admin-rev-tabs">
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" data-action="switchRevenueView" data-period="daily">Täglich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" data-action="switchRevenueView" data-period="monthly">Monatlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" data-action="switchRevenueView" data-period="yearly">Jährlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" data-action="switchRevenueView" data-period="alltime">Gesamt</button>
-            </div>
-          </div>
-          <div style="display:flex;gap:2rem;margin-bottom:1rem">
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#1d4ed8">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
-          </div>
-          <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
-            ${(() => {
-              const bars = getRevenueTimeline(state.adminRevenuePeriod);
-              const maxVal = Math.max(...bars.map(b => b.total), 1);
-              const gradients = ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8','#1e40af','#1e40af','#1e3a8a','#0d9488','#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8'];
-              return bars.map((b, i) => {
-                const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
-                return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#1d4ed8">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-              }).join('');
-            })()}
-          </div>
         </div></div>
       </div>
 
@@ -7059,7 +6816,6 @@ if (typeof registerAction === 'function') {
 
   // Admin
   registerAction('switchAdminTab', (el) => { state.adminTab = el.dataset.tab; render(); });
-  registerAction('switchRevenueView', (el) => { state.adminRevenuePeriod = el.dataset.period; render(); });
   registerAction('adminToggleApproval', (el) => adminToggleApproval(el.dataset.userId, el.dataset.approve === 'true'));
   registerAction('adminRemoveEmployer', (el) => adminRemoveEmployer(el.dataset.userId));
   registerAction('adminReplyTicket', (el) => adminReplyTicket(parseInt(el.dataset.ticketId)));
@@ -7095,7 +6851,6 @@ if (typeof registerAction === 'function') {
     const target = document.getElementById(el.dataset.targetId);
     if (target) target.click();
   });
-  registerAction('aiGenerateJob', (el) => aiGenerateJob(el));
   registerAction('validateWizardStep', () => validateWizardStep());
   registerAction('prevWizardStep', () => { state.wizardStep = Math.max(0, state.wizardStep - 1); render(); });
   registerAction('publishJob', () => publishJob());
@@ -7137,7 +6892,7 @@ if (typeof registerAction === 'function') {
   registerAction('addCVToProfile', () => addCVToProfile());
   registerAction('addRef', () => addRef());
   registerAction('adminLogout', () => logout());
-  registerAction('adminRefreshProfiles', () => { if (typeof loadAllProfilesForAdmin==='function') loadAllProfilesForAdmin().then(() => render()); });
+  registerAction('adminRefreshProfiles', () => adminRefreshProfiles());
   registerAction('adminUpdateTicketStatus', (el) => { if (typeof adminUpdateTicketStatus==='function') adminUpdateTicketStatus(parseInt(el.dataset.ticketId), el.dataset.status); });
   registerAction('clearUserFlag', () => { if (state.user) { state.user.cvUploaded = false; state.user.docsUploaded = false; render(); } });
   registerAction('closeChatDetail', () => { state.activeChat = null; if (typeof renderChatWidget==='function') renderChatWidget(); });
@@ -7147,14 +6902,13 @@ if (typeof registerAction === 'function') {
   registerAction('copyJobLink', (el) => { if (typeof copyJobLink==='function') copyJobLink(el.dataset.url || location.href); });
   registerAction('downloadCV', () => downloadCV());
   registerAction('finalSubmitApplication', () => finalSubmitApplication());
-  registerAction('generateMotivationText', () => generateMotivationText());
   registerAction('goPostJobAndToggleDropdown', () => { state.dropdownOpen = false; goPostJob(); });
   registerAction('gotoProfileAndNav', (el) => { state.profileStep = parseInt(el.dataset.step) || 0; navigate('worker-profile'); });
   registerAction('logoutAndClose', () => { state.dropdownOpen = false; logout(); });
   registerAction('navAndToggleDropdown', (el) => { state.dropdownOpen = false; navigate(el.dataset.page); });
   registerAction('navToApplicant', (el) => navigate('applicant-profile', { applicantId: parseInt(el.dataset.applicantId) }));
   registerAction('navToSection', (el) => navigateToSection(el.dataset.page, el.dataset.section));
-  registerAction('openApplicationDoc', (el) => openApplicationDoc(parseInt(el.dataset.appId), el.dataset.docType));
+  registerAction('openApplicationDoc', (el) => openApplicationDoc(el.dataset.appId, el.dataset.docType));
   registerAction('prevProfileStep', () => gotoProfileStep(Math.max(0, state.profileStep - 1)));
   registerAction('previewCV', () => previewCV());
   registerAction('removeCompanyImage', (el) => removeCompanyImage(parseInt(el.dataset.index)));
@@ -7175,7 +6929,6 @@ if (typeof registerAction === 'function') {
   registerChange('handleDocScanned', (el) => docScanned(el));
   registerChange('handleUploadCV', (el) => uploadCV(el));
   registerChange('limitSkills', (el) => limitSkills(el, 3));
-  registerChange('setApplyMotivation', (el) => { state.applyMotivation = el.value; });
   registerChange('toggleHoursFilter', (el) => toggleHoursFilter(parseInt(el.dataset.hours)));
   registerChange('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value));
 
