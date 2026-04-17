@@ -1564,8 +1564,13 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   padding: 1rem; border: 2px solid var(--gray-200); border-radius: var(--radius);
   text-align: center; cursor: pointer; transition: all 0.2s;
 }
-.role-option:hover { border-color: var(--primary-light); }
-.role-option.selected { border-color: var(--primary); background: rgba(79,70,229,0.05); }
+.role-option:hover { border-color: var(--primary-light); background: rgba(79,70,229,0.04); }
+.role-option.selected {
+  border-color: var(--primary);
+  background: rgba(79,70,229,0.08);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+}
+.role-option.selected .role-name { color: var(--primary); }
 .role-option .role-icon { font-size: 1.5rem; margin-bottom: 0.25rem; }
 .role-option .role-name { font-weight: 600; font-size: 0.9rem; }
 
