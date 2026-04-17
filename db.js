@@ -206,6 +206,15 @@
     return res.data && res.data.signedUrl;
   }
 
+  // Delete an uploaded document. Used by the client to clean up after
+  // a failed applyToJob insert so the file doesn't end up orphaned in
+  // the bucket. Fails silently — the caller is already in an error path.
+  async function deleteApplicationDocument(path) {
+    const bucket = window.DOCUMENTS_BUCKET;
+    if (!bucket || !path) return;
+    try { await sb.storage.from(bucket).remove([path]); } catch (_) {}
+  }
+
   async function getApplicationsForWorker(workerId) {
     return unwrap(await sb.from('applications')
       .select('*, jobs(*)')
@@ -379,6 +388,6 @@
     createSupportTicket, listSupportTickets,
     // storage (optional)
     uploadImage, getPublicImageUrl,
-    uploadApplicationDocument, createSignedDocumentUrl
+    uploadApplicationDocument, createSignedDocumentUrl, deleteApplicationDocument
   };
 })();

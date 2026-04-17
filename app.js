@@ -1301,6 +1301,11 @@ async function finalSubmitApplication() {
   } catch (e) {
     console.error('[finalSubmitApplication]', e);
     const msg = (e && e.message) || '';
+    // Wenn die DB-Row nicht angelegt werden konnte, die bereits hochgeladene
+    // Datei wieder entfernen — sonst liegt sie verwaist im Storage.
+    if (motivationUpload && motivationUpload.path && typeof DB.deleteApplicationDocument === 'function') {
+      await DB.deleteApplicationDocument(motivationUpload.path);
+    }
     if (/duplicate/i.test(msg)) {
       showToast('Du hast dich bereits für diesen Job beworben.', 'info');
       await loadApplicationsForUser();
@@ -6738,6 +6743,15 @@ async function showForgotPassword() {
 // Bootstrap reads the Supabase session + jobs, then renders. If the DB
 // module failed to load (offline / script blocked), fall back to a
 // plain render so the landing page still shows something.
+
+// Safety-Net: wenn irgendeine async-Funktion im Action/Change-Handler
+// doch mal einen Fehler rauslässt, landen wir hier und loggen ihn statt
+// stumm zu scheitern. Kein Toast — die Handler selbst sollen für
+// sichtbares Feedback sorgen. Das ist nur für Logs.
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('[unhandledrejection]', e.reason);
+});
+
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof bootstrap === 'function') { bootstrap(); }
