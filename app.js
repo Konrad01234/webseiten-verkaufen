@@ -5955,7 +5955,7 @@ function renderReviews() {
                 <div class="form-group">
                   <label class="form-label">Bewertung</label>
                   <div class="stars" style="font-size:1.75rem" id="rating-stars">
-                    ${[1,2,3,4,5].map(i => `<span class="star" data-action="setRating" data-rating="${i}" data-rating="${i}">&#9734;</span>`).join('')}
+                    ${[1,2,3,4,5].map(i => `<span class="star" data-action="setRating" data-rating="${i}">&#9734;</span>`).join('')}
                   </div>
                 </div>
                 <div class="form-group">
