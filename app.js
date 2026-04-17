@@ -97,7 +97,6 @@ let state = {
   newJob: {},
   dropdownOpen: false,
   adminTab: 'besucher',
-  adminRevenuePeriod: 'daily',
   jobsLoaded: false,
   chatsLoaded: false,
   applicationsLoaded: false,
@@ -556,14 +555,8 @@ function trackVisit() {
   }
 }
 
-// trackPurchase entfernt — war nur für Boost-Features die ebenfalls weg sind.
-
 function getAnalyticsData() {
   const visits = JSON.parse(localStorage.getItem('jj_analytics_visits') || '[]');
-  // Purchases bleibt localStorage — tote Feature-Spalte (kein Bezahl-Modus).
-  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  // ECHTE Daten aus Supabase: User aus profiles-Cache, Jobs aus JOBS-Array,
-  // Bewerbungen aus apps-Cache.
   const allUsers = state._allProfilesCache || [];
   state._adminTotalJobs = (typeof JOBS !== 'undefined' && JOBS) ? JOBS.length : 0;
   state._adminTotalApps = (state._appsCache || []).length;
@@ -585,15 +578,6 @@ function getAnalyticsData() {
   const visitsThisWeek = [...new Set(visits.filter(v => new Date(v.timestamp) >= weekStart).map(v => v.userId))].length;
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const visitsThisMonth = [...new Set(visits.filter(v => new Date(v.timestamp) >= monthStart).map(v => v.userId))].length;
-  const revenue = {}; let totalRevenue = 0;
-  purchases.forEach(p => {
-    if (!revenue[p.product]) revenue[p.product] = { count: 0, total: 0 };
-    revenue[p.product].count++; revenue[p.product].total += p.price; totalRevenue += p.price;
-  });
-  const purchasesToday = purchases.filter(p => new Date(p.timestamp) >= todayStart);
-  const revenueToday = purchasesToday.reduce((sum, p) => sum + p.price, 0);
-  const purchasesThisMonth = purchases.filter(p => new Date(p.timestamp) >= monthStart);
-  const revenueThisMonth = purchasesThisMonth.reduce((sum, p) => sum + p.price, 0);
   const last7Days = [];
   for (let i = 6; i >= 0; i--) {
     const day = new Date(todayStart); day.setDate(day.getDate() - i);
@@ -605,47 +589,9 @@ function getAnalyticsData() {
     online: { total: uniqueOnline.length, ...onlineByRole },
     users: { total: totalUsers, employers, workers },
     visits: { today: visitsToday, thisWeek: visitsThisWeek, thisMonth: visitsThisMonth, last7Days },
-    revenue: { byProduct: revenue, total: totalRevenue, today: revenueToday, thisMonth: revenueThisMonth },
-    purchases: { total: purchases.length, today: purchasesToday.length },
     jobs: { total: state._adminTotalJobs || 0 },
     applications: { total: state._adminTotalApps || 0 }
   };
-}
-
-function getRevenueTimeline(period) {
-  const purchases = JSON.parse(localStorage.getItem('jj_analytics_purchases') || '[]');
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const bars = [];
-  if (period === 'daily') {
-    for (let i = 13; i >= 0; i--) {
-      const day = new Date(todayStart); day.setDate(day.getDate() - i);
-      const nextDay = new Date(day); nextDay.setDate(nextDay.getDate() + 1);
-      const dayP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= day && d < nextDay; });
-      bars.push({ label: day.toLocaleDateString('de-DE', { day: 'numeric', month: 'short' }), total: dayP.reduce((s, p) => s + p.price, 0), count: dayP.length });
-    }
-  } else if (period === 'monthly') {
-    for (let i = 11; i >= 0; i--) {
-      const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const nextM = new Date(m.getFullYear(), m.getMonth() + 1, 1);
-      const mP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= m && d < nextM; });
-      bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: mP.reduce((s, p) => s + p.price, 0), count: mP.length });
-    }
-  } else if (period === 'yearly') {
-    for (let i = 4; i >= 0; i--) {
-      const y = now.getFullYear() - i;
-      const yStart = new Date(y, 0, 1); const yEnd = new Date(y + 1, 0, 1);
-      const yP = purchases.filter(p => { const d = new Date(p.timestamp); return d >= yStart && d < yEnd; });
-      bars.push({ label: '' + y, total: yP.reduce((s, p) => s + p.price, 0), count: yP.length });
-    }
-  } else {
-    const byMonth = {};
-    purchases.forEach(p => { const d = new Date(p.timestamp); const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); if (!byMonth[key]) byMonth[key] = { total: 0, count: 0 }; byMonth[key].total += p.price; byMonth[key].count++; });
-    const sortedKeys = Object.keys(byMonth).sort();
-    if (sortedKeys.length === 0) { for (let i = 5; i >= 0; i--) { const m = new Date(now.getFullYear(), now.getMonth() - i, 1); bars.push({ label: m.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: 0, count: 0 }); } }
-    else { sortedKeys.forEach(key => { const [y, m] = key.split('-'); const d = new Date(parseInt(y), parseInt(m) - 1, 1); bars.push({ label: d.toLocaleDateString('de-DE', { month: 'short', year: '2-digit' }), total: byMonth[key].total, count: byMonth[key].count }); }); }
-  }
-  return bars;
 }
 
 function switchAdminTab(tab) {
@@ -655,30 +601,6 @@ function switchAdminTab(tab) {
   document.querySelector('.admin-tab[onclick*="' + tab + '"]').classList.add('active');
   const content = document.getElementById('admin-tab-' + tab);
   if (content) content.classList.add('active');
-}
-
-function switchRevenueView(period) {
-  state.adminRevenuePeriod = period;
-  const container = document.getElementById('admin-revenue-timeline');
-  if (!container) return;
-  const bars = getRevenueTimeline(period);
-  const maxVal = Math.max(...bars.map(b => b.total), 1);
-  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
-  const periodTotal = bars.reduce((s, b) => s + b.total, 0);
-  const periodCount = bars.reduce((s, b) => s + b.count, 0);
-  const gradients = ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8','#1e40af','#1e40af','#1e3a8a','#0d9488','#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8'];
-  document.querySelectorAll('.admin-rev-tab').forEach(btn => { btn.classList.toggle('active', btn.dataset.period === period); });
-  const sumEl = document.getElementById('admin-revenue-period-sum');
-  if (sumEl) sumEl.textContent = formatEuro(periodTotal);
-  const countEl = document.getElementById('admin-revenue-period-count');
-  if (countEl) countEl.textContent = periodCount + ' Bestellungen';
-  const chart = document.getElementById('admin-revenue-bars');
-  if (chart) {
-    chart.innerHTML = bars.map((b, i) => {
-      const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
-      return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#1d4ed8">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-    }).join('');
-  }
 }
 
 // ===== NAVIGATION =====
@@ -1199,10 +1121,6 @@ function getUserApps() {
     .filter(a => a.userId === state.user.id)
     .map(a => a.jobId);
 }
-// Legacy no-op: applications are now persisted via DB.applyToJob and
-// refreshed via loadApplicationsForUser(). Kept so older call sites don't
-// crash if they still reference it.
-function saveUserApps(_apps) { /* no-op */ }
 
 // ===== AKTIVER JOB SYSTEM =====
 // Derived from the worker's accepted applications so no extra DB writes
@@ -2169,7 +2087,6 @@ function loadUserChats() {
   // to be synchronous. Results land when render() is called again.
   if (window.DB) { loadChatsForUser(); }
 }
-function saveUserChats() { /* no-op: chats are persisted server-side */ }
 function getChatList() {
   if (!state.user) return [];
   return state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
@@ -6113,10 +6030,6 @@ function renderReviews() {
     </div>`;
 }
 
-// Boost-Code wurde komplett entfernt — aktuell keine kostenpflichtigen
-// Features. Wenn später Stripe integriert wird, kann der Code aus
-// der Git-Historie wiederhergestellt werden.
-
 function setRating(n) {
   document.querySelectorAll('#rating-stars .star').forEach((s, i) => {
     s.innerHTML = i < n ? '&#9733;' : '&#9734;';
@@ -6483,8 +6396,6 @@ function buildDonutSVG(segments, size, strokeWidth, centerLabel, centerSub) {
 
 function renderAdminPanel() {
   const data = getAnalyticsData();
-  const formatEuro = (n) => n.toFixed(2).replace('.', ',') + ' EUR';
-  const formatEuroShort = (n) => n >= 1000 ? (n/1000).toFixed(1).replace('.',',') + 'k EUR' : n.toFixed(2).replace('.',',') + ' EUR';
 
   const onlineDonut = buildDonutSVG([
     { value: data.online.employer, color: '#f97316', label: 'Arbeitgeber' },
@@ -6504,22 +6415,6 @@ function renderAdminPanel() {
     return `<div class="admin-bar-col"><div class="admin-bar-value">${d.count}</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:${pct}%;background:${barColors[i]};animation-delay:${i * 0.08}s"></div></div><div class="admin-bar-label">${d.date.split(',')[0]}</div></div>`;
   }).join('');
 
-  const productEntries = Object.entries(data.revenue.byProduct);
-  const maxProductRevenue = productEntries.length > 0 ? Math.max(...productEntries.map(([,i]) => i.total), 1) : 1;
-  const productColors = { 'Standard Boost (7 Tage)': '#f97316', 'Standard Boost (30 Tage)': '#2563eb', 'Premium Boost (14 Tage)': '#8b5cf6' };
-  const revenueChart = productEntries.length > 0
-    ? productEntries.map(([product, info]) => {
-      const pct = (info.total / maxProductRevenue) * 100;
-      const color = productColors[product] || '#6366f1';
-      return `<div class="admin-hbar-row"><div class="admin-hbar-info"><span class="admin-hbar-dot" style="background:${color}"></span><span class="admin-hbar-name">${product}</span><span class="admin-hbar-count">${info.count}x</span></div><div class="admin-hbar-track"><div class="admin-hbar-fill" style="width:${pct}%;background:${color}"></div></div><div class="admin-hbar-amount">${formatEuro(info.total)}</div></div>`;
-    }).join('')
-    : '<div style="text-align:center;padding:2rem;color:var(--gray-500)">Noch keine Verkäufe</div>';
-
-  const revenueDonut = buildDonutSVG(
-    productEntries.map(([product, info]) => ({ value: info.total, color: productColors[product] || '#6366f1', label: product })),
-    140, 18, formatEuroShort(data.revenue.total), 'Umsatz'
-  );
-
   return `
     <div class="page-wide admin-panel" style="padding-top:2rem">
       <div class="admin-header">
@@ -6538,8 +6433,6 @@ function renderAdminPanel() {
       <div class="admin-kpi-strip">
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div><div><div class="admin-kpi-value">${data.online.total}</div><div class="admin-kpi-label">Gerade Online</div></div></div>
         <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(99,102,241,0.1);color:#6366f1"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><path d="M20 8v6M23 11h-6"/></svg></div><div><div class="admin-kpi-value">${data.users.total}</div><div class="admin-kpi-label">Registriert</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(37,99,235,0.1);color:#2563eb"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div><div class="admin-kpi-value">${formatEuro(data.revenue.total)}</div><div class="admin-kpi-label">Gesamt-Umsatz</div></div></div>
-        <div class="admin-kpi"><div class="admin-kpi-icon" style="background:rgba(249,115,22,0.1);color:#f97316"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div><div><div class="admin-kpi-value">${data.purchases.total}</div><div class="admin-kpi-label">Bestellungen</div></div></div>
       </div>
 
       <!-- Ausstehende Arbeitgeber-Freischaltungen (nur anzeigen wenn es welche gibt) -->
@@ -6595,10 +6488,6 @@ function renderAdminPanel() {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
           Besucher
         </button>
-        <button class="admin-tab ${state.adminTab === 'umsatz' ? 'active' : ''}" data-action="switchAdminTab" data-tab="umsatz">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-          Umsatz
-        </button>
         <button class="admin-tab ${state.adminTab === 'benutzer' ? 'active' : ''}" data-action="switchAdminTab" data-tab="benutzer">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Benutzer
@@ -6639,54 +6528,6 @@ function renderAdminPanel() {
             </div>
           </div>
           <div class="admin-bar-chart">${chartBars}</div>
-        </div></div>
-      </div>
-
-      <!-- TAB: Umsatz -->
-      <div class="admin-tab-content ${state.adminTab === 'umsatz' ? 'active' : ''}" id="admin-tab-umsatz">
-        <div class="admin-row-2">
-          <div class="card admin-chart-card"><div class="card-body">
-            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg> Umsatz-Verteilung</h4>
-            <div class="admin-donut-row"><div class="admin-donut-wrap">${revenueDonut}</div><div class="admin-donut-legend">
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#f97316"></span>Standard 7T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (7 Tage)'] || {total:0}).total)}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#2563eb"></span>Standard 30T<strong>${formatEuro((data.revenue.byProduct['Standard Boost (30 Tage)'] || {total:0}).total)}</strong></div>
-              <div class="admin-legend-item"><span class="admin-legend-dot" style="background:#8b5cf6"></span>Premium 14T<strong>${formatEuro((data.revenue.byProduct['Premium Boost (14 Tage)'] || {total:0}).total)}</strong></div>
-            </div></div>
-          </div></div>
-          <div class="card admin-chart-card"><div class="card-body">
-            <h4 class="admin-chart-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg> Umsatz pro Produkt</h4>
-            <div style="display:flex;gap:1.25rem;margin-bottom:1rem">
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Heute</span><strong style="color:#2563eb">${formatEuro(data.revenue.today)}</strong></div>
-              <div class="admin-mini-stat"><span style="color:var(--gray-500)">Monat</span><strong style="color:#2563eb">${formatEuro(data.revenue.thisMonth)}</strong></div>
-            </div>
-            ${revenueChart}
-          </div></div>
-        </div>
-        <div class="card admin-chart-card" id="admin-revenue-timeline" style="margin-top:1.5rem"><div class="card-body">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">
-            <h4 class="admin-chart-title" style="margin:0"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg> Umsatz-Verlauf</h4>
-            <div class="admin-rev-tabs">
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'daily' ? 'active' : ''}" data-period="daily" data-action="switchRevenueView" data-period="daily">Täglich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'monthly' ? 'active' : ''}" data-period="monthly" data-action="switchRevenueView" data-period="monthly">Monatlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'yearly' ? 'active' : ''}" data-period="yearly" data-action="switchRevenueView" data-period="yearly">Jährlich</button>
-              <button class="admin-rev-tab ${state.adminRevenuePeriod === 'alltime' ? 'active' : ''}" data-period="alltime" data-action="switchRevenueView" data-period="alltime">Gesamt</button>
-            </div>
-          </div>
-          <div style="display:flex;gap:2rem;margin-bottom:1rem">
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Zeitraum-Umsatz</span><div id="admin-revenue-period-sum" style="font-size:1.3rem;font-weight:800;color:#1d4ed8">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.total, 0).toFixed(2).replace('.',',') + ' EUR'; })()}</div></div>
-            <div><span style="font-size:0.75rem;color:var(--gray-500)">Bestellungen</span><div id="admin-revenue-period-count" style="font-size:1.3rem;font-weight:800;color:var(--gray-700)">${(() => { const b = getRevenueTimeline(state.adminRevenuePeriod); return b.reduce((s, x) => s + x.count, 0) + ' Bestellungen'; })()}</div></div>
-          </div>
-          <div class="admin-bar-chart" id="admin-revenue-bars" style="height:200px">
-            ${(() => {
-              const bars = getRevenueTimeline(state.adminRevenuePeriod);
-              const maxVal = Math.max(...bars.map(b => b.total), 1);
-              const gradients = ['#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8','#1e40af','#1e40af','#1e3a8a','#0d9488','#2563eb','#3b82f6','#60a5fa','#93c5fd','#1d4ed8'];
-              return bars.map((b, i) => {
-                const pct = Math.max((b.total / maxVal) * 100, 3); const color = gradients[i % gradients.length];
-                return '<div class="admin-bar-col"><div class="admin-bar-value" style="color:#1d4ed8">' + (b.total > 0 ? b.total.toFixed(0) + ' EUR' : '-') + '</div><div class="admin-bar-track"><div class="admin-bar-fill" style="height:' + pct + '%;background:' + color + ';animation-delay:' + (i * 0.05) + 's"></div></div><div class="admin-bar-label">' + b.label + '</div></div>';
-              }).join('');
-            })()}
-          </div>
         </div></div>
       </div>
 
@@ -7059,7 +6900,6 @@ if (typeof registerAction === 'function') {
 
   // Admin
   registerAction('switchAdminTab', (el) => { state.adminTab = el.dataset.tab; render(); });
-  registerAction('switchRevenueView', (el) => { state.adminRevenuePeriod = el.dataset.period; render(); });
   registerAction('adminToggleApproval', (el) => adminToggleApproval(el.dataset.userId, el.dataset.approve === 'true'));
   registerAction('adminRemoveEmployer', (el) => adminRemoveEmployer(el.dataset.userId));
   registerAction('adminReplyTicket', (el) => adminReplyTicket(parseInt(el.dataset.ticketId)));
