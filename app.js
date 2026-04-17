@@ -30,7 +30,7 @@ const TESTIMONIALS = [
   },
   {
     name: 'Mia Hofmann', role: 'Schülerin, 16 Jahre – Gymnasium Berlin',
-    text: 'Die KI hat mir bei meinem Motivationsschreiben geholfen. Das hat sich wirklich professionell angehört und ich habe den Job bekommen!',
+    text: 'Ich habe meinen ersten Minijob als Nachhilfe-Lehrerin über WorkPilot gefunden. Die Bewerbung ging schnell und der Chat mit dem Arbeitgeber war super unkompliziert.',
     rating: 5, initials: 'MH'
   },
   {
@@ -1211,7 +1211,7 @@ function submitApplication(jobId) {
   if (getActiveJob()) { showToast('Du hast bereits einen aktiven Job. Beende ihn zuerst, bevor du dich neu bewirbst.', 'error'); return; }
   const pendingCount = getPendingAppCount();
   if (pendingCount >= 3) { showToast('Du kannst maximal 3 Bewerbungen gleichzeitig haben. Warte auf eine Antwort oder ziehe eine zurück.', 'error'); return; }
-  state.applyJobId = jobId; state.applyStep = 1; state.applyMotivation = ''; state.applyMotivationFile = null; state.applyCVFile = null; state.applyCVMethod = null; state.applyMotivationMethod = null;
+  state.applyJobId = jobId; state.applyStep = 1; state.applyMotivationFile = null; state.applyCVFile = null; state.applyCVMethod = null; state.applyMotivationMethod = null;
   openApplyModal();
 }
 function openApplyModal() { var m = document.getElementById('apply-modal'); if (m) m.classList.add('open'); renderApplyStep(); }
@@ -1222,7 +1222,7 @@ function renderApplyStep() {
   var job = JOBS.find(function(j){return j.id===state.applyJobId;}); var jobTitle = job ? job.title : 'Job'; var company = job ? job.company : '';
   if (si) { si.innerHTML = [1,2,3].map(function(s){ return '<div style="display:flex;align-items:center;gap:0.4rem"><div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;' + (s<state.applyStep?'background:#2563eb;color:#fff':s===state.applyStep?'background:var(--primary);color:#fff':'background:var(--gray-200);color:var(--gray-500)') + '">' + (s<state.applyStep?'✓':s) + '</div><span style="font-size:0.75rem;color:' + (s===state.applyStep?'var(--primary)':'var(--gray-400)') + ';font-weight:' + (s===state.applyStep?'600':'400') + '">' + (s===1?'Anschreiben':s===2?'Lebenslauf':'Vorschau') + '</span></div>' + (s<3?'<div style="flex:1;height:2px;background:var(--gray-200);margin:0 0.25rem"><div style="height:100%;background:var(--primary);width:' + (s<state.applyStep?'100%':'0%') + '"></div></div>':''); }).join(''); }
   if (state.applyStep === 1) {
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='generate'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="generate" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Automatisch erstellen lassen</strong><div style="font-size:0.8rem;color:var(--gray-500)">Basierend auf deinem Profil</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='generate'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="skip" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Motivationsschreiben</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">für <strong>' + jobTitle + '</strong> bei <strong>' + company + '</strong></p><div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.25rem"><div class="card apply-option ' + (state.applyMotivationMethod==='upload'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="upload" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(99,102,241,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Eigene Datei hochladen</strong><div style="font-size:0.8rem;color:var(--gray-500)">PDF, DOC oder TXT</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='upload'?'checked':'') + '></div></div><div class="card apply-option ' + (state.applyMotivationMethod==='skip'?'apply-option-active':'') + '" data-action="selectMotivationMethod" data-method="skip" style="cursor:pointer"><div class="card-body" style="display:flex;align-items:center;gap:1rem;padding:1rem"><div style="width:40px;height:40px;border-radius:10px;background:rgba(156,163,175,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><polyline points="13 2 13 9 20 9"/></svg></div><div style="flex:1"><strong style="font-size:0.9rem">Ohne Motivationsschreiben</strong><div style="font-size:0.8rem;color:var(--gray-500)">Direkt mit Lebenslauf bewerben</div></div><input type="radio" name="mm" ' + (state.applyMotivationMethod==='skip'?'checked':'') + '></div></div></div><div id="motivation-detail"></div>';
     if (state.applyMotivationMethod) renderMotivationDetail();
     footer.innerHTML = '<button class="btn btn-outline" data-action="closeApplyModal">Abbrechen</button><button class="btn btn-primary" id="apply-next-1" ' + (!state.applyMotivationMethod?'disabled':'') + ' data-action="applyNextStep">Weiter</button>';
   } else if (state.applyStep === 2) {
@@ -1232,113 +1232,14 @@ function renderApplyStep() {
     footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="1">Zurück</button><button class="btn btn-primary" ' + (!state.applyCVMethod||(state.applyCVMethod==='upload'&&!state.applyCVFile)?'disabled':'') + ' data-action="applyNextStep">Weiter zur Vorschau</button>';
   } else if (state.applyStep === 3) {
     var u = state.user || {}; var initials = u.name ? u.name.split(' ').map(function(n){return n[0];}).join('') : '?';
-    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='generate'?'<div style="background:var(--gray-50);border-radius:var(--radius-sm);padding:0.75rem;font-size:0.85rem;color:var(--gray-700);border:1px solid var(--gray-200);white-space:pre-line;max-height:150px;overflow-y:auto">' + state.applyMotivation + '</div>':state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
+    body.innerHTML = '<h4 style="margin-bottom:0.25rem">Vorschau deiner Bewerbung</h4><p style="font-size:0.85rem;color:var(--gray-500);margin-bottom:1.25rem">So sieht es für den Arbeitgeber aus</p><div class="card" style="border-color:var(--primary);background:linear-gradient(135deg,rgba(37,99,235,0.02),rgba(99,102,241,0.02))"><div class="card-body" style="padding:1.25rem"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--gray-200)"><div style="width:48px;height:48px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem">' + initials + '</div><div style="flex:1"><div style="font-weight:700;font-size:1rem">' + (u.name||'') + '</div><div style="font-size:0.8rem;color:var(--gray-500)">' + (u.email||'') + '</div></div><span class="badge" style="background:#ecfdf5;color:#1d4ed8;padding:0.3rem 0.75rem;border-radius:100px;font-size:0.75rem;font-weight:600">Neue Bewerbung</span></div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.15rem">Bewerbung für</div><div style="font-weight:600;margin-bottom:1rem">' + jobTitle + ' bei ' + company + '</div><div style="margin-bottom:1rem"><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Motivationsschreiben</div>' + (state.applyMotivationMethod==='upload'&&state.applyMotivationFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyMotivationFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Nicht beigefügt</div>') + '</div><div><div style="font-size:0.8rem;color:var(--gray-500);margin-bottom:0.35rem;font-weight:600">Lebenslauf</div>' + (state.applyCVMethod==='existing'?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">✓ ' + (u.cvFileName||'Lebenslauf') + '</div>':state.applyCVMethod==='upload'&&state.applyCVFile?'<div style="display:flex;align-items:center;gap:0.5rem;padding:0.6rem 0.75rem;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200);font-size:0.85rem">📄 ' + state.applyCVFile.name + '</div>':'<div style="font-size:0.85rem;color:var(--gray-500);font-style:italic">Über Builder erstellt</div>') + '</div></div></div>';
     footer.innerHTML = '<button class="btn btn-outline" data-action="setApplyStep" data-step="2">Zurück</button><button class="btn btn-primary" data-action="finalSubmitApplication">Bewerbung absenden</button>';
   }
 }
-function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'generate' || m === 'upload') renderMotivationDetail(); }
-function generateMotivationText() {
-  var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-  var name = document.getElementById('motiv-name')?.value?.trim() || state.user?.name || 'Max Mustermann';
-  var alter = document.getElementById('motiv-alter')?.value?.trim() || '';
-  var schule = document.getElementById('motiv-schule')?.value?.trim() || '';
-  var staerken = document.getElementById('motiv-staerken')?.value?.trim() || '';
-  var motivation = document.getElementById('motiv-warum')?.value?.trim() || '';
-  var verfuegbar = document.getElementById('motiv-verfuegbar')?.value?.trim() || '';
-  var erfahrung = document.getElementById('motiv-erfahrung')?.value?.trim() || '';
-  var jobTitle = job ? job.title : 'die ausgeschriebene Stelle';
-  var firma = job ? job.company : 'Ihr Unternehmen';
-  var branche = job ? (job.category || '') : '';
-  var ort = job ? (job.city || '') : '';
-
-  var text = name + '\n' + (ort || 'Musterstadt') + '\n\n';
-  text += 'An\n' + firma + '\n' + (ort ? ort : '') + '\n\n';
-  text += 'Bewerbung als ' + jobTitle + '\n\n';
-  text += 'Sehr geehrte Damen und Herren,\n\n';
-
-  // Einleitung - ausgeschmückt
-  text += 'mit großer Begeisterung habe ich Ihre Stellenanzeige als ' + jobTitle + ' bei ' + firma + ' gelesen. ';
-  if (branche) {
-    text += 'Der Bereich ' + branche + ' fasziniert mich schon seit längerer Zeit, und ich bin überzeugt, dass ' + firma + ' genau das richtige Unternehmen ist, um erste wertvolle Berufserfahrungen zu sammeln. ';
-  }
-  text += 'Hiermit möchte ich mich bei Ihnen um diese Stelle bewerben und Ihnen zeigen, warum ich die richtige Wahl für Ihr Team bin.\n\n';
-
-  // Persönliche Vorstellung - ausgeschmückt
-  text += 'Zu meiner Person: Mein Name ist ' + name;
-  if (alter) text += ' und ich bin ' + alter + ' Jahre alt';
-  text += '. ';
-  if (schule) {
-    text += 'Derzeit besuche ich ' + schule + ', wo ich neben meiner schulischen Ausbildung großen Wert darauf lege, praktische Erfahrungen zu sammeln und mich persönlich weiterzuentwickeln. ';
-  }
-  text += 'Ich bin eine aufgeschlossene und lernbereite Person, die sich schnell in neue Aufgabenbereiche einarbeiten kann.\n\n';
-
-  // Motivation - ausgeschmückt
-  if (motivation) {
-    text += 'Was mich besonders an dieser Stelle begeistert: ' + motivation + '. ';
-    text += 'Ich sehe in dieser Tätigkeit nicht nur eine Möglichkeit, Geld zu verdienen, sondern vor allem die Chance, mich in einem professionellen Umfeld weiterzuentwickeln und einen echten Beitrag zu Ihrem Team zu leisten. ';
-    if (branche) {
-      text += 'Die Arbeit im Bereich ' + branche + ' reizt mich, weil ich hier meine Interessen mit praktischer Berufserfahrung verbinden kann.';
-    }
-    text += '\n\n';
-  }
-
-  // Erfahrungen - ausgeschmückt
-  if (erfahrung) {
-    text += 'Bereits in der Vergangenheit konnte ich wertvolle Erfahrungen sammeln: ' + erfahrung + '. ';
-    text += 'Diese Erfahrungen haben mir gezeigt, wie wichtig Verantwortungsbewusstsein, Teamarbeit und eine zuverlässige Arbeitsweise sind. Ich bin sicher, dass ich diese Qualitäten auch bei Ihnen erfolgreich einbringen kann.\n\n';
-  }
-
-  // Stärken - ausgeschmückt
-  if (staerken) {
-    var staerkenArr = staerken.split(',').map(function(s){return s.trim();}).filter(Boolean);
-    text += 'Meine persönlichen Stärken liegen insbesondere in den Bereichen ';
-    if (staerkenArr.length === 1) {
-      text += staerkenArr[0];
-    } else if (staerkenArr.length === 2) {
-      text += staerkenArr[0] + ' und ' + staerkenArr[1];
-    } else {
-      text += staerkenArr.slice(0, -1).join(', ') + ' sowie ' + staerkenArr[staerkenArr.length - 1];
-    }
-    text += '. ';
-    text += 'Ich bin davon überzeugt, dass diese Eigenschaften für die Position als ' + jobTitle + ' von großem Vorteil sind. ';
-    text += 'Darüber hinaus zeichne ich mich durch eine schnelle Auffassungsgabe und die Bereitschaft aus, auch über die gewohnten Aufgaben hinaus Verantwortung zu übernehmen.\n\n';
-  }
-
-  // Verfügbarkeit und Schluss - ausgeschmückt
-  text += 'Was meine zeitliche Verfügbarkeit betrifft: Ich bin ' + (verfuegbar ? 'ab ' + verfuegbar + ' einsatzbereit' : 'zeitlich flexibel einsetzbar') + ' und kann mich gut an verschiedene Arbeitszeiten anpassen. ';
-  text += 'Zuverlässigkeit und Pünktlichkeit sind für mich selbstverständlich.\n\n';
-
-  text += 'Ich würde mich sehr freuen, wenn Sie mir die Gelegenheit geben würden, mich in einem persönlichen Gespräch bei Ihnen vorzustellen. ';
-  text += 'Gerne möchte ich Sie davon überzeugen, dass ich mit meiner Motivation, meinem Engagement und meiner Lernbereitschaft eine Bereicherung für Ihr Team sein werde.\n\n';
-
-  text += 'Über eine positive Rückmeldung würde ich mich sehr freuen.\n\n';
-  text += 'Mit freundlichen Grüßen\n' + name;
-
-  state.applyMotivation = text;
-  var ta = document.getElementById('motiv-result');
-  if (ta) { ta.value = text; ta.style.display = 'block'; }
-  var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = false;
-}
+function selectMotivationMethod(m) { state.applyMotivationMethod = m; renderApplyStep(); if (m === 'upload') renderMotivationDetail(); }
 function renderMotivationDetail() {
   var d = document.getElementById('motivation-detail'); if (!d) return;
-  if (state.applyMotivationMethod === 'generate') {
-    var job = JOBS.find(function(j){return j.id===state.applyJobId;});
-    d.innerHTML = '<div style="margin-top:0.75rem;display:flex;flex-direction:column;gap:0.75rem">' +
-      '<p style="font-size:0.8rem;color:var(--gray-500);margin:0">Fülle die Felder aus – wir erstellen daraus ein ausführliches, professionelles Motivationsschreiben:</p>' +
-      '<div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem">' +
-        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein vollständiger Name</label><input type="text" id="motiv-name" class="form-input" value="' + (state.user?.name||'') + '" placeholder="Vor- und Nachname"></div>' +
-        '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Dein Alter</label><input type="text" id="motiv-alter" class="form-input" placeholder="z.B. 16"></div>' +
-      '</div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Schule / Ausbildung</label><input type="text" id="motiv-schule" class="form-input" placeholder="z.B. Gymnasium München, 10. Klasse"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Warum möchtest du diesen Job? Was interessiert dich daran?</label><textarea id="motiv-warum" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich finde den Kontakt mit Kunden spannend und möchte lernen, wie ein Geschäft funktioniert"></textarea></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Hast du schon Erfahrungen gesammelt? (Praktika, Jobs, Ehrenamt)</label><textarea id="motiv-erfahrung" class="form-textarea" rows="2" style="font-size:0.85rem" placeholder="z.B. Ich habe ein Schulpraktikum bei einem Bäcker gemacht und helfe ehrenamtlich im Sportverein"></textarea></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Deine Stärken (mit Komma trennen)</label><input type="text" id="motiv-staerken" class="form-input" placeholder="z.B. Teamfähigkeit, Zuverlässigkeit, Freundlichkeit, Pünktlichkeit"></div>' +
-      '<div class="form-group" style="margin:0"><label class="form-label" style="font-size:0.8rem">Ab wann bist du verfügbar?</label><input type="text" id="motiv-verfuegbar" class="form-input" placeholder="z.B. sofort, ab 01.05.2026, nachmittags ab 14 Uhr"></div>' +
-      '<button class="btn btn-primary" data-action="generateMotivationText" style="align-self:flex-start">Motivationsschreiben erstellen</button>' +
-      '<textarea id="motiv-result" class="form-textarea" rows="18" style="font-size:0.85rem;' + (state.applyMotivation ? '' : 'display:none') + '" data-on-change="setApplyMotivation">' + (state.applyMotivation||'') + '</textarea>' +
-    '</div>';
-    var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivation;
-  } else if (state.applyMotivationMethod === 'upload') {
+  if (state.applyMotivationMethod === 'upload') {
     d.innerHTML = '<div style="margin-top:0.75rem;border:2px dashed var(--gray-300);border-radius:var(--radius);padding:1.5rem;text-align:center;cursor:pointer" data-action="triggerFileInput" data-target-id="apply-motivation-file"><input type="file" id="apply-motivation-file" accept=".pdf,.doc,.docx,.txt" style="display:none" data-on-change="handleApplyMotivationFile">' + (state.applyMotivationFile ? '<div style="color:var(--success);font-weight:600">✓ ' + state.applyMotivationFile.name + '</div>' : '<div style="font-size:0.85rem;color:var(--gray-500)">Klicke hier um hochzuladen</div>') + '</div>';
     var btn = document.getElementById('apply-next-1'); if (btn) btn.disabled = !state.applyMotivationFile;
   } else { d.innerHTML = ''; }
@@ -1361,7 +1262,7 @@ async function finalSubmitApplication() {
   }
 
   try {
-    await DB.applyToJob(jobId, state.user.id, state.applyMotivation || null);
+    await DB.applyToJob(jobId, state.user.id, null);
     // Refresh the cache so the worker dashboard / getUserApps pick it up
     await loadApplicationsForUser();
     closeApplyModal();
@@ -1533,26 +1434,6 @@ async function publishJob() {
     console.error('[publishJob]', e);
     showToast('Veröffentlichen fehlgeschlagen: ' + (e.message || 'Unbekannter Fehler'), 'error');
   }
-}
-
-// ===== KI GENERIEREN =====
-function aiGenerateJob(btn) {
-  btn.textContent = 'Wird generiert…';
-  btn.disabled = true;
-  const examples = [
-    { tasks: 'Kundenberatung und Kassentätigkeit\nWareneinräumen und Regalpflege\nSauberhalten des Verkaufsbereichs', req: 'Freundliches Auftreten\nZuverlässigkeit und Pünktlichkeit', benefits: 'Flexible Arbeitszeiten\nFahrgeld\nMitarbeiterrabatte' },
-    { tasks: 'Unterstützung des Teams im Tagesgeschäft\nBearbeitung von Kundenanfragen\nAllgemeine Bürotätigkeiten', req: 'Gute Kommunikationsfähigkeit\nMS-Office Grundkenntnisse', benefits: 'Moderne Arbeitsumgebung\nJobticket\nSocial Events' },
-  ];
-  const ex = examples[Math.floor(Math.random() * examples.length)];
-  setTimeout(() => {
-    const textareas = document.querySelectorAll('.wizard-content textarea');
-    if (textareas[0]) textareas[0].value = ex.tasks;
-    if (textareas[1]) textareas[1].value = ex.req;
-    if (textareas[2]) textareas[2].value = ex.benefits;
-    btn.textContent = '✓ Generiert';
-    btn.disabled = false;
-    showToast('KI hat die Stellenanzeige vorgeneriert!');
-  }, 1200);
 }
 
 // ===== BEWERTUNG ABSENDEN =====
@@ -2798,7 +2679,7 @@ function renderLanding() {
           <div class="sc-step-circle">3</div>
           <div class="sc-step-text">
             <h3>Bewerben & starten</h3>
-            <p>Ein Klick, fertig. Dein Motivationsschreiben wird automatisch erstellt. Der Rest läuft über den Chat.</p>
+            <p>Ein Klick, fertig. Profil und Anschreiben hochladen, Rest läuft über den Chat.</p>
           </div>
         </div>
       </div>
@@ -2857,7 +2738,7 @@ function renderLanding() {
             <h3>Bewerben in einem Wisch.</h3>
             <p>Kein Anschreiben, kein Foto-Upload. Profil einmal ausfüllen &mdash; dann ein Klick pro Job.</p>
             <div class="sp-slide-features">
-              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Auto-Motivationsschreiben</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Motivationsschreiben als PDF hochladen</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf-Builder inklusive</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Status jederzeit im Dashboard</div>
             </div>
@@ -5275,15 +5156,6 @@ function renderWizardStep1() {
         <label class="form-label">Arbeitszeit</label>
         <input type="text" class="form-input" placeholder="z.B. 10-15 Std/Woche" value="10-15 Std/Woche">
       </div>
-    </div>
-
-    <div style="background:rgba(79,70,229,0.05);border:1px solid rgba(79,70,229,0.15);border-radius:var(--radius-sm);padding:1rem;margin-top:1rem">
-      <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem">
-        <span>KI</span>
-        <strong style="font-size:0.9rem">KI-Unterstützung</strong>
-      </div>
-      <p style="font-size:0.85rem;color:var(--gray-600);margin-bottom:0.75rem">Lass die KI deine Stellenanzeige basierend auf den Grundinfos vorgenerieren.</p>
-      <button class="btn btn-primary btn-sm" id="ai-gen-btn" data-action="aiGenerateJob">Mit KI generieren</button>
     </div>`;
 }
 
@@ -6300,7 +6172,7 @@ function renderAGB() {
 
     <div style="background:#fff;border:1px solid var(--gray-200);border-radius:var(--radius-lg);padding:2rem;margin-bottom:1.5rem">
       <h3 style="font-size:1rem;font-weight:700;margin-bottom:0.75rem;color:var(--gray-800)">§ 3 Leistungen der Plattform</h3>
-      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) <strong>Für Arbeitnehmer</strong> bietet die Plattform: Erstellung eines Nutzerprofils, Jobsuche mit Filteroptionen, Ein-Klick-Bewerbung, automatische Erstellung von Motivationsschreiben, Lebenslauf-Builder, Chat-Kommunikation mit Arbeitgebern.</p>
+      <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem">(1) <strong>Für Arbeitnehmer</strong> bietet die Plattform: Erstellung eines Nutzerprofils, Jobsuche mit Filteroptionen, Ein-Klick-Bewerbung, Upload von Motivationsschreiben, Lebenslauf-Builder, Chat-Kommunikation mit Arbeitgebern.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(2) <strong>Für Arbeitgeber</strong> bietet die Plattform: Veröffentlichung von Stellenanzeigen, Verwaltung von Bewerbungen, Chat-Kommunikation mit Bewerbern und Analyse-Dashboard.</p>
       <p style="color:var(--gray-600);line-height:1.8;font-size:0.9rem;margin-top:0.5rem">(3) Die Nutzung der Plattform ist für Arbeitnehmer und Arbeitgeber vollständig kostenlos.</p>
     </div>
@@ -6935,7 +6807,6 @@ if (typeof registerAction === 'function') {
     const target = document.getElementById(el.dataset.targetId);
     if (target) target.click();
   });
-  registerAction('aiGenerateJob', (el) => aiGenerateJob(el));
   registerAction('validateWizardStep', () => validateWizardStep());
   registerAction('prevWizardStep', () => { state.wizardStep = Math.max(0, state.wizardStep - 1); render(); });
   registerAction('publishJob', () => publishJob());
@@ -6987,7 +6858,6 @@ if (typeof registerAction === 'function') {
   registerAction('copyJobLink', (el) => { if (typeof copyJobLink==='function') copyJobLink(el.dataset.url || location.href); });
   registerAction('downloadCV', () => downloadCV());
   registerAction('finalSubmitApplication', () => finalSubmitApplication());
-  registerAction('generateMotivationText', () => generateMotivationText());
   registerAction('goPostJobAndToggleDropdown', () => { state.dropdownOpen = false; goPostJob(); });
   registerAction('gotoProfileAndNav', (el) => { state.profileStep = parseInt(el.dataset.step) || 0; navigate('worker-profile'); });
   registerAction('logoutAndClose', () => { state.dropdownOpen = false; logout(); });
@@ -7015,7 +6885,6 @@ if (typeof registerAction === 'function') {
   registerChange('handleDocScanned', (el) => docScanned(el));
   registerChange('handleUploadCV', (el) => uploadCV(el));
   registerChange('limitSkills', (el) => limitSkills(el, 3));
-  registerChange('setApplyMotivation', (el) => { state.applyMotivation = el.value; });
   registerChange('toggleHoursFilter', (el) => toggleHoursFilter(parseInt(el.dataset.hours)));
   registerChange('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value));
 
