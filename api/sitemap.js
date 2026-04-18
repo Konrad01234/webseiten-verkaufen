@@ -1,7 +1,8 @@
 /**
- * Cloudflare Pages Function: dynamische sitemap.xml
+ * Vercel Edge Function: dynamische sitemap.xml
  * ------------------------------------------------------------------
- * Wird automatisch an GET /sitemap.xml gebunden und liefert eine
+ * Wird ueber den Rewrite in vercel.json an GET /sitemap.xml gebunden
+ * (Quelle: /api/sitemap, Ziel-URL: /sitemap.xml). Liefert eine
  * XML-Sitemap mit allen statischen Routen + allen aktiven Jobs aus
  * Supabase.
  *
@@ -10,12 +11,15 @@
  * keine Job-Links zu folgen — die Sitemap ist der einzige Weg, Google
  * auf jeden einzelnen Job hinzuweisen.
  *
- * Die Supabase-URL + Anon-Key werden aus config.js ausgelesen (kopiert,
- * damit die Function unabhängig vom Client-JS läuft).
+ * Edge runtime: laeuft in Vercels Edge Network (V8 Isolate, kein
+ * Node-Cold-Start, low latency global). Nutzt nur fetch + Web-Standard-
+ * APIs.
  */
 
-// WICHTIG: Werte müssen mit config.js übereinstimmen.
-// Wenn sich dort etwas ändert, hier bitte ebenfalls anpassen.
+export const config = { runtime: 'edge' };
+
+// WICHTIG: Werte muessen mit config.js uebereinstimmen.
+// Wenn sich dort etwas aendert, hier bitte ebenfalls anpassen.
 const SUPABASE_URL = 'https://qowrnfdjwikkjlpluali.supabase.co';
 const SUPABASE_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFvd3JuZmRqd2lra2pscGx1YWxpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU4MTUzNzcsImV4cCI6MjA5MTM5MTM3N30.kjp9fxAupQlPBum1TknMk1oJhrQUY1DT0jEjMYJtqEM';
@@ -58,8 +62,8 @@ async function fetchActiveJobs() {
   return await res.json();
 }
 
-export async function onRequest(context) {
-  const origin = new URL(context.request.url).origin;
+export default async function handler(request) {
+  const origin = new URL(request.url).origin;
 
   let jobs = [];
   try {
@@ -70,7 +74,6 @@ export async function onRequest(context) {
 
   const urls = [];
 
-  // Statische Routen
   for (const r of STATIC_ROUTES) {
     urls.push(
       `  <url>\n` +
@@ -81,7 +84,6 @@ export async function onRequest(context) {
     );
   }
 
-  // Job-Detailseiten (SPA-Hash-Route #job-<id>)
   for (const j of jobs) {
     const lastmod = (j.updated_at || j.created_at || new Date().toISOString()).slice(0, 10);
     urls.push(
@@ -104,7 +106,6 @@ export async function onRequest(context) {
     status: 200,
     headers: {
       'Content-Type': 'application/xml; charset=utf-8',
-      // 1 Stunde Cache — reduziert Supabase-Last, bleibt aber frisch genug
       'Cache-Control': 'public, max-age=3600, s-maxage=3600'
     }
   });
