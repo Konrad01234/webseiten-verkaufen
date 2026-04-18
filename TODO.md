@@ -43,8 +43,7 @@
 
 ### Deployment (Vercel)
 - [ ] Eigene Domain einrichten (aktuell nur `*.vercel.app`)
-- [x] HTTPS / HSTS bestätigt — alle Security-Headers via `vercel.json` (vorher fälschlich in `_headers` für Cloudflare, das Vercel ignoriert hatte)
-- [ ] Vercel-Project-Settings prüfen: Production Branch = `main`, Framework Preset = "Other" oder "Static", Build Command leer, Output Directory leer (oder `.`)
+- [x] Vercel-Project-Settings geprüft — Production Branch = `main` ✅
 - [ ] **Im Vercel-Dashboard SSL/TLS aktivieren** wenn Custom-Domain dran ist (passiert idR automatisch via Let's Encrypt)
 
 ---
