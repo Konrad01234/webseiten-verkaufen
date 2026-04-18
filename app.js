@@ -476,7 +476,16 @@ function subscribeToApplicationUpdates() {
   if (state._appsSub) { try { DB.sb.removeChannel(state._appsSub); } catch (_) {} state._appsSub = null; }
   state._appsSub = DB.sb.channel('apps-realtime')
     .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, () => {
-      loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[realtime] apps', e));
+      // Applications UND jobs parallel neu laden. Die Dashboard-Counter
+      // („Bewerbungen: X", „Aktive Anzeigen") lesen aus jobs.applications_count
+      // bzw. aus JOBS - nicht aus dem _appsCache. Ohne den zweiten Load
+      // bleiben die Zahlen nach einer neuen Bewerbung stumm stehen, bis
+      // man wegnavigiert und zurueckkommt.
+      Promise.all([
+        loadApplicationsForUser(),
+        loadJobsFromDB()
+      ]).then(() => { try { render(); } catch (_) {} })
+        .catch(e => console.error('[realtime] apps', e));
     })
     .subscribe();
 }
@@ -1105,13 +1114,16 @@ async function logout() {
   // vom alten User" sieht. Der SIGNED_OUT-Auth-Handler macht hinterher
   // das Gleiche nochmal — das ist idempotent und nicht schaedlich.
   try { await DB.signOut(); } catch (e) { console.error('[logout]', e); }
-  // Realtime-Chat-Subscription schliessen, sonst liefert sie Messages
-  // in einen (dann null-en) state.user rein und koennte sogar Daten
-  // in den Speicher des naechsten Logins blenden.
-  if (state._chatSub) {
-    try { DB.sb.removeChannel(state._chatSub); } catch (_) {}
-    state._chatSub = null;
-  }
+  // Alle Realtime-Subscriptions schliessen, sonst liefern sie Events
+  // in einen (dann null-en) state.user rein und koennten sogar Daten
+  // in den Speicher des naechsten Logins blenden. Betrifft Chat-,
+  // Applications- und Jobs-Channel.
+  ['_chatSub', '_chatListSub', '_appsSub', '_jobsSub'].forEach(key => {
+    if (state[key]) {
+      try { DB.sb.removeChannel(state[key]); } catch (_) {}
+      state[key] = null;
+    }
+  });
   state.activeChat = null;
   state.user = null;
   state._savedJobs = [];
