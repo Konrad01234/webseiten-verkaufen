@@ -296,7 +296,7 @@ function dbAppToFrontend(row) {
   const j = row.jobs || {};
   const name = p.name || '';
   const initials = (name || '?').split(' ').map(n => n[0]).join('').toUpperCase();
-  const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
+  const statusTexts = { new: 'Neu', pending: 'Neu', reviewing: 'In Prüfung', invited: 'Eingeladen', accepted: 'Hat zugesagt', rejected: 'Abgelehnt', withdrawn: 'Zurückgezogen' };
   return {
     id: row.id,
     userId: row.worker_id,
@@ -876,9 +876,18 @@ function updateNav() {
   const actions = document.getElementById('nav-actions');
   if (state.user) {
     const isEmployer = state.user.role === 'employer';
+    const activeJob = !isEmployer ? getActiveJob() : null;
+    const activeChip = activeJob ? `
+      <a href="#" class="active-job-chip" data-action="nav" data-page="worker-dashboard" title="Dein aktueller Job">
+        <span class="active-job-chip-dot" aria-hidden="true"></span>
+        <span class="active-job-chip-text">
+          <span class="active-job-chip-label">Aktueller Job</span>
+          <span class="active-job-chip-title">${escapeHtml(activeJob.jobTitle)}</span>
+        </span>
+      </a>` : '';
     actions.innerHTML = `
       <div class="user-menu">
-
+        ${activeChip}
         <div class="user-avatar" data-action="toggleDropdown" role="button" tabindex="0" data-on-keydown="avatarKeydown" aria-label="Nutzermenü" aria-haspopup="true" aria-expanded="${state.dropdownOpen}" aria-controls="user-dropdown">${(state.user.name||'').split(' ').map(n=>n[0]).join('')}</div>
         <div class="user-dropdown ${state.dropdownOpen ? '' : 'hidden'}" id="user-dropdown" role="menu">
           <a href="#" data-action="navAndToggleDropdown" data-page="${isEmployer ? 'employer-dashboard' : 'worker-dashboard'}">Dashboard</a>
@@ -1191,6 +1200,62 @@ function getActiveJob() {
     employerId:  job ? job.employerId : null
   };
 }
+// Worker nimmt eine Einladung an. Der accept_invitation-RPC macht alles
+// atomar in der DB: eigene App -> accepted, andere eigene -> withdrawn,
+// andere auf dem Job -> rejected, Job -> active=false.
+async function workerAcceptInvitation(appId) {
+  if (!state.user || !window.DB) return;
+  if (!DB.acceptInvitation) {
+    showToast('Diese Funktion braucht die neueste DB-Migration. Bitte supabase-add-invitation-flow.sql einspielen.', 'error');
+    return;
+  }
+  if (state._acceptingInvite) return;
+  state._acceptingInvite = true;
+  try {
+    await DB.acceptInvitation(appId);
+    await loadApplicationsForUser();
+    await loadJobsFromDB();
+    showToast('Einladung angenommen! Willkommen an Bord.');
+    // Auto-Nachricht an den Arbeitgeber
+    const app = (state._appsCache || []).find(a => String(a.id) === String(appId));
+    if (app && app.job && app.job.employerId && DB.getOrCreateChat && DB.sendMessage) {
+      try {
+        const chat = await DB.getOrCreateChat({
+          workerId: state.user.id, employerId: app.job.employerId,
+          jobId: app.jobId, jobTitle: app.jobTitle
+        });
+        await DB.sendMessage(chat.id, state.user.id,
+          `Hallo, ich habe die Einladung für "${app.jobTitle}" angenommen und freue mich auf die Zusammenarbeit!`);
+        await loadChatsForUser();
+      } catch (e) { console.error('[workerAcceptInvitation] chat', e); }
+    }
+    render();
+  } catch (e) {
+    console.error('[workerAcceptInvitation]', e);
+    showToast('Annehmen fehlgeschlagen: ' + (e.message || ''), 'error');
+  } finally {
+    state._acceptingInvite = false;
+  }
+}
+
+async function workerDeclineInvitation(appId) {
+  if (!state.user || !window.DB) return;
+  if (!confirm('Einladung wirklich ablehnen? Du kannst dich nicht erneut für diese Stelle bewerben.')) return;
+  if (!DB.declineInvitation) {
+    showToast('Diese Funktion braucht die neueste DB-Migration.', 'error');
+    return;
+  }
+  try {
+    await DB.declineInvitation(appId);
+    await loadApplicationsForUser();
+    showToast('Einladung abgelehnt.');
+    render();
+  } catch (e) {
+    console.error('[workerDeclineInvitation]', e);
+    showToast('Ablehnen fehlgeschlagen: ' + (e.message || ''), 'error');
+  }
+}
+
 // clearActiveJob + completed_jobs are stored in profiles so a worker can
 // finish a job and rate the employer even after the application is gone.
 // Wichtig: zusaetzlich den application-Row auf 'withdrawn' setzen, sonst
@@ -2163,21 +2228,29 @@ async function updateApplicantStatus(applicantId, newStatus) {
   if (!a) a = MOCK_APPLICANTS.find(x => x.id === applicantId);
   if (!a) return;
 
-  const statusTexts = { new: 'Neu', reviewing: 'In Prüfung', accepted: 'Eingeladen', rejected: 'Abgelehnt' };
+  const statusTexts = { new: 'Neu', pending: 'Neu', reviewing: 'In Prüfung', invited: 'Eingeladen', accepted: 'Hat zugesagt', rejected: 'Abgelehnt', withdrawn: 'Zurückgezogen' };
   const jobTitle = a.jobTitle || a.job;
 
-  // Richtungs-Validierung: endgueltige Entscheidungen (accepted/rejected)
-  // nicht rueckwaerts abwickeln, sonst verwirrt das Worker und die
-  // Invariants (activeJob, completedJobs) kippen.
+  // Employer darf nicht direkt 'accepted' setzen - das ist Worker-Privileg
+  // nach Einladungs-Annahme. Dropdown sollte 'accepted' gar nicht anbieten,
+  // aber Defensive fuer den Fall.
+  if (newStatus === 'accepted') {
+    showToast('Die Zusage kann nur der Bewerber selbst geben. Bitte zuerst "Einladen" setzen.', 'error');
+    render();
+    return;
+  }
+
+  // Richtungs-Validierung: endgueltige Entscheidungen nicht rueckwaerts
+  // abwickeln.
   const oldStatus = a.status;
-  const TERMINAL = new Set(['accepted', 'rejected']);
+  const TERMINAL = new Set(['accepted', 'rejected', 'withdrawn']);
   if (TERMINAL.has(oldStatus) && newStatus !== oldStatus) {
     if (!confirm('Dieser Status wurde bereits endgueltig entschieden ('
       + (statusTexts[oldStatus] || oldStatus)
       + '). Wirklich auf "'
       + (statusTexts[newStatus] || newStatus)
       + '" zuruecksetzen?')) {
-      render();  // select-Element zurueck auf alten Wert
+      render();
       return;
     }
   }
@@ -2197,14 +2270,12 @@ async function updateApplicantStatus(applicantId, newStatus) {
     a.statusText = statusTexts[newStatus];
   }
 
-  // On accept or reject, send an automated chat message to the worker
-  // via the real DB so they see the decision in their inbox across
-  // browsers. For mock applicants (fake seed data), fall back to the
-  // legacy in-memory push.
-  if (newStatus === 'rejected' || newStatus === 'accepted') {
+  // Auto-Nachricht an Bewerber bei Einladung oder Absage.
+  if (newStatus === 'rejected' || newStatus === 'invited') {
+    const firstName = (a.name || '').split(' ')[0];
     const msg = newStatus === 'rejected'
-      ? `Hallo ${(a.name || '').split(' ')[0]}, vielen Dank für deine Bewerbung auf die Stelle "${jobTitle}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
-      : `Hallo ${(a.name || '').split(' ')[0]}, wir freuen uns dir mitzuteilen, dass deine Bewerbung auf die Stelle "${jobTitle}" erfolgreich war! Wir würden dich gerne zu einem Gespräch einladen. Melde dich gerne zurück, damit wir einen Termin vereinbaren können.`;
+      ? `Hallo ${firstName}, vielen Dank für deine Bewerbung auf die Stelle "${jobTitle}". Leider müssen wir dir mitteilen, dass wir uns für einen anderen Bewerber entschieden haben. Wir wünschen dir alles Gute!`
+      : `Hallo ${firstName}, wir möchten dich zu der Stelle "${jobTitle}" einladen! Sieh dir die Einladung in deinem Dashboard an und sag Bescheid, ob du die Stelle annehmen möchtest.`;
 
     if (isReal && a.userId && window.DB) {
       try {
@@ -4480,14 +4551,44 @@ function renderApplications() {
           <h2 class="dashboard-title">Meine Bewerbungen</h2>
           ${(() => {
             const activeJob = getActiveJob();
-            const pending = myApps.filter(a => a.status !== 'rejected' && a.status !== 'accepted');
-            return activeJob ? `
-            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:1rem;font-size:0.85rem;color:#166534;display:flex;align-items:center;gap:0.5rem">
-              <span style="font-size:1.1rem">💼</span> Du hast einen aktiven Job: <strong>${escapeHtml(activeJob.jobTitle)}</strong> – Neue Bewerbungen sind gesperrt.
-            </div>` : `
-            <div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:1rem;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem">
-              <span style="font-size:1.1rem">📋</span> Offene Bewerbungen: <strong>${pending.length}/3</strong>
-            </div>`;
+            const invites = myApps.filter(a => a.status === 'invited');
+            const pending = myApps.filter(a => a.status !== 'rejected' && a.status !== 'accepted' && a.status !== 'invited' && a.status !== 'withdrawn');
+            let html = '';
+            if (activeJob) {
+              html += `<div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#f0fdf4;border:1px solid #bbf7d0;margin-bottom:1rem;font-size:0.85rem;color:#166534;display:flex;align-items:center;gap:0.5rem">
+                <span style="font-size:1.1rem">💼</span> Dein aktueller Job: <strong>${escapeHtml(activeJob.jobTitle)}</strong> bei <strong>${escapeHtml(activeJob.jobCompany)}</strong> – Neue Bewerbungen sind gesperrt.
+              </div>`;
+            } else {
+              html += `<div style="padding:0.75rem 1rem;border-radius:var(--radius);background:#eff6ff;border:1px solid #bfdbfe;margin-bottom:1rem;font-size:0.85rem;color:#1e40af;display:flex;align-items:center;gap:0.5rem">
+                <span style="font-size:1.1rem">📋</span> Offene Bewerbungen: <strong>${pending.length}/3</strong>
+              </div>`;
+            }
+            if (invites.length > 0 && !activeJob) {
+              html += `<div style="margin-bottom:1.5rem">
+                <h3 style="font-size:1rem;margin-bottom:0.75rem;color:#166534">
+                  <span style="font-size:1.1rem">✉️</span> Offene Einladung${invites.length === 1 ? '' : 'en'} (${invites.length})
+                </h3>
+                ${invites.map(a => `
+                  <div class="card" style="border:2px solid #16a34a;background:linear-gradient(135deg,#f0fdf4,#dcfce7);margin-bottom:0.75rem">
+                    <div class="card-body" style="padding:1rem 1.25rem">
+                      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem">
+                        ${companyLogoHtml(a.job.companyLogo, a.job.company)}
+                        <div style="flex:1">
+                          <h4 style="margin:0;font-size:1rem;color:#14532d">${escapeHtml(a.job.title)}</h4>
+                          <div style="font-size:0.85rem;color:#166534">${escapeHtml(a.job.company)} · Einladung eingegangen ${formatDate(a.date)}</div>
+                        </div>
+                      </div>
+                      <p style="margin:0 0 0.75rem;font-size:0.88rem;color:#166534">Du wurdest von diesem Arbeitgeber eingeladen. Wenn du annimmst, werden deine anderen offenen Bewerbungen automatisch zurückgezogen.</p>
+                      <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+                        <button class="btn btn-primary" style="background:#16a34a;border-color:#16a34a" data-action="workerAcceptInvitation" data-app-id="${a.id}">✓ Einladung annehmen</button>
+                        <button class="btn btn-outline" data-action="workerDeclineInvitation" data-app-id="${a.id}">Ablehnen</button>
+                      </div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>`;
+            }
+            return html;
           })()}
           ${myApps.length > 0 ? `
           <div class="jobs-grid">
@@ -5539,12 +5640,14 @@ function renderApplicants() {
                     <td>${escapeHtml(a.jobTitle || a.job)}</td>
                     <td>${(a.skills || []).map(s => `<span class="tag">${escapeHtml(s)}</span>`).join(' ')}</td>
                     <td>
-                      <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
-                        <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
+                      ${(a.status === 'accepted' || a.status === 'withdrawn')
+                        ? `<span class="badge ${a.status === 'accepted' ? 'badge-success' : 'badge-gray'}" style="font-size:0.75rem">${a.status === 'accepted' ? 'Hat zugesagt' : 'Zurückgezogen'}</span>`
+                        : `<select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;min-width:120px" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
+                        <option value="new" ${a.status==='new' || a.status==='pending'?'selected':''}>Neu</option>
                         <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
-                        <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
+                        <option value="invited" ${a.status==='invited'?'selected':''}>Einladen</option>
                         <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
-                      </select>
+                      </select>`}
                     </td>
                     <td>${formatDate(a.date)}</td>
                     <td>
@@ -5598,12 +5701,14 @@ function renderApplicantProfile() {
                     ${a.age ? a.age + ' Jahre &bull; ' : ''}${escapeHtml(a.city)} &bull; max. ${a.weeklyHours || '?'} Std./Woche
                   </div>
                   <div style="margin-top:0.5rem;display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap">
-                    <select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
-                      <option value="new" ${a.status==='new'?'selected':''}>Neu</option>
+                    ${(a.status === 'accepted' || a.status === 'withdrawn')
+                      ? `<span class="badge ${a.status === 'accepted' ? 'badge-success' : 'badge-gray'}" style="font-size:0.75rem">${a.status === 'accepted' ? 'Hat zugesagt' : 'Zurückgezogen'}</span>`
+                      : `<select class="form-select" style="font-size:0.8rem;padding:0.3rem 0.5rem;width:auto" data-on-change="updateApplicantStatus" data-app-id="${a.id}">
+                      <option value="new" ${a.status==='new' || a.status==='pending'?'selected':''}>Neu</option>
                       <option value="reviewing" ${a.status==='reviewing'?'selected':''}>In Prüfung</option>
-                      <option value="accepted" ${a.status==='accepted'?'selected':''}>Eingeladen</option>
+                      <option value="invited" ${a.status==='invited'?'selected':''}>Einladen</option>
                       <option value="rejected" ${a.status==='rejected'?'selected':''}>Abgelehnt</option>
-                    </select>
+                    </select>`}
                     <span style="font-size:0.8rem;color:var(--gray-500)">Beworben auf: <strong>${escapeHtml(a.jobTitle || a.job)}</strong></span>
                   </div>
                 </div>
@@ -6911,6 +7016,8 @@ if (typeof registerAction === 'function') {
   registerAction('deletePostedJob', (el) => deletePostedJob(parseInt(el.dataset.jobId)));
   registerAction('updateApplicantStatus', (el) => updateApplicantStatus(parseInt(el.dataset.appId), el.value || el.dataset.status));
   registerAction('openApplicantChat', (el) => openApplicantChat(parseInt(el.dataset.appId)));
+  registerAction('workerAcceptInvitation', (el) => workerAcceptInvitation(parseInt(el.dataset.appId)));
+  registerAction('workerDeclineInvitation', (el) => workerDeclineInvitation(parseInt(el.dataset.appId)));
 
   // Reviews + Support
   registerAction('submitReview', (el) => submitReview(el));

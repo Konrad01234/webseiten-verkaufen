@@ -244,6 +244,24 @@
     return unwrap(await sb.from('applications').update({ status }).eq('id', id).select().single());
   }
 
+  // Worker nimmt eine Einladung (status='invited') an. Atomar per RPC:
+  // - eigene Bewerbung -> 'accepted'
+  // - andere eigene offene Bewerbungen -> 'withdrawn'
+  // - andere offene Bewerbungen auf dem Job -> 'rejected'
+  // - Job auf active=false
+  // Voraussetzung: supabase-add-invitation-flow.sql ist eingespielt.
+  async function acceptInvitation(appId) {
+    const res = await sb.rpc('accept_invitation', { app_id_in: appId });
+    if (res.error) throw res.error;
+    return res.data;
+  }
+
+  async function declineInvitation(appId) {
+    const res = await sb.rpc('decline_invitation', { app_id_in: appId });
+    if (res.error) throw res.error;
+    return res.data;
+  }
+
   // -----------------------------------------------------------------
   // CHATS + MESSAGES
   // -----------------------------------------------------------------
@@ -377,6 +395,7 @@
     listJobs, getJob, getJobsByEmployer, createJob, updateJob, deleteJob, incrementJobMetric,
     // applications
     applyToJob, getApplicationsForWorker, getApplicationsForJob, getApplicationsForEmployer, updateApplicationStatus,
+    acceptInvitation, declineInvitation,
     // chats + messages
     getOrCreateChat, listChatsForUser, getMessages, sendMessage,
     subscribeToMessages, subscribeToChatList,
