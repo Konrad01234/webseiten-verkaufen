@@ -90,14 +90,8 @@
 ### Features
 - [ ] Stripe-Integration für Boost-Pakete (falls Monetarisierung kommt)
 - [ ] Push-Notifications für Chat (PWA Service Worker)
-- [ ] Mehrsprachigkeit (hreflang, Englisch als zweite Sprache)
 - [ ] Job-Alerts per E-Mail (tägliche/wöchentliche Zusammenfassung)
 - [x] **Job-Sharing** via Web-Share-API (mobil nativ) + WhatsApp/E-Mail/X/Link-kopieren Fallback-Menü. Share-Button auf Job-Detailseite.
-
-### Code-Qualität
-- [ ] `app.js` modularisieren (aktuell 5800+ Zeilen in einer Datei)
-- [ ] Unit-Tests für kritische DB-Funktionen
-- [ ] TypeScript-Migration (optional)
 
 ---
 
