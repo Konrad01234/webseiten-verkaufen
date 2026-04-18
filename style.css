@@ -111,6 +111,38 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 0.85rem; cursor: pointer;
 }
+
+/* Aktiver-Job-Chip in der Nav, nur sichtbar wenn Worker einen
+   angenommenen Job hat. Zeigt den Status auf einen Blick. */
+.active-job-chip {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.35rem 0.75rem; border-radius: 100px;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  text-decoration: none; color: #166534;
+  transition: background 0.2s, border-color 0.2s;
+  max-width: 220px;
+}
+.active-job-chip:hover { background: #dcfce7; border-color: #86efac; }
+.active-job-chip-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #16a34a; flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(22,163,74,0.18);
+}
+.active-job-chip-text {
+  display: flex; flex-direction: column; line-height: 1.1;
+  min-width: 0;
+}
+.active-job-chip-label {
+  font-size: 0.62rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: #15803d;
+}
+.active-job-chip-title {
+  font-size: 0.82rem; font-weight: 700; color: #14532d;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+@media (max-width: 640px) {
+  .active-job-chip { display: none; }
+}
 .user-dropdown {
   position: absolute; top: 100%; right: 0; margin-top: 0.5rem;
   background: #fff; border-radius: var(--radius); box-shadow: var(--shadow-lg);
