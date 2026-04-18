@@ -41,10 +41,11 @@
 - [x] **`supabase-add-application-files.sql` eingespielt** + privater Bucket „documents" im Dashboard angelegt (Public: OFF). Spalten `motivation_file_path` + `motivation_file_name` auf `applications` + RLS (Bewerber + zugehöriger Arbeitgeber dürfen lesen).
 - [x] **`supabase-add-invitation-flow.sql` eingespielt** — Einladungs-Flow mit Cascade: Arbeitnehmer nimmt selbst an, andere Bewerbungen werden automatisch zurückgezogen, Job verschwindet aus der Suche.
 
-### Deployment
-- [ ] Eigene Domain einrichten (aktuell vermutlich nur `*.pages.dev`)
-- [ ] HTTPS / HSTS bestätigen (ist via `_headers` schon konfiguriert)
-- [ ] Cloudflare Pages Build-Settings prüfen (Branch `main` → Deployment)
+### Deployment (Vercel)
+- [ ] Eigene Domain einrichten (aktuell nur `*.vercel.app`)
+- [x] HTTPS / HSTS bestätigt — alle Security-Headers via `vercel.json` (vorher fälschlich in `_headers` für Cloudflare, das Vercel ignoriert hatte)
+- [ ] Vercel-Project-Settings prüfen: Production Branch = `main`, Framework Preset = "Other" oder "Static", Build Command leer, Output Directory leer (oder `.`)
+- [ ] **Im Vercel-Dashboard SSL/TLS aktivieren** wenn Custom-Domain dran ist (passiert idR automatisch via Let's Encrypt)
 
 ---
 
