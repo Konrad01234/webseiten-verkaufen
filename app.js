@@ -5232,7 +5232,7 @@ function validateWizardStep() {
     if (textareas[1]) state.newJob.requirements = textareas[1].value;
     if (textareas[2]) state.newJob.benefits = textareas[2].value;
   }
-  state.wizardStep = Math.min(4, state.wizardStep + 1);
+  state.wizardStep = Math.min(3, state.wizardStep + 1);
   render();
 }
 
@@ -5248,7 +5248,7 @@ function renderPostJob() {
     </div>`;
   }
   const step = state.wizardStep;
-  const steps = ['Grundinfos', 'Details', 'Bilder', 'Laufzeit', 'Vorschau'];
+  const steps = ['Grundinfos', 'Details', 'Bilder', 'Vorschau'];
 
   return `
     <div class="page page-narrow" style="max-width:900px">
@@ -5270,15 +5270,14 @@ function renderPostJob() {
         ${step === 0 ? renderWizardStep1() : ''}
         ${step === 1 ? renderWizardStep2() : ''}
         ${step === 2 ? renderWizardStep3() : ''}
-        ${step === 3 ? renderWizardStep4() : ''}
-        ${step === 4 ? renderWizardStep5() : ''}
+        ${step === 3 ? renderWizardStep5() : ''}
       </div>
 
       <div class="wizard-footer">
         ${step === 0
           ? `<button class="btn btn-outline" data-action="nav" data-page="employer-dashboard">&#8592; Dashboard</button>`
           : `<button class="btn btn-outline" data-action="prevWizardStep">&#8592; Zurück</button>`}
-        ${step < 4 ? `
+        ${step < 3 ? `
           <button class="btn btn-primary" data-action="validateWizardStep">Weiter &#8594;</button>
         ` : `
           <button class="btn btn-success btn-lg" data-action="publishJob">✓ Veröffentlichen</button>
@@ -5436,12 +5435,10 @@ function renderWizardStep5() {
       </div>
     </div>
 
-    <div style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:1rem;margin-top:1.5rem;display:flex;align-items:center;gap:0.75rem">
-      <span style="font-size:1.25rem">!</span>
-      <div>
-        <strong>Fast geschafft!</strong>
-        <div style="font-size:0.85rem;color:var(--gray-600)">Nach der Bezahlung wird deine Anzeige sofort veröffentlicht. Du kannst sie jederzeit bearbeiten oder pausieren.</div>
-      </div>
+    <div style="background:rgba(37,99,235,0.04);border:1px solid rgba(37,99,235,0.12);border-radius:var(--radius-sm);padding:0.85rem 1rem;margin-top:1.5rem;display:flex;align-items:center;gap:0.65rem">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e3a8a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="font-size:0.88rem;color:#1e3a8a;font-weight:600">Aktuell komplett kostenlos</span>
+      <span style="font-size:0.82rem;color:var(--gray-500);margin-left:0.25rem">&mdash; keine versteckten Kosten</span>
     </div>`;
 }
 
