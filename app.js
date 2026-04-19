@@ -4879,19 +4879,23 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- HERO: Foto-Hintergrund mit klarem CTA oben -->
-    <div class="employer-hero" style="min-height:480px">
+    <!-- Hero: anderes Foto, anderer Text, auf Arbeitgeber zugeschnitten -->
+    <div class="employer-hero" style="min-height:560px">
       <div class="employer-hero-bg">
-        <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1400&q=80" alt="">
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1400&q=80" alt="">
       </div>
-      <div class="employer-hero-content slide-up" style="max-width:600px;padding:4rem 2rem">
-        <h1 style="font-size:2.8rem;line-height:1.12;font-family:'Playfair Display',serif">Stelle ausschreiben</h1>
-        <p style="font-size:1.1rem;margin:0.75rem 0 2rem;opacity:0.92">Finde Schüler und Studenten für dein Team. Kostenlos, ohne Vertrag.</p>
-        <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-size:1rem;padding:0.875rem 2.5rem;font-weight:700;border:none;border-radius:10px;cursor:pointer">Kostenlos Anzeige schalten</button>
+      <div class="employer-hero-content slide-up" style="max-width:700px;padding:4rem 2rem">
+        <div style="display:inline-block;background:rgba(255,255,255,0.15);backdrop-filter:blur(4px);padding:0.4rem 1rem;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;letter-spacing:0.05em">FÜR ARBEITGEBER</div>
+        <h1 style="font-size:3.2rem;line-height:1.12;font-family:'Playfair Display',serif">Finde junge Talente<br>für dein Team.</h1>
+        <p style="font-size:1.15rem;opacity:0.92;margin-bottom:2rem;line-height:1.7;max-width:550px">Stelle ausschreiben, Bewerbungen erhalten, im Chat klären. Alles an einem Ort.</p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap">
+          <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1d4ed8;font-size:1rem;padding:0.875rem 2.5rem">Kostenlos Anzeige schalten</button>
+          <button class="btn btn-lg" style="background:transparent;border:2px solid rgba(255,255,255,0.4);color:#fff;font-size:1rem;padding:0.875rem 2rem" data-action="nav" data-page="register">Konto erstellen</button>
+        </div>
       </div>
     </div>
 
-    <!-- SO EINFACH GEHTS: Kaskade wie auf der Startseite -->
+    <!-- Schritte: Arbeitgeber-Perspektive -->
     <div style="background:var(--gray-50);padding:4rem 0">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
         <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach läuft's</h2>
@@ -4902,44 +4906,55 @@ function renderEmployerLanding() {
           <div class="sc-step-circle">1</div>
           <div class="sc-step-text">
             <h3>Anzeige schreiben</h3>
-            <p>Titel, Stundenlohn, Standort. Dauert keine fünf Minuten.</p>
+            <p>Titel, Stundenlohn, Standort &mdash; mehr braucht's nicht. Dauert keine fünf Minuten.</p>
           </div>
         </div>
         <div class="sc-step" data-i="1">
           <div class="sc-step-circle">2</div>
           <div class="sc-step-text">
-            <h3>Bewerbungen erhalten</h3>
-            <p>Schüler bewerben sich mit Profil und Lebenslauf. Du siehst alles im Dashboard.</p>
+            <h3>Bewerbungen sichten</h3>
+            <p>Schüler bewerben sich mit Profil und Lebenslauf. Du siehst alles direkt im Dashboard.</p>
           </div>
         </div>
         <div class="sc-step" data-i="2">
           <div class="sc-step-circle">3</div>
           <div class="sc-step-text">
             <h3>Im Chat klären</h3>
-            <p>Termine und Fragen direkt per Nachricht. Keine E-Mails nötig.</p>
+            <p>Frag nach, vereinbar Probearbeit, sag zu. Alles per Nachricht, keine E-Mails nötig.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- SLIDESHOW: Sticky-Slides wie auf der Startseite, aber mit Arbeitgeber-Content -->
+    <!-- Slideshow: ANDERER Content als Startseite - aus Arbeitgeber-Sicht -->
     <section class="sp-wrap">
       <div class="sp-wrap-head">
-        <h2>Warum <em>WorkPilot</em></h2>
-        <p class="sp-wrap-sub">Das macht uns anders.</p>
+        <h2>Warum Arbeitgeber <em>WorkPilot</em> nutzen</h2>
+        <p class="sp-wrap-sub">Was die Plattform für dich als Arbeitgeber besonders macht.</p>
       </div>
 
       <article class="sp-slide" data-i="1">
         <div class="sp-slide-inner">
           <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1521737852567-6949f3f9f2b5?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1543269865-cbf427effbad?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <div class="sp-slide-badge">
+              <span class="sp-slide-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+              </span>
+              <div class="sp-slide-badge-text">
+                <strong>Motivierte Bewerber</strong>
+                <span>direkt in deiner Stadt</span>
+              </div>
+            </div>
           </div>
           <div class="sp-slide-body">
-            <h3>Bewerbungen mit Profil statt PDF.</h3>
-            <p>Jede Bewerbung kommt mit ausgefülltem Profil. Du siehst Erfahrung, Verfügbarkeit und Standort auf einen Blick.</p>
+            <span class="sp-slide-num">eins.</span>
+            <h3>Junge Leute, die wirklich Lust haben.</h3>
+            <p>Schüler und Studenten, die aktiv nach Arbeit suchen &mdash; keine Karteileichen, keine alten Lebensläufe.</p>
             <div class="sp-slide-features">
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Profil mit Verfügbarkeit und Skills</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Standort-Filter nach Umkreis</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Lebenslauf direkt einsehbar</div>
-              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Standort-Filter im Dashboard</div>
             </div>
           </div>
         </div>
@@ -4948,14 +4963,25 @@ function renderEmployerLanding() {
       <article class="sp-slide sp-slide-reverse" data-i="2">
         <div class="sp-slide-inner">
           <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <div class="sp-slide-badge">
+              <span class="sp-slide-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </span>
+              <div class="sp-slide-badge-text">
+                <strong>Dein Dashboard</strong>
+                <span>alles auf einen Blick</span>
+              </div>
+            </div>
           </div>
           <div class="sp-slide-body">
-            <h3>Direkter Chat statt E-Mail-Hölle.</h3>
-            <p>Termine, Rückfragen, Zusagen &mdash; alles im Messenger. Schnell, persönlich, ohne Umwege.</p>
+            <span class="sp-slide-num">zwei.</span>
+            <h3>Alles an einem Ort verwalten.</h3>
+            <p>Anzeigen, Bewerbungen und Nachrichten &mdash; übersichtlich im Dashboard. Kein E-Mail-Chaos mehr.</p>
             <div class="sp-slide-features">
-              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Antwort meist in unter 24h</div>
-              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Telefonnummern bleiben privat</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Bewerbungen annehmen oder absagen</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Direkter Chat mit Bewerbern</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Anzeige jederzeit bearbeiten</div>
             </div>
           </div>
         </div>
@@ -4964,14 +4990,25 @@ function renderEmployerLanding() {
       <article class="sp-slide" data-i="3">
         <div class="sp-slide-inner">
           <div class="sp-slide-media">
-            <img src="https://images.unsplash.com/photo-1607270788972-66a2989ad7e7?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1100&auto=format&fit=crop" alt="" loading="lazy">
+            <div class="sp-slide-badge">
+              <span class="sp-slide-badge-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <div class="sp-slide-badge-text">
+                <strong>Keine Kosten</strong>
+                <span>wirklich kostenlos</span>
+              </div>
+            </div>
           </div>
           <div class="sp-slide-body">
+            <span class="sp-slide-num">drei.</span>
             <h3>Komplett kostenlos. Ohne Haken.</h3>
-            <p>Kein Abo, keine Provision, kein Vertrag. Alle Funktionen sind kostenlos &mdash; jetzt und in Zukunft.</p>
+            <p>Keine Provision, kein Abo, kein Vertrag. Du zahlst nichts &mdash; weder jetzt noch später.</p>
             <div class="sp-slide-features">
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unbegrenzt Anzeigen schalten</div>
               <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Unbegrenzt Bewerber kontaktieren</div>
+              <div class="sp-slide-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Keine Mindestlaufzeit</div>
             </div>
           </div>
         </div>
@@ -4980,10 +5017,11 @@ function renderEmployerLanding() {
       <div class="sp-end"></div>
     </section>
 
-    <!-- TESTIMONIALS: Scrollender Ticker wie auf der Startseite -->
+    <!-- Testimonials: Arbeitgeber-Bewertungen -->
     <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
       <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
         <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Das sagen <span style="color:var(--primary)">Arbeitgeber</span></h2>
+        <p style="color:var(--gray-500);font-size:0.95rem">Echte Erfahrungen von echten Unternehmen</p>
       </div>
       <div class="testi-ticker-wrap">
         <div class="testi-ticker-fade testi-ticker-fade-left"></div>
@@ -4993,9 +5031,11 @@ function renderEmployerLanding() {
             ${(() => {
               var list = [
                 { name:'Sandra K.', role:'Café Sonnenschein, Köln', photo:'https://randomuser.me/api/portraits/women/65.jpg', text:'„Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir."', rating:5 },
-                { name:'Thomas M.', role:'MediaMarkt, Düsseldorf', photo:'https://randomuser.me/api/portraits/men/52.jpg', text:'„Über WorkPilot läuft das ohne Bürokratie — einfach hingucken, anschreiben, fertig."', rating:5 },
-                { name:'Lara H.', role:'TechStart, Berlin', photo:'https://randomuser.me/api/portraits/women/82.jpg', text:'„Der direkte Chat ist Gold wert. Die Schüler antworten schneller als jeder Erwachsene."', rating:4.5 },
-                { name:'Markus R.', role:'Bäckerei Richter, München', photo:'https://randomuser.me/api/portraits/men/45.jpg', text:'„Wir hatten innerhalb einer Woche alle Stellen besetzt. Super einfach."', rating:5 },
+                { name:'Thomas M.', role:'MediaMarkt, Düsseldorf', photo:'https://randomuser.me/api/portraits/men/52.jpg', text:'„Einfach hingucken, anschreiben, fertig. Ohne Bürokratie."', rating:5 },
+                { name:'Lara H.', role:'TechStart, Berlin', photo:'https://randomuser.me/api/portraits/women/82.jpg', text:'„Der direkte Chat ist Gold wert. Und die Schüler antworten schneller als jeder Erwachsene."', rating:4.5 },
+                { name:'Markus R.', role:'Bäckerei Richter, München', photo:'https://randomuser.me/api/portraits/men/45.jpg', text:'„Innerhalb einer Woche alle Stellen besetzt. Super einfach."', rating:5 },
+                { name:'Anna B.', role:'Buchhandlung Blatt, Hamburg', photo:'https://randomuser.me/api/portraits/women/33.jpg', text:'„Endlich eine Plattform, die auf junge Aushilfen spezialisiert ist."', rating:5 },
+                { name:'Felix W.', role:'Pizzeria Napoli, Stuttgart', photo:'https://randomuser.me/api/portraits/men/67.jpg', text:'„Kostenlos und funktioniert einfach. Mehr braucht man nicht."', rating:4.5 },
               ];
               var render = function(t) {
                 var pct = (t.rating / 5) * 100;
@@ -5012,12 +5052,12 @@ function renderEmployerLanding() {
       </div>
     </div>
 
-    <!-- CTA: gleicher Fullblock wie Startseite -->
+    <!-- CTA -->
     <section class="cta-fullblock">
       <div class="cta-fullblock-inner">
         <span class="cta-fullblock-kicker">Bereit?</span>
-        <h2>Jetzt Anzeige schalten</h2>
-        <p>Dauert keine fünf Minuten. Komplett kostenlos.</p>
+        <h2>Dein nächster Mitarbeiter wartet.</h2>
+        <p>Anzeige schalten dauert fünf Minuten. Komplett kostenlos.</p>
         <div class="cta-fullblock-buttons">
           <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Kostenlos starten <span class="cta-arrow">&rarr;</span></button>
           <button class="btn btn-lg cta-btn-outline" data-action="nav" data-page="register">Konto erstellen</button>
