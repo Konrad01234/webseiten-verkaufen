@@ -56,8 +56,10 @@
     return res.data;
   }
 
-  async function signIn({ email, password }) {
-    const res = await sb.auth.signInWithPassword({ email, password });
+  async function signIn({ email, password, captchaToken }) {
+    const params = { email, password };
+    if (captchaToken) params.options = { captchaToken };
+    const res = await sb.auth.signInWithPassword(params);
     if (res.error) throw res.error;
     return res.data;
   }
