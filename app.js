@@ -2112,8 +2112,8 @@ async function copyJobLink(url) {
 
 // ===== GUARDS =====
 function requireEmployerLogin(then) {
-  if (!state.user) { navigate('login'); return; }
-  if (state.user.role !== 'employer') { navigate('login'); return; }
+  if (!state.user) { navigate('register', { role: 'employer' }); return; }
+  if (state.user.role !== 'employer') { navigate('register', { role: 'employer' }); return; }
   if (!state.user.approved) { showToast('Dein Account muss erst vom Admin freigeschaltet werden.', 'error'); return; }
   if (then) then();
 }
@@ -3748,6 +3748,8 @@ function renderLogin() {
 }
 
 function renderRegister() {
+  const preRole = (state.pageData && state.pageData.role) || 'worker';
+  const isEmp = preRole === 'employer';
   return `
     <div class="auth-page">
       <div class="auth-card fade-in">
@@ -3757,18 +3759,26 @@ function renderRegister() {
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
+<<<<<<< Updated upstream
               <div class="role-option selected" data-action="selectRole" data-role="worker">
+=======
+              <div class="role-option ${isEmp ? '' : 'selected'}" onclick="selectRole(this, 'worker')" data-role="worker">
+>>>>>>> Stashed changes
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
+<<<<<<< Updated upstream
               <div class="role-option" data-action="selectRole" data-role="employer">
+=======
+              <div class="role-option ${isEmp ? 'selected' : ''}" onclick="selectRole(this, 'employer')" data-role="employer">
+>>>>>>> Stashed changes
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
               </div>
             </div>
-            <input type="hidden" name="role" value="worker">
+            <input type="hidden" name="role" value="${preRole}">
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -3780,9 +3790,10 @@ function renderRegister() {
               <input type="text" name="lastName" class="form-input" placeholder="Mustermann" required>
             </div>
           </div>
-          <div class="form-group employer-field" style="display:none">
+          <div class="form-group employer-field" style="display:${isEmp ? 'block' : 'none'}">
             <label class="form-label">Firmenname</label>
-            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH" ${isEmp ? 'required' : ''}>
+          </div>
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
@@ -5052,8 +5063,13 @@ function renderEmployerLanding() {
           <p>Anzeige schalten dauert fünf Minuten. Kostenlos, unverbindlich, ohne Kleingedrucktes.</p>
         </div>
         <div class="eh-cta-actions">
+<<<<<<< Updated upstream
           <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
           <a href="#" data-action="nav" data-page="register" class="eh-cta-link">oder Konto erstellen</a>
+=======
+          <button class="btn btn-lg cta-btn-primary" onclick="goPostJob()">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
+          <a href="#" onclick="navigate('register',{role:'employer'});return false;" class="eh-cta-link">oder Konto erstellen</a>
+>>>>>>> Stashed changes
         </div>
       </div>
     </section>`;
