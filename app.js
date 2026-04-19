@@ -3766,10 +3766,10 @@ function renderLogin() {
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:0.75rem">
-          <a href="#" onclick="showForgotPassword()" style="color:var(--gray-600)">Passwort vergessen?</a>
+          <a href="#" data-action="showForgotPassword" style="color:var(--gray-600)">Passwort vergessen?</a>
         </p>
         <div class="auth-divider">oder</div>
-        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" onclick="navigate('register')" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
+        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" data-action="nav" data-page="register" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
       </div>
     </div>`;
 }
@@ -3831,7 +3831,7 @@ function renderRegister() {
           ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
         </form>
-        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
+        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" data-action="nav" data-page="login" style="color:var(--primary);font-weight:600">Anmelden</a></p>
       </div>
     </div>`;
 }
