@@ -853,11 +853,38 @@ function render() {
   // Re-attach event listeners
   attachEventListeners();
 
+  // hCaptcha rendert sich nur beim initialen DOM-Scan automatisch.
+  // Da unsere Login/Register-Formulare via innerHTML NACH dem Script-
+  // Load eingefuegt werden, muessen wir hcaptcha.render() manuell auf
+  // jedem noch-nicht-gerenderten .h-captcha-Div aufrufen.
+  renderPendingCaptchas();
+
   // Admin-Link im Footer nur fuer echte Admins einblenden
   updateFooterAdminLink();
 
   // Fokus wiederherstellen (siehe _captureFocusState weiter oben)
   _restoreFocusState(_focusSnap);
+}
+
+// Sucht alle .h-captcha-Divs im DOM und rendert ein hCaptcha-Widget
+// fuer jeden, der noch keins hat. Wird nach jedem render() aufgerufen,
+// weil unsere SPA die Formulare dynamisch via innerHTML austauscht -
+// das Auto-Render von hCaptcha greift dabei nicht (es scannt das DOM
+// nur einmal beim Script-Load).
+function renderPendingCaptchas() {
+  if (!window.hcaptcha || !window.HCAPTCHA_SITE_KEY) return;
+  document.querySelectorAll('.h-captcha').forEach(el => {
+    // Schon gerendert? hCaptcha setzt data-hcaptcha-widget-id aufs
+    // Container-Element sobald ein Widget dran haengt.
+    if (el.dataset.hcaptchaWidgetId) return;
+    if (el.querySelector('iframe')) return;
+    try {
+      const widgetId = window.hcaptcha.render(el, {
+        sitekey: el.dataset.sitekey || window.HCAPTCHA_SITE_KEY
+      });
+      el.dataset.hcaptchaWidgetId = String(widgetId);
+    } catch (e) { console.warn('[hcaptcha] render', e); }
+  });
 }
 
 // Blendet den "Admin"-Link im Footer ein/aus basierend auf dem
