@@ -3752,7 +3752,7 @@ function renderLogin() {
       <div class="auth-card fade-in">
         <h2>Willkommen zurück!</h2>
         <p class="subtitle">Melde dich an, um fortzufahren.</p>
-        <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
+        <form data-on-submit="loginForm">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
@@ -3775,27 +3775,29 @@ function renderLogin() {
 }
 
 function renderRegister() {
+  const preRole = (state.pageData && state.pageData.role) || 'worker';
+  const isEmp = preRole === 'employer';
   return `
     <div class="auth-page">
       <div class="auth-card fade-in">
         <h2>Konto erstellen</h2>
         <p class="subtitle">Registriere dich kostenlos und leg los.</p>
-        <form onsubmit="event.preventDefault(); submitRegister(this)">
+        <form data-on-submit="registerForm">
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
-              <div class="role-option selected" onclick="selectRole(this, 'worker')" data-role="worker">
+              <div class="role-option ${isEmp ? '' : 'selected'}" data-action="selectRole" data-role="worker">
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
-              <div class="role-option" onclick="selectRole(this, 'employer')" data-role="employer">
+              <div class="role-option ${isEmp ? 'selected' : ''}" data-action="selectRole" data-role="employer">
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
               </div>
             </div>
-            <input type="hidden" name="role" value="worker">
+            <input type="hidden" name="role" value="${preRole}">
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -3807,17 +3809,23 @@ function renderRegister() {
               <input type="text" name="lastName" class="form-input" placeholder="Mustermann" required>
             </div>
           </div>
-          <div class="form-group employer-field" style="display:none">
+          <div class="form-group employer-field" style="display:${isEmp ? 'block' : 'none'}">
             <label class="form-label">Firmenname</label>
-            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH" ${isEmp ? 'required' : ''}>
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
           </div>
           <div class="form-group">
-            <label class="form-label">Passwort</label>
-            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" required minlength="8">
+            <label class="form-label" for="reg-password">Passwort</label>
+            <input type="password" name="password" id="reg-password" class="form-input" placeholder="Passwort eingeben" required minlength="8" data-on-input="updatePasswordChecklist" autocomplete="new-password">
+            <ul class="pw-checklist" id="pw-checklist" aria-live="polite">
+              <li data-rule="length"><span class="pw-check-icon" aria-hidden="true">○</span>Mindestens 8 Zeichen</li>
+              <li data-rule="lower"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Kleinbuchstabe (a–z)</li>
+              <li data-rule="upper"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Großbuchstabe (A–Z)</li>
+              <li data-rule="digit"><span class="pw-check-icon" aria-hidden="true">○</span>Eine Zahl (0–9)</li>
+            </ul>
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
