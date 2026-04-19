@@ -4879,21 +4879,12 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- Hero: Split-Layout (Text links, Foto rechts) - ANDERS als Landing -->
-    <div style="background:#fff;padding:5rem 1.5rem 4rem">
-      <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center">
-        <div>
-          <div style="display:inline-block;background:#eff6ff;color:#1e3a8a;padding:0.35rem 0.85rem;border-radius:100px;font-size:0.75rem;font-weight:700;margin-bottom:1.25rem;letter-spacing:0.08em;text-transform:uppercase">Für Arbeitgeber</div>
-          <h1 style="font-size:clamp(2.2rem,4vw,3rem);line-height:1.12;font-family:'Playfair Display',serif;font-weight:800;margin:0 0 1rem;color:var(--gray-900)">Finde junge Talente<br>für dein Team.</h1>
-          <p style="font-size:1.05rem;color:var(--gray-600);margin:0 0 2rem;line-height:1.65;max-width:480px">Stelle ausschreiben, Bewerbungen erhalten, im Chat klären. Kostenlos, ohne Vertrag.</p>
-          <div style="display:flex;gap:0.75rem;flex-wrap:wrap">
-            <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Kostenlos Anzeige schalten</button>
-            <button class="btn btn-lg cta-btn-outline" data-action="nav" data-page="register">Konto erstellen</button>
-          </div>
-        </div>
-        <div style="border-radius:20px;overflow:hidden;box-shadow:0 24px 60px -20px rgba(15,23,42,0.2)">
-          <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&q=80" alt="" style="width:100%;display:block;object-fit:cover;aspect-ratio:4/3" loading="eager">
-        </div>
+    <!-- Hero: blauer Hintergrund, Inhalt zentriert -->
+    <div style="background:#1e3a8a;padding:5rem 1.5rem 4.5rem;color:#fff">
+      <div style="max-width:640px;margin:0 auto;text-align:center">
+        <h1 style="font-size:clamp(2.2rem,4.5vw,3.2rem);line-height:1.12;font-family:'Playfair Display',serif;font-weight:800;margin:0 0 1rem;color:#fff">Finde junge Talente für dein Team.</h1>
+        <p style="font-size:1.1rem;color:rgba(255,255,255,0.8);margin:0 0 2.25rem;line-height:1.65">Stelle ausschreiben, Bewerbungen erhalten, im Chat klären. Kostenlos, ohne Vertrag.</p>
+        <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.95rem 2.5rem;border-radius:10px;border:none;font-size:1rem;cursor:pointer">Kostenlos Anzeige schalten</button>
       </div>
     </div>
 
