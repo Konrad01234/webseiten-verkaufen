@@ -3775,8 +3775,6 @@ function renderLogin() {
 }
 
 function renderRegister() {
-  const preRole = (state.pageData && state.pageData.role) || 'worker';
-  const isEmp = preRole === 'employer';
   return `
     <div class="auth-page">
       <div class="auth-card fade-in">
@@ -3786,18 +3784,18 @@ function renderRegister() {
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
-              <div class="role-option ${isEmp ? '' : 'selected'}" data-action="selectRole" data-role="worker">
+              <div class="role-option selected" data-action="selectRole" data-role="worker">
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
-              <div class="role-option ${isEmp ? 'selected' : ''}" data-action="selectRole" data-role="employer">
+              <div class="role-option" data-action="selectRole" data-role="employer">
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
               </div>
             </div>
-            <input type="hidden" name="role" value="${preRole}">
+            <input type="hidden" name="role" value="worker">
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -5083,7 +5081,7 @@ function renderEmployerLanding() {
         </div>
         <div class="eh-cta-actions">
           <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
-          <a href="#" data-action="nav" data-page="register" data-args='{"role":"employer"}' class="eh-cta-link">oder Konto erstellen</a>
+          <a href="#" data-action="nav" data-page="register" class="eh-cta-link">oder Konto erstellen</a>
         </div>
       </div>
     </section>`;
