@@ -2139,8 +2139,8 @@ async function copyJobLink(url) {
 
 // ===== GUARDS =====
 function requireEmployerLogin(then) {
-  if (!state.user) { navigate('register', { role: 'employer' }); return; }
-  if (state.user.role !== 'employer') { navigate('register', { role: 'employer' }); return; }
+  if (!state.user) { navigate('login'); return; }
+  if (state.user.role !== 'employer') { navigate('login'); return; }
   if (!state.user.approved) { showToast('Dein Account muss erst vom Admin freigeschaltet werden.', 'error'); return; }
   if (then) then();
 }
