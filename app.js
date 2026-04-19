@@ -4879,20 +4879,20 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- Hero: blauer Hintergrund, Inhalt zentriert -->
-    <div style="background:#1e3a8a;padding:5rem 1.5rem 4.5rem;color:#fff">
-      <div style="max-width:640px;margin:0 auto;text-align:center">
-        <h1 style="font-size:clamp(2.2rem,4.5vw,3.2rem);line-height:1.12;font-family:'Playfair Display',serif;font-weight:800;margin:0 0 1rem;color:#fff">Finde junge Talente für dein Team.</h1>
-        <p style="font-size:1.1rem;color:rgba(255,255,255,0.8);margin:0 0 2.25rem;line-height:1.65">Stelle ausschreiben, Bewerbungen erhalten, im Chat klären. Kostenlos, ohne Vertrag.</p>
-        <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.95rem 2.5rem;border-radius:10px;border:none;font-size:1rem;cursor:pointer">Kostenlos Anzeige schalten</button>
+    <!-- Hero: blau, linksbündig, weniger perfekt = weniger KI -->
+    <div style="background:#1e3a8a;padding:4.5rem 1.5rem 4rem;color:#fff">
+      <div style="max-width:1060px;margin:0 auto">
+        <p style="font-size:0.78rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin:0 0 1.5rem;font-weight:600">WorkPilot für Arbeitgeber</p>
+        <h1 style="font-size:clamp(2rem,4.5vw,3.2rem);line-height:1.1;font-weight:800;margin:0 0 1.25rem;max-width:580px;color:#fff">Junge Aushilfen finden. Ohne Aufwand.</h1>
+        <p style="font-size:1.05rem;color:rgba(255,255,255,0.7);margin:0 0 2rem;line-height:1.6;max-width:440px">Schreib eine Anzeige, bekomm Bewerbungen, kläre alles im Chat. Kostenlos.</p>
+        <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.85rem 2rem;border-radius:8px;border:none;font-size:0.95rem;cursor:pointer">Anzeige schalten</button>
       </div>
     </div>
 
-    <!-- So einfach laeuft's: Auto-Slideshow mit Fotos + Dots (ANDERS als Landing's Kaskade) -->
-    <div style="background:var(--gray-50);padding:4.5rem 0">
-      <div style="text-align:center;margin-bottom:2rem;padding:0 1.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">So einfach läuft's</h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">In 3 Schritten zu neuen Aushilfen</p>
+    <!-- Slideshow: So geht's - mit Fotos -->
+    <div style="padding:4rem 0;background:#fff">
+      <div style="max-width:1060px;margin:0 auto;padding:0 1.5rem">
+        <h2 style="font-size:1.4rem;font-weight:700;margin:0 0 1.75rem;color:var(--gray-900)">So geht's</h2>
       </div>
       <div style="max-width:900px;margin:0 auto;padding:0 1.5rem">
         <div class="emp-slideshow" id="emp-slideshow">
@@ -4900,22 +4900,22 @@ function renderEmployerLanding() {
             <div class="emp-slideshow-slide">
               <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1000&q=80" alt="">
               <div class="emp-slideshow-caption">
-                <h3>1. Anzeige schreiben</h3>
-                <p>Titel, Stundenlohn, Standort &mdash; dauert keine fünf Minuten.</p>
+                <h3>Anzeige schreiben</h3>
+                <p>Titel, Stundenlohn, Standort. Fertig in fünf Minuten.</p>
               </div>
             </div>
             <div class="emp-slideshow-slide">
               <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?w=1000&q=80" alt="">
               <div class="emp-slideshow-caption">
-                <h3>2. Bewerbungen sichten</h3>
-                <p>Schüler bewerben sich mit Profil und Lebenslauf. Alles im Dashboard.</p>
+                <h3>Bewerbungen sichten</h3>
+                <p>Profil, Lebenslauf, Verfügbarkeit. Alles im Dashboard.</p>
               </div>
             </div>
             <div class="emp-slideshow-slide">
               <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1000&q=80" alt="">
               <div class="emp-slideshow-caption">
-                <h3>3. Im Chat klären</h3>
-                <p>Termine und Fragen direkt per Nachricht. Keine E-Mails nötig.</p>
+                <h3>Im Chat klären</h3>
+                <p>Termine und Rückfragen direkt per Nachricht.</p>
               </div>
             </div>
           </div>
@@ -4928,41 +4928,31 @@ function renderEmployerLanding() {
       </div>
     </div>
 
-    <!-- 3 Vorteile: schlichte Karten (ANDERS als Landing's Sticky-Slideshow) -->
-    <div style="padding:5rem 1.5rem;background:#fff">
-      <div style="text-align:center;margin-bottom:2.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Warum <span style="color:var(--primary)">WorkPilot</span></h2>
-      </div>
-      <div style="max-width:1000px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem">
-        <div style="border:1px solid var(--gray-200);border-radius:16px;padding:2rem 1.5rem">
-          <div style="width:44px;height:44px;border-radius:10px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/></svg>
+    <!-- Vorteile: linksbündig, kein Icon-Raster, mehr wie ein Artikel -->
+    <div style="padding:4rem 1.5rem;background:var(--gray-50)">
+      <div style="max-width:1060px;margin:0 auto">
+        <h2 style="font-size:1.4rem;font-weight:700;margin:0 0 2rem;color:var(--gray-900)">Warum WorkPilot</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem">
+          <div>
+            <h3 style="font-size:1rem;font-weight:700;margin:0 0 0.4rem;color:var(--gray-900)">Motivierte Bewerber</h3>
+            <p style="font-size:0.88rem;color:var(--gray-500);margin:0;line-height:1.55">Schüler und Studenten, die wirklich arbeiten wollen. Mit Profil und Lebenslauf.</p>
           </div>
-          <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 0.5rem;color:var(--gray-900)">Motivierte Bewerber</h3>
-          <p style="font-size:0.9rem;color:var(--gray-600);margin:0;line-height:1.55">Schüler und Studenten, die aktiv nach Arbeit suchen. Profil mit Skills und Lebenslauf.</p>
-        </div>
-        <div style="border:1px solid var(--gray-200);border-radius:16px;padding:2rem 1.5rem">
-          <div style="width:44px;height:44px;border-radius:10px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <div>
+            <h3 style="font-size:1rem;font-weight:700;margin:0 0 0.4rem;color:var(--gray-900)">Chat statt E-Mail</h3>
+            <p style="font-size:0.88rem;color:var(--gray-500);margin:0;line-height:1.55">Termine, Fragen, Zusagen. Alles im Messenger, nicht im Postfach.</p>
           </div>
-          <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 0.5rem;color:var(--gray-900)">Direkter Chat</h3>
-          <p style="font-size:0.9rem;color:var(--gray-600);margin:0;line-height:1.55">Termine, Rückfragen, Zusagen direkt im Messenger. Kein E-Mail-Chaos.</p>
-        </div>
-        <div style="border:1px solid var(--gray-200);border-radius:16px;padding:2rem 1.5rem">
-          <div style="width:44px;height:44px;border-radius:10px;background:#f0fdf4;color:#15803d;display:flex;align-items:center;justify-content:center;margin-bottom:1rem">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <div>
+            <h3 style="font-size:1rem;font-weight:700;margin:0 0 0.4rem;color:var(--gray-900)">Kostenlos</h3>
+            <p style="font-size:0.88rem;color:var(--gray-500);margin:0;line-height:1.55">Kein Abo, kein Vertrag, keine Provision. Auch nicht irgendwann.</p>
           </div>
-          <h3 style="font-size:1.05rem;font-weight:700;margin:0 0 0.5rem;color:var(--gray-900)">Komplett kostenlos</h3>
-          <p style="font-size:0.9rem;color:var(--gray-600);margin:0;line-height:1.55">Kein Abo, kein Vertrag, keine Provision. Unbegrenzt Anzeigen schalten.</p>
         </div>
       </div>
     </div>
 
-    <!-- Testimonials: Ticker -->
-    <div style="background:var(--gray-50);padding:4rem 0;overflow:hidden">
-      <div style="text-align:center;margin-bottom:2.5rem;padding:0 1.5rem">
-        <h2 style="font-size:1.8rem;font-weight:800;font-family:'Playfair Display',serif;margin-bottom:0.5rem">Das sagen <span style="color:var(--primary)">Arbeitgeber</span></h2>
-        <p style="color:var(--gray-500);font-size:0.95rem">Echte Erfahrungen von echten Unternehmen</p>
+    <!-- Testimonials -->
+    <div style="padding:4rem 0;overflow:hidden;background:#fff">
+      <div style="max-width:1060px;margin:0 auto;padding:0 1.5rem">
+        <h2 style="font-size:1.4rem;font-weight:700;margin:0 0 2rem;color:var(--gray-900)">Das sagen Arbeitgeber</h2>
       </div>
       <div class="testi-ticker-wrap">
         <div class="testi-ticker-fade testi-ticker-fade-left"></div>
@@ -4971,12 +4961,12 @@ function renderEmployerLanding() {
           <div class="testi-ticker-track">
             ${(() => {
               var list = [
-                { name:'Sandra K.', role:'Café Sonnenschein, Köln', photo:'https://randomuser.me/api/portraits/women/65.jpg', text:'\u201EInnerhalb von einem Tag hatte ich vier Bewerbungen.\u201C', rating:5 },
-                { name:'Thomas M.', role:'MediaMarkt, Düsseldorf', photo:'https://randomuser.me/api/portraits/men/52.jpg', text:'\u201EEinfach hingucken, anschreiben, fertig.\u201C', rating:5 },
-                { name:'Lara H.', role:'TechStart, Berlin', photo:'https://randomuser.me/api/portraits/women/82.jpg', text:'\u201EDer direkte Chat ist Gold wert.\u201C', rating:4.5 },
-                { name:'Markus R.', role:'Bäckerei Richter, München', photo:'https://randomuser.me/api/portraits/men/45.jpg', text:'\u201EInnerhalb einer Woche alle Stellen besetzt.\u201C', rating:5 },
-                { name:'Anna B.', role:'Buchhandlung Blatt, Hamburg', photo:'https://randomuser.me/api/portraits/women/33.jpg', text:'\u201EEndlich eine Plattform für junge Aushilfen.\u201C', rating:5 },
-                { name:'Felix W.', role:'Pizzeria Napoli, Stuttgart', photo:'https://randomuser.me/api/portraits/men/67.jpg', text:'\u201EKostenlos und funktioniert einfach.\u201C', rating:4.5 },
+                { name:'Sandra K.', role:'Café Sonnenschein, Köln', photo:'https://randomuser.me/api/portraits/women/65.jpg', text:'\u201EInnerhalb von einem Tag vier Bewerbungen. Eine arbeitet seit drei Monaten bei mir.\u201C', rating:5 },
+                { name:'Thomas M.', role:'MediaMarkt, Düsseldorf', photo:'https://randomuser.me/api/portraits/men/52.jpg', text:'\u201EHingucken, anschreiben, fertig. Ohne Papierkram.\u201C', rating:5 },
+                { name:'Lara H.', role:'TechStart, Berlin', photo:'https://randomuser.me/api/portraits/women/82.jpg', text:'\u201EDer Chat ist Gold wert. Schüler antworten schneller als Erwachsene.\u201C', rating:4.5 },
+                { name:'Markus R.', role:'Bäckerei Richter, München', photo:'https://randomuser.me/api/portraits/men/45.jpg', text:'\u201EEine Woche, alle Stellen besetzt.\u201C', rating:5 },
+                { name:'Anna B.', role:'Buchhandlung Blatt, Hamburg', photo:'https://randomuser.me/api/portraits/women/33.jpg', text:'\u201EEndlich was für junge Aushilfen.\u201C', rating:5 },
+                { name:'Felix W.', role:'Pizzeria Napoli, Stuttgart', photo:'https://randomuser.me/api/portraits/men/67.jpg', text:'\u201EKostenlos. Funktioniert. Fertig.\u201C', rating:4.5 },
               ];
               var render = function(t) {
                 var pct = (t.rating / 5) * 100;
@@ -4989,18 +4979,13 @@ function renderEmployerLanding() {
       </div>
     </div>
 
-    <!-- CTA -->
-    <section class="cta-fullblock">
-      <div class="cta-fullblock-inner">
-        <span class="cta-fullblock-kicker">Bereit?</span>
-        <h2>Dein nächster Mitarbeiter wartet.</h2>
-        <p>Anzeige schalten dauert fünf Minuten. Komplett kostenlos.</p>
-        <div class="cta-fullblock-buttons">
-          <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Kostenlos starten <span class="cta-arrow">&rarr;</span></button>
-          <button class="btn btn-lg cta-btn-outline" data-action="nav" data-page="register">Konto erstellen</button>
-        </div>
-      </div>
-    </section>`;
+    <!-- CTA: schlicht -->
+    <div style="background:#1e3a8a;padding:3.5rem 1.5rem;text-align:center">
+      <p style="color:rgba(255,255,255,0.55);font-size:0.82rem;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin:0 0 0.75rem">Bereit?</p>
+      <h2 style="color:#fff;font-size:1.6rem;font-weight:700;margin:0 0 0.6rem">Jetzt Anzeige schalten.</h2>
+      <p style="color:rgba(255,255,255,0.6);font-size:0.92rem;margin:0 0 1.5rem">Fünf Minuten. Kostenlos.</p>
+      <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.85rem 2rem;border-radius:8px;border:none;font-size:0.95rem;cursor:pointer">Loslegen</button>
+    </div>`;
 }
 
 // (Slideshow-Logik fuer die alte Arbeitgeber-Slideshow ist nicht mehr im Einsatz,
