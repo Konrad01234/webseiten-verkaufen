@@ -3752,7 +3752,7 @@ function renderLogin() {
       <div class="auth-card fade-in">
         <h2>Willkommen zurück!</h2>
         <p class="subtitle">Melde dich an, um fortzufahren.</p>
-        <form data-on-submit="loginForm">
+        <form onsubmit="event.preventDefault(); login(this.email.value, this.password.value)">
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
@@ -3766,10 +3766,10 @@ function renderLogin() {
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:0.75rem">
-          <a href="#" data-action="showForgotPassword" style="color:var(--gray-600)">Passwort vergessen?</a>
+          <a href="#" onclick="showForgotPassword()" style="color:var(--gray-600)">Passwort vergessen?</a>
         </p>
         <div class="auth-divider">oder</div>
-        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" data-action="nav" data-page="register" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
+        <p style="text-align:center;font-size:0.9rem">Noch kein Konto? <a href="#" onclick="navigate('register')" style="color:var(--primary);font-weight:600">Jetzt registrieren</a></p>
       </div>
     </div>`;
 }
@@ -3780,16 +3780,16 @@ function renderRegister() {
       <div class="auth-card fade-in">
         <h2>Konto erstellen</h2>
         <p class="subtitle">Registriere dich kostenlos und leg los.</p>
-        <form data-on-submit="registerForm">
+        <form onsubmit="event.preventDefault(); submitRegister(this)">
           <div class="form-group">
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
-              <div class="role-option selected" data-action="selectRole" data-role="worker">
+              <div class="role-option selected" onclick="selectRole(this, 'worker')" data-role="worker">
                 <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
-              <div class="role-option" data-action="selectRole" data-role="employer">
+              <div class="role-option" onclick="selectRole(this, 'employer')" data-role="employer">
                 <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
@@ -3807,30 +3807,23 @@ function renderRegister() {
               <input type="text" name="lastName" class="form-input" placeholder="Mustermann" required>
             </div>
           </div>
-          <div class="form-group employer-field" style="display:${isEmp ? 'block' : 'none'}">
+          <div class="form-group employer-field" style="display:none">
             <label class="form-label">Firmenname</label>
-            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH" ${isEmp ? 'required' : ''}>
-          </div>
+            <input type="text" name="company" class="form-input" placeholder="z.B. MediaMarkt GmbH">
           </div>
           <div class="form-group">
             <label class="form-label">E-Mail</label>
             <input type="email" name="email" class="form-input" placeholder="deine@email.de" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="reg-password">Passwort</label>
-            <input type="password" name="password" id="reg-password" class="form-input" placeholder="Passwort eingeben" required minlength="8" data-on-input="updatePasswordChecklist" autocomplete="new-password">
-            <ul class="pw-checklist" id="pw-checklist" aria-live="polite">
-              <li data-rule="length"><span class="pw-check-icon" aria-hidden="true">○</span>Mindestens 8 Zeichen</li>
-              <li data-rule="lower"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Kleinbuchstabe (a–z)</li>
-              <li data-rule="upper"><span class="pw-check-icon" aria-hidden="true">○</span>Ein Großbuchstabe (A–Z)</li>
-              <li data-rule="digit"><span class="pw-check-icon" aria-hidden="true">○</span>Eine Zahl (0–9)</li>
-            </ul>
+            <label class="form-label">Passwort</label>
+            <input type="password" name="password" class="form-input" placeholder="Min. 8 Zeichen" required minlength="8">
           </div>
           <div id="register-error" style="display:none;color:var(--danger);font-size:0.85rem;margin-bottom:0.75rem"></div>
           ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg">Kostenlos registrieren</button>
         </form>
-        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" data-action="nav" data-page="login" style="color:var(--primary);font-weight:600">Anmelden</a></p>
+        <p style="text-align:center;font-size:0.85rem;margin-top:1rem;color:var(--gray-500)">Bereits registriert? <a href="#" onclick="navigate('login')" style="color:var(--primary);font-weight:600">Anmelden</a></p>
       </div>
     </div>`;
 }
