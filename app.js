@@ -6981,53 +6981,7 @@ document.addEventListener('click', (e) => {
 // den entsprechenden Funktionen. Schrittweise werden alle inline
 // onclick="..." Handler hierher migriert.
 
-// Zentrale Action-Map + Dispatcher: Klick auf ein Element mit
-// data-action="xyz" ruft den registrierten Handler auf.
-var _actionMap = {};
-var _submitMap = {};
-var _keydownMap = {};
-var _inputMap = {};
-function registerAction(name, fn) { _actionMap[name] = fn; }
-function registerSubmit(name, fn) { _submitMap[name] = fn; }
-function registerKeydown(name, fn) { _keydownMap[name] = fn; }
-function registerInput(name, fn) { _inputMap[name] = fn; }
-
-document.addEventListener('click', function(e) {
-  var el = e.target.closest('[data-action]');
-  if (!el) return;
-  var action = el.dataset.action;
-  if (_actionMap[action]) {
-    e.preventDefault();
-    _actionMap[action](el, e);
-  }
-});
-document.addEventListener('submit', function(e) {
-  var form = e.target.closest('[data-on-submit]');
-  if (!form) return;
-  var name = form.dataset.onSubmit;
-  if (_submitMap[name]) {
-    e.preventDefault();
-    _submitMap[name](form, e);
-  }
-});
-document.addEventListener('keydown', function(e) {
-  var el = e.target.closest('[data-on-keydown]');
-  if (!el) return;
-  var name = el.dataset.onKeydown;
-  if (_keydownMap[name]) {
-    _keydownMap[name](el, e);
-  }
-});
-document.addEventListener('input', function(e) {
-  var el = e.target.closest('[data-on-input]');
-  if (!el) return;
-  var name = el.dataset.onInput;
-  if (_inputMap[name]) {
-    _inputMap[name](el, e);
-  }
-});
-
-{
+if (typeof registerAction === 'function') {
   // Navigation
   registerAction('nav', (el) => {
     const page = el.dataset.page;
