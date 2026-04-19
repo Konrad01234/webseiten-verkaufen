@@ -5056,6 +5056,7 @@ function renderEmployerDashboard() {
   const myJobs = JOBS.filter(j => j.employerId === state.user.id);
   const totalViews = myJobs.reduce((s, j) => s + (j.views || 0), 0);
   const totalApps = myJobs.reduce((s, j) => s + (j.applications || 0), 0);
+  const unreadChats = (EMPLOYER_CHAT_MESSAGES || []).filter(c => c && c.unread).length;
   const hasJobs = myJobs.length > 0;
   return `
     <div class="page employer-page">
@@ -5099,7 +5100,7 @@ function renderEmployerDashboard() {
             </div>
             <div class="stat-card employer-stat">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-              <div class="stat-value">0</div>
+              <div class="stat-value">${unreadChats}</div>
               <div class="stat-label">Neue Nachrichten</div>
             </div>
           </div>
@@ -5140,15 +5141,16 @@ function renderEmployerDashboard() {
 }
 
 function renderEmployerSidebar(active) {
+  var _unread = (EMPLOYER_CHAT_MESSAGES || []).filter(function(c) { return c && c.unread; }).length;
   return `
     <div class="dashboard-sidebar">
       <nav class="sidebar-nav">
         <a href="#" class="${active==='dashboard'?'active':''}" data-action="nav" data-page="employer-dashboard">Dashboard</a>
         <a href="#" class="${active==='post'?'active':''}" data-action="goPostJob">Anzeige schalten</a>
-        <a href="#" class="${active==='applicants'?'active':''}" data-action="nav" data-page="applicants">Bewerber</a>
+        <a href="#" class="${active==='applicants'?'active':''}" data-action="nav" data-page="applicants">Bewerber${_unread > 0 ? ' <span style="background:#ef4444;color:#fff;font-size:0.68rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:100px;margin-left:0.4rem">' + _unread + '</span>' : ''}</a>
         <a href="#" class="${active==='profile'?'active':''}" data-action="nav" data-page="employer-profile">Unternehmensprofil</a>
         <div class="divider"></div>
-        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten</a>
+        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten${_unread > 0 ? ' <span style="background:#ef4444;color:#fff;font-size:0.68rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:100px;margin-left:0.4rem">' + _unread + '</span>' : ''}</a>
         <a href="#" class="${active==='reviews'?'active':''}" data-action="nav" data-page="reviews">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
@@ -5582,7 +5584,7 @@ function renderApplicants() {
             <button class="tab ${state.applicantFilter==='accepted' ? 'active' : ''}" data-action="setApplicantFilter" data-filter="accepted">Eingeladen (${allApplicants.filter(a=>a.status==='accepted').length})</button>
           </div>
 
-          <div class="card">
+          <div class="card" style="overflow-x:auto;-webkit-overflow-scrolling:touch">
             <table class="applicants-table">
               <thead>
                 <tr>
