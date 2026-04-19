@@ -41,16 +41,16 @@ const TESTIMONIALS = [
 ];
 
 const CATEGORIES = [
-  { name: 'Einzelhandel', icon: '🛒', count: 45 },
-  { name: 'Gastronomie', icon: '🍽️', count: 38 },
-  { name: 'Logistik', icon: '📦', count: 22 },
+  { name: 'Einzelhandel', icon: '', count: 45 },
+  { name: 'Gastronomie', icon: '', count: 38 },
+  { name: 'Logistik', icon: '', count: 22 },
   { name: 'Marketing', icon: '📱', count: 18 },
   { name: 'IT', icon: '💻', count: 15 },
-  { name: 'Bildung', icon: '📚', count: 12 },
-  { name: 'Events', icon: '🎉', count: 28 },
+  { name: 'Bildung', icon: '', count: 12 },
+  { name: 'Events', icon: '', count: 28 },
   { name: 'Tierpflege', icon: '🐕', count: 8 },
-  { name: 'Büro', icon: '🏢', count: 20 },
-  { name: 'Handwerk', icon: '🔧', count: 10 }
+  { name: 'Büro', icon: '', count: 20 },
+  { name: 'Handwerk', icon: '', count: 10 }
 ];
 
 const JOB_TYPES = ['Minijob', 'Ferienjob', 'Praktikum'];
@@ -3315,7 +3315,7 @@ function renderJobSearch() {
             <h4>Kategorie</h4>
             <select class="form-select" data-on-change="setFilterCategory">
               <option value="">Alle Kategorien</option>
-              ${CATEGORIES.map(c => `<option value="${c.name}" ${state.filters.category===c.name?'selected':''}>${c.icon} ${c.name} (${c.count})</option>`).join('')}
+              ${CATEGORIES.map(c => `<option value="${c.name}" ${state.filters.category===c.name?'selected':''}>${c.name} (${c.count})</option>`).join('')}
             </select>
           </div>
 
@@ -5297,7 +5297,7 @@ function renderWizardStep1() {
         <label class="form-label">Kategorie *</label>
         <select class="form-select">
           <option value="">Kategorie wählen...</option>
-          ${CATEGORIES.map(c => `<option value="${c.name}" ${c.name==='Einzelhandel'?'selected':''}>${c.icon} ${c.name}</option>`).join('')}
+          ${CATEGORIES.map(c => `<option value="${c.name}" ${c.name==='Einzelhandel'?'selected':''}>${c.name}</option>`).join('')}
         </select>
       </div>
       <div class="form-group">
