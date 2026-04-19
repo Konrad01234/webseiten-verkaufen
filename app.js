@@ -6978,9 +6978,11 @@ document.addEventListener('click', (e) => {
 var _actionMap = {};
 var _submitMap = {};
 var _keydownMap = {};
+var _inputMap = {};
 function registerAction(name, fn) { _actionMap[name] = fn; }
 function registerSubmit(name, fn) { _submitMap[name] = fn; }
 function registerKeydown(name, fn) { _keydownMap[name] = fn; }
+function registerInput(name, fn) { _inputMap[name] = fn; }
 
 document.addEventListener('click', function(e) {
   var el = e.target.closest('[data-action]');
@@ -7006,6 +7008,14 @@ document.addEventListener('keydown', function(e) {
   var name = el.dataset.onKeydown;
   if (_keydownMap[name]) {
     _keydownMap[name](el, e);
+  }
+});
+document.addEventListener('input', function(e) {
+  var el = e.target.closest('[data-on-input]');
+  if (!el) return;
+  var name = el.dataset.onInput;
+  if (_inputMap[name]) {
+    _inputMap[name](el, e);
   }
 });
 
