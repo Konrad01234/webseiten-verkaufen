@@ -1088,9 +1088,15 @@ async function login(email, password, captchaToken) {
     _loadUserDataInBackground();
   }
   try { subscribeToJobUpdates(); } catch (e) { console.error('[login] jobsSub', e); }
-  // Step 3: Navigate to the dashboard
+  // Step 3: Navigate to the dashboard (oder zum gemerkten post-auth-Ziel)
   if (state.user) {
-    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+    var redirect = state.postAuthRedirect;
+    state.postAuthRedirect = null;
+    if (redirect === 'post-job' && state.user.role === 'employer' && state.user.approved) {
+      navigate('post-job');
+    } else {
+      navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+    }
   } else {
     showErr('Login erfolgreich, aber Profil konnte nicht geladen werden. Bitte Seite neu laden.');
   }
@@ -1141,7 +1147,13 @@ async function register(data) {
   }
   try { subscribeToJobUpdates(); } catch (e) { console.error('[register] jobsSub', e); }
   if (state.user) {
-    navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+    var redirect = state.postAuthRedirect;
+    state.postAuthRedirect = null;
+    if (redirect === 'post-job' && state.user.role === 'employer' && state.user.approved) {
+      navigate('post-job');
+    } else {
+      navigate(state.user.role === 'employer' ? 'employer-dashboard' : 'worker-dashboard');
+    }
   } else {
     showErr('Registrierung erfolgreich, aber Profil konnte nicht geladen werden. Bitte Seite neu laden.');
   }
@@ -2166,7 +2178,21 @@ async function deletePostedJob(jobId) {
 }
 
 function goPostJob() {
-  requireEmployerLogin(() => navigate('post-job'));
+  // Nicht eingeloggt? Merken dass der User zu post-job will und
+  // ihn zur Register-Seite schicken (mit Arbeitgeber vorausgewaehlt).
+  // Nach erfolgreichem Register/Login wird state.postAuthRedirect
+  // abgearbeitet und direkt in den Anzeigen-Flow weitergeleitet.
+  if (!state.user) {
+    state.postAuthRedirect = 'post-job';
+    navigate('register', { role: 'employer' });
+    return;
+  }
+  if (state.user.role !== 'employer') {
+    showToast('Du bist als Arbeitnehmer angemeldet. Logge dich aus und erstelle ein Arbeitgeber-Konto.', 'error');
+    return;
+  }
+  if (!state.user.approved) { showToast('Dein Account muss erst vom Admin freigeschaltet werden.', 'error'); return; }
+  navigate('post-job');
 }
 
 // ===== CHAT =====
@@ -5218,7 +5244,10 @@ function renderPostJob() {
 
   return `
     <div class="page page-narrow" style="max-width:900px">
-      <h2 class="dashboard-title">Stellenanzeige schalten</h2>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+        <h2 class="dashboard-title" style="margin:0">Stellenanzeige schalten</h2>
+        <button class="btn btn-sm btn-outline" data-action="nav" data-page="employer-dashboard" style="font-size:0.82rem">Später ausfüllen &rarr;</button>
+      </div>
 
       <div class="wizard-steps">
         ${steps.map((s, i) => `
