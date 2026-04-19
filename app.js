@@ -640,6 +640,12 @@ function navigate(page, data) {
   }
   state.currentPage = page;
   state.pageData = data;
+  // postAuthRedirect loeschen wenn der User von Login/Register
+  // wegnavigiert OHNE sich einzuloggen (z.B. zurueck zur Startseite).
+  // Sonst bleibt der Redirect kleben und greift beim naechsten normalen Login.
+  if (page !== 'login' && page !== 'register' && page !== 'post-job') {
+    state.postAuthRedirect = null;
+  }
   // Jobs-Seite: Filter-Adresse automatisch aus dem User-Profil
   // vorbelegen, damit der Nutzer seine Adresse nicht zweimal eingeben
   // muss. Greift nur wenn das Filterfeld noch leer ist (nicht explizit
