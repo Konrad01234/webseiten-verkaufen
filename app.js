@@ -5221,8 +5221,10 @@ function validateWizardStep() {
     const _city   = body.querySelector('#nj-city')?.value.trim()   || '';
     state.newJob.location = _street + ', ' + _plz + ' ' + _city;
     state.newJob.city = _city;
-    state.newJob.salary = body.querySelector('input[placeholder*="12,50"]')?.value || '';
-    state.newJob.hours = body.querySelector('input[placeholder*="Std/Woche"]')?.value || '';
+    var salaryVal = body.querySelector('#nj-salary')?.value || '';
+    state.newJob.salary = salaryVal ? salaryVal.replace('.', ',') + '€/Std' : '';
+    var hoursVal = body.querySelector('#nj-hours')?.value || '';
+    state.newJob.hours = hoursVal ? hoursVal + ' Std/Woche' : '';
   }
   if (body && step === 1) {
     const textareas = body.querySelectorAll('textarea.form-textarea');
@@ -5323,12 +5325,18 @@ function renderWizardStep1() {
     </div>
     <div class="form-row">
       <div class="form-group">
-        <label class="form-label">Stundenlohn</label>
-        <input type="text" class="form-input" placeholder="z.B. 12,50€/Std" value="12,50€/Std">
+        <label class="form-label">Stundenlohn (€)</label>
+        <div style="position:relative">
+          <input type="number" id="nj-salary" class="form-input" placeholder="12,50" step="0.50" min="0" value="" style="padding-right:5rem">
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gray-500);font-size:0.85rem;pointer-events:none">€ / Std</span>
+        </div>
       </div>
       <div class="form-group">
-        <label class="form-label">Arbeitszeit</label>
-        <input type="text" class="form-input" placeholder="z.B. 10-15 Std/Woche" value="10-15 Std/Woche">
+        <label class="form-label">Arbeitszeit (Std/Woche)</label>
+        <div style="position:relative">
+          <input type="number" id="nj-hours" class="form-input" placeholder="15" min="1" max="40" value="" style="padding-right:6rem">
+          <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gray-500);font-size:0.85rem;pointer-events:none">Std / Woche</span>
+        </div>
       </div>
     </div>`;
 }
