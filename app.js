@@ -2466,16 +2466,26 @@ async function openChatById(chatId) {
       // which leaks memory and can flash stale data.
       if (state.activeChat !== chatId) return;
       if (!state.user) return;
-      const now = chat.messages.find(m => m.id === newMsg.id);
+      var now = chat.messages.find(m => m.id === newMsg.id);
       if (now) return;
-      chat.messages.push({
+      // Optimistische Nachricht (gleicher Text, _optimistic Flag) ersetzen
+      var optIdx = -1;
+      if (newMsg.sender_id === state.user.id) {
+        optIdx = chat.messages.findIndex(m => m._optimistic && m.text === (newMsg.text || ''));
+      }
+      var realMsg = {
         id: newMsg.id,
         text: newMsg.text || '',
         sent: newMsg.sender_id === state.user.id,
         time: newMsg.created_at
           ? new Date(newMsg.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
           : ''
-      });
+      };
+      if (optIdx !== -1) {
+        chat.messages[optIdx] = realMsg;
+      } else {
+        chat.messages.push(realMsg);
+      }
       chat.lastMessage = newMsg.text || '';
       chat.time = chat.messages[chat.messages.length - 1].time;
       try { render(); } catch (_) {}
@@ -2498,19 +2508,32 @@ async function sendChatMessage() {
   const msgText = censorContactInfo(input.value);
   input.value = '';
 
-  // Real DB-backed chat: hand off to Supabase. The realtime subscription
-  // installed by openChatById() appends the message to chat.messages and
-  // re-renders automatically — no optimistic local push (it caused
-  // duplicates because the realtime dedupe check keys on message id
-  // and the optimistic push has no id).
+  // Real DB-backed chat: optimistisch lokal anzeigen + an Supabase senden.
+  // Die Nachricht erscheint sofort fuer den Sender. Wenn das Realtime-Event
+  // vom Server kommt, wird die optimistische Nachricht per _optimistic-Flag
+  // mit der echten (mit DB-ID) ersetzt.
   if (window.DB && state.user && chat.id) {
+    // Optimistic push: sofort anzeigen
+    var optimistic = { _optimistic: true, text: msgText, sent: true, time: new Date().toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) };
+    chat.messages.push(optimistic);
+    chat.lastMessage = msgText;
+    chat.time = optimistic.time;
+    try { render(); } catch (_) {}
+    setTimeout(function() {
+      var el = document.getElementById('chat-messages-page');
+      if (el) el.scrollTop = el.scrollHeight;
+    }, 30);
+
     try {
       await DB.sendMessage(chat.id, state.user.id, msgText);
     } catch (e) {
       console.error('[sendChatMessage]', e);
+      // Optimistische Nachricht wieder entfernen bei Fehler
+      var idx = chat.messages.indexOf(optimistic);
+      if (idx !== -1) chat.messages.splice(idx, 1);
       showToast('Nachricht konnte nicht gesendet werden.', 'error');
-      // Put the text back in the input so the user can retry
       input.value = msgText;
+      try { render(); } catch (_) {}
       return;
     }
     return;

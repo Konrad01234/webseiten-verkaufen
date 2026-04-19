@@ -1,6 +1,6 @@
 /* ===== RESET & BASE ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
+html { scroll-behavior: smooth; overflow-x: hidden; overscroll-behavior-x: none; }
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #1a1a2e;
@@ -8,6 +8,9 @@ body {
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+  overscroll-behavior-x: none;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 a { text-decoration: none; color: inherit; }
 img { max-width: 100%; }
