@@ -4959,132 +4959,50 @@ function renderEmployerLanding() {
       </div>
     </section>
 
-    <!-- BENTO GRID: 6 unterschiedlich grosse Kacheln (individuelles Layout) -->
-    <section class="eh-bento">
-      <div class="eh-bento-head">
-        <span class="emp3-section-kicker">Warum WorkPilot</span>
-        <h2>Alles an <em>einem</em> Ort.</h2>
-      </div>
-      <div class="eh-bento-grid">
-        <!-- Kachel 1: Gross, mit Mini-Editor-Mockup -->
-        <article class="eh-b eh-b-big eh-b-blue">
-          <span class="eh-b-tag">01 · Ausschreiben</span>
-          <h3>Anzeige in fünf Minuten online.</h3>
-          <p>Titel, Beschreibung, Standort, Stundenlohn &mdash; fertig. Keine Freischaltung, keine Formulare.</p>
-          <div class="eh-b-editor">
-            <div class="eh-b-editor-field"><label>Jobtitel</label><div>Kassierer*in (m/w/d)</div></div>
-            <div class="eh-b-editor-field"><label>Standort</label><div>Köln, Innenstadt</div></div>
-            <div class="eh-b-editor-field"><label>Stundenlohn</label><div>14,50 €</div></div>
-            <div class="eh-b-editor-btn">Anzeige veröffentlichen</div>
+    <!-- 3 VORTEILE: schlicht, uebersichtlich, gleich gross -->
+    <section style="background:#f8fafc;padding:4rem 1.5rem">
+      <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
+          <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
-        </article>
-
-        <!-- Kachel 2: Typografie-Statement -->
-        <article class="eh-b eh-b-type">
-          <span class="eh-b-tag">02 · Preis</span>
-          <div class="eh-b-type-big">Kostenlos.<br><em>Für immer.</em></div>
-          <p>Kein Abo, keine Provision, keine Freemium-Falle.</p>
-        </article>
-
-        <!-- Kachel 3: Chat-Bubbles-Mockup -->
-        <article class="eh-b eh-b-chat">
-          <span class="eh-b-tag">03 · Kommunikation</span>
-          <h3>Direkt im Messenger.</h3>
-          <div class="eh-b-chat-stream">
-            <div class="eh-b-bubble eh-b-bubble-them">Hi! Ich hätte Interesse an der Stelle.</div>
-            <div class="eh-b-bubble eh-b-bubble-you">Super. Kannst du Samstag 14 Uhr?</div>
-            <div class="eh-b-bubble eh-b-bubble-them">Passt! ✓</div>
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">In 5 Minuten online</h3>
+          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Titel, Beschreibung, Standort &mdash; fertig.</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
+          <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
           </div>
-        </article>
-
-        <!-- Kachel 4: Foto + kurzer Text -->
-        <article class="eh-b eh-b-photo">
-          <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80" alt="" loading="lazy">
-          <div class="eh-b-photo-overlay">
-            <span class="eh-b-tag eh-b-tag-light">04 · Talente</span>
-            <h3>Junge Aushilfen, sofort bereit.</h3>
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">Direkter Chat</h3>
+          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Bewerber schreiben dich direkt an. Kein Mail-Chaos.</p>
+        </div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
+          <div style="width:48px;height:48px;border-radius:12px;background:#f0fdf4;color:#15803d;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
-        </article>
-
-        <!-- Kachel 5: Profil-Card-Mockup -->
-        <article class="eh-b eh-b-profile">
-          <span class="eh-b-tag">05 · Bewerbungen</span>
-          <h3>Profil statt PDF.</h3>
-          <p>Lebenslauf, Verfügbarkeit und Erfahrung direkt im Dashboard.</p>
-          <div class="eh-b-profile-card">
-            <div class="eh-b-profile-av">LM</div>
-            <div class="eh-b-profile-info">
-              <strong>Lena M., 17</strong>
-              <span>Verfügbar ab Mai &middot; 10 Std/Wo</span>
-              <div class="eh-b-profile-skills">
-                <span>Kasse</span><span>Service</span><span>Englisch</span>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <!-- Kachel 6: Typografie-Statement -->
-        <article class="eh-b eh-b-type eh-b-dark">
-          <span class="eh-b-tag eh-b-tag-light">06 · Flexibilität</span>
-          <div class="eh-b-type-big">Kein Vertrag.<br><em>Keine Laufzeit.</em></div>
-          <p>Schalte Anzeigen wann du willst, pausiere wann du willst.</p>
-        </article>
+          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">Komplett kostenlos</h3>
+          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Kein Abo, kein Vertrag, keine Provision.</p>
+        </div>
       </div>
     </section>
 
-    <!-- STIMMEN: Karten mit echten Profilbildern (gleich wie vorher) -->
-    <section class="emp2-quotes">
-      <div class="emp2-quotes-head">
-        <span class="emp2-section-kicker">Stimmen</span>
-        <h2>Was <em>Arbeitgeber</em> sagen</h2>
-      </div>
-      <div class="emp2-quotes-grid">
-        <article class="emp2-quote scroll-reveal">
-          <p>&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir im Café.&ldquo;</p>
-          <div class="emp2-quote-author">
-            <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="">
-            <div>
-              <strong>Sandra K.</strong>
-              <span>Inhaberin, Café Sonnenschein &middot; Köln</span>
-            </div>
-          </div>
-        </article>
-        <article class="emp2-quote scroll-reveal">
-          <p>&bdquo;Wir suchen regelmäßig Aushilfen für Wochenenden. Über WorkPilot läuft das ohne Bürokratie &mdash; einfach hingucken, anschreiben, fertig.&ldquo;</p>
-          <div class="emp2-quote-author">
-            <img src="https://randomuser.me/api/portraits/men/52.jpg" alt="">
-            <div>
-              <strong>Thomas M.</strong>
-              <span>Filialleiter, MediaMarkt &middot; Düsseldorf</span>
-            </div>
-          </div>
-        </article>
-        <article class="emp2-quote scroll-reveal">
-          <p>&bdquo;Der direkte Chat ist Gold wert. Keine Bewerbungs-Mails mehr durchforsten &mdash; und die Schüler antworten schneller als jeder Erwachsene.&ldquo;</p>
-          <div class="emp2-quote-author">
-            <img src="https://randomuser.me/api/portraits/women/82.jpg" alt="">
-            <div>
-              <strong>Lara H.</strong>
-              <span>HR Manager, TechStart &middot; Berlin</span>
-            </div>
-          </div>
-        </article>
+    <!-- EINE STIMME: kurz, echt -->
+    <section style="padding:3rem 1.5rem;max-width:700px;margin:0 auto;text-align:center">
+      <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:#334155;line-height:1.6;margin:0 0 1.25rem">&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir.&ldquo;</p>
+      <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem">
+        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
+        <div style="text-align:left">
+          <strong style="font-size:0.88rem;color:#0f172a">Sandra K.</strong>
+          <span style="display:block;font-size:0.78rem;color:#64748b">Café Sonnenschein, Köln</span>
+        </div>
       </div>
     </section>
 
-    <!-- FINALER CTA: editorial, kein Fullblock-Gradient -->
-    <section class="eh-cta">
-      <div class="eh-cta-inner">
-        <div class="eh-cta-text">
-          <span class="emp3-section-kicker">Los geht's</span>
-          <h2>Dein nächster Mitarbeiter ist <em>einen Klick</em> entfernt.</h2>
-          <p>Anzeige schalten dauert fünf Minuten. Kostenlos, unverbindlich, ohne Kleingedrucktes.</p>
-        </div>
-        <div class="eh-cta-actions">
-          <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten <span class="cta-arrow">&rarr;</span></button>
-          <a href="#" data-action="nav" data-page="register" class="eh-cta-link">oder Konto erstellen</a>
-        </div>
-      </div>
+    <!-- CTA: eine Zeile, ein Button -->
+    <section style="background:#1e3a8a;padding:3rem 1.5rem;text-align:center">
+      <h2 style="color:#fff;font-size:1.5rem;font-weight:700;margin:0 0 0.75rem">Jetzt Anzeige schalten</h2>
+      <p style="color:rgba(255,255,255,0.75);font-size:0.95rem;margin:0 0 1.5rem">Kostenlos, kein Vertrag, keine Provision.</p>
+      <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.85rem 2rem;border-radius:10px;border:none;font-size:0.95rem;cursor:pointer">Jetzt loslegen &rarr;</button>
     </section>`;
 }
 
