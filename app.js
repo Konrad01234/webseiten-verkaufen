@@ -6996,12 +6996,18 @@ if (typeof registerAction === 'function') {
 
   registerSubmit('loginForm', (form) => {
     // hCaptcha-Token vom Widget abholen, wenn Bot-Protection aktiv ist.
-    // Supabase verlangt den Token bei signInWithPassword wenn in den
-    // Auth-Settings Captcha-Protection eingeschaltet ist. Ohne Widget
-    // im Form liefert das Login sonst "captcha verification failed".
+    // WICHTIG: Widget-ID aus dem Form-eigenen .h-captcha-Element holen,
+    // nicht hcaptcha.getResponse() ohne Argument (das trifft oft das
+    // falsche Widget wenn mehrere im DOM sind).
     var captchaToken = null;
     if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      try { captchaToken = window.hcaptcha.getResponse() || null; }
+      try {
+        var capEl = form.querySelector('.h-captcha');
+        var wid = capEl && capEl.dataset.hcaptchaWidgetId;
+        captchaToken = (wid !== undefined && wid !== null && wid !== '')
+          ? (window.hcaptcha.getResponse(wid) || null)
+          : (window.hcaptcha.getResponse() || null);
+      }
       catch (e) { console.error('[hcaptcha]', e); }
       if (!captchaToken) {
         const err = document.getElementById('login-error');
@@ -7014,12 +7020,19 @@ if (typeof registerAction === 'function') {
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
-    // Wenn hCaptcha konfiguriert ist, Token direkt vom Widget abholen.
-    // Frueher wurde window.hcaptchaToken gelesen - das wird aber nirgendwo
-    // gesetzt, also ging IMMER null an Supabase -> Captcha wirkungslos.
+    // hCaptcha-Token aus dem Form-eigenen Widget holen (ueber die
+    // widget-id auf .h-captcha). Ohne Argument trifft getResponse
+    // ein beliebiges Widget und liefert oft leer obwohl das richtige
+    // Widget im aktuellen Formular geloest wurde.
     var captchaToken = null;
     if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      try { captchaToken = window.hcaptcha.getResponse() || null; }
+      try {
+        var capEl = form.querySelector('.h-captcha');
+        var wid = capEl && capEl.dataset.hcaptchaWidgetId;
+        captchaToken = (wid !== undefined && wid !== null && wid !== '')
+          ? (window.hcaptcha.getResponse(wid) || null)
+          : (window.hcaptcha.getResponse() || null);
+      }
       catch (e) { console.error('[hcaptcha]', e); }
       if (!captchaToken) {
         const err = document.getElementById('register-error');
