@@ -292,8 +292,8 @@
   async function sendMessage(chatId, senderId, text) {
     const res = await sb.from('messages').insert({ chat_id: chatId, sender_id: senderId, text }).select().single();
     if (res.error) throw res.error;
-    // Update parent chat's last_message
-    await sb.from('chats').update({ last_message: text, last_message_at: new Date().toISOString() }).eq('id', chatId);
+    // Update parent chat's last_message + sender for unread tracking
+    await sb.from('chats').update({ last_message: text, last_message_at: new Date().toISOString(), last_sender_id: senderId }).eq('id', chatId);
     return res.data;
   }
 

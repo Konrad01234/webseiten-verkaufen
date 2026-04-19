@@ -363,7 +363,7 @@ function dbChatToFrontend(row) {
     time: row.last_message_at
       ? new Date(row.last_message_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
       : '',
-    unread: false,
+    unread: row.last_message && row.last_sender_id && row.last_sender_id !== state.user.id,
     messages: []  // lazily filled by openChat
   };
 }
@@ -1267,11 +1267,14 @@ async function workerAcceptInvitation(appId) {
     showToast('Einladung angenommen! Willkommen an Bord.');
     // Auto-Nachricht an den Arbeitgeber
     const app = (state._appsCache || []).find(a => String(a.id) === String(appId));
-    if (app && app.job && app.job.employerId && DB.getOrCreateChat && DB.sendMessage) {
+    // Employer-ID aus dem JOBS-Array holen (app.job existiert nicht im Frontend-Objekt)
+    const appJob = app ? JOBS.find(j => j.id === app.jobId) : null;
+    const empId = appJob ? appJob.employerId : null;
+    if (app && empId && DB.getOrCreateChat && DB.sendMessage) {
       try {
         const chat = await DB.getOrCreateChat({
-          workerId: state.user.id, employerId: app.job.employerId,
-          jobId: app.jobId, jobTitle: app.jobTitle
+          workerId: state.user.id, employerId: empId,
+          jobId: app.jobId, jobTitle: app.jobTitle || (appJob && appJob.title) || ''
         });
         await DB.sendMessage(chat.id, state.user.id,
           `Hallo, ich habe die Einladung für "${app.jobTitle}" angenommen und freue mich auf die Zusammenarbeit!`);
@@ -2429,8 +2432,14 @@ async function openApplicantChat(applicantId) {
 async function openChatById(chatId) {
   if (!window.DB || !state.user) return;
   const list = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
-  const chat = list.find(c => c.id === chatId);
-  if (!chat) return;
+  var chat = list.find(c => c.id === chatId);
+  // Chat nicht in der Liste? Nochmal laden — passiert wenn loadChatsForUser
+  // noch nicht fertig war als der User den Chat oeffnete.
+  if (!chat) {
+    try { await loadChatsForUser(); } catch (_) {}
+    chat = list.find(c => c.id === chatId);
+    if (!chat) return;
+  }
   try {
     const msgs = await DB.getMessages(chatId);
     chat.messages = (msgs || []).map(m => ({
@@ -5770,7 +5779,13 @@ function renderChatDetail() {
   const chatId = state.pageData?.chatId !== undefined ? state.pageData.chatId : state.activeChat;
   if (chatId !== undefined && chatId !== null) state.activeChat = chatId;
   const chat = findChat(state.activeChat);
-  if (!chat) return renderMessages();
+  // Chat noch nicht geladen? Lade-Anzeige statt sofort zurueck zu Messages
+  if (!chat) {
+    if (state._activeChatLoading) {
+      return `<div class="page"><div class="dashboard-layout">${isEmployer ? renderEmployerSidebar('messages') : renderWorkerSidebar('messages')}<div class="dashboard-content">${skeletonChatMessages()}</div></div></div>`;
+    }
+    return renderMessages();
+  }
 
   return `
     <div class="page">
