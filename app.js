@@ -1019,7 +1019,7 @@ function clearFailedLogins(email) {
   if (s[email]) { delete s[email]; _saveLoginThrottle(s); }
 }
 
-async function login(email, password) {
+async function login(email, password, captchaToken) {
   const errEl = document.getElementById('login-error');
   const showErr = (msg) => { if (errEl) { errEl.textContent = msg; errEl.style.display='block'; } };
   if (errEl) errEl.style.display = 'none';
@@ -1034,21 +1034,25 @@ async function login(email, password) {
   }
   // Step 1: Authenticate with Supabase
   try {
-    await DB.signIn({ email: cleanEmail, password });
+    await DB.signIn({ email: cleanEmail, password, captchaToken: captchaToken || null });
   } catch (e) {
     const msg = (e && e.message) || '';
     // Record the failure before returning so the backoff ramps up.
     recordFailedLogin(cleanEmail);
     const newWait = loginLockoutRemaining(cleanEmail);
     const tail = newWait > 0 ? ' (nächster Versuch in ' + newWait + ' Sek.)' : '';
-    if (/email not confirmed/i.test(msg)) showErr('E-Mail noch nicht bestätigt. Bitte Link in der Mail klicken.');
+    if (/captcha/i.test(msg)) showErr('CAPTCHA-Prüfung fehlgeschlagen. Bitte erneut lösen.');
+    else if (/email not confirmed/i.test(msg)) showErr('E-Mail noch nicht bestätigt. Bitte Link in der Mail klicken.');
     else if (/invalid login/i.test(msg) || /invalid/i.test(msg)) showErr('E-Mail oder Passwort falsch. Noch kein Konto? Jetzt registrieren.' + tail);
     else showErr('Login fehlgeschlagen: ' + msg + tail);
     console.error('[login] signIn failed', e);
+    // Captcha-Widget zuruecksetzen, Token ist bei Supabase verbraucht.
+    try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
     return;
   }
   // Success → reset the failure counter for this email.
   clearFailedLogins(cleanEmail);
+  try { if (window.hcaptcha && window.hcaptcha.reset) window.hcaptcha.reset(); } catch (_) {}
   // Step 2: Load session synchron (billig — nur Cookie-Lookup).
   // Alle anderen Loads laufen im Hintergrund, damit das Dashboard
   // sofort gerendert wird (mit Skeletons wo nötig).
@@ -3731,6 +3735,7 @@ function renderLogin() {
             <input type="password" name="password" class="form-input" placeholder="Dein Passwort" required>
           </div>
           <div id="login-error" style="display:none;background:#fef2f2;border:1px solid #fca5a5;color:#dc2626;border-radius:8px;padding:0.6rem 0.9rem;font-size:0.85rem;margin-bottom:0.75rem"></div>
+          ${window.HCAPTCHA_SITE_KEY ? `<div class="h-captcha" data-sitekey="${escapeAttr(window.HCAPTCHA_SITE_KEY)}" style="margin-bottom:1rem;display:flex;justify-content:center"></div>` : ''}
           <button type="submit" class="btn btn-primary btn-block btn-lg">Anmelden</button>
         </form>
         <p style="text-align:center;font-size:0.85rem;margin-top:0.75rem">
@@ -7059,7 +7064,23 @@ if (typeof registerAction === 'function') {
     if (e.key === 'Enter') sendChatMessage();
   });
 
-  registerSubmit('loginForm', (form) => login(form.email.value, form.password.value));
+  registerSubmit('loginForm', (form) => {
+    // hCaptcha-Token vom Widget abholen, wenn Bot-Protection aktiv ist.
+    // Supabase verlangt den Token bei signInWithPassword wenn in den
+    // Auth-Settings Captcha-Protection eingeschaltet ist. Ohne Widget
+    // im Form liefert das Login sonst "captcha verification failed".
+    var captchaToken = null;
+    if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
+      try { captchaToken = window.hcaptcha.getResponse() || null; }
+      catch (e) { console.error('[hcaptcha]', e); }
+      if (!captchaToken) {
+        const err = document.getElementById('login-error');
+        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+        return;
+      }
+    }
+    login(form.email.value, form.password.value, captchaToken);
+  });
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
