@@ -6995,20 +6995,25 @@ if (typeof registerAction === 'function') {
   });
 
   registerSubmit('loginForm', (form) => {
-    // hCaptcha-Token vom Widget abholen, wenn Bot-Protection aktiv ist.
-    // WICHTIG: Widget-ID aus dem Form-eigenen .h-captcha-Element holen,
-    // nicht hcaptcha.getResponse() ohne Argument (das trifft oft das
-    // falsche Widget wenn mehrere im DOM sind).
+    // hCaptcha-Token holen - erst ueber Widget-ID des Forms, sonst Fallback.
     var captchaToken = null;
     if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      try {
-        var capEl = form.querySelector('.h-captcha');
-        var wid = capEl && capEl.dataset.hcaptchaWidgetId;
-        captchaToken = (wid !== undefined && wid !== null && wid !== '')
-          ? (window.hcaptcha.getResponse(wid) || null)
-          : (window.hcaptcha.getResponse() || null);
+      var capEl = form.querySelector('.h-captcha');
+      var wid = capEl && capEl.dataset.hcaptchaWidgetId;
+      if (wid !== undefined && wid !== null && wid !== '') {
+        // Mit Widget-ID versuchen (numerisch + string)
+        var numWid = parseInt(wid, 10);
+        if (!isNaN(numWid)) {
+          try { captchaToken = window.hcaptcha.getResponse(numWid) || null; } catch (_) {}
+        }
+        if (!captchaToken) {
+          try { captchaToken = window.hcaptcha.getResponse(wid) || null; } catch (_) {}
+        }
       }
-      catch (e) { console.error('[hcaptcha]', e); }
+      // Fallback: ohne Argument (greift das erste Widget im DOM)
+      if (!captchaToken) {
+        try { captchaToken = window.hcaptcha.getResponse() || null; } catch (_) {}
+      }
       if (!captchaToken) {
         const err = document.getElementById('login-error');
         if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
@@ -7020,20 +7025,23 @@ if (typeof registerAction === 'function') {
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
-    // hCaptcha-Token aus dem Form-eigenen Widget holen (ueber die
-    // widget-id auf .h-captcha). Ohne Argument trifft getResponse
-    // ein beliebiges Widget und liefert oft leer obwohl das richtige
-    // Widget im aktuellen Formular geloest wurde.
+    // hCaptcha-Token holen - erst ueber Widget-ID des Forms, sonst Fallback.
     var captchaToken = null;
     if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      try {
-        var capEl = form.querySelector('.h-captcha');
-        var wid = capEl && capEl.dataset.hcaptchaWidgetId;
-        captchaToken = (wid !== undefined && wid !== null && wid !== '')
-          ? (window.hcaptcha.getResponse(wid) || null)
-          : (window.hcaptcha.getResponse() || null);
+      var capEl = form.querySelector('.h-captcha');
+      var wid = capEl && capEl.dataset.hcaptchaWidgetId;
+      if (wid !== undefined && wid !== null && wid !== '') {
+        var numWid = parseInt(wid, 10);
+        if (!isNaN(numWid)) {
+          try { captchaToken = window.hcaptcha.getResponse(numWid) || null; } catch (_) {}
+        }
+        if (!captchaToken) {
+          try { captchaToken = window.hcaptcha.getResponse(wid) || null; } catch (_) {}
+        }
       }
-      catch (e) { console.error('[hcaptcha]', e); }
+      if (!captchaToken) {
+        try { captchaToken = window.hcaptcha.getResponse() || null; } catch (_) {}
+      }
       if (!captchaToken) {
         const err = document.getElementById('register-error');
         if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
