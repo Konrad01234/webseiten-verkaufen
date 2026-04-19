@@ -4879,130 +4879,60 @@ function renderCVBuilder() {
 
 function renderEmployerLanding() {
   return `
-    <!-- HERO: Split-Layout - Text links, Mac-Browser-Mockup mit unserer UI rechts -->
-    <section class="eh2">
-      <div class="eh2-inner">
-        <div class="eh2-text">
-          <span class="eh2-kicker">Für Arbeitgeber</span>
-          <h1>Junge Talente.<br>Direkt erreichen.</h1>
-          <p>Schalte deine Stellenanzeige in fünf Minuten und schreib mit motivierten Schülern und Studenten in deiner Stadt &mdash; ohne Bewerbungsformular, ohne Mail-Hin-und-Her.</p>
-          <div class="eh2-buttons">
-            <button class="btn btn-lg cta-btn-primary" data-action="goPostJob">Jetzt Anzeige schalten</button>
-            <button class="btn btn-lg cta-btn-outline" data-action="scrollToSection" data-target="emp-cascade-wrap">So funktioniert's</button>
+    <!-- OBEN: Klare Box - Anzeige schalten, kein Textbombardement -->
+    <section style="padding:5rem 1.5rem 4rem;text-align:center;background:#fff">
+      <div style="max-width:520px;margin:0 auto">
+        <h1 style="font-size:2.4rem;font-weight:800;color:#0f172a;margin:0 0 0.75rem;line-height:1.15;letter-spacing:-0.02em">Stelle ausschreiben</h1>
+        <p style="font-size:1.05rem;color:#64748b;margin:0 0 2rem;line-height:1.5">Finde Schüler und Studenten für dein Team.</p>
+        <button class="btn btn-lg" data-action="goPostJob" style="background:#1e3a8a;color:#fff;font-weight:700;padding:1rem 2.5rem;border-radius:12px;border:none;font-size:1rem;cursor:pointer;box-shadow:0 4px 14px rgba(30,58,138,0.2)">Kostenlos Anzeige schalten</button>
+        <p style="font-size:0.8rem;color:#94a3b8;margin:0.85rem 0 0">Kein Abo &middot; Kein Vertrag &middot; Keine Provision</p>
+      </div>
+    </section>
+
+    <!-- FOTO: echtes Bild, keine Mockups -->
+    <div style="max-width:1000px;margin:0 auto;padding:0 1.5rem">
+      <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1200&q=80" alt="" style="width:100%;border-radius:20px;display:block;object-fit:cover;max-height:420px" loading="lazy">
+    </div>
+
+    <!-- SO GEHTS: 3 Schritte nebeneinander, kein Schnickschnack -->
+    <section style="padding:5rem 1.5rem 4rem">
+      <div style="max-width:900px;margin:0 auto">
+        <h2 style="text-align:center;font-size:1.5rem;font-weight:700;color:#0f172a;margin:0 0 2.5rem">So läuft's</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2.5rem;text-align:center">
+          <div>
+            <div style="font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:0.5rem">1</div>
+            <h3 style="font-size:0.95rem;font-weight:700;color:#0f172a;margin:0 0 0.4rem">Anzeige schreiben</h3>
+            <p style="font-size:0.88rem;color:#64748b;margin:0;line-height:1.5">Titel, Stundenlohn, Standort. Dauert keine fünf Minuten.</p>
           </div>
-        </div>
-        <div class="eh2-visual">
-          <!-- Browser-Fenster Mockup mit unserer WorkPilot-Oberflaeche -->
-          <div class="eh2-browser">
-            <div class="eh2-browser-bar">
-              <span class="eh2-bd" style="background:#ef4444"></span>
-              <span class="eh2-bd" style="background:#f59e0b"></span>
-              <span class="eh2-bd" style="background:#22c55e"></span>
-              <div class="eh2-browser-url">workpilot.de/dashboard</div>
-            </div>
-            <div class="eh2-browser-body">
-              <div class="eh2-heading">
-                <div>
-                  <strong>Neue Bewerbungen</strong>
-                  <span>Heute, 14. April</span>
-                </div>
-                <span class="eh2-chip">3 neu</span>
-              </div>
-              <div class="eh2-row">
-                <div class="eh2-av" style="background:linear-gradient(135deg,#fce7f3,#f9a8d4)">LM</div>
-                <div class="eh2-info">
-                  <strong>Lena M., 17</strong>
-                  <span>Schülerin &middot; Köln</span>
-                </div>
-                <span class="eh2-pill eh2-pill-new">Neu</span>
-              </div>
-              <div class="eh2-row">
-                <div class="eh2-av" style="background:linear-gradient(135deg,#dbeafe,#93c5fd)">TK</div>
-                <div class="eh2-info">
-                  <strong>Tim K., 19</strong>
-                  <span>Student &middot; Düsseldorf</span>
-                </div>
-                <span class="eh2-pill eh2-pill-new">Neu</span>
-              </div>
-              <div class="eh2-row">
-                <div class="eh2-av" style="background:linear-gradient(135deg,#fef3c7,#fcd34d)">SH</div>
-                <div class="eh2-info">
-                  <strong>Sara H., 16</strong>
-                  <span>Schülerin &middot; Essen</span>
-                </div>
-                <span class="eh2-pill eh2-pill-chat">Im Chat</span>
-              </div>
-            </div>
+          <div>
+            <div style="font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:0.5rem">2</div>
+            <h3 style="font-size:0.95rem;font-weight:700;color:#0f172a;margin:0 0 0.4rem">Bewerbungen erhalten</h3>
+            <p style="font-size:0.88rem;color:#64748b;margin:0;line-height:1.5">Schüler bewerben sich mit Profil. Du siehst alles im Dashboard.</p>
           </div>
-          <!-- Kleines Phone-Mockup im Vordergrund, wie bei workflow.at -->
-          <div class="eh2-phone">
-            <div class="eh2-phone-screen">
-              <div class="eh2-phone-top"></div>
-              <div class="eh2-phone-heading">Nachrichten</div>
-              <div class="eh2-phone-msg">
-                <div class="eh2-av-sm" style="background:#fce7f3">L</div>
-                <div>
-                  <strong>Lena M.</strong>
-                  <p>Hallo! Ich hätte Interesse...</p>
-                </div>
-              </div>
-              <div class="eh2-phone-msg">
-                <div class="eh2-av-sm" style="background:#dbeafe">T</div>
-                <div>
-                  <strong>Tim K.</strong>
-                  <p>Wann kann ich anfangen?</p>
-                </div>
-              </div>
-            </div>
+          <div>
+            <div style="font-size:2rem;font-weight:800;color:#1e3a8a;margin-bottom:0.5rem">3</div>
+            <h3 style="font-size:0.95rem;font-weight:700;color:#0f172a;margin:0 0 0.4rem">Im Chat klären</h3>
+            <p style="font-size:0.88rem;color:#64748b;margin:0;line-height:1.5">Termine und Fragen direkt per Nachricht. Keine E-Mails.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- 3 VORTEILE: schlicht, uebersichtlich, gleich gross -->
-    <section style="background:#f8fafc;padding:4rem 1.5rem">
-      <div style="max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem">
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
-          <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">In 5 Minuten online</h3>
-          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Titel, Beschreibung, Standort &mdash; fertig.</p>
-        </div>
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
-          <div style="width:48px;height:48px;border-radius:12px;background:#eff6ff;color:#1e3a8a;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          </div>
-          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">Direkter Chat</h3>
-          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Bewerber schreiben dich direkt an. Kein Mail-Chaos.</p>
-        </div>
-        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:2rem 1.5rem;text-align:center">
-          <div style="width:48px;height:48px;border-radius:12px;background:#f0fdf4;color:#15803d;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h3 style="font-size:1.1rem;font-weight:700;margin:0 0 0.5rem;color:#0f172a">Komplett kostenlos</h3>
-          <p style="font-size:0.9rem;color:#64748b;margin:0;line-height:1.5">Kein Abo, kein Vertrag, keine Provision.</p>
+    <!-- ZITAT -->
+    <section style="background:#f8fafc;padding:3.5rem 1.5rem">
+      <div style="max-width:620px;margin:0 auto;text-align:center">
+        <p style="font-size:1.15rem;color:#334155;line-height:1.65;margin:0 0 1.25rem">&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir.&ldquo;</p>
+        <div style="display:inline-flex;align-items:center;gap:0.65rem">
+          <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="" style="width:36px;height:36px;border-radius:50%;object-fit:cover">
+          <span style="font-size:0.85rem;color:#64748b">Sandra K., Café Sonnenschein</span>
         </div>
       </div>
     </section>
 
-    <!-- EINE STIMME: kurz, echt -->
-    <section style="padding:3rem 1.5rem;max-width:700px;margin:0 auto;text-align:center">
-      <p style="font-family:'Playfair Display',serif;font-size:1.2rem;font-style:italic;color:#334155;line-height:1.6;margin:0 0 1.25rem">&bdquo;Innerhalb von einem Tag hatte ich vier Bewerbungen. Eine davon arbeitet jetzt seit drei Monaten bei mir.&ldquo;</p>
-      <div style="display:flex;align-items:center;justify-content:center;gap:0.75rem">
-        <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="" style="width:40px;height:40px;border-radius:50%;object-fit:cover">
-        <div style="text-align:left">
-          <strong style="font-size:0.88rem;color:#0f172a">Sandra K.</strong>
-          <span style="display:block;font-size:0.78rem;color:#64748b">Café Sonnenschein, Köln</span>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA: eine Zeile, ein Button -->
-    <section style="background:#1e3a8a;padding:3rem 1.5rem;text-align:center">
-      <h2 style="color:#fff;font-size:1.5rem;font-weight:700;margin:0 0 0.75rem">Jetzt Anzeige schalten</h2>
-      <p style="color:rgba(255,255,255,0.75);font-size:0.95rem;margin:0 0 1.5rem">Kostenlos, kein Vertrag, keine Provision.</p>
-      <button class="btn btn-lg" data-action="goPostJob" style="background:#fff;color:#1e3a8a;font-weight:700;padding:0.85rem 2rem;border-radius:10px;border:none;font-size:0.95rem;cursor:pointer">Jetzt loslegen &rarr;</button>
+    <!-- UNTEN: dezenter Abschluss -->
+    <section style="padding:3.5rem 1.5rem;text-align:center">
+      <p style="font-size:1.1rem;color:#0f172a;font-weight:600;margin:0 0 1rem">Bereit?</p>
+      <button class="btn btn-lg" data-action="goPostJob" style="background:#1e3a8a;color:#fff;font-weight:700;padding:0.9rem 2rem;border-radius:10px;border:none;font-size:0.95rem;cursor:pointer">Anzeige schalten &rarr;</button>
     </section>`;
 }
 
