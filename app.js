@@ -3859,12 +3859,10 @@ function renderRegister() {
             <label class="form-label">Ich bin...</label>
             <div class="role-selector">
               <div class="role-option ${isEmp ? '' : 'selected'}" data-action="selectRole" data-role="worker">
-                <div class="role-icon">&#9786;</div>
                 <div class="role-name">Arbeitnehmer</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche einen Job</div>
               </div>
               <div class="role-option ${isEmp ? 'selected' : ''}" data-action="selectRole" data-role="employer">
-                <div class="role-icon">&#9962;</div>
                 <div class="role-name">Arbeitgeber</div>
                 <div style="font-size:0.75rem;color:var(--gray-500)">Ich suche Mitarbeiter</div>
               </div>
@@ -5820,23 +5818,23 @@ function renderChatDetail() {
   }
 
   return `
-    <div class="page">
-      <div class="dashboard-layout">
+    <div class="page chat-detail-page">
+      <div class="dashboard-layout chat-detail-layout">
         ${isEmployer ? renderEmployerSidebar('messages') : renderWorkerSidebar('messages')}
-        <div class="dashboard-content" style="display:flex;flex-direction:column;max-height:calc(100vh - 140px)">
+        <div class="dashboard-content chat-detail-content">
 
           <!-- Chat-Kopfzeile -->
-          <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--gray-200)">
+          <div class="chat-detail-header">
             <button class="btn btn-sm btn-outline" data-action="nav" data-page="messages">&#8592; Zurück</button>
             <div class="user-avatar" style="width:38px;height:38px;font-size:0.8rem;flex-shrink:0">${chat.partnerInitials}</div>
-            <div>
-              <strong style="font-size:0.95rem">${escapeHtml(chat.partnerName)}</strong>
-              <div style="font-size:0.78rem;color:var(--gray-500)">${escapeHtml(chat.jobTitle)}</div>
+            <div style="min-width:0;flex:1;overflow:hidden">
+              <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(chat.partnerName)}</strong>
+              <div style="font-size:0.78rem;color:var(--gray-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(chat.jobTitle)}</div>
             </div>
           </div>
 
           <!-- Nachrichten -->
-          <div id="chat-messages-page" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.625rem;padding-bottom:1rem;max-width:620px">
+          <div id="chat-messages-page" class="chat-detail-messages">
             ${state._activeChatLoading === chat.id ? skeletonChatMessages() : ''}
             ${state._activeChatLoading !== chat.id && chat.messages.length === 0 ? `
               <div style="text-align:center;color:var(--gray-500);font-size:0.85rem;padding:2rem">
@@ -5844,7 +5842,7 @@ function renderChatDetail() {
               </div>` : ''}
             ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
               <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
-                <div style="max-width:72%;padding:0.6rem 0.85rem;border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'};background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};font-size:0.88rem;line-height:1.45">
+                <div class="chat-bubble ${m.sent ? 'chat-bubble-sent' : 'chat-bubble-received'}" style="background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'}">
                   ${escapeHtml(m.text)}
                   <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
                 </div>
@@ -5853,10 +5851,10 @@ function renderChatDetail() {
           </div>
 
           <!-- Eingabezeile -->
-          <div style="display:flex;gap:0.5rem;padding-top:0.75rem;border-top:1px solid var(--gray-200);max-width:620px">
+          <div class="chat-detail-input">
             <label for="chat-input" class="sr-only">Nachricht schreiben</label>
-            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1" data-on-keydown="chatInputEnter" aria-label="Nachricht schreiben">
-            <button class="btn btn-primary" data-action="sendChatMessage">Senden</button>
+            <input type="text" id="chat-input" class="form-input" placeholder="Nachricht schreiben..." style="flex:1;min-width:0" data-on-keydown="chatInputEnter" aria-label="Nachricht schreiben">
+            <button class="btn btn-primary" data-action="sendChatMessage" style="flex-shrink:0">Senden</button>
           </div>
 
         </div>
