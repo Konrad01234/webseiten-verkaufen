@@ -360,9 +360,7 @@ function dbChatToFrontend(row) {
     jobTitle: row.job_title || '',
     jobId: row.job_id || null,
     lastMessage: row.last_message || '',
-    time: row.last_message_at
-      ? new Date(row.last_message_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-      : '',
+    time: formatMessageTime(row.last_message_at),
     unread: row.last_message && row.last_sender_id && row.last_sender_id !== state.user.id,
     messages: []  // lazily filled by openChat
   };
@@ -663,6 +661,21 @@ function navigate(page, data) {
         // Umkreis-Filter nach jedem Reload nicht mehr greifen).
         if (state.filters.address) { recomputeDistancesAndRender(); }
       }).catch(e => console.error('[navigate] jobs refresh', e));
+    }
+    // Aufrufe-Zaehler hochzaehlen, wenn ein Job-Detail geoeffnet wird.
+    // Dedupe via Session-Set, damit der Zaehler nicht bei jedem Zurueck/Vor-
+    // Navigieren nochmal hochgeht. Eigene Jobs werden ignoriert.
+    if (page === 'job-detail' && data && data.jobId) {
+      try {
+        const jobId = data.jobId;
+        if (!state._viewedJobs) state._viewedJobs = new Set();
+        const job = (typeof JOBS !== 'undefined' ? JOBS : []).find(j => j.id === jobId);
+        const isOwn = state.user && job && job.employerId === state.user.id;
+        if (!isOwn && !state._viewedJobs.has(jobId)) {
+          state._viewedJobs.add(jobId);
+          DB.incrementJobMetric(jobId, 'views').catch(e => console.warn('[views]', e));
+        }
+      } catch (_) {}
     }
     if (page === 'employer-dashboard' || page === 'applicants' || page === 'worker-dashboard') {
       loadApplicationsForUser().then(() => { try { render(); } catch (_) {} }).catch(e => console.error('[navigate] apps refresh', e));
@@ -2454,9 +2467,7 @@ async function openChatById(chatId) {
       id: m.id,
       text: m.text || '',
       sent: m.sender_id === state.user.id,
-      time: m.created_at
-        ? new Date(m.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-        : ''
+      time: formatMessageTime(m.created_at)
     }));
     chat.unread = false;
     state.activeChat = chatId;
@@ -2485,9 +2496,7 @@ async function openChatById(chatId) {
         id: newMsg.id,
         text: newMsg.text || '',
         sent: newMsg.sender_id === state.user.id,
-        time: newMsg.created_at
-          ? new Date(newMsg.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })
-          : ''
+        time: formatMessageTime(newMsg.created_at)
       };
       if (optIdx !== -1) {
         chat.messages[optIdx] = realMsg;
@@ -2610,6 +2619,23 @@ function formatDate(dateStr) {
   if (diff === 1) return 'Gestern';
   if (diff < 7) return `Vor ${diff} Tagen`;
   return d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+// Chat-Zeitstempel: HH:MM wenn heute, "Gestern HH:MM" wenn gestern,
+// sonst "DD.MM.YY HH:MM". So sieht der Nutzer immer, von wann eine
+// Nachricht ist, ohne dass die heutige Anzeige ueberladen wirkt.
+function formatMessageTime(dateStr) {
+  if (!dateStr) return '';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return '';
+  const now = new Date();
+  const hhmm = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const sameDay = d.toDateString() === now.toDateString();
+  if (sameDay) return hhmm;
+  const y = new Date(now); y.setDate(y.getDate() - 1);
+  if (d.toDateString() === y.toDateString()) return `Gestern ${hhmm}`;
+  const dd = d.toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' });
+  return `${dd} ${hhmm}`;
 }
 
 // Bekannte deutsche Orte mit Koordinaten. Dient als schneller Fast-Path
@@ -5149,14 +5175,15 @@ function renderEmployerDashboard() {
           <div class="jobs-grid">
             ${myJobs.map(j => `
               <div class="card">
-                <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem">
-                  <div style="display:flex;align-items:center;gap:1rem;flex:1">
+                <div class="card-body" style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+                  <div style="display:flex;align-items:center;gap:1rem;flex:1;min-width:0">
                     ${companyLogoHtml(j.companyLogo, j.company)}
-                    <div>
+                    <div style="min-width:0">
                       <h3 style="font-size:0.95rem;margin-bottom:0.25rem">${escapeHtml(j.title)}</h3>
-                      <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500)">
+                      <div style="display:flex;gap:1rem;font-size:0.8rem;color:var(--gray-500);flex-wrap:wrap">
                         <span>${j.views || 0} Views</span>
                         <span>${j.applications || 0} Bew.</span>
+                        <span>Geschaltet: ${formatDate(j.posted)}</span>
                       </div>
                     </div>
                   </div>
