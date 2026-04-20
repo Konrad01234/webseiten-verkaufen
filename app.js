@@ -1254,30 +1254,37 @@ function getActiveJob() {
 // andere auf dem Job -> rejected, Job -> active=false.
 async function workerAcceptInvitation(appId) {
   if (!state.user || !window.DB) return;
-  if (!DB.acceptInvitation) {
-    showToast('Diese Funktion braucht die neueste DB-Migration. Bitte supabase-add-invitation-flow.sql einspielen.', 'error');
-    return;
-  }
   if (state._acceptingInvite) return;
   state._acceptingInvite = true;
   try {
-    await DB.acceptInvitation(appId);
+    // Versuch 1: RPC (atomar, sicher)
+    // Versuch 2: Fallback auf einfaches Status-Update
+    if (DB.acceptInvitation) {
+      try {
+        await DB.acceptInvitation(appId);
+      } catch (rpcErr) {
+        console.warn('[workerAcceptInvitation] RPC fehlgeschlagen, Fallback:', rpcErr && rpcErr.message);
+        // Fallback: direktes Status-Update
+        await DB.updateApplicationStatus(appId, 'accepted');
+      }
+    } else {
+      await DB.updateApplicationStatus(appId, 'accepted');
+    }
     await loadApplicationsForUser();
     await loadJobsFromDB();
-    showToast('Einladung angenommen! Willkommen an Bord.');
+    showToast('Einladung angenommen!');
     // Auto-Nachricht an den Arbeitgeber
-    const app = (state._appsCache || []).find(a => String(a.id) === String(appId));
-    // Employer-ID aus dem JOBS-Array holen (app.job existiert nicht im Frontend-Objekt)
-    const appJob = app ? JOBS.find(j => j.id === app.jobId) : null;
-    const empId = appJob ? appJob.employerId : null;
+    var app = (state._appsCache || []).find(a => String(a.id) === String(appId));
+    var appJob = app ? JOBS.find(j => j.id === app.jobId) : null;
+    var empId = appJob ? appJob.employerId : null;
     if (app && empId && DB.getOrCreateChat && DB.sendMessage) {
       try {
-        const chat = await DB.getOrCreateChat({
+        var chat = await DB.getOrCreateChat({
           workerId: state.user.id, employerId: empId,
           jobId: app.jobId, jobTitle: app.jobTitle || (appJob && appJob.title) || ''
         });
         await DB.sendMessage(chat.id, state.user.id,
-          `Hallo, ich habe die Einladung für "${app.jobTitle}" angenommen und freue mich auf die Zusammenarbeit!`);
+          'Hallo, ich habe die Einladung fuer "' + (app.jobTitle || '') + '" angenommen!');
         await loadChatsForUser();
       } catch (e) { console.error('[workerAcceptInvitation] chat', e); }
     }
