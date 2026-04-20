@@ -617,15 +617,6 @@ function getAnalyticsData() {
   };
 }
 
-function switchAdminTab(tab) {
-  state.adminTab = tab;
-  document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
-  document.querySelector('.admin-tab[onclick*="' + tab + '"]').classList.add('active');
-  const content = document.getElementById('admin-tab-' + tab);
-  if (content) content.classList.add('active');
-}
-
 // ===== NAVIGATION =====
 function navigate(page, data) {
   // Chat-Realtime-Subscription aufraeumen wenn wir den Chat-Detail
@@ -1002,7 +993,8 @@ function toggleDropdown() {
 }
 
 function toggleMobileMenu() {
-  document.getElementById('mobile-menu').classList.toggle('open');
+  var menu = document.getElementById('mobile-menu');
+  if (menu) menu.classList.toggle('open');
 }
 
 // ===== AUTH =====
@@ -3816,7 +3808,7 @@ function renderJobDetail() {
 
               <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--gray-200)">
                 <div style="font-size:0.8rem;color:var(--gray-500)">
-                  <div>Anzeige läuft bis: ${new Date(job.expires).toLocaleDateString('de-DE')}</div>
+                  ${job.expires ? `<div>Anzeige läuft bis: ${new Date(job.expires).toLocaleDateString('de-DE')}</div>` : ''}
                 </div>
               </div>
             </div>
@@ -3919,7 +3911,8 @@ function renderRegister() {
 function selectRole(el, role) {
   document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
   el.classList.add('selected');
-  document.querySelector('input[name="role"]').value = role;
+  var roleInput = document.querySelector('input[name="role"]');
+  if (roleInput) roleInput.value = role;
   const companyField = document.querySelector('.employer-field');
   if (companyField) {
     companyField.style.display = role === 'employer' ? 'block' : 'none';
@@ -6044,8 +6037,8 @@ function renderSupport() {
               Du hast noch keine Support-Tickets erstellt.
             </div>` : tickets.map(t => {
             const categoryLabels = { bug: 'Technisches Problem', account: 'Konto & Profil', payment: 'Zahlung', job: 'Job & Bewerbung', user: 'Nutzer-Problem', other: 'Sonstiges' };
-            const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
-            const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+            const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', 'in_progress': 'var(--primary)', closed: 'var(--success)', resolved: 'var(--success)' };
+            const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', 'in_progress': 'In Bearbeitung', closed: 'Erledigt', resolved: 'Erledigt' };
             return `
               <div class="card" style="padding:1rem 1.25rem;margin-bottom:0.75rem">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">
@@ -6769,8 +6762,8 @@ function renderAdminPanel() {
             <tbody>
               ${getSupportTickets().filter(t => t.status !== 'closed').slice().reverse().map(t => {
                 const catLabels = { bug: 'Bug', account: 'Konto', payment: 'Zahlung', job: 'Job', user: 'Nutzer', other: 'Sonstiges' };
-                const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', closed: 'var(--success)' };
-                const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', closed: 'Erledigt' };
+                const statusColors = { open: '#f59e0b', 'in-progress': 'var(--primary)', 'in_progress': 'var(--primary)', closed: 'var(--success)', resolved: 'var(--success)' };
+                const statusLabels = { open: 'Offen', 'in-progress': 'In Bearbeitung', 'in_progress': 'In Bearbeitung', closed: 'Erledigt', resolved: 'Erledigt' };
                 return `
                 <tr class="admin-table-row" style="cursor:pointer" data-action="toggleTicketDetail" data-ticket-id="${t.id}">
                   <td style="padding:0.65rem 1.25rem">
@@ -6784,7 +6777,7 @@ function renderAdminPanel() {
                   <td style="padding:0.65rem 1.25rem;font-weight:500;font-size:0.88rem">${escapeHtml(t.subject)}</td>
                   <td style="padding:0.65rem 1.25rem;font-size:0.8rem;color:var(--gray-500)">${new Date(t.createdAt).toLocaleString('de-DE')}</td>
                   <td style="padding:0.65rem 1.25rem;text-align:center">
-                    <button class="btn btn-sm btn-outline" data-action="adminUpdateTicketStatus" data-ticket-id="${t.id}" data-status="in-progress" ${t.status==='in-progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
+                    <button class="btn btn-sm btn-outline" data-action="adminUpdateTicketStatus" data-ticket-id="${t.id}" data-status="in-progress" ${t.status==='in-progress'||t.status==='in_progress'||t.status==='closed'?'disabled':''}>Bearbeiten</button>
                     <button class="btn btn-sm" style="background:var(--success);color:#fff;border:none;margin-left:0.25rem" data-action="adminUpdateTicketStatus" data-ticket-id="${t.id}" data-status="closed" ${t.status==='closed'?'disabled':''}>Erledigt</button>
                   </td>
                 </tr>
