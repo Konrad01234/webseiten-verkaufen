@@ -427,6 +427,7 @@ async function loadChatsForUser() {
           if (typeof updateNav === 'function') updateNav();
         } catch (e) {
           console.error('[loadChatsForUser]', e);
+          state.chatsLoaded = true;
         }
       } while (_loadChatsAgain);
     } finally {
@@ -689,7 +690,15 @@ function navigate(page, data) {
         .catch(e => {
           if (state._activeChatLoading === data.chatId) state._activeChatLoading = null;
           console.error('[navigate] chat open', e);
+          try { render(); } catch (_) {}
         });
+      // Sicherheits-Timeout: Falls openChatById haengt, Skeleton nach 8 Sek entfernen
+      setTimeout(function() {
+        if (state._activeChatLoading === data.chatId) {
+          state._activeChatLoading = null;
+          try { render(); } catch (_) {}
+        }
+      }, 8000);
     }
     // Reload the user profile on dashboard/profile/post pages so
     // changes made by the admin (e.g. employer approval) oder
