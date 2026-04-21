@@ -6072,24 +6072,17 @@ function renderChatDetail() {
               <div style="text-align:center;color:var(--gray-500);font-size:0.85rem;padding:2rem">
                 Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
-            ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => {
-              const canDelete = m.id != null && !m._optimistic && window.DB && DB.deleteMessage;
-              const delBtn = canDelete
-                ? `<button class="chat-msg-delete" data-action="deleteChatMessage" data-msg-id="${m.id}" title="Nachricht löschen" aria-label="Nachricht löschen">×</button>`
-                : '';
-              // Eigene Nachricht (sent): Bubble rechts, × links davor.
-              // Fremde Nachricht (received): Bubble links, × rechts dahinter.
-              // So bleibt die × immer auf der "innen"-Seite, nicht am Rand.
-              return `
+            ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
               <div class="chat-msg-row" style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'};align-items:flex-end;gap:0.35rem">
-                ${m.sent ? delBtn : ''}
+                ${m.sent && m.id != null && !m._optimistic && window.DB && DB.deleteMessage ? `
+                  <button class="chat-msg-delete" data-action="deleteChatMessage" data-msg-id="${m.id}" title="Nachricht löschen" aria-label="Nachricht löschen">×</button>
+                ` : ''}
                 <div class="chat-bubble ${m.sent ? 'chat-bubble-sent' : 'chat-bubble-received'}" style="background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'}">
                   ${escapeHtml(m.text)}
                   <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
                 </div>
-                ${m.sent ? '' : delBtn}
-              </div>`;
-            }).join('')}
+              </div>
+            `).join('')}
           </div>
 
           <!-- Eingabezeile -->
