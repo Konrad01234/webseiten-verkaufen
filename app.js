@@ -906,6 +906,43 @@ function renderPendingCaptchas() {
   });
 }
 
+// Robuster hCaptcha-Token-Lookup. Problem auf iPad/Safari: hcaptcha.getResponse()
+// mit dynamisch gerenderten Widgets gibt manchmal nichts zurueck. Deshalb
+// fragen wir zusaetzlich das versteckte <textarea name="h-captcha-response">
+// ab, das hCaptcha ins Form schreibt sobald das Widget geloest ist.
+function getCaptchaToken(form) {
+  if (!window.HCAPTCHA_SITE_KEY) return null;
+  var token = null;
+  // 1) Versuch: ueber hcaptcha-API mit Widget-ID
+  if (window.hcaptcha && form) {
+    var capEl = form.querySelector('.h-captcha');
+    var wid = capEl && capEl.dataset.hcaptchaWidgetId;
+    if (wid !== undefined && wid !== null && wid !== '') {
+      var numWid = parseInt(wid, 10);
+      if (!isNaN(numWid)) {
+        try { token = window.hcaptcha.getResponse(numWid) || null; } catch (_) {}
+      }
+      if (!token) {
+        try { token = window.hcaptcha.getResponse(wid) || null; } catch (_) {}
+      }
+    }
+    if (!token) {
+      try { token = window.hcaptcha.getResponse() || null; } catch (_) {}
+    }
+  }
+  // 2) Fallback: versteckte Textarea/Input im Form (setzt hCaptcha beim Loesen)
+  if (!token && form) {
+    var ta = form.querySelector('textarea[name="h-captcha-response"], input[name="h-captcha-response"]');
+    if (ta && ta.value) token = ta.value;
+  }
+  // 3) Fallback: global im Dokument (erstes vorhandenes)
+  if (!token) {
+    var any = document.querySelector('textarea[name="h-captcha-response"], input[name="h-captcha-response"]');
+    if (any && any.value) token = any.value;
+  }
+  return token || null;
+}
+
 // Blendet den "Admin"-Link im Footer ein/aus basierend auf dem
 // eingeloggten User. Die Admin-Rechte werden serverseitig durch RLS
 // erzwungen (siehe supabase-add-approval.sql), das hier ist nur
@@ -7109,58 +7146,22 @@ if (typeof registerAction === 'function') {
   });
 
   registerSubmit('loginForm', (form) => {
-    // hCaptcha-Token holen - erst ueber Widget-ID des Forms, sonst Fallback.
-    var captchaToken = null;
-    if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      var capEl = form.querySelector('.h-captcha');
-      var wid = capEl && capEl.dataset.hcaptchaWidgetId;
-      if (wid !== undefined && wid !== null && wid !== '') {
-        // Mit Widget-ID versuchen (numerisch + string)
-        var numWid = parseInt(wid, 10);
-        if (!isNaN(numWid)) {
-          try { captchaToken = window.hcaptcha.getResponse(numWid) || null; } catch (_) {}
-        }
-        if (!captchaToken) {
-          try { captchaToken = window.hcaptcha.getResponse(wid) || null; } catch (_) {}
-        }
-      }
-      // Fallback: ohne Argument (greift das erste Widget im DOM)
-      if (!captchaToken) {
-        try { captchaToken = window.hcaptcha.getResponse() || null; } catch (_) {}
-      }
-      if (!captchaToken) {
-        const err = document.getElementById('login-error');
-        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
-        return;
-      }
+    var captchaToken = getCaptchaToken(form);
+    if (window.HCAPTCHA_SITE_KEY && !captchaToken) {
+      const err = document.getElementById('login-error');
+      if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+      return;
     }
     login(form.email.value, form.password.value, captchaToken);
   });
   registerSubmit('registerForm', (form) => {
     var fn = form.firstName?.value || '';
     var ln = form.lastName?.value || '';
-    // hCaptcha-Token holen - erst ueber Widget-ID des Forms, sonst Fallback.
-    var captchaToken = null;
-    if (window.HCAPTCHA_SITE_KEY && window.hcaptcha) {
-      var capEl = form.querySelector('.h-captcha');
-      var wid = capEl && capEl.dataset.hcaptchaWidgetId;
-      if (wid !== undefined && wid !== null && wid !== '') {
-        var numWid = parseInt(wid, 10);
-        if (!isNaN(numWid)) {
-          try { captchaToken = window.hcaptcha.getResponse(numWid) || null; } catch (_) {}
-        }
-        if (!captchaToken) {
-          try { captchaToken = window.hcaptcha.getResponse(wid) || null; } catch (_) {}
-        }
-      }
-      if (!captchaToken) {
-        try { captchaToken = window.hcaptcha.getResponse() || null; } catch (_) {}
-      }
-      if (!captchaToken) {
-        const err = document.getElementById('register-error');
-        if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
-        return;
-      }
+    var captchaToken = getCaptchaToken(form);
+    if (window.HCAPTCHA_SITE_KEY && !captchaToken) {
+      const err = document.getElementById('register-error');
+      if (err) { err.textContent = 'Bitte löse das CAPTCHA.'; err.style.display = 'block'; }
+      return;
     }
     register({
       name: (fn + ' ' + ln).trim(),
