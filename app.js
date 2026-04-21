@@ -104,12 +104,6 @@ let state = {
   sessionLoaded: false
 };
 
-// Clear old broken chat data (one-time reset)
-if (!localStorage.getItem('jj_chat_reset_v2')) {
-  Object.keys(localStorage).filter(k => k.startsWith('jj_chats_')).forEach(k => localStorage.removeItem(k));
-  localStorage.setItem('jj_chat_reset_v2', '1');
-}
-
 // ===== SUPABASE BOOTSTRAP =====
 // Convert a Supabase `jobs` row into the camelCase shape the existing
 // renderers expect.
