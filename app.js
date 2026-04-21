@@ -4818,7 +4818,21 @@ function renderApplications() {
   const myApps = appJobIds.map(jobId => {
     const job = JOBS.find(j => j.id === jobId);
     const appData = allApps.find(a => a.userId === state.user.id && a.jobId === jobId);
-    return { job, status: appData?.status || 'new', statusText: appData?.statusText || 'Gesendet', date: appData?.date || new Date().toISOString().split('T')[0] };
+    // WICHTIG: id + jobId mit in das zurueckgegebene Objekt ziehen, sonst
+    // laufen data-app-id="${a.id}"-Buttons (Annehmen/Ablehnen) mit
+    // undefined → parseInt → NaN → 22P02 "invalid input syntax for bigint".
+    return {
+      id: appData?.id,
+      userId: appData?.userId,
+      jobId: jobId,
+      employerId: appData?.employerId,
+      jobTitle: appData?.jobTitle || (job && job.title) || '',
+      jobCompany: appData?.jobCompany || (job && job.company) || '',
+      job,
+      status: appData?.status || 'new',
+      statusText: appData?.statusText || 'Gesendet',
+      date: appData?.date || new Date().toISOString().split('T')[0]
+    };
   }).filter(a => a.job);
   if (loading) {
     return `
@@ -6058,17 +6072,24 @@ function renderChatDetail() {
               <div style="text-align:center;color:var(--gray-500);font-size:0.85rem;padding:2rem">
                 Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
-            ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
+            ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => {
+              const canDelete = m.id != null && !m._optimistic && window.DB && DB.deleteMessage;
+              const delBtn = canDelete
+                ? `<button class="chat-msg-delete" data-action="deleteChatMessage" data-msg-id="${m.id}" title="Nachricht löschen" aria-label="Nachricht löschen">×</button>`
+                : '';
+              // Eigene Nachricht (sent): Bubble rechts, × links davor.
+              // Fremde Nachricht (received): Bubble links, × rechts dahinter.
+              // So bleibt die × immer auf der "innen"-Seite, nicht am Rand.
+              return `
               <div class="chat-msg-row" style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'};align-items:flex-end;gap:0.35rem">
-                ${m.sent && m.id != null && !m._optimistic && window.DB && DB.deleteMessage ? `
-                  <button class="chat-msg-delete" data-action="deleteChatMessage" data-msg-id="${m.id}" title="Nachricht löschen" aria-label="Nachricht löschen">×</button>
-                ` : ''}
+                ${m.sent ? delBtn : ''}
                 <div class="chat-bubble ${m.sent ? 'chat-bubble-sent' : 'chat-bubble-received'}" style="background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'}">
                   ${escapeHtml(m.text)}
                   <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
                 </div>
-              </div>
-            `).join('')}
+                ${m.sent ? '' : delBtn}
+              </div>`;
+            }).join('')}
           </div>
 
           <!-- Eingabezeile -->

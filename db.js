@@ -299,18 +299,30 @@
 
   // Eine eigene Nachricht loeschen. Die DELETE-Policy (msgs_delete_sender)
   // erzwingt dass nur der Absender das darf — der Client muss das nicht
-  // nochmal pruefen. Wenn die Zeile nicht existiert oder fremd ist, liefert
-  // Supabase ein leeres Ergebnis ohne Fehler.
+  // nochmal pruefen.
+  //
+  // Wichtig: `.select()` anhaengen, damit Supabase die betroffenen Zeilen
+  // zurueckgibt. Ohne .select() kommt auch bei RLS-Deny ein "Erfolg" mit
+  // leerem data zurueck und der Aufrufer denkt's hat geklappt. Wir
+  // werfen einen Fehler wenn 0 Zeilen geloescht wurden — dann weiss der
+  // Caller: Policy blockt (meist fehlt die SQL-Migration).
   async function deleteMessage(messageId) {
-    const res = await sb.from('messages').delete().eq('id', messageId);
+    const res = await sb.from('messages').delete().eq('id', messageId).select();
     if (res.error) throw res.error;
+    if (!res.data || res.data.length === 0) {
+      throw new Error('Nachricht konnte nicht gelöscht werden (RLS oder nicht gefunden). Bitte die Migration supabase-add-chat-delete.sql einspielen.');
+    }
   }
 
   // Einen Chat komplett loeschen. Durch ON DELETE CASCADE auf
   // messages.chat_id verschwinden alle Nachrichten automatisch mit.
+  // Gleiche 0-rows-Behandlung wie bei deleteMessage.
   async function deleteChat(chatId) {
-    const res = await sb.from('chats').delete().eq('id', chatId);
+    const res = await sb.from('chats').delete().eq('id', chatId).select();
     if (res.error) throw res.error;
+    if (!res.data || res.data.length === 0) {
+      throw new Error('Chat konnte nicht gelöscht werden (RLS oder nicht gefunden). Bitte die Migration supabase-add-chat-delete.sql einspielen.');
+    }
   }
 
   // Callback bekommt ein Objekt { type: 'insert'|'delete', message }.
