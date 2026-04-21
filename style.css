@@ -334,7 +334,10 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 }
 .wdt-badge-green { background: var(--success); }
 .wdt-badge-warn  { background: #f59e0b; }
+.wdt-badge-unread { background: #ef4444; }
 .wdt-msg-row { display: flex; align-items: center; gap: 0.6rem; padding: 0.4rem 0; border-bottom: 1px solid var(--gray-100); }
+.wdt-msg-row-unread .wdt-msg-name { color: var(--gray-900); font-weight: 700; }
+.wdt-msg-row-unread .wdt-msg-preview { color: var(--gray-700); font-weight: 500; }
 .wdt-msg-avatar {
   width: 32px; height: 32px; border-radius: 50%;
   background: var(--primary-light); color: var(--primary);
@@ -1910,6 +1913,35 @@ input, select, textarea, button { font-family: inherit; font-size: inherit; }
 .chat-detail-input {
   display: flex; gap: 0.5rem;
   padding-top: 0.75rem; border-top: 1px solid var(--gray-200);
+}
+
+/* Kleiner × neben eigenen Chat-Bubbles zum Nachrichten-Loeschen.
+   Standardmaessig ausgeblendet, erscheint on-hover der ganzen Zeile.
+   Auf Touch-Geraeten (hover nicht verlaesslich) immer sichtbar. */
+.chat-msg-delete {
+  border: none; background: transparent; cursor: pointer;
+  color: var(--gray-400); font-size: 1.05rem; line-height: 1;
+  padding: 0 0.25rem; opacity: 0; transition: opacity 0.15s, color 0.15s;
+  align-self: center;
+}
+.chat-msg-row:hover .chat-msg-delete { opacity: 1; }
+.chat-msg-delete:hover { color: var(--danger); }
+@media (hover: none) {
+  .chat-msg-delete { opacity: 0.5; }
+}
+
+/* Delete-Button in der Chat-Liste (nur sichtbar on-hover bzw. Touch). */
+.chat-list-delete {
+  border: none; background: transparent; cursor: pointer;
+  color: var(--gray-400); font-size: 1.25rem; line-height: 1;
+  padding: 0.35rem 0.55rem; border-radius: 6px;
+  opacity: 0; transition: opacity 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.chat-list-row:hover .chat-list-delete { opacity: 1; }
+.chat-list-delete:hover { color: var(--danger); background: var(--gray-100); }
+@media (hover: none) {
+  .chat-list-delete { opacity: 0.5; }
 }
 
 /* ===== RESPONSIVE ===== */

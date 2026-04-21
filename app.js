@@ -303,6 +303,7 @@ function dbAppToFrontend(row) {
     jobId: row.job_id,
     jobTitle: j.title || '',
     jobCompany: j.company || '',
+    employerId: j.employer_id || null,
     name: name,
     initials: initials,
     email: p.email || '',
@@ -1307,38 +1308,49 @@ async function workerAcceptInvitation(appId) {
   if (!state.user || !window.DB) return;
   if (state._acceptingInvite) return;
   state._acceptingInvite = true;
+  // App-Daten VOR den DB-Calls cachen. Nach dem RPC wird der Job auf
+  // active=false gesetzt und faellt beim naechsten listJobs() raus —
+  // dann finden wir den Employer nicht mehr ueber JOBS. jobTitle/empId
+  // also hier einmal einfrieren.
+  var appBefore = (state._appsCache || []).find(a => String(a.id) === String(appId));
+  var jobBefore = appBefore ? JOBS.find(j => j.id === appBefore.jobId) : null;
+  var empId = (jobBefore && jobBefore.employerId)
+           || (appBefore && appBefore.employerId)
+           || null;
+  var jobTitleCached = (appBefore && appBefore.jobTitle)
+                   || (jobBefore && jobBefore.title)
+                   || '';
   try {
-    // Versuch 1: RPC (atomar, sicher)
-    // Versuch 2: Fallback auf einfaches Status-Update
+    var rpcWorked = false;
     if (DB.acceptInvitation) {
       try {
         await DB.acceptInvitation(appId);
+        rpcWorked = true;
       } catch (rpcErr) {
         console.warn('[workerAcceptInvitation] RPC fehlgeschlagen, Fallback:', rpcErr && rpcErr.message);
-        // Fallback: direktes Status-Update
-        await DB.updateApplicationStatus(appId, 'accepted');
       }
-    } else {
+    }
+    if (!rpcWorked) {
+      // Fallback ohne Migration: zumindest eigene Bewerbung umstellen.
+      // Nebeneffekte (andere Bewerbungen withdraw/reject, Job deaktivieren)
+      // macht sonst der RPC — in diesem Pfad bleiben sie offen.
       await DB.updateApplicationStatus(appId, 'accepted');
     }
     await loadApplicationsForUser();
     await loadJobsFromDB();
-    showToast('Einladung angenommen!');
     // Auto-Nachricht an den Arbeitgeber
-    var app = (state._appsCache || []).find(a => String(a.id) === String(appId));
-    var appJob = app ? JOBS.find(j => j.id === app.jobId) : null;
-    var empId = appJob ? appJob.employerId : null;
-    if (app && empId && DB.getOrCreateChat && DB.sendMessage) {
+    if (appBefore && empId && DB.getOrCreateChat && DB.sendMessage) {
       try {
         var chat = await DB.getOrCreateChat({
           workerId: state.user.id, employerId: empId,
-          jobId: app.jobId, jobTitle: app.jobTitle || (appJob && appJob.title) || ''
+          jobId: appBefore.jobId, jobTitle: jobTitleCached
         });
         await DB.sendMessage(chat.id, state.user.id,
-          'Hallo, ich habe die Einladung fuer "' + (app.jobTitle || '') + '" angenommen!');
+          'Hallo, ich habe die Einladung für "' + jobTitleCached + '" angenommen. Ich freue mich auf die Zusammenarbeit!');
         await loadChatsForUser();
       } catch (e) { console.error('[workerAcceptInvitation] chat', e); }
     }
+    showToast('Einladung angenommen!');
     render();
   } catch (e) {
     console.error('[workerAcceptInvitation]', e);
@@ -1351,13 +1363,42 @@ async function workerAcceptInvitation(appId) {
 async function workerDeclineInvitation(appId) {
   if (!state.user || !window.DB) return;
   if (!confirm('Einladung wirklich ablehnen? Du kannst dich nicht erneut für diese Stelle bewerben.')) return;
-  if (!DB.declineInvitation) {
-    showToast('Diese Funktion braucht die neueste DB-Migration.', 'error');
-    return;
-  }
+  // Gleicher Cache-Trick wie beim Annehmen.
+  var appBefore = (state._appsCache || []).find(a => String(a.id) === String(appId));
+  var jobBefore = appBefore ? JOBS.find(j => j.id === appBefore.jobId) : null;
+  var empId = (jobBefore && jobBefore.employerId)
+           || (appBefore && appBefore.employerId)
+           || null;
+  var jobTitleCached = (appBefore && appBefore.jobTitle)
+                   || (jobBefore && jobBefore.title)
+                   || '';
   try {
-    await DB.declineInvitation(appId);
+    var rpcWorked = false;
+    if (DB.declineInvitation) {
+      try {
+        await DB.declineInvitation(appId);
+        rpcWorked = true;
+      } catch (rpcErr) {
+        console.warn('[workerDeclineInvitation] RPC fehlgeschlagen, Fallback:', rpcErr && rpcErr.message);
+      }
+    }
+    if (!rpcWorked) {
+      // Fallback ohne Migration: den v2-Guard laesst Worker->withdrawn zu.
+      await DB.updateApplicationStatus(appId, 'withdrawn');
+    }
     await loadApplicationsForUser();
+    // Auto-Nachricht an den Arbeitgeber (gleich wie beim Annehmen).
+    if (appBefore && empId && DB.getOrCreateChat && DB.sendMessage) {
+      try {
+        var chat = await DB.getOrCreateChat({
+          workerId: state.user.id, employerId: empId,
+          jobId: appBefore.jobId, jobTitle: jobTitleCached
+        });
+        await DB.sendMessage(chat.id, state.user.id,
+          'Hallo, vielen Dank für die Einladung zu "' + jobTitleCached + '". Leider muss ich absagen.');
+        await loadChatsForUser();
+      } catch (e) { console.error('[workerDeclineInvitation] chat', e); }
+    }
     showToast('Einladung abgelehnt.');
     render();
   } catch (e) {
@@ -2514,7 +2555,7 @@ async function openChatById(chatId) {
       try { DB.sb.removeChannel(state._chatSub); } catch (_) {}
       state._chatSub = null;
     }
-    state._chatSub = DB.subscribeToMessages(chatId, (newMsg) => {
+    state._chatSub = DB.subscribeToMessages(chatId, (evt) => {
       // Guard: the user may have navigated away (or opened a different
       // chat) between the time this subscription was created and this
       // callback firing. Without the guard we'd mutate chat.messages
@@ -2522,25 +2563,41 @@ async function openChatById(chatId) {
       // which leaks memory and can flash stale data.
       if (state.activeChat !== chatId) return;
       if (!state.user) return;
-      var now = chat.messages.find(m => m.id === newMsg.id);
+      // Neues Format: { type: 'insert'|'delete', message }. Alt-Format
+      // (direkt das newMsg-Objekt) defensiv auch noch mitmachen.
+      var type = evt && evt.type ? evt.type : 'insert';
+      var msg  = evt && evt.message ? evt.message : evt;
+      if (type === 'delete') {
+        if (!msg || msg.id == null) return;
+        var delIdx = chat.messages.findIndex(m => String(m.id) === String(msg.id));
+        if (delIdx !== -1) {
+          chat.messages.splice(delIdx, 1);
+          var last = chat.messages[chat.messages.length - 1];
+          chat.lastMessage = last ? last.text : '';
+          chat.time = last ? last.time : '';
+          try { render(); } catch (_) {}
+        }
+        return;
+      }
+      var now = chat.messages.find(m => m.id === msg.id);
       if (now) return;
       // Optimistische Nachricht (gleicher Text, _optimistic Flag) ersetzen
       var optIdx = -1;
-      if (newMsg.sender_id === state.user.id) {
-        optIdx = chat.messages.findIndex(m => m._optimistic && m.text === (newMsg.text || ''));
+      if (msg.sender_id === state.user.id) {
+        optIdx = chat.messages.findIndex(m => m._optimistic && m.text === (msg.text || ''));
       }
       var realMsg = {
-        id: newMsg.id,
-        text: newMsg.text || '',
-        sent: newMsg.sender_id === state.user.id,
-        time: formatMessageTime(newMsg.created_at)
+        id: msg.id,
+        text: msg.text || '',
+        sent: msg.sender_id === state.user.id,
+        time: formatMessageTime(msg.created_at)
       };
       if (optIdx !== -1) {
         chat.messages[optIdx] = realMsg;
       } else {
         chat.messages.push(realMsg);
       }
-      chat.lastMessage = newMsg.text || '';
+      chat.lastMessage = msg.text || '';
       chat.time = chat.messages[chat.messages.length - 1].time;
       try { render(); } catch (_) {}
       setTimeout(() => {
@@ -2607,6 +2664,66 @@ async function sendChatMessage() {
     }, 50);
   } else {
     renderChatWidget();
+  }
+}
+
+// Eine einzelne (eigene) Nachricht loeschen. Wird ueber den kleinen
+// "Loeschen"-Button an der eigenen Bubble getriggert. RLS verhindert
+// dass jemand fremde Nachrichten erwischt.
+async function deleteChatMessage(messageId) {
+  if (!state.user || !window.DB || !DB.deleteMessage) return;
+  if (messageId == null) return;
+  if (!confirm('Diese Nachricht wirklich löschen? Sie verschwindet auch beim Gesprächspartner.')) return;
+  const chat = findChat(state.activeChat);
+  if (!chat) return;
+  // Optimistisch entfernen, damit die Bubble sofort weg ist.
+  const idx = chat.messages.findIndex(m => String(m.id) === String(messageId));
+  const backup = idx !== -1 ? chat.messages[idx] : null;
+  if (idx !== -1) chat.messages.splice(idx, 1);
+  const last = chat.messages[chat.messages.length - 1];
+  chat.lastMessage = last ? last.text : '';
+  chat.time = last ? last.time : '';
+  try { render(); } catch (_) {}
+  try {
+    await DB.deleteMessage(messageId);
+  } catch (e) {
+    console.error('[deleteChatMessage]', e);
+    // Rollback: Nachricht wieder einsetzen.
+    if (backup && idx !== -1) {
+      chat.messages.splice(idx, 0, backup);
+      const l2 = chat.messages[chat.messages.length - 1];
+      chat.lastMessage = l2 ? l2.text : '';
+      chat.time = l2 ? l2.time : '';
+    }
+    showToast('Nachricht konnte nicht gelöscht werden: ' + (e.message || ''), 'error');
+    try { render(); } catch (_) {}
+  }
+}
+
+// Einen kompletten Chat loeschen — verschwindet dadurch fuer beide
+// Seiten. Messages werden per ON DELETE CASCADE mitgenommen.
+async function deleteChat(chatId) {
+  if (!state.user || !window.DB || !DB.deleteChat) return;
+  if (chatId == null) return;
+  if (!confirm('Diesen Chat wirklich löschen? Alle Nachrichten werden auch beim Gesprächspartner entfernt.')) return;
+  try {
+    await DB.deleteChat(chatId);
+    // Lokalen Cache aufraeumen, damit die Liste sofort passt — das
+    // Realtime-Event ersetzt das spaeter ohnehin.
+    const container = state.user.role === 'employer' ? EMPLOYER_CHAT_MESSAGES : WORKER_CHAT_MESSAGES;
+    const idx = container.findIndex(c => String(c.id) === String(chatId));
+    if (idx !== -1) container.splice(idx, 1);
+    if (String(state.activeChat) === String(chatId)) state.activeChat = null;
+    // Subscription beenden, sie zeigt auf einen nicht mehr existenten Chat.
+    if (state._chatSub) {
+      try { DB.sb.removeChannel(state._chatSub); } catch (_) {}
+      state._chatSub = null;
+    }
+    showToast('Chat gelöscht.');
+    navigate('messages');
+  } catch (e) {
+    console.error('[deleteChat]', e);
+    showToast('Chat konnte nicht gelöscht werden: ' + (e.message || ''), 'error');
   }
 }
 
@@ -4005,7 +4122,13 @@ function renderWorkerDashboard() {
   const steps   = getProfileSteps();
   const pct     = calcProfilePct();
   const todo    = steps.filter(s => !s.done);
-  const msgs    = WORKER_CHAT_MESSAGES.slice(0, 3);
+  // Ungelesene zuerst zeigen, damit neue Nachrichten auf dem Dashboard
+  // sichtbar werden statt dauerhaft unter aelteren zu verschwinden.
+  const msgs    = WORKER_CHAT_MESSAGES
+    .slice()
+    .sort((a, b) => (b.unread ? 1 : 0) - (a.unread ? 1 : 0))
+    .slice(0, 3);
+  const unreadMsgs = WORKER_CHAT_MESSAGES.filter(c => c && c.unread).length;
   const saved   = JOBS.filter(j => state.savedJobs.includes(j.id)).slice(0, 3);
 
   const pctColor = pct < 40 ? 'var(--danger)' : pct < 75 ? '#f59e0b' : 'var(--success)';
@@ -4054,14 +4177,14 @@ function renderWorkerDashboard() {
               <div class="wdt-header">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 <span>Nachrichten</span>
-                <span class="wdt-badge">${msgs.length}</span>
+                <span class="wdt-badge${unreadMsgs > 0 ? ' wdt-badge-unread' : ''}">${unreadMsgs > 0 ? unreadMsgs + ' neu' : WORKER_CHAT_MESSAGES.length}</span>
               </div>
               ${msgs.length > 0 ? msgs.map(m => `
-                <div class="wdt-msg-row">
+                <div class="wdt-msg-row${m.unread ? ' wdt-msg-row-unread' : ''}">
                   <div class="wdt-msg-avatar">${m.partnerInitials}</div>
                   <div class="wdt-msg-info">
-                    <div class="wdt-msg-name">${escapeHtml(m.partnerName)}</div>
-                    <div class="wdt-msg-preview">${escapeHtml(m.messages[m.messages.length-1]?.text?.slice(0,45) || '')}…</div>
+                    <div class="wdt-msg-name">${escapeHtml(m.partnerName)}${m.unread ? ' <span style="display:inline-block;width:7px;height:7px;background:var(--primary);border-radius:50%;margin-left:4px;vertical-align:middle"></span>' : ''}</div>
+                    <div class="wdt-msg-preview">${escapeHtml((m.lastMessage || '').slice(0, 60))}${(m.lastMessage || '').length > 60 ? '…' : ''}</div>
                   </div>
                 </div>`).join('') : `<p class="wdt-empty">Noch keine Nachrichten</p>`}
               <div class="wdt-link">Alle Nachrichten →</div>
@@ -4170,6 +4293,10 @@ function removeRef(i) {
 }
 
 function renderWorkerSidebar(active) {
+  var _unread = (WORKER_CHAT_MESSAGES || []).filter(function(c) { return c && c.unread; }).length;
+  var _unreadBadge = _unread > 0
+    ? ' <span style="background:#ef4444;color:#fff;font-size:0.68rem;font-weight:700;padding:0.1rem 0.45rem;border-radius:100px;margin-left:0.4rem">' + _unread + '</span>'
+    : '';
   return `
     <div class="dashboard-sidebar">
       <nav class="sidebar-nav">
@@ -4179,7 +4306,7 @@ function renderWorkerSidebar(active) {
         <a href="#" class="${active==='applications'?'active':''}" data-action="nav" data-page="applications">Bewerbungen</a>
         <a href="#" class="${active==='cv'?'active':''}" data-action="nav" data-page="cv-builder">Lebenslauf</a>
         <div class="divider"></div>
-        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten</a>
+        <a href="#" class="${active==='messages'?'active':''}" data-action="nav" data-page="messages">Nachrichten${_unreadBadge}</a>
         <a href="#" class="${active==='reviews'?'active':''}" data-action="nav" data-page="reviews">Bewertungen</a>
       </nav>
       <div class="divider" style="margin:0.25rem 0"></div>
@@ -5200,12 +5327,42 @@ function renderEmployerDashboard() {
               <div class="stat-value">${totalApps}</div>
               <div class="stat-label">Bewerbungen</div>
             </div>
-            <div class="stat-card employer-stat">
+            <div class="stat-card employer-stat" data-action="nav" data-page="messages" style="cursor:pointer">
               <div class="stat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
               <div class="stat-value">${unreadChats}</div>
               <div class="stat-label">Neue Nachrichten</div>
             </div>
           </div>
+
+          ${(() => {
+            // Neueste Chats direkt auf dem Dashboard anzeigen damit der
+            // Employer frische Bewerber-Antworten (z.B. "Einladung angenommen")
+            // sofort sieht, statt erst in die Nachrichten-Seite klicken zu muessen.
+            const recent = (EMPLOYER_CHAT_MESSAGES || [])
+              .slice()
+              .sort((a, b) => (b.unread ? 1 : 0) - (a.unread ? 1 : 0))
+              .slice(0, 3);
+            if (recent.length === 0) return '';
+            return `
+            <div class="card" style="margin-bottom:1.5rem">
+              <div style="padding:0.85rem 1rem;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;justify-content:space-between">
+                <strong style="font-size:0.95rem">Nachrichten${unreadChats > 0 ? ` <span class="badge badge-danger" style="margin-left:0.35rem">${unreadChats} neu</span>` : ''}</strong>
+                <a href="#" data-action="nav" data-page="messages" style="font-size:0.8rem;color:var(--primary)">Alle ansehen →</a>
+              </div>
+              ${recent.map(c => `
+                <div class="chat-list-row" style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer" data-action="navToChat" data-chat-id="${c.id}">
+                  <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline">
+                      <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}${c.unread ? ' <span style="display:inline-block;width:7px;height:7px;background:var(--primary);border-radius:50%;margin-left:4px;vertical-align:middle"></span>' : ''}</strong>
+                      <span style="font-size:0.72rem;color:var(--gray-500);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                    </div>
+                    <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml((c.lastMessage || '').slice(0, 80))}</div>
+                  </div>
+                </div>
+              `).join('')}
+            </div>`;
+          })()}
 
           ${hasJobs ? `
           <h3 style="font-size:1.1rem;margin-bottom:1rem">Deine Anzeigen</h3>
@@ -5895,6 +6052,9 @@ function renderChatDetail() {
               <strong style="font-size:0.95rem;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(chat.partnerName)}</strong>
               <div style="font-size:0.78rem;color:var(--gray-500);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(chat.jobTitle)}</div>
             </div>
+            ${window.DB && DB.deleteChat ? `
+              <button class="btn btn-sm btn-outline" style="color:var(--danger);border-color:var(--danger);flex-shrink:0" data-action="deleteChat" data-chat-id="${chat.id}" title="Chat für beide Seiten löschen">Chat löschen</button>
+            ` : ''}
           </div>
 
           <!-- Nachrichten -->
@@ -5905,7 +6065,10 @@ function renderChatDetail() {
                 Noch keine Nachrichten. Schreib ${escapeHtml(chat.partnerName?.split(' ')[0])} eine erste Nachricht!
               </div>` : ''}
             ${state._activeChatLoading === chat.id ? '' : chat.messages.map(m => `
-              <div style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'}">
+              <div class="chat-msg-row" style="display:flex;justify-content:${m.sent ? 'flex-end' : 'flex-start'};align-items:flex-end;gap:0.35rem">
+                ${m.sent && m.id != null && !m._optimistic && window.DB && DB.deleteMessage ? `
+                  <button class="chat-msg-delete" data-action="deleteChatMessage" data-msg-id="${m.id}" title="Nachricht löschen" aria-label="Nachricht löschen">×</button>
+                ` : ''}
                 <div class="chat-bubble ${m.sent ? 'chat-bubble-sent' : 'chat-bubble-received'}" style="background:${m.sent ? 'var(--primary)' : 'var(--gray-100)'};color:${m.sent ? '#fff' : 'inherit'};border-radius:${m.sent ? '14px 14px 4px 14px' : '14px 14px 14px 4px'}">
                   ${escapeHtml(m.text)}
                   <div style="font-size:0.68rem;opacity:0.6;margin-top:0.25rem;text-align:right">${m.time}</div>
@@ -5959,17 +6122,22 @@ function renderMessages() {
           </div>
           <div class="card" style="max-width:620px">
             ${chatList.map(c => `
-              <div style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:background 0.15s" data-on-hover="chatItem"  data-action="navToChat" data-chat-id="${c.id}">
-                <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
-                <div style="flex:1;min-width:0">
-                  <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
-                    <span style="font-size:0.72rem;color:var(--gray-500);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+              <div class="chat-list-row" style="display:flex;align-items:center;gap:0.75rem;padding:0.625rem 1rem;border-bottom:1px solid var(--gray-100);transition:background 0.15s">
+                <div style="display:flex;align-items:center;gap:0.75rem;flex:1;min-width:0;cursor:pointer" data-on-hover="chatItem" data-action="navToChat" data-chat-id="${c.id}">
+                  <div class="user-avatar" style="width:36px;height:36px;font-size:0.75rem;flex-shrink:0">${c.partnerInitials}</div>
+                  <div style="flex:1;min-width:0">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline">
+                      <strong style="font-size:0.85rem">${escapeHtml(c.partnerName)}</strong>
+                      <span style="font-size:0.72rem;color:var(--gray-500);flex-shrink:0;margin-left:0.5rem">${c.time}</span>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
+                    <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
                   </div>
-                  <div style="font-size:0.75rem;color:var(--primary)">${escapeHtml(c.jobTitle)}</div>
-                  <div style="font-size:0.78rem;color:var(--gray-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(c.lastMessage)}</div>
+                  ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
                 </div>
-                ${c.unread ? '<div style="width:8px;height:8px;background:var(--primary);border-radius:50%;flex-shrink:0"></div>' : ''}
+                ${window.DB && DB.deleteChat ? `
+                  <button class="chat-list-delete" data-action="deleteChat" data-chat-id="${c.id}" title="Chat löschen" aria-label="Chat löschen">×</button>
+                ` : ''}
               </div>
             `).join('')}
             ${chatList.length === 0 ? `
@@ -7104,6 +7272,16 @@ if (typeof registerAction === 'function') {
   registerAction('openApplicantChat', (el) => openApplicantChat(parseInt(el.dataset.appId)));
   registerAction('workerAcceptInvitation', (el) => workerAcceptInvitation(parseInt(el.dataset.appId)));
   registerAction('workerDeclineInvitation', (el) => workerDeclineInvitation(parseInt(el.dataset.appId)));
+
+  // Chat-/Nachrichten-Loeschen (Worker- und Employer-Seite identisch)
+  registerAction('deleteChatMessage', (el, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    deleteChatMessage(parseInt(el.dataset.msgId));
+  });
+  registerAction('deleteChat', (el, e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    deleteChat(parseInt(el.dataset.chatId));
+  });
 
   // Reviews + Support
   registerAction('submitReview', (el) => submitReview(el));

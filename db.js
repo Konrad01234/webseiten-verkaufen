@@ -297,11 +297,34 @@
     return res.data;
   }
 
+  // Eine eigene Nachricht loeschen. Die DELETE-Policy (msgs_delete_sender)
+  // erzwingt dass nur der Absender das darf — der Client muss das nicht
+  // nochmal pruefen. Wenn die Zeile nicht existiert oder fremd ist, liefert
+  // Supabase ein leeres Ergebnis ohne Fehler.
+  async function deleteMessage(messageId) {
+    const res = await sb.from('messages').delete().eq('id', messageId);
+    if (res.error) throw res.error;
+  }
+
+  // Einen Chat komplett loeschen. Durch ON DELETE CASCADE auf
+  // messages.chat_id verschwinden alle Nachrichten automatisch mit.
+  async function deleteChat(chatId) {
+    const res = await sb.from('chats').delete().eq('id', chatId);
+    if (res.error) throw res.error;
+  }
+
+  // Callback bekommt ein Objekt { type: 'insert'|'delete', message }.
+  // `message` ist bei INSERT die neue Row, bei DELETE der Stub den Postgres
+  // Realtime schickt (nur id ist zuverlaessig belegt wenn REPLICA IDENTITY
+  // nicht FULL ist — fuer unsere UI reicht das).
   function subscribeToMessages(chatId, cb) {
     return sb.channel('messages-' + chatId)
       .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages', filter: 'chat_id=eq.' + chatId },
-        payload => cb(payload.new))
+        payload => cb({ type: 'insert', message: payload.new }))
+      .on('postgres_changes',
+        { event: 'DELETE', schema: 'public', table: 'messages', filter: 'chat_id=eq.' + chatId },
+        payload => cb({ type: 'delete', message: payload.old }))
       .subscribe();
   }
 
@@ -400,6 +423,7 @@
     acceptInvitation, declineInvitation,
     // chats + messages
     getOrCreateChat, listChatsForUser, getMessages, sendMessage,
+    deleteMessage, deleteChat,
     subscribeToMessages, subscribeToChatList,
     // reviews
     getReviewsFor, createReview,
