@@ -12,10 +12,15 @@ export default function HomePage() {
             alt="Gegrillter Burger mit Käse und Salat"
             fill
             priority
-            className="object-cover opacity-40"
+            className="object-cover object-right"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-concrete via-brand-concrete/85 to-transparent" />
-          <div className="absolute inset-0 bg-grid-steel [background-size:40px_40px]" />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, #121212 0%, rgba(18,18,18,0.85) 30%, rgba(18,18,18,0.35) 55%, transparent 75%), linear-gradient(180deg, transparent 50%, rgba(18,18,18,0.6) 100%)",
+            }}
+          />
         </div>
 
         <div className="relative mx-auto grid min-h-[82vh] max-w-7xl items-center px-6 py-24">
@@ -27,7 +32,10 @@ export default function HomePage() {
               </span>
             </div>
 
-            <h1 className="font-display text-6xl leading-[0.9] text-brand-bone md:text-8xl lg:text-9xl">
+            <h1
+              className="font-display text-6xl leading-[0.9] text-brand-bone md:text-8xl lg:text-9xl"
+              style={{ textShadow: "0 4px 24px rgba(0,0,0,0.9), 0 1px 2px rgba(0,0,0,0.8)" }}
+            >
               FLAME.
               <br />
               GRILLED.
@@ -35,7 +43,10 @@ export default function HomePage() {
               <span className="text-brand-red">HANDMADE.</span>
             </h1>
 
-            <p className="mt-8 max-w-xl text-lg text-brand-bone/80 md:text-xl">
+            <p
+              className="mt-8 max-w-xl text-lg text-brand-bone/90 md:text-xl"
+              style={{ textShadow: "0 2px 12px rgba(0,0,0,0.85)" }}
+            >
               Keine Franchise. Keine Kompromisse. Nur ehrliche Burger aus der
               Werkstatt der Brüder — vom Dry-Aged-Patty bis zum Brioche-Bun.
             </p>
@@ -109,27 +120,39 @@ export default function HomePage() {
               Und unsere Pommes schneiden wir von Hand. Punkt.
             </p>
 
-            <div className="mt-10 grid grid-cols-2 gap-4">
-              <FeatureBox
-                num="01"
-                title="Lokale Herkunft"
-                text="Alle Zutaten aus der Region, wenn irgend möglich."
-              />
-              <FeatureBox
-                num="02"
-                title="Flamme, nicht Platte"
-                text="Holzkohle-Grill für den echten Smokeyness-Kick."
-              />
-              <FeatureBox
-                num="03"
-                title="Handgemacht"
-                text="Von der Sauce bis zum Bun — alles hausgemacht."
-              />
-              <FeatureBox
-                num="04"
-                title="Ehrlich"
-                text="Keine Zusätze, keine Geschmacksverstärker."
-              />
+            <div className="mt-10 border-l-[3px] border-brand-red pl-5 font-display text-2xl leading-tight tracking-wide text-brand-bone md:text-3xl">
+              Keine App. Keine Pinzetten-Deko.
+              <br />
+              Nur <span className="text-brand-yellow">Feuer, Fleisch &amp; Brot.</span>
+            </div>
+
+            <div className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-2 font-display text-2xl tracking-[0.2em] text-brand-bone">
+              <span>LOKAL</span>
+              <span className="font-bold text-brand-red/90">/</span>
+              <span>HANDMADE</span>
+              <span className="font-bold text-brand-red/90">/</span>
+              <span>FLAMME</span>
+              <span className="font-bold text-brand-red/90">/</span>
+              <span>EHRLICH</span>
+            </div>
+
+            <div
+              className="mt-10 inline-block border-[3px] border-double border-brand-yellow px-7 py-3.5 text-brand-yellow opacity-90"
+              style={{
+                transform: "rotate(-4deg)",
+                outline: "1px solid #F9C21A",
+                outlineOffset: "4px",
+              }}
+            >
+              <div className="mono text-center text-[0.7rem] uppercase tracking-[0.35em]">
+                ★ Genehmigt in der Werkstatt ★
+              </div>
+              <div className="my-1 text-center font-display text-3xl tracking-[0.18em] leading-none">
+                BROTHERS
+              </div>
+              <div className="mono text-center text-[0.65rem] uppercase tracking-[0.3em] opacity-85">
+                Berlin · Seit 2014
+              </div>
             </div>
           </div>
         </div>
@@ -177,22 +200,3 @@ function Stat({ value, label }: { value: string; label: string }) {
   );
 }
 
-function FeatureBox({
-  num,
-  title,
-  text,
-}: {
-  num: string;
-  title: string;
-  text: string;
-}) {
-  return (
-    <div className="border border-brand-steel bg-brand-concrete-light p-5">
-      <div className="mono text-xs text-brand-yellow">{num}</div>
-      <div className="mt-1 font-display text-xl tracking-wider text-brand-bone">
-        {title}
-      </div>
-      <div className="mt-2 text-sm text-brand-bone/70">{text}</div>
-    </div>
-  );
-}
