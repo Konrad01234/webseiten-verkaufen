@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Burger Brothers | Handgemachte Burger aus Berlin</title>
+  <meta name="description" content="Rauchige Patties, knusprige Buns, handgeschnittene Pommes. Burger Brothers - urbane Burger-Manufaktur in Berlin." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav-wrap">
+    <div class="hazard-stripes"></div>
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <span class="logo-box">BB</span>
+        <div>
+          <div class="logo-text-1">BURGER</div>
+          <div class="logo-text-2">BROTHERS</div>
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="menu.html">Menü</a></li>
+        <li><a href="kontakt.html">Kontakt</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Menü umschalten" onclick="document.getElementById('navLinks').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero bg-concrete">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=2000&q=80" alt="Gegrillter Burger" />
+      <div class="hero-overlay"></div>
+      <div class="bg-grid" style="position:absolute;inset:0;"></div>
+    </div>
+    <div class="container hero-content">
+      <div class="hero-kicker">
+        <span class="line"></span>
+        <span class="text">Seit 2014 · Berlin</span>
+      </div>
+      <h1>FLAME.<br>GRILLED.<br><span class="red">HANDMADE.</span></h1>
+      <p class="lead">Keine Franchise. Keine Kompromisse. Nur ehrliche Burger aus der Werkstatt der Brüder — vom Dry-Aged-Patty bis zum Brioche-Bun.</p>
+      <div class="hero-cta">
+        <a href="menu.html" class="btn-primary">Zur Speisekarte →</a>
+        <a href="kontakt.html" class="btn-outline">Öffnungszeiten</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Rindfleisch aus Brandenburg</div>
+        </div>
+        <div>
+          <div class="stat-value">48H</div>
+          <div class="stat-label">Brioche Fermentation</div>
+        </div>
+        <div>
+          <div class="stat-value">11</div>
+          <div class="stat-label">Jahre Burger-Handwerk</div>
+        </div>
+      </div>
+    </div>
+    <div class="hazard-stripes" style="position:absolute;bottom:0;left:0;right:0;"></div>
+  </section>
+
+  <!-- FEATURE STRIPE -->
+  <section class="feature-stripe">
+    <div class="container items">
+      <span>★ DRY-AGED BEEF</span>
+      <span>★ HOUSE-BAKED BUNS</span>
+      <span>★ HAND-CUT FRIES</span>
+      <span>★ CRAFT SAUCEN</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section bg-concrete">
+    <div class="container about">
+      <div class="about-image">
+        <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80" alt="Koch am Grill" />
+        <div class="badge-corner"></div>
+        <div class="badge-num">11</div>
+        <div class="badge-sub">Jahre</div>
+      </div>
+      <div class="about-text">
+        <div class="section-kicker">/ Unsere Philosophie</div>
+        <h2 class="section-title">ROHES HANDWERK.<br><span class="red">KEIN SCHNICKSCHNACK.</span></h2>
+        <p>Unsere Werkstatt sieht aus wie eine: Beton, Stahl, offene Flammen. Wir glauben, dass der beste Burger nichts verstecken muss — weder seine Zutaten noch seine Geschichte.</p>
+        <p>Deshalb kommt unser Fleisch von einem Brandenburger Metzger, der seinen Namen nennt. Unsere Buns backen wir jeden Morgen frisch. Und unsere Pommes schneiden wir von Hand. Punkt.</p>
+        <div class="feature-grid">
+          <div class="feature-box">
+            <div class="num">01</div>
+            <div class="title">Lokale Herkunft</div>
+            <div class="text">Alle Zutaten aus der Region, wenn irgend möglich.</div>
+          </div>
+          <div class="feature-box">
+            <div class="num">02</div>
+            <div class="title">Flamme, nicht Platte</div>
+            <div class="text">Holzkohle-Grill für den echten Smokeyness-Kick.</div>
+          </div>
+          <div class="feature-box">
+            <div class="num">03</div>
+            <div class="title">Handgemacht</div>
+            <div class="text">Von der Sauce bis zum Bun — alles hausgemacht.</div>
+          </div>
+          <div class="feature-box">
+            <div class="num">04</div>
+            <div class="title">Ehrlich</div>
+            <div class="text">Keine Zusätze, keine Geschmacksverstärker.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section bg-metal">
+    <div class="bg-image">
+      <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?auto=format&fit=crop&w=2000&q=80" alt="" />
+    </div>
+    <div class="container">
+      <div class="section-kicker">/ Ready to eat?</div>
+      <h2 class="section-title" style="text-align:center;">5 SIGNATURE BURGER.<br><span class="red">EIN BESUCH.</span></h2>
+      <p style="max-width:560px;margin:0 auto 2rem;text-align:center;color:rgba(243,239,232,0.8);font-size:1.125rem;">
+        Schau dir unsere Karte an — jeder Burger hat seine eigene Persönlichkeit.
+      </p>
+      <a href="menu.html" class="btn-primary">Menü ansehen →</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="hazard-stripes"></div>
+    <div class="container footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:1rem;">
+          <span class="logo-box">BB</span>
+          <div>
+            <div class="logo-text-1">BURGER</div>
+            <div class="logo-text-2">BROTHERS</div>
+          </div>
+        </div>
+        <p style="max-width:380px;font-size:0.875rem;color:rgba(243,239,232,0.7);">
+          Hand-gemachte Burger aus regionalen Zutaten. Mitten in der Stadt, roh im Look, ehrlich im Geschmack.
+        </p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="menu.html">Menü</a></li>
+          <li><a href="kontakt.html">Kontakt & Öffnungszeiten</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Find Us</h4>
+        <address>
+          Fabrikstraße 42<br>
+          10117 Berlin<br>
+          <span class="mono">+49 30 1234 5678</span><br>
+          <span class="mono">hallo@burger-brothers.de</span>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container row">
+        <div id="year">© Burger Brothers. All rights reserved.</div>
+        <div class="mono">MADE WITH FIRE &amp; IRON</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = '© ' + new Date().getFullYear() + ' Burger Brothers. All rights reserved.';
+  </script>
+</body>
+</html>

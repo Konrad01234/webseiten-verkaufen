@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontakt & Öffnungszeiten | Burger Brothers</title>
+  <meta name="description" content="Besuch uns in der Werkstatt - Adresse, Öffnungszeiten und Anfahrt zu Burger Brothers in Berlin-Mitte." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="nav-wrap">
+    <div class="hazard-stripes"></div>
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <span class="logo-box">BB</span>
+        <div>
+          <div class="logo-text-1">BURGER</div>
+          <div class="logo-text-2">BROTHERS</div>
+        </div>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="menu.html">Menü</a></li>
+        <li><a href="kontakt.html" class="active">Kontakt</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Menü umschalten" onclick="document.getElementById('navLinks').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <section class="page-header bg-metal">
+    <div class="bg-grid" style="position:absolute;inset:0;opacity:0.6;"></div>
+    <div class="container" style="position:relative;">
+      <div class="section-kicker">/ Kontakt</div>
+      <h1>BESUCH UNS IN DER <span class="red">WERKSTATT</span></h1>
+      <p>Mitten in Berlin-Mitte, keine Ecke für schüchterne Esser. Kein Tischreservierungs-Zirkus — einfach vorbeikommen, warten ist Teil des Erlebnisses.</p>
+    </div>
+    <div class="hazard-stripes" style="position:absolute;bottom:0;left:0;right:0;"></div>
+  </section>
+
+  <!-- CONTACT GRID -->
+  <section class="section bg-concrete">
+    <div class="container contact-grid">
+
+      <!-- LEFT: Contact cards -->
+      <div style="display:flex;flex-direction:column;gap:2rem;">
+        <div class="contact-card">
+          <div class="num">/ 01</div>
+          <div class="dot"></div>
+          <h3>Adresse</h3>
+          <div class="lines">
+            <div>Fabrikstraße 42</div>
+            <div>10117 Berlin</div>
+            <div>Deutschland</div>
+          </div>
+        </div>
+
+        <div class="contact-card mono-accent">
+          <div class="num">/ 02</div>
+          <div class="dot"></div>
+          <h3>Telefon</h3>
+          <div class="lines">
+            <div>+49 30 1234 5678</div>
+          </div>
+        </div>
+
+        <div class="contact-card mono-accent">
+          <div class="num">/ 03</div>
+          <div class="dot"></div>
+          <h3>E-Mail</h3>
+          <div class="lines">
+            <div>hallo@burger-brothers.de</div>
+          </div>
+        </div>
+
+        <div class="contact-card">
+          <div class="num">/ 04</div>
+          <div class="dot"></div>
+          <h3>Anfahrt</h3>
+          <div class="lines">
+            <div>U-Bahn: Rosenthaler Platz (U8) — 3 Min</div>
+            <div>S-Bahn: Hackescher Markt (S5/S7) — 8 Min</div>
+            <div>Parken: Parkhaus Torstraße — 5 Min</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Opening hours -->
+      <div>
+        <div class="hours-card">
+          <div class="hours-head">
+            <div class="section-kicker" style="margin-bottom:0;">/ Opening Hours</div>
+            <h2>ÖFFNUNGSZEITEN</h2>
+          </div>
+          <ul class="hours-list">
+            <li class="closed"><span class="day">Mo</span><span class="time">Geschlossen</span></li>
+            <li><span class="day">Di</span><span class="time">12:00 — 22:00</span></li>
+            <li><span class="day">Mi</span><span class="time">12:00 — 22:00</span></li>
+            <li><span class="day">Do</span><span class="time">12:00 — 23:00</span></li>
+            <li class="highlight"><span class="day">Fr</span><span class="time">12:00 — 00:00</span></li>
+            <li class="highlight"><span class="day">Sa</span><span class="time">11:00 — 00:00</span></li>
+            <li><span class="day">So</span><span class="time">11:00 — 22:00</span></li>
+          </ul>
+          <div class="hours-foot">Küchenschluss jeweils 30 Min vor Ladenschluss.</div>
+        </div>
+
+        <div class="note-box">
+          <div class="icon">⚠</div>
+          <div>
+            <div class="title">HINWEIS</div>
+            <p>An Feiertagen können sich die Öffnungszeiten ändern. Ruf uns im Zweifel kurz an — wir beißen nicht. Meistens.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MAP SECTION -->
+  <section class="map-section">
+    <img src="https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=2000&q=80" alt="Berlin Street-Food-Atmosphäre" />
+    <div class="gradient"></div>
+    <div class="bg-grid" style="position:absolute;inset:0;opacity:0.4;"></div>
+    <div class="container content">
+      <div>
+        <div class="section-kicker">/ Pin drop</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);color:var(--bone);margin-top:0.5rem;">FABRIKSTRASSE 42</div>
+        <div class="mono" style="margin-top:0.5rem;font-size:0.85rem;color:rgba(243,239,232,0.6);">52.5244° N · 13.4105° E</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="hazard-stripes"></div>
+    <div class="container footer-grid">
+      <div>
+        <div class="logo" style="margin-bottom:1rem;">
+          <span class="logo-box">BB</span>
+          <div>
+            <div class="logo-text-1">BURGER</div>
+            <div class="logo-text-2">BROTHERS</div>
+          </div>
+        </div>
+        <p style="max-width:380px;font-size:0.875rem;color:rgba(243,239,232,0.7);">
+          Hand-gemachte Burger aus regionalen Zutaten. Mitten in der Stadt, roh im Look, ehrlich im Geschmack.
+        </p>
+      </div>
+      <div>
+        <h4>Navigation</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="menu.html">Menü</a></li>
+          <li><a href="kontakt.html">Kontakt & Öffnungszeiten</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Find Us</h4>
+        <address>
+          Fabrikstraße 42<br>
+          10117 Berlin<br>
+          <span class="mono">+49 30 1234 5678</span><br>
+          <span class="mono">hallo@burger-brothers.de</span>
+        </address>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="container row">
+        <div id="year">© Burger Brothers. All rights reserved.</div>
+        <div class="mono">MADE WITH FIRE &amp; IRON</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = '© ' + new Date().getFullYear() + ' Burger Brothers. All rights reserved.';
+  </script>
+</body>
+</html>
