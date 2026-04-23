@@ -674,7 +674,15 @@ h1, h2, h3, .font-display {
   .section { padding: 4rem 0; }
 }
 
-</style>
+
+/* ---------- Single-Page Smooth Scroll ---------- */
+html { scroll-behavior: smooth; }
+section[id] { scroll-margin-top: 80px; }
+
+/* ensure single-file anchors don't get hidden behind sticky nav */
+.spacer-between { height: 0; }
+
+  </style>
 </head>
 <body>
 
@@ -682,7 +690,7 @@ h1, h2, h3, .font-display {
   <header class="nav-wrap">
     <div class="hazard-stripes"></div>
     <nav class="nav">
-      <a href="index.html" class="logo">
+      <a href="#home" class="logo">
         <span class="logo-box">BB</span>
         <div>
           <div class="logo-text-1">BURGER</div>
@@ -690,9 +698,9 @@ h1, h2, h3, .font-display {
         </div>
       </a>
       <ul class="nav-links" id="navLinks">
-        <li><a href="index.html" class="active">Home</a></li>
-        <li><a href="menu.html">Menü</a></li>
-        <li><a href="kontakt.html">Kontakt</a></li>
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#menu">Menü</a></li>
+        <li><a href="#kontakt">Kontakt</a></li>
       </ul>
       <button class="nav-toggle" aria-label="Menü umschalten" onclick="document.getElementById('navLinks').classList.toggle('open')">
         <span></span><span></span><span></span>
@@ -700,8 +708,8 @@ h1, h2, h3, .font-display {
     </nav>
   </header>
 
-  <!-- HERO -->
-  <section class="hero bg-concrete">
+  <!-- ============ HOME ============ -->
+  <section id="home" class="hero bg-concrete">
     <div class="hero-bg">
       <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=2000&q=80" alt="Gegrillter Burger" />
       <div class="hero-overlay"></div>
@@ -715,8 +723,8 @@ h1, h2, h3, .font-display {
       <h1>FLAME.<br>GRILLED.<br><span class="red">HANDMADE.</span></h1>
       <p class="lead">Keine Franchise. Keine Kompromisse. Nur ehrliche Burger aus der Werkstatt der Brüder — vom Dry-Aged-Patty bis zum Brioche-Bun.</p>
       <div class="hero-cta">
-        <a href="menu.html" class="btn-primary">Zur Speisekarte →</a>
-        <a href="kontakt.html" class="btn-outline">Öffnungszeiten</a>
+        <a href="#menu" class="btn-primary">Zur Speisekarte →</a>
+        <a href="#kontakt" class="btn-outline">Öffnungszeiten</a>
       </div>
       <div class="hero-stats">
         <div>
@@ -736,7 +744,6 @@ h1, h2, h3, .font-display {
     <div class="hazard-stripes" style="position:absolute;bottom:0;left:0;right:0;"></div>
   </section>
 
-  <!-- FEATURE STRIPE -->
   <section class="feature-stripe">
     <div class="container items">
       <span>★ DRY-AGED BEEF</span>
@@ -746,7 +753,6 @@ h1, h2, h3, .font-display {
     </div>
   </section>
 
-  <!-- ABOUT -->
   <section class="section bg-concrete">
     <div class="container about">
       <div class="about-image">
@@ -785,18 +791,224 @@ h1, h2, h3, .font-display {
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="cta-section bg-metal">
-    <div class="bg-image">
-      <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?auto=format&fit=crop&w=2000&q=80" alt="" />
+  <!-- ============ MENU ============ -->
+  <section id="menu" class="page-header bg-metal">
+    <div class="bg-grid" style="position:absolute;inset:0;opacity:0.6;"></div>
+    <div class="container" style="position:relative;">
+      <div class="section-kicker">/ Unsere Speisekarte</div>
+      <h1>DIE <span class="red">FÜNF</span> SIGNATURE BURGER</h1>
+      <p>Fünf Burger. Fünf Geschichten. Jeder hat seinen Platz auf unserer Karte verdient. Zu jedem gibt's handgeschnittene Pommes & ein kühles Bier auf Wunsch.</p>
     </div>
+    <div class="hazard-stripes" style="position:absolute;bottom:0;left:0;right:0;"></div>
+  </section>
+
+  <section class="section bg-concrete">
     <div class="container">
-      <div class="section-kicker">/ Ready to eat?</div>
-      <h2 class="section-title" style="text-align:center;">5 SIGNATURE BURGER.<br><span class="red">EIN BESUCH.</span></h2>
-      <p style="max-width:560px;margin:0 auto 2rem;text-align:center;color:rgba(243,239,232,0.8);font-size:1.125rem;">
-        Schau dir unsere Karte an — jeder Burger hat seine eigene Persönlichkeit.
+      <div class="burger-list">
+
+        <article class="burger-row">
+          <div class="burger-image-wrap">
+            <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=1200&q=80" alt="The Classic" />
+            <div class="burger-badge">Signature</div>
+            <div class="burger-num-stamp">No. 01</div>
+          </div>
+          <div>
+            <div class="burger-num-big">01</div>
+            <h2 class="burger-title">The Classic</h2>
+            <div class="burger-tagline">Wie alles angefangen hat</div>
+            <p class="burger-desc">Unser Signature-Burger. 180g Dry-Aged Beef, Cheddar, knackiger Salat, hausgemachte Brothers-Sauce.</p>
+            <ul class="ingredients">
+              <li>180g Dry-Aged Beef</li><li>Cheddar</li><li>Eisbergsalat</li><li>Tomate</li><li>Rote Zwiebel</li><li>Brothers-Sauce</li>
+            </ul>
+            <div class="burger-price-row">
+              <div><div class="label">Preis</div><div class="price">13,50 €</div></div>
+              <div class="divider"></div>
+              <div class="note">Serviert mit<br>Brioche-Bun & Beilage</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="burger-row reverse">
+          <div class="burger-image-wrap">
+            <img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=1200&q=80" alt="Smoke House" />
+            <div class="burger-badge">Hot</div>
+            <div class="burger-num-stamp">No. 02</div>
+          </div>
+          <div>
+            <div class="burger-num-big">02</div>
+            <h2 class="burger-title">Smoke House</h2>
+            <div class="burger-tagline">Rauchig. Kräftig. Kompromisslos.</div>
+            <p class="burger-desc">Langsam geschmortes Pulled Beef, geräucherter Gouda, knuspriger Bacon und unsere Smoked-BBQ-Sauce.</p>
+            <ul class="ingredients">
+              <li>180g Patty + Pulled Beef</li><li>Smoked Gouda</li><li>Crispy Bacon</li><li>Fried Onions</li><li>BBQ-Sauce</li>
+            </ul>
+            <div class="burger-price-row">
+              <div><div class="label">Preis</div><div class="price">15,90 €</div></div>
+              <div class="divider"></div>
+              <div class="note">Serviert mit<br>Brioche-Bun & Beilage</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="burger-row">
+          <div class="burger-image-wrap">
+            <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=1200&q=80" alt="The Iron Bun" />
+            <div class="burger-badge">XL</div>
+            <div class="burger-num-stamp">No. 03</div>
+          </div>
+          <div>
+            <div class="burger-num-big">03</div>
+            <h2 class="burger-title">The Iron Bun</h2>
+            <div class="burger-tagline">Schwer wie Stahl.</div>
+            <p class="burger-desc">Double Patty, doppelt Cheddar, karamellisierte Zwiebeln, Trüffel-Mayo. Nicht für Anfänger.</p>
+            <ul class="ingredients">
+              <li>2 × 150g Beef</li><li>Doppel Cheddar</li><li>Karamellisierte Zwiebeln</li><li>Rucola</li><li>Trüffel-Mayo</li>
+            </ul>
+            <div class="burger-price-row">
+              <div><div class="label">Preis</div><div class="price">17,50 €</div></div>
+              <div class="divider"></div>
+              <div class="note">Serviert mit<br>Brioche-Bun & Beilage</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="burger-row reverse">
+          <div class="burger-image-wrap">
+            <img src="https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=1200&q=80" alt="The Garden" />
+            <div class="burger-badge">Vegan</div>
+            <div class="burger-num-stamp">No. 04</div>
+          </div>
+          <div>
+            <div class="burger-num-big">04</div>
+            <h2 class="burger-title">The Garden</h2>
+            <div class="burger-tagline">Pflanzlich. Ehrlich. Lecker.</div>
+            <p class="burger-desc">Hausgemachtes Beyond-Patty, Avocado-Creme, eingelegte Gurken, geröstete Paprika — 100% vegan.</p>
+            <ul class="ingredients">
+              <li>Plant-Based Patty</li><li>Avocado-Creme</li><li>Geröstete Paprika</li><li>Eingelegte Gurken</li><li>Vegane Mayo</li>
+            </ul>
+            <div class="burger-price-row">
+              <div><div class="label">Preis</div><div class="price">13,90 €</div></div>
+              <div class="divider"></div>
+              <div class="note">Serviert mit<br>Brioche-Bun & Beilage</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="burger-row">
+          <div class="burger-image-wrap">
+            <img src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?auto=format&fit=crop&w=1200&q=80" alt="Firebird" />
+            <div class="burger-badge">Spicy</div>
+            <div class="burger-num-stamp">No. 05</div>
+          </div>
+          <div>
+            <div class="burger-num-big">05</div>
+            <h2 class="burger-title">Firebird</h2>
+            <div class="burger-tagline">Scharf wie die Schmiede.</div>
+            <p class="burger-desc">Hähnchen-Patty, Jalapeños, Pepper-Jack-Käse, Habanero-Mayo. Achtung: macht süchtig.</p>
+            <ul class="ingredients">
+              <li>Crispy Chicken</li><li>Pepper Jack</li><li>Jalapeños</li><li>Krautsalat</li><li>Habanero-Mayo</li>
+            </ul>
+            <div class="burger-price-row">
+              <div><div class="label">Preis</div><div class="price">14,50 €</div></div>
+              <div class="divider"></div>
+              <div class="note">Serviert mit<br>Brioche-Bun & Beilage</div>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:var(--surface-2);border-top:1px solid var(--steel);">
+    <div class="container" style="text-align:center;max-width:800px;">
+      <div class="section-kicker">/ Auch an der Seite</div>
+      <h2 class="section-title">HAND-CUT FRIES, CRAFT BIER, HOUSE SODA</h2>
+      <p style="color:rgba(243,239,232,0.7);margin-bottom:2rem;">
+        Unsere Pommes werden täglich frisch geschnitten und doppelt frittiert. Dazu: lokales Craft-Bier vom Fass und hausgemachte Limonaden. Alles vor Ort im Restaurant.
       </p>
-      <a href="menu.html" class="btn-primary">Menü ansehen →</a>
+      <a href="#kontakt" class="btn-outline">Besuch planen →</a>
+    </div>
+  </section>
+
+  <!-- ============ KONTAKT ============ -->
+  <section id="kontakt" class="page-header bg-metal">
+    <div class="bg-grid" style="position:absolute;inset:0;opacity:0.6;"></div>
+    <div class="container" style="position:relative;">
+      <div class="section-kicker">/ Kontakt</div>
+      <h1>BESUCH UNS IN DER <span class="red">WERKSTATT</span></h1>
+      <p>Mitten in Berlin-Mitte, keine Ecke für schüchterne Esser. Kein Tischreservierungs-Zirkus — einfach vorbeikommen, warten ist Teil des Erlebnisses.</p>
+    </div>
+    <div class="hazard-stripes" style="position:absolute;bottom:0;left:0;right:0;"></div>
+  </section>
+
+  <section class="section bg-concrete">
+    <div class="container contact-grid">
+      <div style="display:flex;flex-direction:column;gap:2rem;">
+        <div class="contact-card">
+          <div class="num">/ 01</div><div class="dot"></div>
+          <h3>Adresse</h3>
+          <div class="lines"><div>Fabrikstraße 42</div><div>10117 Berlin</div><div>Deutschland</div></div>
+        </div>
+        <div class="contact-card mono-accent">
+          <div class="num">/ 02</div><div class="dot"></div>
+          <h3>Telefon</h3>
+          <div class="lines"><div>+49 30 1234 5678</div></div>
+        </div>
+        <div class="contact-card mono-accent">
+          <div class="num">/ 03</div><div class="dot"></div>
+          <h3>E-Mail</h3>
+          <div class="lines"><div>hallo@burger-brothers.de</div></div>
+        </div>
+        <div class="contact-card">
+          <div class="num">/ 04</div><div class="dot"></div>
+          <h3>Anfahrt</h3>
+          <div class="lines">
+            <div>U-Bahn: Rosenthaler Platz (U8) — 3 Min</div>
+            <div>S-Bahn: Hackescher Markt (S5/S7) — 8 Min</div>
+            <div>Parken: Parkhaus Torstraße — 5 Min</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="hours-card">
+          <div class="hours-head">
+            <div class="section-kicker" style="margin-bottom:0;">/ Opening Hours</div>
+            <h2>ÖFFNUNGSZEITEN</h2>
+          </div>
+          <ul class="hours-list">
+            <li class="closed"><span class="day">Mo</span><span class="time">Geschlossen</span></li>
+            <li><span class="day">Di</span><span class="time">12:00 — 22:00</span></li>
+            <li><span class="day">Mi</span><span class="time">12:00 — 22:00</span></li>
+            <li><span class="day">Do</span><span class="time">12:00 — 23:00</span></li>
+            <li class="highlight"><span class="day">Fr</span><span class="time">12:00 — 00:00</span></li>
+            <li class="highlight"><span class="day">Sa</span><span class="time">11:00 — 00:00</span></li>
+            <li><span class="day">So</span><span class="time">11:00 — 22:00</span></li>
+          </ul>
+          <div class="hours-foot">Küchenschluss jeweils 30 Min vor Ladenschluss.</div>
+        </div>
+        <div class="note-box">
+          <div class="icon">⚠</div>
+          <div>
+            <div class="title">HINWEIS</div>
+            <p>An Feiertagen können sich die Öffnungszeiten ändern. Ruf uns im Zweifel kurz an — wir beißen nicht. Meistens.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="map-section">
+    <img src="https://images.unsplash.com/photo-1513828583688-c52646db42da?auto=format&fit=crop&w=2000&q=80" alt="Berlin Street-Food-Atmosphäre" />
+    <div class="gradient"></div>
+    <div class="bg-grid" style="position:absolute;inset:0;opacity:0.4;"></div>
+    <div class="container content">
+      <div>
+        <div class="section-kicker">/ Pin drop</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,6vw,4rem);color:var(--bone);margin-top:0.5rem;">FABRIKSTRASSE 42</div>
+        <div class="mono" style="margin-top:0.5rem;font-size:0.85rem;color:rgba(243,239,232,0.6);">52.5244° N · 13.4105° E</div>
+      </div>
     </div>
   </section>
 
@@ -819,9 +1031,9 @@ h1, h2, h3, .font-display {
       <div>
         <h4>Navigation</h4>
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="menu.html">Menü</a></li>
-          <li><a href="kontakt.html">Kontakt & Öffnungszeiten</a></li>
+          <li><a href="#home">Home</a></li>
+          <li><a href="#menu">Menü</a></li>
+          <li><a href="#kontakt">Kontakt & Öffnungszeiten</a></li>
         </ul>
       </div>
       <div>
@@ -843,7 +1055,28 @@ h1, h2, h3, .font-display {
   </footer>
 
   <script>
+    // Year
     document.getElementById('year').textContent = '© ' + new Date().getFullYear() + ' Burger Brothers. All rights reserved.';
+
+    // Active-section highlight in nav
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('#navLinks a');
+    const setActive = (id) => {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      });
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) setActive(e.target.id);
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    sections.forEach(s => io.observe(s));
+
+    // Close mobile menu on link click
+    navLinks.forEach(a => a.addEventListener('click', () => {
+      document.getElementById('navLinks').classList.remove('open');
+    }));
   </script>
 </body>
 </html>
