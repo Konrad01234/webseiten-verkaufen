@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zero Titanium &mdash; Strength in Simplicity</title>
+<meta name="description" content="Zero Titanium &mdash; Premium Titan. Pur, leicht, kompromisslos.">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="nav">
+  <div class="wrap">
+    <a href="#" class="logo">ZERO<span>TITANIUM</span></a>
+    <nav>
+      <a href="#produkt">Produkt</a>
+      <a href="#material">Material</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="kicker">Grade 5 &middot; Aerospace Titanium</p>
+    <h1>Strength in<br>Simplicity.</h1>
+    <p class="lead">Zero Titanium fertigt Objekte aus reinem Titan &mdash; leichter als Stahl, st&auml;rker als Aluminium, ein Leben lang dein Begleiter.</p>
+    <div class="cta">
+      <a href="#produkt" class="btn primary">Entdecken</a>
+      <a href="#kontakt" class="btn ghost">Kontakt</a>
+    </div>
+  </div>
+</section>
+
+<section id="produkt" class="grid">
+  <div class="wrap">
+    <h2>Produkte</h2>
+    <div class="cards">
+      <article class="card">
+        <div class="thumb thumb-1"></div>
+        <h3>Titanium Ring</h3>
+        <p>Aus einem St&uuml;ck gefr&auml;st. Hypoallergen, wasserfest, kratzresistent.</p>
+      </article>
+      <article class="card">
+        <div class="thumb thumb-2"></div>
+        <h3>Titanium EDC</h3>
+        <p>Werkzeuge f&uuml;r jeden Tag. Gewichtsoptimiert. F&uuml;r ein Leben lang.</p>
+      </article>
+      <article class="card">
+        <div class="thumb thumb-3"></div>
+        <h3>Titanium Cup</h3>
+        <p>Doppelwandig, 70&thinsp;g leicht. Kein Beigeschmack, keine Kompromisse.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="material" class="material">
+  <div class="wrap two-col">
+    <div>
+      <p class="kicker">Material</p>
+      <h2>Warum Titan?</h2>
+      <p>Titan kombiniert das Festigkeits-Gewichts-Verh&auml;ltnis, das sonst nur in der Luftfahrt vorkommt, mit einer Korrosionsbest&auml;ndigkeit, die selbst Salzwasser nichts ausmacht. Es ist hypoallergen, oxidiert nicht und altert mit Charakter.</p>
+    </div>
+    <ul class="specs">
+      <li><span>Dichte</span><strong>4,51&nbsp;g/cm&sup3;</strong></li>
+      <li><span>Zugfestigkeit</span><strong>950&nbsp;MPa</strong></li>
+      <li><span>Schmelzpunkt</span><strong>1668&nbsp;&deg;C</strong></li>
+      <li><span>Korrosion</span><strong>nahezu null</strong></li>
+    </ul>
+  </div>
+</section>
+
+<section id="kontakt" class="contact">
+  <div class="wrap">
+    <h2>Bleib in Kontakt</h2>
+    <p>Neue Drops, limitierte Editionen und Werkstatt-Geschichten &mdash; direkt in dein Postfach.</p>
+    <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Danke!';">
+      <input type="email" required placeholder="deine@email.de">
+      <button type="submit" class="btn primary">Anmelden</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>&copy; <span id="y"></span> Zero Titanium. Alle Rechte vorbehalten.</p>
+  </div>
+</footer>
+
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
