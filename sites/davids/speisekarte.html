@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speisekarte | Davids im Landhaus – Neuss</title>
+  <meta name="description" content="Die aktuelle Speisekarte von Davids im Landhaus in Neuss: Vorspeisen, Hauptgänge, Spargelkarte, Klassiker und Dessert – frisch, regional und saisonal." />
+  <meta name="theme-color" content="#13140d" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <!-- ===== Fullscreen nav overlay ===== -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html">Start</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="speisekarte.html">Speisekarte</a>
+    <a href="impressionen.html">Impressionen</a>
+    <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">Davids im Landhaus · Neuss</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Top bar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+4915754791998" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        +49 1575 4791998
+      </a>
+      <div class="tb-right">
+        <span>Hüsenstraße 17 · 41468 Neuss</span>
+        <span>Mi–So geöffnet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Davids im Landhaus – Startseite">
+        <img class="brand-logo" src="img/logo-light.png" alt="Davids im Landhaus" width="200" height="65" />
+      </a>
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="speisekarte.html" class="active">Speisekarte</a>
+        <a href="impressionen.html">Impressionen</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary">Tisch reservieren</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Page hero ===== -->
+    <section class="pagehero">
+      <svg class="pagehero-deco" viewBox="0 0 220 220" fill="none" aria-hidden="true">
+        <path d="M30 200 C 70 150 110 120 180 40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <g fill="currentColor">
+          <ellipse cx="64" cy="156" rx="13" ry="6" transform="rotate(-38 64 156)"/>
+          <ellipse cx="86" cy="132" rx="13" ry="6" transform="rotate(-44 86 132)"/>
+          <ellipse cx="108" cy="110" rx="13" ry="6" transform="rotate(-50 108 110)"/>
+          <ellipse cx="130" cy="88" rx="13" ry="6" transform="rotate(-54 130 88)"/>
+          <ellipse cx="92" cy="158" rx="12" ry="5.5" transform="rotate(36 92 158)"/>
+          <ellipse cx="114" cy="136" rx="12" ry="5.5" transform="rotate(30 114 136)"/>
+        </g>
+      </svg>
+      <div class="wrap">
+        <span class="eyebrow">Speisekarte</span>
+        <h1>Frisch, regional &amp; saisonal</h1>
+        <p>Ein Auszug aus unserer aktuellen Karte. Sie wechselt mit den Jahreszeiten – die jeweils gültige Karte finden Sie auch als PDF.</p>
+        <div class="crumbs"><a href="index.html">Start</a> · Speisekarte</div>
+      </div>
+    </section>
+
+    <!-- ===== Speisekarte ===== -->
+    <section class="section">
+      <div class="wrap">
+
+        <!-- Chef's Menü Surprise (Featured) -->
+        <div class="reveal" style="background:var(--olive);color:#e7dfcd;border-radius:var(--radius);padding:clamp(1.8rem,4vw,2.6rem);text-align:center;margin-bottom:clamp(2.4rem,5vw,3.4rem);position:relative;overflow:hidden">
+          <span class="eyebrow" style="color:var(--gold)">Chef's Menü</span>
+          <h2 style="color:var(--cream);font-size:clamp(1.7rem,4vw,2.4rem);margin:.5rem 0 .5rem">Chef's Menü Surprise</h2>
+          <p style="color:#d6cdba;max-width:48ch;margin:0 auto .8rem">4-Gang-Überraschungs-Menü – mit Fleisch oder Fisch im Hauptgang zur Wahl.</p>
+          <div style="font-family:var(--serif);color:var(--gold);font-size:1.7rem">44,00 €</div>
+        </div>
+
+        <div class="split split--menu">
+          <!-- Left column -->
+          <div>
+            <!-- Vorspeisen -->
+            <div class="menu-block reveal">
+              <div class="menu-cat"><h3>Vorspeisen</h3><span class="rule"></span></div>
+              <div class="dish">
+                <span class="dn">Thunfisch</span><span class="dp">17,90 €</span>
+                <span class="dd">Rare, Pfeffermantel, Gurken-Melonen-Relish.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Rosa Roastbeef</span><span class="dp">17,50 €</span>
+                <span class="dd">Zitrone, Olivenöl, Nüsse, Granatapfel, Jungzwiebel, Radieschen, Gartenkresse.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Burrata</span><span class="dp">15,90 €</span>
+                <span class="dd">Ofentomate, Pesto, Balsamico.</span>
+                <span class="tags"><span class="tag">vegetarisch</span></span>
+              </div>
+              <div class="dish">
+                <span class="dn">Hummerbisque</span><span class="dp">16,90 €</span>
+                <span class="dd">Tomate, Jungzwiebel, Garnelen.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Vorspeisen-Etagere</span><span class="dp">17,50 €</span>
+                <span class="dd">Ab 2 Personen · Preis pro Person.</span>
+              </div>
+            </div>
+
+            <!-- Hauptgänge -->
+            <div class="menu-block reveal">
+              <div class="menu-cat"><h3>Hauptgänge</h3><span class="rule"></span></div>
+              <div class="dish">
+                <span class="dn">Lammrücken</span><span class="dp">33,50 €</span>
+                <span class="dd">Kräftige Jus, Fenchel-Apfel-Gemüse, Risotto.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Wiener Schnitzel</span><span class="dp">26,50 €</span>
+                <span class="dd">Jus, Zitrone, Kartoffelsalat, Essig-Öl, Speck-Zwiebel.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Catch of the Day · Fisch</span><span class="dp">25,90 €</span>
+                <span class="dd">Tomatenrisotto, marinierter Wildkräutersalat.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Pasta</span><span class="dp">16,90 €</span>
+                <span class="dd">Trüffelrahmsauce, Kirschtomate, grüner Spargel, Wildkräutersalat, Parmesanhobel.</span>
+                <span class="dd" style="margin-top:.35rem">+ auf Rindercarpaccio 7,90 € &nbsp;·&nbsp; + mit Garnelen 6,50 €</span>
+                <span class="tags"><span class="tag">vegetarisch</span></span>
+              </div>
+              <div class="dish">
+                <span class="dn">Tomaten-Feta-Semmelknödel</span><span class="dp">16,90 €</span>
+                <span class="dd">Spargelragout, marinierte Wildkräuter.</span>
+                <span class="tags"><span class="tag">vegetarisch</span></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column -->
+          <div>
+            <!-- Spargelkarte -->
+            <div class="menu-block reveal d1">
+              <div class="menu-cat"><h3>Spargelkarte</h3><span class="rule"></span><span class="note">saisonal</span></div>
+              <div class="dish">
+                <span class="dn">Spargelcremesüppchen</span><span class="dp">8,90 €</span>
+                <span class="dd">Spargelspitzen.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">250 g hiesiger frischer Spargel</span><span class="dp">16,90 €</span>
+                <span class="dd">Butter oder Hollandaise, Drillinge.</span>
+                <span class="dd" style="margin-top:.4rem"><strong style="color:var(--cream)">Wählbar dazu:</strong> gebratenes Rumpsteak 250 g 13,50 € · kleines Kalbsschnitzel 8,50 € · Lachsforelle 9,50 €</span>
+              </div>
+            </div>
+
+            <!-- Klassiker -->
+            <div class="menu-block reveal d2">
+              <div class="menu-cat"><h3>Klassiker</h3><span class="rule"></span></div>
+              <div class="dish">
+                <span class="dn">Double Trouble</span><span class="dp">21,00 €</span>
+                <span class="dd">Bun, Dry Aged Beef, Trüffelmayo, Cheddar, Tomate, Gurke, Salat, crunchy Fritten.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Caesar Salad</span><span class="dp">19,50 €</span>
+                <span class="dd">Kirschtomaten, Parmesan, Croutons, Frühlingslauch, Hähnchen-Saté-Spieß.</span>
+              </div>
+            </div>
+
+            <!-- Dessert -->
+            <div class="menu-block reveal d3">
+              <div class="menu-cat"><h3>Dessert</h3><span class="rule"></span></div>
+              <div class="dish">
+                <span class="dn">Apple Crumble</span><span class="dp">9,50 €</span>
+                <span class="dd">Bayrische Creme, Vanilleeis.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Crème Brûlée</span><span class="dp">11,90 €</span>
+                <span class="dd">Sorbet, Macaron.</span>
+              </div>
+              <div class="dish">
+                <span class="dn">Frische Erdbeeren</span><span class="dp">8,50 €</span>
+                <span class="dd">Sabayone, Sorbet.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes + PDF -->
+        <div class="narrow reveal" style="margin:3rem auto 0;text-align:center;color:var(--muted);font-size:.95rem">
+          <div class="divider" style="margin-bottom:1.4rem"><span></span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21c5-3 8-7 8-12a8 8 0 0 0-16 0c0 5 3 9 8 12Z"/><path d="M12 3v18"/></svg>
+          <span></span></div>
+          <p style="margin-bottom:1.4rem">Unsere Karte wechselt saisonal. Bei Fragen zu Allergenen und Unverträglichkeiten beraten wir Sie gern persönlich.</p>
+          <a href="speisekarte.pdf" target="_blank" rel="noopener" class="btn btn-outline">Aktuelle Karte als PDF
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="m7 12 5 5 5-5"/><path d="M5 21h14"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta-band section">
+      <div class="wrap reveal">
+        <span class="eyebrow" style="color:var(--gold)">Guten Appetit</span>
+        <h2>Reservieren Sie Ihren Tisch</h2>
+        <p>Sichern Sie sich Ihren Platz – wir freuen uns darauf, für Sie zu kochen.</p>
+        <div class="cta-actions">
+          <a href="kontakt.html" class="btn btn-cream">Tisch reservieren</a>
+          <a href="tel:+4915754791998" class="btn btn-ghost-light">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            Anrufen
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" class="brand" aria-label="Davids im Landhaus">
+            <svg class="crest" viewBox="0 0 48 48" aria-hidden="true">
+              <circle cx="24" cy="24" r="22.4" fill="none" stroke="#b08a4a" stroke-width="1.4"/>
+              <line x1="24" y1="37" x2="24" y2="15" stroke="#cdbb95" stroke-width="1.7" stroke-linecap="round"/>
+              <g fill="#8a965f">
+                <ellipse cx="24" cy="14" rx="2.1" ry="3.4"/>
+                <ellipse cx="19.6" cy="18.4" rx="1.8" ry="3" transform="rotate(-34 19.6 18.4)"/>
+                <ellipse cx="28.4" cy="18.4" rx="1.8" ry="3" transform="rotate(34 28.4 18.4)"/>
+                <ellipse cx="19.8" cy="23.4" rx="1.8" ry="3" transform="rotate(-34 19.8 23.4)"/>
+                <ellipse cx="28.2" cy="23.4" rx="1.8" ry="3" transform="rotate(34 28.2 23.4)"/>
+              </g>
+            </svg>
+            <span class="brand-text">
+              <span class="brand-name">Davids</span>
+              <span class="brand-sub">im Landhaus · Neuss</span>
+            </span>
+          </a>
+          <p>Gehobene Landhausküche von David Esser. Regional, saisonal und mit ganzem Herzen – mitten am Niederrhein.</p>
+          <div class="socials">
+            <a href="https://www.instagram.com/davidsimlandhaus/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.facebook.com/p/Davids-im-Landhaus-100063723634595/" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V7c0-.8.4-1.2 1.3-1.2H17V3h-2.6C11.8 3 10.5 4.5 10.5 7v1.5H8.3V11h2.2v10h3V11h2.3l.4-2.5H14Z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Entdecken</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="speisekarte.html">Speisekarte</a></li>
+            <li><a href="impressionen.html">Impressionen</a></li>
+            <li><a href="kontakt.html">Kontakt &amp; Reservierung</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Öffnungszeiten</h4>
+          <ul>
+            <li>Mo &amp; Di · Ruhetag</li>
+            <li>Mi – Sa · ab 17 Uhr</li>
+            <li>So · 12 – 20 Uhr</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul class="fcontact">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Hüsenstraße 17<br>41468 Neuss</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+              <a href="tel:+4915754791998">+49 1575 4791998</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <a href="mailto:esser-davids@web.de">esser-davids@web.de</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> Davids GmbH · Alle Rechte vorbehalten</span>
+        <div class="legal">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="#" data-cookie-open>Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="cookie" id="cookie-banner" role="dialog" aria-label="Cookie-Hinweis">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <strong>Wir verwenden Cookies</strong>
+        <p>Wir nutzen Cookies, um diese Website bereitzustellen und – mit Ihrer Einwilligung – zu verbessern. Mehr in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>
+      </div>
+      <div class="cookie-actions">
+        <button class="btn btn-outline" data-cookie="essential">Nur notwendige</button>
+        <button class="btn btn-primary" data-cookie="all">Alle akzeptieren</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

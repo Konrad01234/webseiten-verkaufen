@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kontakt &amp; Reservierung | Davids im Landhaus – Neuss</title>
+  <meta name="description" content="Reservieren Sie Ihren Tisch im Davids im Landhaus in Neuss. Kontakt, Öffnungszeiten, Anfahrt und Reservierungsanfrage – wir freuen uns auf Sie." />
+  <meta name="theme-color" content="#13140d" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <!-- ===== Fullscreen nav overlay ===== -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html">Start</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="speisekarte.html">Speisekarte</a>
+    <a href="impressionen.html">Impressionen</a>
+    <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">Davids im Landhaus · Neuss</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Top bar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+4915754791998" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        +49 1575 4791998
+      </a>
+      <div class="tb-right">
+        <span>Hüsenstraße 17 · 41468 Neuss</span>
+        <span>Mi–So geöffnet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Davids im Landhaus – Startseite">
+        <img class="brand-logo" src="img/logo-light.png" alt="Davids im Landhaus" width="200" height="65" />
+      </a>
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="speisekarte.html">Speisekarte</a>
+        <a href="impressionen.html">Impressionen</a>
+        <a href="kontakt.html" class="active">Kontakt</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="tel:+4915754791998" class="btn btn-primary">Anrufen</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Page hero ===== -->
+    <section class="pagehero">
+      <svg class="pagehero-deco" viewBox="0 0 220 220" fill="none" aria-hidden="true">
+        <path d="M30 200 C 70 150 110 120 180 40" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <g fill="currentColor">
+          <ellipse cx="64" cy="156" rx="13" ry="6" transform="rotate(-38 64 156)"/>
+          <ellipse cx="86" cy="132" rx="13" ry="6" transform="rotate(-44 86 132)"/>
+          <ellipse cx="108" cy="110" rx="13" ry="6" transform="rotate(-50 108 110)"/>
+          <ellipse cx="130" cy="88" rx="13" ry="6" transform="rotate(-54 130 88)"/>
+          <ellipse cx="92" cy="158" rx="12" ry="5.5" transform="rotate(36 92 158)"/>
+          <ellipse cx="114" cy="136" rx="12" ry="5.5" transform="rotate(30 114 136)"/>
+        </g>
+      </svg>
+      <div class="wrap">
+        <span class="eyebrow">Kontakt &amp; Reservierung</span>
+        <h1>Wir freuen uns auf Ihren Besuch</h1>
+        <p>Reservieren Sie ganz bequem telefonisch oder über das Formular. Für Gruppen ab 15 Personen öffnen wir auf Anfrage auch außerhalb unserer Zeiten.</p>
+        <div class="crumbs"><a href="index.html">Start</a> · Kontakt</div>
+      </div>
+    </section>
+
+    <!-- ===== Contact + Form ===== -->
+    <section class="section">
+      <div class="wrap contact-grid">
+        <!-- Info column -->
+        <div class="reveal">
+          <div class="info-list">
+            <div class="info-item">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+              <div>
+                <h4>Adresse</h4>
+                <p>Hüsenstraße 17<br>41468 Neuss</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></span>
+              <div>
+                <h4>Telefon</h4>
+                <p><a href="tel:+4915754791998">+49 1575 4791998</a></p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span>
+              <div>
+                <h4>E-Mail</h4>
+                <p><a href="mailto:esser-davids@web.de">esser-davids@web.de</a></p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 5 8H3M21 8h-2l-4-4"/><path d="M3 12c4 3 14 3 18 0"/><path d="M5 16c4 3 10 3 14 0"/></svg></span>
+              <div>
+                <h4>Anfahrt &amp; Parken</h4>
+                <p>Parkplätze direkt am Haus. Gut erreichbar aus Neuss und Umgebung.</p>
+              </div>
+            </div>
+          </div>
+
+          <h3 style="margin:2.4rem 0 1rem;font-size:1.5rem">Öffnungszeiten</h3>
+          <table class="hours-table">
+            <tbody>
+              <tr data-day="1" class="closed"><td>Montag</td><td>Ruhetag</td></tr>
+              <tr data-day="2" class="closed"><td>Dienstag</td><td>Ruhetag</td></tr>
+              <tr data-day="3"><td>Mittwoch</td><td>ab 17:00</td></tr>
+              <tr data-day="4"><td>Donnerstag</td><td>ab 17:00</td></tr>
+              <tr data-day="5"><td>Freitag</td><td>ab 17:00</td></tr>
+              <tr data-day="6"><td>Samstag</td><td>ab 17:00</td></tr>
+              <tr data-day="7"><td>Sonntag</td><td>12:00 – 20:00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Form column -->
+        <div class="reveal d1">
+          <div class="form-card">
+            <h2 style="font-size:1.8rem;margin-bottom:.4rem">Tisch anfragen</h2>
+            <p style="color:var(--muted);margin-bottom:1.6rem">Füllen Sie kurz das Formular aus – wir bestätigen Ihre Reservierung so schnell wie möglich.</p>
+            <form id="reservation-form" novalidate>
+              <div class="field">
+                <label for="r-name">Name</label>
+                <input type="text" id="r-name" name="name" autocomplete="name" placeholder="Ihr Name" required />
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="r-date">Datum</label>
+                  <input type="date" id="r-date" name="date" required />
+                </div>
+                <div class="field">
+                  <label for="r-time">Uhrzeit</label>
+                  <input type="time" id="r-time" name="time" required />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="r-guests">Personen</label>
+                  <select id="r-guests" name="guests">
+                    <option>1</option><option selected>2</option><option>3</option><option>4</option>
+                    <option>5</option><option>6</option><option>7</option><option>8</option>
+                    <option>9</option><option>10</option><option>mehr als 10</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="r-phone">Telefon</label>
+                  <input type="tel" id="r-phone" name="phone" autocomplete="tel" placeholder="Für Rückfragen" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="r-email">E-Mail</label>
+                <input type="email" id="r-email" name="email" autocomplete="email" placeholder="name@beispiel.de" />
+              </div>
+              <div class="field">
+                <label for="r-message">Anmerkungen</label>
+                <textarea id="r-message" name="message" placeholder="Anlass, Allergien, Wünsche zum Biergarten …"></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%">Reservierung absenden</button>
+              <p class="form-note">Mit dem Absenden öffnet sich Ihr E-Mail-Programm mit der vorausgefüllten Anfrage. Lieber direkt? Rufen Sie uns unter <a href="tel:+4915754791998" style="color:var(--gold);font-weight:600">+49 1575 4791998</a> an.</p>
+              <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Map ===== -->
+    <section class="section section--alt" style="padding-top:0">
+      <div class="wrap">
+        <div class="mapcard reveal">
+          <svg class="bg" viewBox="0 0 800 320" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="800" height="320" fill="#171a10"/>
+            <g stroke="#2c3120" stroke-width="2" fill="none">
+              <path d="M-20 70 H820"/><path d="M-20 150 H820"/><path d="M-20 240 H820"/>
+              <path d="M120 -20 V340"/><path d="M320 -20 V340"/><path d="M520 -20 V340"/><path d="M680 -20 V340"/>
+            </g>
+            <g stroke="#5a4a26" stroke-width="6" fill="none" opacity=".8">
+              <path d="M-20 150 H820"/><path d="M320 -20 V340"/>
+            </g>
+            <g fill="#23271a" opacity=".7">
+              <rect x="160" y="92" width="120" height="40" rx="4"/>
+              <rect x="360" y="180" width="120" height="44" rx="4"/>
+              <rect x="560" y="92" width="90" height="44" rx="4"/>
+            </g>
+            <path d="M40 300 C 200 250 240 180 320 150" stroke="#9c7b3e" stroke-width="3" fill="none" stroke-dasharray="2 8" stroke-linecap="round"/>
+          </svg>
+          <svg class="pin" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a8 8 0 0 0-8 8c0 6 8 12 8 12s8-6 8-12a8 8 0 0 0-8-8Z"/><circle cx="12" cy="10" r="3.2" fill="#fbf7ef"/></svg>
+          <div class="addr">
+            <span>
+              <strong>Davids im Landhaus</strong>
+              <span>Hüsenstraße 17 · 41468 Neuss</span>
+            </span>
+            <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&query=Davids+im+Landhaus+H%C3%BCsenstra%C3%9Fe+17+41468+Neuss" target="_blank" rel="noopener">Route planen</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" class="brand" aria-label="Davids im Landhaus">
+            <svg class="crest" viewBox="0 0 48 48" aria-hidden="true">
+              <circle cx="24" cy="24" r="22.4" fill="none" stroke="#b08a4a" stroke-width="1.4"/>
+              <line x1="24" y1="37" x2="24" y2="15" stroke="#cdbb95" stroke-width="1.7" stroke-linecap="round"/>
+              <g fill="#8a965f">
+                <ellipse cx="24" cy="14" rx="2.1" ry="3.4"/>
+                <ellipse cx="19.6" cy="18.4" rx="1.8" ry="3" transform="rotate(-34 19.6 18.4)"/>
+                <ellipse cx="28.4" cy="18.4" rx="1.8" ry="3" transform="rotate(34 28.4 18.4)"/>
+                <ellipse cx="19.8" cy="23.4" rx="1.8" ry="3" transform="rotate(-34 19.8 23.4)"/>
+                <ellipse cx="28.2" cy="23.4" rx="1.8" ry="3" transform="rotate(34 28.2 23.4)"/>
+              </g>
+            </svg>
+            <span class="brand-text">
+              <span class="brand-name">Davids</span>
+              <span class="brand-sub">im Landhaus · Neuss</span>
+            </span>
+          </a>
+          <p>Gehobene Landhausküche von David Esser. Regional, saisonal und mit ganzem Herzen – mitten am Niederrhein.</p>
+          <div class="socials">
+            <a href="https://www.instagram.com/davidsimlandhaus/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="https://www.facebook.com/p/Davids-im-Landhaus-100063723634595/" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 8.5V7c0-.8.4-1.2 1.3-1.2H17V3h-2.6C11.8 3 10.5 4.5 10.5 7v1.5H8.3V11h2.2v10h3V11h2.3l.4-2.5H14Z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Entdecken</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="speisekarte.html">Speisekarte</a></li>
+            <li><a href="impressionen.html">Impressionen</a></li>
+            <li><a href="kontakt.html">Kontakt &amp; Reservierung</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Öffnungszeiten</h4>
+          <ul>
+            <li>Mo &amp; Di · Ruhetag</li>
+            <li>Mi – Sa · ab 17 Uhr</li>
+            <li>So · 12 – 20 Uhr</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul class="fcontact">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Hüsenstraße 17<br>41468 Neuss</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+              <a href="tel:+4915754791998">+49 1575 4791998</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <a href="mailto:esser-davids@web.de">esser-davids@web.de</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> Davids GmbH · Alle Rechte vorbehalten</span>
+        <div class="legal">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="#" data-cookie-open>Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="cookie" id="cookie-banner" role="dialog" aria-label="Cookie-Hinweis">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <strong>Wir verwenden Cookies</strong>
+        <p>Wir nutzen Cookies, um diese Website bereitzustellen und – mit Ihrer Einwilligung – zu verbessern. Mehr in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>
+      </div>
+      <div class="cookie-actions">
+        <button class="btn btn-outline" data-cookie="essential">Nur notwendige</button>
+        <button class="btn btn-primary" data-cookie="all">Alle akzeptieren</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
