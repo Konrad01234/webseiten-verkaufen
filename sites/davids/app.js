@@ -193,5 +193,56 @@
     /* ---------- Footer year ---------- */
     var y = document.getElementById("year");
     if (y) y.textContent = new Date().getFullYear();
+
+    /* ---------- Gallery slideshow (impressionen.html) ---------- */
+    var slSlides = document.querySelectorAll(".sl-slide");
+    if (slSlides.length) {
+      var slIdx = 0, slCount = slSlides.length, slTimer;
+      var slCurEl   = document.getElementById("sl-cur");
+      var slTotalEl = document.getElementById("sl-total");
+      if (slTotalEl) slTotalEl.textContent = slCount;
+
+      function slGoTo(n) {
+        slSlides[slIdx].classList.remove("active");
+        slIdx = (n + slCount) % slCount;
+        var el = slSlides[slIdx];
+        el.style.animation = "none";
+        void el.offsetWidth;          /* force reflow to restart Ken Burns */
+        el.style.animation = "";
+        el.classList.add("active");
+        if (slCurEl) slCurEl.textContent = slIdx + 1;
+      }
+      function slNext() { slGoTo(slIdx + 1); }
+      function slPrev() { slGoTo(slIdx - 1); }
+      function slStart() { slTimer = setInterval(slNext, 5800); }
+      function slReset() { clearInterval(slTimer); slStart(); }
+
+      slSlides[0].classList.add("active");
+      slStart();
+
+      var slWrap    = document.querySelector(".sl-wrap");
+      var slPrevBtn = document.querySelector(".sl-prev");
+      var slNextBtn = document.querySelector(".sl-next");
+      if (slPrevBtn) slPrevBtn.addEventListener("click", function() { slPrev(); slReset(); });
+      if (slNextBtn) slNextBtn.addEventListener("click", function() { slNext(); slReset(); });
+
+      if (slWrap) {
+        slWrap.addEventListener("mouseenter", function() { clearInterval(slTimer); });
+        slWrap.addEventListener("mouseleave", slStart);
+        var slTouchX = null;
+        slWrap.addEventListener("touchstart", function(e) { slTouchX = e.changedTouches[0].clientX; }, { passive: true });
+        slWrap.addEventListener("touchend", function(e) {
+          if (slTouchX === null) return;
+          var dx = e.changedTouches[0].clientX - slTouchX;
+          if (Math.abs(dx) > 44) { (dx < 0 ? slNext : slPrev)(); slReset(); }
+          slTouchX = null;
+        });
+      }
+      document.addEventListener("keydown", function(e) {
+        if (!document.querySelector(".sl-wrap")) return;
+        if (e.key === "ArrowLeft")  { slPrev(); slReset(); }
+        if (e.key === "ArrowRight") { slNext(); slReset(); }
+      });
+    }
   });
 })();
