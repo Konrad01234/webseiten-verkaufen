@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<style>
+html, body { margin: 0; padding: 0; background: #F5EFE2; }
+* { box-sizing: border-box; }
+</style>
+</helmet>
+<div style="font-family: Inter, -apple-system, sans-serif; background: #F5EFE2; color: #44403A; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; min-height: 100vh; display: flex; flex-direction: column;">
+
+  <!-- NAV -->
+  <div style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(245, 239, 226, 0.78); backdrop-filter: blur(14px) saturate(1.1); border-bottom: 1px solid #DDD2B9;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 32px;">
+      <a href="startseite.dc.html" style="text-decoration: none; display: flex; align-items: baseline; gap: 12px;">
+        <span style="font-family: Fraunces, Georgia, serif; font-size: 24px; color: #0E1F1C; letter-spacing: -0.01em;">Da Franco</span>
+        <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #B08F4E;">Italienisches Eis · Neuss</span>
+      </a>
+      <div style="display: flex; gap: 28px; align-items: center;">
+        <a href="startseite.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Start</a>
+        <a href="unser-eis.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Unser Eis</a>
+        <a href="ueber-uns.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Über uns</a>
+        <a href="standorte.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Standorte</a>
+        <a href="kontakt.dc.html" style="display: inline-block; font-size: 14px; font-weight: 500; color: #F5EFE2; background: #1B3A35; text-decoration: none; padding: 10px 20px; border-radius: 8px;" style-hover="background: #2E524B;">Kontakt</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width: 760px; margin: 0 auto; padding: 160px 24px 96px; width: 100%; flex: 1;">
+    <h1 style="font-family: Fraunces, Georgia, serif; font-weight: 400; font-size: 48px; line-height: 1.06; letter-spacing: -0.02em; color: #0E1F1C; margin: 0 0 16px;">Datenschutzerklärung</h1>
+    <p style="font-size: 14px; color: #B08F4E; background: #FBF6EC; border: 1px solid #E3CC95; border-radius: 8px; padding: 14px 18px; margin: 0 0 40px;">Platzhalter-Seite. Vor Livegang von einer fachkundigen Stelle erstellen bzw. prüfen lassen (DSGVO). ### TODO Kunde ###</p>
+
+    <div style="display: flex; flex-direction: column; gap: 32px;">
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">1. Verantwortliche Stelle</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">### TODO Kunde: Name, Anschrift, E-Mail des Verantwortlichen ###</p>
+      </div>
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">2. Hosting &amp; Server-Logs</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">### TODO Kunde: Hosting-Anbieter benennen, AV-Vertrag, Log-Speicherdauer ###</p>
+      </div>
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">3. Google Maps</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">Auf der Standorte-Seite sind Karten von Google Maps eingebunden. Dabei werden Daten (u. a. IP-Adresse) an Google übertragen. ### TODO Kunde: Zwei-Klick-Lösung oder Consent-Banner ergänzen, Rechtsgrundlage dokumentieren ###</p>
+      </div>
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">4. Google Fonts</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">Schriften werden derzeit von Google geladen. ### TODO: Vor Livegang lokal einbinden (DSGVO-konform, kein Drittlandtransfer) ###</p>
+      </div>
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">5. Kontaktformular</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">### TODO Kunde: Zweck, Rechtsgrundlage (Art. 6 Abs. 1 lit. b DSGVO), Speicherdauer ###</p>
+      </div>
+      <div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 500; font-size: 24px; color: #0E1F1C; margin: 0 0 10px;">6. Deine Rechte</h2>
+        <p style="margin: 0; font-size: 15px; line-height: 1.7;">Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit, Widerspruch, Beschwerde bei der Aufsichtsbehörde (LDI NRW). ### TODO: ausformulieren ###</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER (kompakt) -->
+  <div style="background: #1B3A35; color: #F5EFE2;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(245, 239, 226, 0.55);">
+      <span>© 2026 Da Franco · Familie Franciamore, Neuss</span>
+      <span style="display: flex; gap: 24px;">
+        <a href="impressum.dc.html" style="color: inherit; text-decoration: none;" style-hover="color: #F5EFE2;">Impressum</a>
+        <a href="datenschutz.dc.html" style="color: #F5EFE2; text-decoration: none;">Datenschutz</a>
+      </span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>

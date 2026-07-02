@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&amp;family=Inter:wght@400;500;600&amp;display=swap">
+<style>
+html, body { margin: 0; padding: 0; background: #F5EFE2; }
+* { box-sizing: border-box; }
+</style>
+</helmet>
+<div style="font-family: Inter, -apple-system, sans-serif; background: #F5EFE2; color: #44403A; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased;">
+
+  <!-- NAV -->
+  <div style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: rgba(245, 239, 226, 0.78); backdrop-filter: blur(14px) saturate(1.1); border-bottom: 1px solid #DDD2B9;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 32px;">
+      <a href="startseite.dc.html" style="text-decoration: none; display: flex; align-items: baseline; gap: 12px;">
+        <span style="font-family: Fraunces, Georgia, serif; font-size: 24px; color: #0E1F1C; letter-spacing: -0.01em;">Da Franco</span>
+        <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #B08F4E;">Italienisches Eis · Neuss</span>
+      </a>
+      <div style="display: flex; gap: 28px; align-items: center;">
+        <a href="startseite.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Start</a>
+        <a href="unser-eis.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Unser Eis</a>
+        <a href="ueber-uns.dc.html" style="font-size: 14px; font-weight: 500; color: #44403A; text-decoration: none; padding-bottom: 2px; border-bottom: 2px solid transparent;" style-hover="color: #0E1F1C; border-bottom: 2px solid #C9A86A;">Über uns</a>
+        <a href="standorte.dc.html" style="font-size: 14px; font-weight: 500; color: #0E1F1C; text-decoration: none; border-bottom: 2px solid #C9A86A; padding-bottom: 2px;">Standorte</a>
+        <a href="kontakt.dc.html" style="display: inline-block; font-size: 14px; font-weight: 500; color: #F5EFE2; background: #1B3A35; text-decoration: none; padding: 10px 20px; border-radius: 8px; transition: background 140ms cubic-bezier(0.22, 0.61, 0.36, 1);" style-hover="background: #2E524B;">Kontakt</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE HEAD -->
+  <div style="max-width: 1240px; margin: 0 auto; padding: 160px 24px 72px;">
+    <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #B08F4E; margin-bottom: 16px;">Standorte</div>
+    <h1 style="font-family: Fraunces, Georgia, serif; font-weight: 400; font-size: clamp(44px, 6vw, 80px); line-height: 1.04; letter-spacing: -0.02em; color: #0E1F1C; margin: 0 0 24px; max-width: 800px;">Zweimal in Neuss.<br>Und unterwegs.</h1>
+    <p style="font-size: 18px; line-height: 1.6; color: #44403A; max-width: 560px; margin: 0;">Beide Standorte gehören zur Familie Franciamore, beide führen dasselbe Eis. Dazu kommen unsere Eiswagen.</p>
+  </div>
+
+  <!-- STANDORT A -->
+  <div id="am-roettgen" data-screen-label="Standort Am Röttgen" style="max-width: 1240px; margin: 0 auto; padding: 0 24px 48px;">
+    <div style="background: #FFFFFF; border: 1px solid #DDD2B9; border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr;">
+      <div style="padding: 48px; display: flex; flex-direction: column; gap: 0;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #B08F4E; border: 1px solid #E3CC95; border-radius: 999px; padding: 5px 12px; white-space: nowrap;">Neu seit 2023</span>
+          <span style="font-size: 12px; font-weight: 500; color: #B08F4E;">5,0 ★ · 37 Bewertungen</span>
+        </div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 400; font-size: clamp(32px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.015em; color: #0E1F1C; margin: 0 0 12px;">Eis Café da Franco<br>Am Röttgen</h2>
+        <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.6; color: #44403A;">Im Innenhof Am Röttgen — folg den Tafeln. Direkt am Naturschutzgebiet und an der Spazier- und Radstrecke Richtung Rhein. Hunde sind im Innenhof willkommen.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid #ECE4D2; padding-top: 24px; margin-bottom: 28px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Adresse</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">Am Röttgen 128<br>41468 Neuss-Grimlinghausen</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Öffnungszeiten</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">täglich 12–19 Uhr</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <span style="width: 8px; height: 8px; border-radius: 999px; background: {{ dotA }};"></span>
+              <span style="font-size: 13px; font-weight: 500; color: #44403A;">{{ statusA }}</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Telefon</div>
+            <div style="font-size: 15px; color: #0E1F1C;">### TODO Kunde ###</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Vor Ort</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">Innenhof · innen &amp; außen · hundefreundlich</div>
+          </div>
+        </div>
+        <a href="https://maps.google.com/?cid=14487786654904748388" target="_blank" rel="noopener" style="display: inline-block; align-self: flex-start; font-size: 15px; font-weight: 500; color: #F5EFE2; background: #1B3A35; text-decoration: none; padding: 14px 28px; border-radius: 8px; transition: background 140ms cubic-bezier(0.22, 0.61, 0.36, 1);" style-hover="background: #2E524B;">Route planen</a>
+      </div>
+      <div style="display: grid; grid-template-rows: 1fr 1fr; min-height: 560px;">
+        <img src="https://lh3.googleusercontent.com/place-photos/AJRVUZOutGYiv4mP8a4kDp-eO1AhdjZ09ClRajtAGrcbSZ19XVAeVFgyEfiiwQ5VKpzIua0y544Sq5m27A15uzrYyJysR7SLP0L26b-yoGPkI_wdoxp0r2lilrd5D0iSBSJhQfhcyoyFw_CJQvkVuKIZZX6S=s4800-w800-h600" alt="Innenhof des Eis Café da Franco Am Röttgen" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        <iframe src="https://maps.google.com/maps?q=51.1782558,6.7548121&amp;z=15&amp;output=embed" title="Karte: Eis Café da Franco, Am Röttgen 128" style="width: 100%; height: 100%; border: none; display: block; border-top: 1px solid #DDD2B9;" loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- STANDORT B -->
+  <div id="berghaeuschensweg" data-screen-label="Standort Berghäuschensweg" style="max-width: 1240px; margin: 0 auto; padding: 0 24px 96px;">
+    <div style="background: #FFFFFF; border: 1px solid #DDD2B9; border-radius: 14px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr;">
+      <div style="display: grid; grid-template-rows: 1fr 1fr; min-height: 560px; order: 1;">
+        <img src="https://lh3.googleusercontent.com/place-photos/AJRVUZNTff1lkD4HKf3Oc_zbBW7C7JeJKHhuVOVbH-hck9d7auprU4vBO0PDh0LcfLMIyNPxQKlkf6Zb0ArNNdAaG77PyImEYfqXpbuyfOawkCMKto9q5y105RGmTgOsoY9-Xa3373rBdh0JBV0M12c=s4800-w800-h600" alt="Ital Eis Da Franco am Berghäuschensweg" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+        <iframe src="https://maps.google.com/maps?q=51.1791153,6.7157847&amp;z=15&amp;output=embed" title="Karte: Ital Eis Da Franco, Berghäuschensweg 196–198" style="width: 100%; height: 100%; border: none; display: block; border-top: 1px solid #DDD2B9;" loading="lazy"></iframe>
+      </div>
+      <div style="padding: 48px; display: flex; flex-direction: column; order: 2;">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+          <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #B08F4E; border: 1px solid #E3CC95; border-radius: 999px; padding: 5px 12px; white-space: nowrap;">Das Original</span>
+          <span style="font-size: 12px; font-weight: 500; color: #B08F4E;">4,6 ★ · 25 Bewertungen</span>
+        </div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 400; font-size: clamp(32px, 4vw, 44px); line-height: 1.08; letter-spacing: -0.015em; color: #0E1F1C; margin: 0 0 12px;">Ital Eis Da Franco<br>Berghäuschensweg</h2>
+        <p style="margin: 0 0 28px; font-size: 15px; line-height: 1.6; color: #44403A;">Der Stammsitz mit der eigenen Eisküche — hier entsteht das Eis für beide Standorte und die Wagen. Klein, mit Terrasse. Dazu italienischer Kaffee: Espresso, Cappuccino, Latte Macchiato.</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid #ECE4D2; padding-top: 24px; margin-bottom: 28px;">
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Adresse</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">Berghäuschensweg 196–198<br>41468 Neuss-Selikum</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Öffnungszeiten</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">täglich 13–19 Uhr</div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+              <span style="width: 8px; height: 8px; border-radius: 999px; background: {{ dotB }};"></span>
+              <span style="font-size: 13px; font-weight: 500; color: #44403A;">{{ statusB }}</span>
+            </div>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Telefon</div>
+            <a href="tel:021311256508" style="font-size: 15px; color: #0E1F1C; text-decoration: none; border-bottom: 1px solid #C9A86A;">02131 1256508</a>
+          </div>
+          <div>
+            <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #9A9287; margin-bottom: 6px;">Vor Ort</div>
+            <div style="font-size: 15px; line-height: 1.5; color: #0E1F1C;">Terrasse · Kaffee · Basis der Eiswagen</div>
+          </div>
+        </div>
+        <a href="https://maps.google.com/?cid=14868260274152037710" target="_blank" rel="noopener" style="display: inline-block; align-self: flex-start; font-size: 15px; font-weight: 500; color: #F5EFE2; background: #1B3A35; text-decoration: none; padding: 14px 28px; border-radius: 8px; transition: background 140ms cubic-bezier(0.22, 0.61, 0.36, 1);" style-hover="background: #2E524B;">Route planen</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- EISWAGEN (inverse) -->
+  <div style="background: #1B3A35;">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 96px 24px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 72px; align-items: center;">
+      <div>
+        <div style="font-size: 12px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #C9A86A; margin-bottom: 16px;">Eiswagen</div>
+        <h2 style="font-family: Fraunces, Georgia, serif; font-weight: 400; font-size: clamp(32px, 4vw, 48px); line-height: 1.1; letter-spacing: -0.015em; color: #F5EFE2; margin: 0 0 20px;">Und wenn du nicht<br>zu uns kommst —</h2>
+        <p style="margin: 0; font-size: 16px; line-height: 1.6; color: rgba(245, 239, 226, 0.7); max-width: 480px;">— kommen wir zu dir. Unsere umgebauten VW-Busse stehen regelmäßig an der Marina im Sportboothafen und am Kinderbauernhof. Damit hat alles angefangen.</p>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(245, 239, 226, 0.18); padding-bottom: 12px;">
+          <span style="font-family: Fraunces, Georgia, serif; font-size: 22px; color: #F5EFE2;">Marina · Sportboothafen</span>
+          <span style="font-size: 13px; color: rgba(245, 239, 226, 0.55);">Neuss</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(245, 239, 226, 0.18); padding-bottom: 12px;">
+          <span style="font-family: Fraunces, Georgia, serif; font-size: 22px; color: #F5EFE2;">Kinderbauernhof</span>
+          <span style="font-size: 13px; color: rgba(245, 239, 226, 0.55);">Neuss</span>
+        </div>
+        <div style="font-size: 13px; color: rgba(245, 239, 226, 0.55); margin-top: 4px;">Aktuelle Zeiten und Plätze: ### TODO Kunde ###</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="background: #1B3A35; color: #F5EFE2; border-top: 1px solid rgba(245, 239, 226, 0.18);">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 72px 24px 0; display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 56px; border-bottom: 1px solid rgba(245, 239, 226, 0.18);">
+      <div>
+        <div style="font-family: Fraunces, Georgia, serif; font-size: 26px; margin-bottom: 14px;">Da Franco</div>
+        <p style="font-family: Fraunces, Georgia, serif; font-style: italic; font-size: 19px; line-height: 1.45; color: rgba(245, 239, 226, 0.7); max-width: 320px; margin: 0;">Hausgemachtes italienisches Eis. Für den Weg, den Rhein, und alles dazwischen.</p>
+      </div>
+      <div>
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #C9A86A; margin-bottom: 18px;">Seiten</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="unser-eis.dc.html" style="color: rgba(245, 239, 226, 0.75); text-decoration: none; font-size: 14px;" style-hover="color: #F5EFE2;">Unser Eis</a>
+          <a href="ueber-uns.dc.html" style="color: rgba(245, 239, 226, 0.75); text-decoration: none; font-size: 14px;" style-hover="color: #F5EFE2;">Über uns</a>
+          <a href="standorte.dc.html" style="color: rgba(245, 239, 226, 0.75); text-decoration: none; font-size: 14px;" style-hover="color: #F5EFE2;">Standorte</a>
+          <a href="kontakt.dc.html" style="color: rgba(245, 239, 226, 0.75); text-decoration: none; font-size: 14px;" style-hover="color: #F5EFE2;">Kontakt</a>
+        </div>
+      </div>
+      <div>
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #C9A86A; margin-bottom: 18px;">Am Röttgen</div>
+        <div style="font-size: 14px; line-height: 1.6; color: rgba(245, 239, 226, 0.75);">Am Röttgen 128<br>41468 Neuss-Grimlinghausen<br>täglich 12–19 Uhr</div>
+      </div>
+      <div>
+        <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: #C9A86A; margin-bottom: 18px;">Berghäuschensweg</div>
+        <div style="font-size: 14px; line-height: 1.6; color: rgba(245, 239, 226, 0.75);">Berghäuschensweg 196–198<br>41468 Neuss-Selikum<br>täglich 13–19 Uhr<br>02131 1256508</div>
+      </div>
+    </div>
+    <div style="max-width: 1240px; margin: 0 auto; padding: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: rgba(245, 239, 226, 0.55);">
+      <span>© 2026 Da Franco · Familie Franciamore, Neuss</span>
+      <span style="display: flex; gap: 24px;">
+        <a href="impressum.dc.html" style="color: inherit; text-decoration: none;" style-hover="color: #F5EFE2;">Impressum</a>
+        <a href="datenschutz.dc.html" style="color: inherit; text-decoration: none;" style-hover="color: #F5EFE2;">Datenschutz</a>
+      </span>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals() {
+    const now = new Date();
+    const h = now.getHours() + now.getMinutes() / 60;
+    const openA = h >= 12 && h < 19;
+    const openB = h >= 13 && h < 19;
+    return {
+      statusA: openA ? 'Jetzt geöffnet' : 'Gerade geschlossen',
+      statusB: openB ? 'Jetzt geöffnet' : 'Gerade geschlossen',
+      dotA: openA ? '#6B8E4E' : '#9A9287',
+      dotB: openB ? '#6B8E4E' : '#9A9287'
+    };
+  }
+}
+</script>
+</body>
+</html>
