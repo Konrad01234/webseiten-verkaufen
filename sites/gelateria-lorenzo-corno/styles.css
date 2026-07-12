@@ -622,6 +622,12 @@ html:not(.js) #preloader { display: none; }
 }
 .about-card:hover { rotate: 0deg; box-shadow: var(--shadow-hover); }
 .about-card svg { width: 100%; height: auto; display: block; }
+.about-card img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 24px;
+}
 .about-badge {
   position: absolute;
   right: -8px;
@@ -717,6 +723,102 @@ html:not(.js) #preloader { display: none; }
   margin-left: auto;
   margin-right: auto;
 }
+
+/* ============================================================
+   Impressionen (Galerie)
+   ============================================================ */
+.gallery { background: var(--cream); }
+.gallery-grid {
+  columns: 3;
+  column-gap: 22px;
+}
+.gallery-grid figure {
+  break-inside: avoid;
+  margin: 0 0 22px;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 10px 10px 14px;
+  box-shadow: var(--shadow-soft);
+  transition: translate .35s var(--ease-out), box-shadow .35s, rotate .35s var(--ease-out);
+}
+.gallery-grid figure:nth-child(odd) { rotate: -.6deg; }
+.gallery-grid figure:nth-child(even) { rotate: .6deg; }
+.gallery-grid figure:hover {
+  translate: 0 -5px;
+  rotate: 0deg;
+  box-shadow: var(--shadow-hover);
+}
+.gallery-grid img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 14px;
+}
+.gallery-grid figcaption {
+  padding: 10px 6px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--cocoa-soft);
+  text-align: center;
+}
+
+/* ============================================================
+   So bestellst du (Steps)
+   ============================================================ */
+.steps { background: var(--white); }
+.steps-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  counter-reset: step;
+}
+.steps-grid li {
+  position: relative;
+  background: var(--cream);
+  border-radius: var(--radius);
+  padding: 54px 22px 24px;
+  box-shadow: var(--shadow-soft);
+  transition: translate .3s var(--ease-out), box-shadow .3s;
+}
+.steps-grid li:hover { translate: 0 -4px; box-shadow: var(--shadow-hover); }
+.step-num {
+  position: absolute;
+  top: -20px;
+  left: 22px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--berry);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(196, 80, 107, .4);
+}
+.steps-grid strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 19px;
+  margin-bottom: 6px;
+}
+.steps-grid p { font-size: 14.5px; color: var(--cocoa-soft); }
+.steps-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 620px;
+  margin: 36px auto 0;
+  padding: 16px 20px;
+  background: var(--cream-deep);
+  border-radius: 16px;
+  font-size: 15px;
+  color: var(--cocoa-soft);
+}
+.steps-tip svg { flex: none; width: 22px; height: 22px; color: var(--amber); margin-top: 1px; }
 
 /* ============================================================
    Zahlen
@@ -929,6 +1031,8 @@ html:not(.js) #preloader { display: none; }
   .flavor-grid { grid-template-columns: repeat(2, 1fr); }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-grid { columns: 2; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); row-gap: 38px; }
 }
 
 @media (max-width: 880px) {
@@ -948,6 +1052,8 @@ html:not(.js) #preloader { display: none; }
 @media (max-width: 560px) {
   .flavor-grid { grid-template-columns: 1fr; }
   .visit-cards { grid-template-columns: 1fr; }
+  .gallery-grid { columns: 1; }
+  .steps-grid { grid-template-columns: 1fr; row-gap: 38px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
   .footer-grid { grid-template-columns: 1fr; }
   .topbar .tb-right { display: none; }
