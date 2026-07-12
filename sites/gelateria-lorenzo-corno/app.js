@@ -15,14 +15,24 @@
   if (reduce || seen) { if (preloader) preloader.classList.add("done"); }
   else { setTimeout(hideIntro, 2200); }
 
-  /* ---------- Scroll-Fortschritt + Nav-Zustand ---------- */
+  /* ---------- Scroll-Fortschritt + Nav-Zustand + Hero-Fade ---------- */
   var progress = document.getElementById("scroll-progress");
   var nav = document.getElementById("nav");
+  var heroContent = document.querySelector(".hero-content");
   function onScroll() {
     var doc = document.documentElement;
+    var y = doc.scrollTop;
     var max = doc.scrollHeight - doc.clientHeight;
-    if (progress) progress.style.width = (max > 0 ? (doc.scrollTop / max) * 100 : 0) + "%";
-    if (nav) nav.classList.toggle("scrolled", doc.scrollTop > 80);
+    if (progress) progress.style.width = (max > 0 ? (y / max) * 100 : 0) + "%";
+    if (nav) nav.classList.toggle("scrolled", y > 80);
+    // Hero-Inhalt driftet nach oben und blendet aus (Tiefe/Kino)
+    if (heroContent && !reduce) {
+      var vh = window.innerHeight;
+      if (y < vh) {
+        heroContent.style.opacity = String(Math.max(0, 1 - (y / vh) * 1.35));
+        heroContent.style.transform = "translateY(" + (y * 0.16).toFixed(1) + "px)";
+      }
+    }
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   onScroll();
@@ -92,6 +102,32 @@
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
     sections.forEach(function (s) { sio.observe(s); });
+  }
+
+  /* ---------- Kennzahlen hochzählen ---------- */
+  function animateCount(el) {
+    var target = parseFloat(el.getAttribute("data-count"));
+    var dec = parseInt(el.getAttribute("data-decimals") || "0", 10);
+    var suffix = el.getAttribute("data-suffix") || "";
+    function fmt(v) { return v.toFixed(dec).replace(".", ",") + suffix; }
+    if (reduce) { el.innerHTML = fmt(target); return; }
+    var dur = 1500, start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      el.innerHTML = fmt(target * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var counters = document.querySelectorAll(".count");
+  if ("IntersectionObserver" in window && counters.length) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { animateCount(en.target); cio.unobserve(en.target); } });
+    }, { threshold: 0.6 });
+    counters.forEach(function (el) { cio.observe(el); });
+  } else {
+    counters.forEach(animateCount);
   }
 
   /* ---------- Jahr ---------- */
