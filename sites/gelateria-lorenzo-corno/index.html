@@ -9,8 +9,27 @@
   <meta property="og:title" content="Gelateria Lorenzo Corno | München-Schwabing" />
   <meta property="og:description" content="Handgemachtes italienisches Gelato – Eismacher in München seit 1986. Hohenzollernstraße 44." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="img/makro-kugeln.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="img/makro-kugeln.jpg" fetchpriority="high" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "IceCreamShop",
+    "name": "Gelateria Lorenzo Corno",
+    "description": "Handgemachtes italienisches Gelato nach kalabrischer Tradition – Eismacher in München seit 1986.",
+    "address": { "@type": "PostalAddress", "streetAddress": "Hohenzollernstraße 44", "postalCode": "80801", "addressLocality": "München", "addressCountry": "DE" },
+    "telephone": "+491776756438",
+    "openingHours": "Mo-Su 11:30-22:30",
+    "servesCuisine": "Gelato",
+    "priceRange": "€",
+    "sameAs": ["https://www.instagram.com/gelateria_lorenzo_corno/"],
+    "geo": { "@type": "GeoCoordinates", "latitude": 48.160112, "longitude": 11.579728 },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "300" }
+  }
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2c5 0 9 3.6 9 8 0 .7-.1 1.4-.3 2H7.3c-.2-.6-.3-1.3-.3-2 0-4.4 4-8 9-8z' fill='%23c4506b'/%3E%3Cpath d='M7.5 13h17L16 30z' fill='%23d9a05b'/%3E%3C/svg%3E" />
   <link rel="stylesheet" href="styles.css" />
@@ -77,9 +96,9 @@
     <!-- ===== Hero (Vollbild, Ken-Burns) ===== -->
     <section class="hero" id="start">
       <div class="hero-media" aria-hidden="true">
-        <img src="img/makro-kugeln.jpg" alt="" class="hero-slide s1" />
-        <img src="img/theke-pistazie.jpg" alt="" class="hero-slide s2" />
-        <img src="img/cono-schoko-mango.jpg" alt="" class="hero-slide s3" />
+        <img src="img/makro-kugeln.jpg" alt="" class="hero-slide s1" fetchpriority="high" decoding="async" />
+        <img src="img/theke-pistazie.jpg" alt="" class="hero-slide s2" loading="lazy" decoding="async" />
+        <img src="img/cono-schoko-mango.jpg" alt="" class="hero-slide s3" loading="lazy" decoding="async" />
       </div>
       <div class="hero-veil" aria-hidden="true"></div>
       <div class="wrap hero-content">
