@@ -154,7 +154,7 @@
           </div>
         </div>
 
-        <div class="hero-art reveal d-2" aria-hidden="true">
+        <div class="hero-art reveal d-2">
           <div class="hero-badge" aria-hidden="true">
             <svg viewBox="0 0 120 120">
               <defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
@@ -167,26 +167,12 @@
               </svg>
             </span>
           </div>
-          <svg class="hero-cone" viewBox="0 0 240 340" fill="none">
-            <defs>
-              <pattern id="hwaffle" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-                <rect width="14" height="14" fill="#d9a05b"/>
-                <path d="M0 0h14M0 7h14M0 0v14M7 0v14" stroke="#c08840" stroke-width="2"/>
-              </pattern>
-            </defs>
-            <ellipse cx="120" cy="322" rx="72" ry="11" fill="#e8d9be" opacity=".75"/>
-            <path class="float f-3" d="M120 14c26 0 47 19 47 42 0 4.6-.8 9-2.4 13H75.4A38.6 38.6 0 0 1 73 56c0-23 21-42 47-42Z" fill="#c4506b"/>
-            <path class="float f-3" d="M84 40c-19 3-33 17-33 34 0 3.4.6 6.7 1.7 9.7h39.6" fill="#e78fa3"/>
-            <path class="float f-2" d="M156 40c19 3 33 17 33 34 0 3.4-.6 6.7-1.7 9.7h-39.6" fill="#8ea86b"/>
-            <path class="float f-2 hero-drip" d="M88 96c0 12-5 17-5 26 0 6 4 9.5 8.5 9.5S100 128 100 122c0-9-5-14-5-26Z" fill="#e78fa3"/>
-            <path class="float f-2" d="M52 84h136c6 0 9.6 5 7.6 10.4L190 110H50l-5.6-15.6C42.4 89 46 84 52 84Z" fill="#f3e3c3"/>
-            <path d="M50 110h140l-61.5 196c-3 9.4-14 9.4-17 0L50 110Z" fill="url(#hwaffle)" stroke="#b07c3c" stroke-width="3"/>
-            <circle class="float f-1" cx="196" cy="52" r="7" fill="#e0b64b"/>
-            <circle class="float f-2" cx="34" cy="96" r="5" fill="#c4506b"/>
-            <circle class="float f-3" cx="216" cy="120" r="4" fill="#8ea86b"/>
-            <path class="float f-1" d="M28 40c4 0 6-2 6-6 0 4 2 6 6 6-4 0-6 2-6 6 0-4-2-6-6-6Z" fill="#e0b64b"/>
-            <path class="float f-2" d="M204 168c3.4 0 5-1.6 5-5 0 3.4 1.6 5 5 5-3.4 0-5 1.6-5 5 0-3.4-1.6-5-5-5Z" fill="#c4506b"/>
-          </svg>
+          <figure class="hero-video">
+            <video autoplay muted loop playsinline poster="media/eistheke-poster.jpg" aria-label="Video: Blick in die Eistheke der Gelateria Lorenzo Corno">
+              <source src="media/eistheke-loop.mp4" type="video/mp4" />
+            </video>
+            <figcaption><span class="live-dot" aria-hidden="true"></span>Direkt aus der Theke</figcaption>
+          </figure>
         </div>
       </div>
       <a class="hero-scrollhint" href="#marquee" aria-label="Weiter zur nächsten Sektion">
@@ -371,6 +357,10 @@
           <figure class="reveal d-2">
             <img src="img/eistheke.jpg" alt="Die Eistheke der Gelateria mit frischen Sorten in Metallbehältern" loading="lazy" />
             <figcaption>Frisch produziert – direkt hinter der Theke</figcaption>
+          </figure>
+          <figure class="reveal d-1">
+            <img src="img/theke-video-still.jpg" alt="Nahaufnahme der Gelato-Sorten in der Auslage: Mango, Erdbeere, Sahne, Schokolade" loading="lazy" />
+            <figcaption>Mango, Erdbeere, Sahne &amp; Schokolade</figcaption>
           </figure>
           <figure class="reveal">
             <img src="img/eis-kokos.jpg" alt="Kokoseis in der Hand gehalten im Waffelbecher" loading="lazy" />

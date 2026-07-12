@@ -137,6 +137,14 @@
     sections.forEach(function (sec) { sio.observe(sec); });
   }
 
+  /* ---------- Hero-Video bei reduzierter Bewegung anhalten ---------- */
+  if (prefersReduced) {
+    document.querySelectorAll("video").forEach(function (v) {
+      v.removeAttribute("autoplay");
+      v.pause();
+    });
+  }
+
   /* ---------- Jahr im Footer ---------- */
   var year = document.getElementById("year");
   if (year) year.textContent = String(new Date().getFullYear());
