@@ -91,9 +91,9 @@
       </a>
       <nav class="nav-links" aria-label="Hauptnavigation">
         <a href="#start">Start</a>
+        <a href="#impressionen">Impressionen</a>
         <a href="#lorenzo">Über Lorenzo</a>
         <a href="#sorten">Sorten</a>
-        <a href="#impressionen">Impressionen</a>
         <a href="#stimmen">Stimmen</a>
         <a href="#besuch">Besuch</a>
       </nav>
@@ -112,9 +112,9 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
     <a href="#start">Start</a>
+    <a href="#impressionen">Impressionen</a>
     <a href="#lorenzo">Über Lorenzo</a>
     <a href="#sorten">Sorten</a>
-    <a href="#impressionen">Impressionen</a>
     <a href="#stimmen">Stimmen</a>
     <a href="#besuch">Besuch</a>
     <span class="ov-tagline">Gelateria Lorenzo Corno · München</span>
@@ -123,38 +123,21 @@
   <main>
 
     <!-- ===== Hero ===== -->
-    <section class="hero" id="start">
+    <section class="hero hero--cine" id="start">
       <div class="hero-blobs" aria-hidden="true">
         <span class="blob blob-1"></span>
         <span class="blob blob-2"></span>
         <span class="blob blob-3"></span>
       </div>
-      <div class="wrap hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow reveal">Gelateria · Schwabing-West</p>
-          <h1 class="reveal d-1">Gelato, wie es<br /><em>Italien</em> meint.</h1>
-          <p class="lead reveal d-2">
-            In der Hohenzollernstraße 44 macht Lorenzo Corno sein Eis noch von Hand –
-            nach der ursprünglichen Tradition seiner Heimat Kalabrien. Direkt hinter
-            der Theke, jeden Tag frisch, in Sorten, die es sonst nirgendwo gibt.
-          </p>
-          <div class="hero-actions reveal d-3">
-            <a href="#sorten" class="btn btn-primary">Sorten entdecken</a>
-            <a href="#besuch" class="btn btn-ghost">Öffnungszeiten &amp; Anfahrt</a>
-          </div>
-          <div class="hero-rating reveal d-4">
-            <div class="stars" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
-            </div>
-            <p><strong>4,8 von 5</strong> auf Google – eine der beliebtesten Eisdielen Münchens</p>
-          </div>
-        </div>
+      <div class="wrap hero-cine">
+        <p class="eyebrow reveal">Gelateria · Schwabing-West</p>
+        <h1 class="reveal d-1">Gelato, wie es <em>Italien</em> meint.</h1>
+        <p class="lead reveal d-2">
+          In der Hohenzollernstraße 44 macht Lorenzo Corno sein Eis noch von Hand –
+          nach der Tradition seiner Heimat Kalabrien. Jeden Tag frisch, direkt hinter der Theke.
+        </p>
 
-        <div class="hero-art reveal d-2">
+        <figure class="hero-stage reveal d-2">
           <div class="hero-badge" aria-hidden="true">
             <svg viewBox="0 0 120 120">
               <defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
@@ -167,15 +150,28 @@
               </svg>
             </span>
           </div>
-          <figure class="hero-video">
-            <video autoplay muted loop playsinline poster="media/eistheke-poster.jpg" aria-label="Video: Blick in die Eistheke der Gelateria Lorenzo Corno">
-              <source src="media/eistheke-loop.mp4" type="video/mp4" />
-            </video>
-            <figcaption><span class="live-dot" aria-hidden="true"></span>Direkt aus der Theke</figcaption>
-          </figure>
+          <video autoplay muted loop playsinline poster="media/eistheke-poster.jpg" aria-label="Video: Blick in die Eistheke der Gelateria Lorenzo Corno">
+            <source src="media/eistheke-loop.mp4" type="video/mp4" />
+          </video>
+          <figcaption><span class="live-dot" aria-hidden="true"></span>Direkt aus der Theke</figcaption>
+        </figure>
+
+        <div class="hero-actions reveal d-3">
+          <a href="#impressionen" class="btn btn-primary">Eis entdecken</a>
+          <a href="#besuch" class="btn btn-ghost">Öffnungszeiten &amp; Anfahrt</a>
+        </div>
+        <div class="hero-rating reveal d-4">
+          <div class="stars" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+              <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
+          </div>
+          <p><strong>4,8 von 5</strong> auf Google – eine der beliebtesten Eisdielen Münchens</p>
         </div>
       </div>
-      <a class="hero-scrollhint" href="#marquee" aria-label="Weiter zur nächsten Sektion">
+      <a class="hero-scrollhint" href="#impressionen" aria-label="Weiter zu den Impressionen">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16m0 0 6-6m-6 6-6-6"/></svg>
       </a>
     </section>
@@ -199,6 +195,61 @@
         <span>Kaffee Krokant</span><i>·</i>
         <span>Joghurt–Heidelbeer</span><i>·</i>
         <span>Pistazie</span><i>·</i>
+      </div>
+    </section>
+
+    <!-- ===== Impressionen ===== -->
+    <section class="section gallery" id="impressionen">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow reveal">Impressionen</p>
+          <h2 class="reveal d-1">Ein Blick in<br />die Theke.</h2>
+          <p class="section-sub reveal d-2">
+            Momente aus der Gelateria – von unseren Gästen auf Google geteilt.
+          </p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="reveal">
+            <img src="img/eis-schoko-ingwer-mango.jpg" alt="Drei Kugeln Schokolade-Ingwer mit Mango-Sorbet obenauf" loading="lazy" />
+            <figcaption>Schokolade-Ingwer &amp; Mango-Sorbet</figcaption>
+          </figure>
+          <figure class="reveal d-1">
+            <img src="img/eis-joghurt-heidelbeer.jpg" alt="Joghurt-Heidelbeer-Eis im blütenförmigen Waffelbecher" loading="lazy" />
+            <figcaption>Joghurt-Heidelbeer im Waffelblüten-Becher</figcaption>
+          </figure>
+          <figure class="reveal d-2">
+            <img src="img/eistheke.jpg" alt="Die Eistheke der Gelateria mit frischen Sorten in Metallbehältern" loading="lazy" />
+            <figcaption>Frisch produziert – direkt hinter der Theke</figcaption>
+          </figure>
+          <figure class="reveal d-1">
+            <img src="img/theke-video-still.jpg" alt="Nahaufnahme der Gelato-Sorten in der Auslage: Mango, Erdbeere, Sahne, Schokolade" loading="lazy" />
+            <figcaption>Mango, Erdbeere, Sahne &amp; Schokolade</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="img/eis-kokos.jpg" alt="Kokoseis in der Hand gehalten im Waffelbecher" loading="lazy" />
+            <figcaption>Kokos – cremig wie in Kalabrien</figcaption>
+          </figure>
+          <figure class="reveal d-1">
+            <img src="img/fruechte.jpg" alt="Kisten mit Melonen, Pfirsichen und Wassermelonen aus Sizilien" loading="lazy" />
+            <figcaption>Frische Früchte – L&rsquo;orto di Sicilia</figcaption>
+          </figure>
+          <figure class="reveal d-2">
+            <img src="img/eis-kuerbiskern.jpg" alt="Kürbiskern-Eis im Waffelblüten-Becher" loading="lazy" />
+            <figcaption>Kürbiskern – eine Rarität</figcaption>
+          </figure>
+          <figure class="reveal">
+            <img src="img/eis-waffelbecher.jpg" alt="Eine Kugel Eis im kleinen Waffelbecher vor der Gelateria" loading="lazy" />
+            <figcaption>Der kleine Moment Italien</figcaption>
+          </figure>
+          <figure class="reveal d-1">
+            <img src="img/eis-schoko-nah.jpg" alt="Nahaufnahme von Schokoladen-Eis mit Mango und Vanille" loading="lazy" />
+            <figcaption>Dunkle Schokolade, ganz nah</figcaption>
+          </figure>
+          <figure class="reveal d-2">
+            <img src="img/laden-schild.jpg" alt="Ladenschild Lorenzo Corno Gelati e Sorbetti an der Wand" loading="lazy" />
+            <figcaption>Gelati &amp; Sorbetti – seit Jahrzehnten in München</figcaption>
+          </figure>
+        </div>
       </div>
     </section>
 
@@ -335,60 +386,6 @@
       </div>
     </section>
 
-    <!-- ===== Impressionen ===== -->
-    <section class="section gallery" id="impressionen">
-      <div class="wrap">
-        <div class="section-head">
-          <p class="eyebrow reveal">Impressionen</p>
-          <h2 class="reveal d-1">Ein Blick in<br />die Theke.</h2>
-          <p class="section-sub reveal d-2">
-            Momente aus der Gelateria – von unseren Gästen auf Google geteilt.
-          </p>
-        </div>
-        <div class="gallery-grid">
-          <figure class="reveal">
-            <img src="img/eis-schoko-ingwer-mango.jpg" alt="Drei Kugeln Schokolade-Ingwer mit Mango-Sorbet obenauf" loading="lazy" />
-            <figcaption>Schokolade-Ingwer &amp; Mango-Sorbet</figcaption>
-          </figure>
-          <figure class="reveal d-1">
-            <img src="img/eis-joghurt-heidelbeer.jpg" alt="Joghurt-Heidelbeer-Eis im blütenförmigen Waffelbecher" loading="lazy" />
-            <figcaption>Joghurt-Heidelbeer im Waffelblüten-Becher</figcaption>
-          </figure>
-          <figure class="reveal d-2">
-            <img src="img/eistheke.jpg" alt="Die Eistheke der Gelateria mit frischen Sorten in Metallbehältern" loading="lazy" />
-            <figcaption>Frisch produziert – direkt hinter der Theke</figcaption>
-          </figure>
-          <figure class="reveal d-1">
-            <img src="img/theke-video-still.jpg" alt="Nahaufnahme der Gelato-Sorten in der Auslage: Mango, Erdbeere, Sahne, Schokolade" loading="lazy" />
-            <figcaption>Mango, Erdbeere, Sahne &amp; Schokolade</figcaption>
-          </figure>
-          <figure class="reveal">
-            <img src="img/eis-kokos.jpg" alt="Kokoseis in der Hand gehalten im Waffelbecher" loading="lazy" />
-            <figcaption>Kokos – cremig wie in Kalabrien</figcaption>
-          </figure>
-          <figure class="reveal d-1">
-            <img src="img/fruechte.jpg" alt="Kisten mit Melonen, Pfirsichen und Wassermelonen aus Sizilien" loading="lazy" />
-            <figcaption>Frische Früchte – L&rsquo;orto di Sicilia</figcaption>
-          </figure>
-          <figure class="reveal d-2">
-            <img src="img/eis-kuerbiskern.jpg" alt="Kürbiskern-Eis im Waffelblüten-Becher" loading="lazy" />
-            <figcaption>Kürbiskern – eine Rarität</figcaption>
-          </figure>
-          <figure class="reveal">
-            <img src="img/eis-waffelbecher.jpg" alt="Eine Kugel Eis im kleinen Waffelbecher vor der Gelateria" loading="lazy" />
-            <figcaption>Der kleine Moment Italien</figcaption>
-          </figure>
-          <figure class="reveal d-1">
-            <img src="img/eis-schoko-nah.jpg" alt="Nahaufnahme von Schokoladen-Eis mit Mango und Vanille" loading="lazy" />
-            <figcaption>Dunkle Schokolade, ganz nah</figcaption>
-          </figure>
-          <figure class="reveal d-2">
-            <img src="img/laden-schild.jpg" alt="Ladenschild Lorenzo Corno Gelati e Sorbetti an der Wand" loading="lazy" />
-            <figcaption>Gelati &amp; Sorbetti – seit Jahrzehnten in München</figcaption>
-          </figure>
-        </div>
-      </div>
-    </section>
 
     <!-- ===== So bestellst du ===== -->
     <section class="section steps">

@@ -507,42 +507,58 @@ html:not(.js) #preloader { display: none; }
 }
 .hero-badge-core svg { width: 26px; height: 26px; }
 
-/* Hero-Video */
-.hero-video {
+/* Video-zentrierter Hero */
+.hero--cine { text-align: center; }
+.hero-cine {
   position: relative;
-  margin: 0;
-  width: min(430px, 82vw);
-  border-radius: 26px;
-  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.hero--cine h1 { font-size: clamp(40px, 6.4vw, 74px); margin-bottom: 18px; }
+.hero--cine .lead { max-width: 60ch; margin: 0 auto 28px; }
+.hero--cine .hero-actions { justify-content: center; margin-top: 26px; margin-bottom: 22px; }
+.hero--cine .hero-rating { justify-content: center; flex-wrap: wrap; }
+.hero--cine .hero-rating p { max-width: none; }
+
+.hero-stage {
+  position: relative;
+  margin: 6px auto 0;
+  width: min(840px, 100%);
+  border-radius: 30px;
+  padding: 12px;
   background: var(--white);
   box-shadow: var(--shadow-hover);
-  rotate: 1.5deg;
-  transition: rotate .4s var(--ease-out);
 }
-.hero-video:hover { rotate: 0deg; }
-.hero-video video {
+.hero-stage video {
   display: block;
   width: 100%;
-  aspect-ratio: 5 / 4;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
-  border-radius: 18px;
+  border-radius: 20px;
   background: var(--cocoa);
 }
-.hero-video figcaption {
+.hero-stage figcaption {
   position: absolute;
-  left: 20px;
-  bottom: 20px;
+  left: 26px;
+  bottom: 26px;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 14px;
+  padding: 8px 15px;
   border-radius: 999px;
   background: rgba(74, 47, 27, .82);
   backdrop-filter: blur(4px);
   color: var(--cream);
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 700;
   letter-spacing: .02em;
+}
+.hero-stage .hero-badge {
+  position: absolute;
+  top: -18px;
+  right: -18px;
+  z-index: 2;
 }
 .live-dot {
   width: 9px; height: 9px;
@@ -1104,6 +1120,8 @@ html:not(.js) #preloader { display: none; }
   .visit-cards { grid-template-columns: 1fr; }
   .gallery-grid { columns: 1; }
   .steps-grid { grid-template-columns: 1fr; row-gap: 38px; }
+  .hero-stage .hero-badge { top: -10px; right: -4px; width: 88px; height: 88px; }
+  .hero-stage figcaption { left: 16px; bottom: 16px; }
   .stats-grid { grid-template-columns: 1fr 1fr; gap: 22px; }
   .footer-grid { grid-template-columns: 1fr; }
   .topbar .tb-right { display: none; }
