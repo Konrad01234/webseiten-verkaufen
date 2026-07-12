@@ -80,6 +80,14 @@ img { display: block; max-width: 100%; }
 .btn-outline:hover { background: rgba(255,255,255,.12); border-color: #fff; color: #fff; }
 .btn-ghost { background: transparent; color: var(--cocoa); border-color: rgba(60,39,24,.3); }
 .btn-ghost:hover { border-color: var(--berry); color: var(--berry); }
+/* feiner Glanz beim Hover (gefüllte Buttons) */
+.btn-primary, .btn-light { position: relative; overflow: hidden; }
+.btn-primary::after, .btn-light::after {
+  content: ""; position: absolute; top: 0; left: -70%; width: 45%; height: 100%; pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.42), transparent); transform: skewX(-18deg);
+}
+.btn-primary:hover::after, .btn-light:hover::after { animation: sheen .75s var(--ease); }
+@keyframes sheen { from { left: -70%; } to { left: 150%; } }
 
 /* ============================================================
    Cinematic Intro
@@ -443,6 +451,11 @@ html:not(.js) #preloader { display: none; }
 .js .reveal.d-2 { transition-delay: .2s; }
 .js .reveal.d-3 { transition-delay: .3s; }
 .js .reveal.d-4 { transition-delay: .4s; }
+
+/* Zeilen-Maske: großer Satz steigt hinter einer Kante hervor (Filmtitel) */
+.js .reveal.mask { overflow: hidden; opacity: 1; transform: none; padding-bottom: .12em; }
+.js .reveal.mask > span { display: block; transform: translateY(112%); transition: transform 1.15s var(--ease-cine); }
+.js .reveal.mask.in > span { transform: translateY(0); }
 
 /* ============================================================
    Responsive
