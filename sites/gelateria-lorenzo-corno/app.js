@@ -4,20 +4,25 @@
 
   var prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  /* ---------- Preloader ---------- */
+  /* ---------- Intro: Eiskugel fällt ins Hörnchen ---------- */
   var preloader = document.getElementById("preloader");
+  var skipBtn = document.getElementById("pl-skip");
+  var introSeen = false;
+  try { introSeen = sessionStorage.getItem("lc-intro") === "1"; } catch (e) {}
+
   function hidePreloader() {
+    if (!preloader || preloader.classList.contains("done")) return;
+    preloader.classList.add("done");
+    try { sessionStorage.setItem("lc-intro", "1"); } catch (e) {}
+  }
+  if (prefersReduced || introSeen) {
+    // Keine (erneute) Animation: sofort ausblenden
     if (preloader) preloader.classList.add("done");
-  }
-  if (prefersReduced) {
-    hidePreloader();
   } else {
-    window.addEventListener("load", function () {
-      setTimeout(hidePreloader, 650);
-    });
-    // Fallback, falls "load" hängt (z. B. Karten-iframe)
-    setTimeout(hidePreloader, 3000);
+    // Animation dauert ~2,9 s, danach sanft ausblenden
+    setTimeout(hidePreloader, 3300);
   }
+  if (skipBtn) skipBtn.addEventListener("click", hidePreloader);
 
   /* ---------- Scroll-Fortschritt ---------- */
   var progress = document.getElementById("scroll-progress");

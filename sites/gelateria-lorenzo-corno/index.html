@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gelateria Lorenzo Corno | Handgemachtes Eis in München-Schwabing</title>
-  <meta name="description" content="Gelateria Lorenzo Corno in München-Schwabing – handgemachtes italienisches Gelato nach kalabrischer Tradition. Hohenzollernstraße 44, täglich 11:30–22:30 Uhr. Google-Bewertung 4,8 Sterne." />
+  <meta name="description" content="Gelateria Lorenzo Corno in München-Schwabing – handgemachtes italienisches Gelato nach kalabrischer Tradition. Hohenzollernstraße 44, täglich 11:00–23:00 Uhr. Google-Bewertung 4,8 Sterne." />
   <meta name="theme-color" content="#fdf6ec" />
   <meta property="og:title" content="Gelateria Lorenzo Corno | München-Schwabing" />
   <meta property="og:description" content="Handgemachtes italienisches Gelato nach kalabrischer Tradition – Hohenzollernstraße 44, München." />
@@ -18,18 +18,49 @@
 </head>
 <body>
 
-  <!-- ===== Preloader ===== -->
+  <!-- ===== Intro: Eiskugel fällt ins Hörnchen ===== -->
   <div id="preloader" aria-hidden="true">
-    <div class="pl-cone">
-      <svg viewBox="0 0 64 88" fill="none" aria-hidden="true">
-        <path class="pl-scoop pl-scoop-1" d="M32 4c9 0 16 6.5 16 14.5 0 1.6-.3 3-.8 4.4H16.8c-.5-1.4-.8-2.8-.8-4.4C16 10.5 23 4 32 4Z" fill="#c4506b"/>
-        <path class="pl-scoop pl-scoop-2" d="M14 23h36c2 0 3 1.6 2.4 3.4L51 31H13l-1.4-4.6C11 24.6 12 23 14 23Z" fill="#8ea86b"/>
-        <path class="pl-conebody" d="M14 31h36L34.6 82.4c-.9 2.9-4.3 2.9-5.2 0L14 31Z" fill="#d9a05b"/>
-        <path class="pl-conebody" d="M18 36l5 16m4-16 4 13m5-13 3 10" stroke="#b07c3c" stroke-width="2" stroke-linecap="round"/>
+    <div class="ld-stage">
+      <svg viewBox="0 0 220 300" fill="none" aria-hidden="true">
+        <defs>
+          <pattern id="waffle" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="16" height="16" fill="#d9a05b"/>
+            <path d="M0 0h16M0 8h16M0 0v16M8 0v16" stroke="#c08840" stroke-width="2.4"/>
+          </pattern>
+        </defs>
+
+        <!-- Schatten -->
+        <ellipse class="ld-shadow" cx="110" cy="284" rx="58" ry="9" fill="#e2d2b4"/>
+
+        <!-- Hörnchen -->
+        <g class="ld-cone">
+          <path d="M52 128h116c5 0 8.4 4.4 6.7 9L110 278c-1.8 4.8-8.2 4.8-10 0L45.3 137c-1.7-4.6 1.7-9 6.7-9Z" fill="url(#waffle)" stroke="#b07c3c" stroke-width="3"/>
+          <path d="M48 120h124c4 0 7 3 7 7v1c0 4-3 7-7 7H48c-4 0-7-3-7-7v-1c0-4 3-7 7-7Z" fill="#f3e3c3" stroke="#e0c896" stroke-width="2"/>
+        </g>
+
+        <!-- Kugel 1: Himbeere -->
+        <g class="ld-scoop1">
+          <circle cx="110" cy="92" r="46" fill="#c4506b"/>
+          <path d="M78 76c6-12 18-20 32-20" stroke="#e78fa3" stroke-width="7" stroke-linecap="round" fill="none"/>
+          <path class="ld-drip ld-drip-1" d="M84 130c0 10-4 14-4 22 0 5 3.4 8 7 8s7-3 7-8c0-8-4-12-4-22Z" fill="#c4506b"/>
+        </g>
+
+        <!-- Kugel 2: Pistazie -->
+        <g class="ld-scoop2">
+          <circle cx="132" cy="44" r="30" fill="#8ea86b"/>
+          <path d="M112 36c4-8 12-13 20-13" stroke="#b9d29a" stroke-width="5" stroke-linecap="round" fill="none"/>
+        </g>
+
+        <!-- Funkeln -->
+        <g class="ld-spark ld-spark-1"><path d="M36 60c5 0 7.5-2.5 7.5-7.5 0 5 2.5 7.5 7.5 7.5-5 0-7.5 2.5-7.5 7.5 0-5-2.5-7.5-7.5-7.5Z" fill="#e0b64b"/></g>
+        <g class="ld-spark ld-spark-2"><path d="M176 88c4 0 6-2 6-6 0 4 2 6 6 6-4 0-6 2-6 6 0-4-2-6-6-6Z" fill="#c4506b"/></g>
+        <g class="ld-spark ld-spark-3"><circle cx="58" cy="104" r="4" fill="#8ea86b"/></g>
+        <g class="ld-spark ld-spark-4"><circle cx="186" cy="34" r="5" fill="#e0b64b"/></g>
       </svg>
     </div>
     <p class="pl-name">Lorenzo <em>Corno</em></p>
     <span class="pl-loc">Gelateria · München-Schwabing</span>
+    <button type="button" class="pl-skip" id="pl-skip">Überspringen</button>
   </div>
 
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
@@ -43,7 +74,7 @@
       </a>
       <div class="tb-right">
         <span>Hohenzollernstraße 44 · 80801 München</span>
-        <span>Täglich 11:30 – 22:30 Uhr</span>
+        <span>Täglich 11:00 – 23:00 Uhr</span>
       </div>
     </div>
   </div>
@@ -117,19 +148,37 @@
               <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
               <svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg>
             </div>
-            <p><strong><span data-count="4.8">4,8</span> von 5</strong> auf Google – eine der beliebtesten Eisdielen Münchens</p>
+            <p><strong>4,8 von 5</strong> auf Google – eine der beliebtesten Eisdielen Münchens</p>
           </div>
         </div>
 
         <div class="hero-art reveal d-2" aria-hidden="true">
+          <div class="hero-badge" aria-hidden="true">
+            <svg viewBox="0 0 120 120">
+              <defs><path id="circ" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+              <text><textPath href="#circ">TÄGLICH FRISCH · FATTO A MANO · TÄGLICH FRISCH · FATTO A MANO ·</textPath></text>
+            </svg>
+            <span class="hero-badge-core">
+              <svg viewBox="0 0 32 32" aria-hidden="true">
+                <path d="M16 2c5 0 9 3.6 9 8 0 .7-.1 1.4-.3 2H7.3c-.2-.6-.3-1.3-.3-2 0-4.4 4-8 9-8z" fill="#c4506b"/>
+                <path d="M7.5 13h17L16 30z" fill="#d9a05b"/>
+              </svg>
+            </span>
+          </div>
           <svg class="hero-cone" viewBox="0 0 240 340" fill="none">
-            <ellipse cx="120" cy="320" rx="72" ry="12" fill="#e8d9be" opacity=".7"/>
+            <defs>
+              <pattern id="hwaffle" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                <rect width="14" height="14" fill="#d9a05b"/>
+                <path d="M0 0h14M0 7h14M0 0v14M7 0v14" stroke="#c08840" stroke-width="2"/>
+              </pattern>
+            </defs>
+            <ellipse cx="120" cy="322" rx="72" ry="11" fill="#e8d9be" opacity=".75"/>
             <path class="float f-3" d="M120 14c26 0 47 19 47 42 0 4.6-.8 9-2.4 13H75.4A38.6 38.6 0 0 1 73 56c0-23 21-42 47-42Z" fill="#c4506b"/>
             <path class="float f-3" d="M84 40c-19 3-33 17-33 34 0 3.4.6 6.7 1.7 9.7h39.6" fill="#e78fa3"/>
             <path class="float f-2" d="M156 40c19 3 33 17 33 34 0 3.4-.6 6.7-1.7 9.7h-39.6" fill="#8ea86b"/>
+            <path class="float f-2 hero-drip" d="M88 96c0 12-5 17-5 26 0 6 4 9.5 8.5 9.5S100 128 100 122c0-9-5-14-5-26Z" fill="#e78fa3"/>
             <path class="float f-2" d="M52 84h136c6 0 9.6 5 7.6 10.4L190 110H50l-5.6-15.6C42.4 89 46 84 52 84Z" fill="#f3e3c3"/>
-            <path d="M50 110h140l-61.5 196c-3 9.4-14 9.4-17 0L50 110Z" fill="#d9a05b"/>
-            <path d="M64 128l18 56m10-56 15 47m13-47 12 38m11-38 8 26M76 168l13 40m14-40 11 33m13-33 8 24" stroke="#b07c3c" stroke-width="4" stroke-linecap="round"/>
+            <path d="M50 110h140l-61.5 196c-3 9.4-14 9.4-17 0L50 110Z" fill="url(#hwaffle)" stroke="#b07c3c" stroke-width="3"/>
             <circle class="float f-1" cx="196" cy="52" r="7" fill="#e0b64b"/>
             <circle class="float f-2" cx="34" cy="96" r="5" fill="#c4506b"/>
             <circle class="float f-3" cx="216" cy="120" r="4" fill="#8ea86b"/>
@@ -167,6 +216,9 @@
 
     <!-- ===== Über Lorenzo ===== -->
     <section class="section about" id="lorenzo">
+      <svg class="drip-divider" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0h1440v18c-60 0-60 34-120 34s-60-26-120-26-60 40-120 40-60-32-120-32-60 22-120 22-60-38-120-38-60 30-120 30-60-24-120-24-60 36-120 36-60-28-120-28-60 20-120 20-60-34-120-34Z" fill="var(--cream)"/>
+      </svg>
       <div class="wrap about-grid">
         <div class="about-art reveal" aria-hidden="true">
           <div class="about-card">
@@ -223,6 +275,9 @@
 
     <!-- ===== Sorten ===== -->
     <section class="section flavors" id="sorten">
+      <svg class="drip-divider" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0h1440v18c-60 0-60 34-120 34s-60-26-120-26-60 40-120 40-60-32-120-32-60 22-120 22-60-38-120-38-60 30-120 30-60-24-120-24-60 36-120 36-60-28-120-28-60 20-120 20-60-34-120-34Z" fill="var(--white)"/>
+      </svg>
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow reveal">Unsere Sorten</p>
@@ -233,42 +288,42 @@
           </p>
         </div>
         <div class="flavor-grid">
-          <article class="flavor-card reveal" style="--fc:#e0b64b">
+          <article class="flavor-card reveal" style="--fc:#e0b64b; --fc2:#f0d489">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Tonkabohne &amp; Kürbis</h3>
             <p>Warm, würzig, überraschend – die Sorte, über die ganz Schwabing spricht.</p>
           </article>
-          <article class="flavor-card reveal d-1" style="--fc:#b7a26b">
+          <article class="flavor-card reveal d-1" style="--fc:#b7a26b; --fc2:#d4c497">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Earl Grey &amp; Zitrone</h3>
             <p>Feiner Bergamotte-Tee trifft auf frische Zitrone. Elegant und erfrischend.</p>
           </article>
-          <article class="flavor-card reveal d-2" style="--fc:#4a4a4a">
+          <article class="flavor-card reveal d-2" style="--fc:#4a4a4a; --fc2:#7a7a7a">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Schwarzer Sesam</h3>
             <p>Nussig-geröstet mit asiatischer Note – cremig wie ein Espresso am Abend.</p>
           </article>
-          <article class="flavor-card reveal d-3" style="--fc:#d98ca4">
+          <article class="flavor-card reveal d-3" style="--fc:#d98ca4; --fc2:#ecb7c6">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Rose &amp; Hibiskus</h3>
             <p>Blumig und zart – schmeckt wie ein Spaziergang durch einen Sommergarten.</p>
           </article>
-          <article class="flavor-card reveal d-1" style="--fc:#6b4630">
+          <article class="flavor-card reveal d-1" style="--fc:#6b4630; --fc2:#96684c">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Schokolade &amp; Ingwer</h3>
             <p>Dunkle Schokolade mit feuriger Ingwerschärfe – intensiv und lang im Abgang.</p>
           </article>
-          <article class="flavor-card reveal d-2" style="--fc:#9fb87a">
+          <article class="flavor-card reveal d-2" style="--fc:#9fb87a; --fc2:#c1d4a3">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Vanille, weiße Schoko &amp; Pistazie</h3>
             <p>Drei Klassiker, ein Becher: cremige Vanille, weiße Schokolade, Pistazien-Crunch.</p>
           </article>
-          <article class="flavor-card reveal d-3" style="--fc:#e08a3c">
+          <article class="flavor-card reveal d-3" style="--fc:#e08a3c; --fc2:#f0af6f">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Orange &amp; Pinienkerne</h3>
             <p>Sizilianische Orangen und geröstete Pinienkerne – Sonne im Hörnchen.</p>
           </article>
-          <article class="flavor-card reveal d-4" style="--fc:#a8ccd7">
+          <article class="flavor-card reveal d-4" style="--fc:#a8ccd7; --fc2:#c9e2ea">
             <span class="scoop" aria-hidden="true"></span>
             <h3>Milch &amp; Minze</h3>
             <p>Kühle Gartenminze in samtiger Milchbasis – ohne künstliches Grün.</p>
@@ -353,6 +408,9 @@
 
     <!-- ===== Besuch ===== -->
     <section class="section visit" id="besuch">
+      <svg class="drip-divider" viewBox="0 0 1440 70" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 0h1440v18c-60 0-60 34-120 34s-60-26-120-26-60 40-120 40-60-32-120-32-60 22-120 22-60-38-120-38-60 30-120 30-60-24-120-24-60 36-120 36-60-28-120-28-60 20-120 20-60-34-120-34Z" fill="var(--white)"/>
+      </svg>
       <div class="wrap visit-grid">
         <div class="visit-copy">
           <p class="eyebrow reveal">Besuch uns</p>
@@ -374,7 +432,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
               <div>
                 <strong>Öffnungszeiten</strong>
-                <span>Täglich 11:30 – 22:30 Uhr</span>
+                <span>Täglich 11:00 – 23:00 Uhr</span>
                 <em>Winterpause: ca. November bis Februar –<br />dann ist Lorenzo in Kalabrien.</em>
               </div>
             </div>
@@ -414,7 +472,7 @@
           <path d="M14 31h36L34.6 82.4c-.9 2.9-4.3 2.9-5.2 0L14 31Z" fill="#d9a05b"/>
         </svg>
         <h2 class="reveal d-1">Heute schon ein Eis gehabt?</h2>
-        <p class="reveal d-2">Täglich von 11:30 bis 22:30 Uhr · Hohenzollernstraße 44, München</p>
+        <p class="reveal d-2">Täglich von 11:00 bis 23:00 Uhr · Hohenzollernstraße 44, München</p>
         <a href="https://www.google.com/maps/search/?api=1&amp;query=Gelateria+Lorenzo+Corno+Hohenzollernstra%C3%9Fe+44+M%C3%BCnchen" target="_blank" rel="noopener" class="btn btn-light reveal d-3">Jetzt Route planen</a>
       </div>
     </section>
@@ -438,7 +496,7 @@
       </div>
       <div class="f-col">
         <h4>Öffnungszeiten</h4>
-        <p>Täglich 11:30 – 22:30 Uhr</p>
+        <p>Täglich 11:00 – 23:00 Uhr</p>
         <p>Winterpause ca. Nov. – Feb.</p>
       </div>
       <div class="f-col">

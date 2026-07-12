@@ -14,7 +14,7 @@ Statisches HTML + CSS + Vanilla JS, keine Build-Tools nötig.
 
 - Adresse: Hohenzollernstraße 44, 80801 München
 - Telefon: 0177 675 64 38
-- Öffnungszeiten: täglich 11:30–22:30 Uhr, Winterpause ca. Nov.–Feb.
+- Öffnungszeiten: täglich 11:00–23:00 Uhr (Stand April 2026), Winterpause ca. Nov.–Feb.
 - Google-Bewertung: 4,8 ★
 
 ## Lokal testen
