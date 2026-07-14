@@ -84,6 +84,33 @@
     revealEls.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* Thermostat dreht hoch: 17,0° -> 21,5° samt wachsendem Bogen */
+  var thermoTemp = document.getElementById('thermo-temp');
+  var thermoArc = document.getElementById('thermo-arc');
+  if (thermoTemp && thermoArc) {
+    var T_START = 17, T_END = 21.5;
+    if (reduceMotion) {
+      thermoTemp.textContent = '21,5°';
+    } else {
+      thermoTemp.textContent = T_START.toFixed(1).replace('.', ',') + '°';
+      thermoArc.style.strokeDasharray = '100';
+      thermoArc.style.strokeDashoffset = '100';
+      setTimeout(function () {
+        var t0 = null;
+        var stepT = function (t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min(1, (t - t0) / 2200);
+          var eased = 1 - Math.pow(1 - p, 3);
+          var val = T_START + (T_END - T_START) * eased;
+          thermoTemp.textContent = val.toFixed(1).replace('.', ',') + '°';
+          thermoArc.style.strokeDashoffset = String(100 - 100 * eased);
+          if (p < 1) requestAnimationFrame(stepT);
+        };
+        requestAnimationFrame(stepT);
+      }, 1700);
+    }
+  }
+
   /* Statistiken hochzählen */
   var counters = document.querySelectorAll('[data-count]');
   if (counters.length && 'IntersectionObserver' in window && !reduceMotion) {
@@ -152,7 +179,7 @@
 
   /* 3D-Tilt auf Karten (nur Maus-Geräte) */
   if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    document.querySelectorAll('.card, .step, .quote').forEach(function (el) {
+    document.querySelectorAll('.svc, .step, .quote').forEach(function (el) {
       el.addEventListener('mousemove', function (e) {
         var r = el.getBoundingClientRect();
         var rx = ((e.clientY - r.top) / r.height - 0.5) * -6;

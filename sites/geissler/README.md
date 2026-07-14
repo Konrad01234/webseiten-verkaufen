@@ -36,8 +36,9 @@ Statisches HTML + CSS + JS, kein Build-Schritt nötig.
 
 ## Bilder & Karte
 
-Alle Grafiken liegen lokal in `img/` (selbst gestaltete SVG-Illustrationen:
-Thermostat, Heizkörper-Szene, Gastherme, Lageplan). Die Seite lädt dadurch
+Alle Grafiken liegen lokal: das animierte Hero-Thermostat (dreht beim Laden
+auf 21,5° hoch) direkt als Inline-SVG in `index.html`, weitere Illustrationen
+(Heizkörper-Szene, Gastherme, Lageplan) in `img/`. Die Seite lädt dadurch
 **keinerlei Inhalte von Drittservern** – sie funktioniert offline, in jeder
 Vorschau und ohne Datenschutz-Fallstricke. Die Karte verlinkt per Klick auf
 Google Maps (Routenplanung).
