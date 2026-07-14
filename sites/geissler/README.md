@@ -32,12 +32,15 @@ Statisches HTML + CSS + JS, kein Build-Schritt nötig.
 - [ ] Impressum vollständig ausfüllen (Firmierung, Inhaber, USt-ID, Kammer)
 - [ ] Datenschutzerklärung rechtlich prüfen lassen
 - [ ] Kontaktformular an Versand anbinden (z. B. Formspree oder Vercel Function)
-- [ ] Stock-Fotos (Unsplash-Hotlinks) durch eigene Fotos ersetzen bzw. lokal hosten
+- [ ] Illustrationen (`img/*.svg`) bei Bedarf durch echte Fotos des Betriebs ersetzen
 
-## Bilder
+## Bilder & Karte
 
-Die Fotos werden aktuell direkt von `images.unsplash.com` geladen (Stock-Fotos).
-Lädt ein Bild nicht, greift automatisch ein gestalteter Fallback-Hintergrund.
+Alle Grafiken liegen lokal in `img/` (selbst gestaltete SVG-Illustrationen:
+Thermostat, Heizkörper-Szene, Gastherme, Lageplan). Die Seite lädt dadurch
+**keinerlei Inhalte von Drittservern** – sie funktioniert offline, in jeder
+Vorschau und ohne Datenschutz-Fallstricke. Die Karte verlinkt per Klick auf
+Google Maps (Routenplanung).
 
 ## Lokal testen
 

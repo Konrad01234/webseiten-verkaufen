@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img" aria-label="Lageplan: Markstraße 413, 44795 Bochum">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eef2f6"/>
+      <stop offset="1" stop-color="#e2e9f0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="600" fill="url(#bg)"/>
+
+  <!-- Grünfläche / Park -->
+  <path d="M0 430 Q 260 340 420 470 T 900 560 L 1200 600 L 0 600 Z" fill="#cfe6d4"/>
+  <path d="M980 0 Q 1080 120 1200 90 L 1200 0 Z" fill="#cfe6d4"/>
+
+  <!-- Wasser -->
+  <path d="M0 90 Q 140 60 200 110 T 380 120 L 380 0 L 0 0 Z" fill="#cfe0ee"/>
+
+  <!-- Nebenstraßen -->
+  <g stroke="#ffffff" stroke-width="14" fill="none" stroke-linecap="round">
+    <path d="M120 0 V 600"/>
+    <path d="M320 40 Q 420 220 380 600"/>
+    <path d="M640 0 Q 610 200 700 380 T 760 600"/>
+    <path d="M920 0 Q 900 180 1010 300 T 1200 420"/>
+    <path d="M0 300 H 1200" stroke-width="12"/>
+    <path d="M200 480 Q 500 430 820 500"/>
+  </g>
+
+  <!-- Hauptstraße: Markstraße -->
+  <path id="markstr" d="M0 210 Q 330 160 620 220 T 1200 260" stroke="#f6c453" stroke-width="26" fill="none" stroke-linecap="round"/>
+  <path d="M0 210 Q 330 160 620 220 T 1200 260" stroke="#ffffff" stroke-width="3" fill="none" stroke-dasharray="18 16" opacity=".8"/>
+  <text font-family="ui-sans-serif, system-ui, sans-serif" font-size="22" font-weight="700" fill="#8a6d1f">
+    <textPath href="#markstr" startOffset="7%">M a r k s t r a ß e</textPath>
+  </text>
+
+  <!-- Gebäude -->
+  <g fill="#d5dce4">
+    <rect x="180" y="240" width="70" height="46" rx="4"/>
+    <rect x="430" y="120" width="80" height="52" rx="4"/>
+    <rect x="470" y="250" width="64" height="44" rx="4"/>
+    <rect x="760" y="120" width="72" height="50" rx="4"/>
+    <rect x="820" y="330" width="84" height="54" rx="4"/>
+    <rect x="1020" y="160" width="70" height="46" rx="4"/>
+    <rect x="210" y="360" width="60" height="42" rx="4"/>
+  </g>
+  <!-- Bäume im Park -->
+  <g fill="#9ecfaa">
+    <circle cx="220" cy="500" r="16"/>
+    <circle cx="300" cy="530" r="12"/>
+    <circle cx="520" cy="520" r="15"/>
+    <circle cx="700" cy="545" r="12"/>
+    <circle cx="1080" cy="60" r="14"/>
+  </g>
+
+  <!-- Standort-Pin -->
+  <g>
+    <circle cx="620" cy="222" r="34" fill="#f97316" opacity=".18"/>
+    <circle cx="620" cy="222" r="52" fill="#f97316" opacity=".08"/>
+    <path d="M620 160 c-24 0-42 18-42 41 0 30 42 65 42 65 s42-35 42-65 c0-23-18-41-42-41z" fill="#ea580c"/>
+    <circle cx="620" cy="201" r="15" fill="#ffffff"/>
+    <path d="M620 193 c.8 2.6-.5 4.6-2.2 6.4 -1.7 1.8-2.8 3.3-2.8 5.1 a5 5 0 0 0 10 .2 c0-1.7-.7-3.2-1.7-4.5 .1 1.2-.3 2.3-1.4 2.8 .4-2.3-.5-7.6-1.9-10z" fill="#ea580c"/>
+  </g>
+
+  <!-- Adress-Karte -->
+  <g>
+    <rect x="700" y="120" width="330" height="96" rx="16" fill="#ffffff" stroke="#dbe2ea" stroke-width="2"/>
+    <circle cx="744" cy="168" r="22" fill="#fff7ed"/>
+    <path d="M744 152 c-9 0-16 7-16 15.5 0 11.5 16 24.5 16 24.5 s16-13 16-24.5 c0-8.5-7-15.5-16-15.5z m0 22 a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13z" fill="#ea580c"/>
+    <text x="782" y="162" font-family="ui-sans-serif, system-ui, sans-serif" font-size="21" font-weight="800" fill="#16233d">Geißler Heizungstechnik</text>
+    <text x="782" y="192" font-family="ui-sans-serif, system-ui, sans-serif" font-size="18" fill="#64748b">Markstraße 413 · 44795 Bochum</text>
+  </g>
+</svg>
