@@ -42,6 +42,12 @@ Thermostat, Heizkörper-Szene, Gastherme, Lageplan). Die Seite lädt dadurch
 Vorschau und ohne Datenschutz-Fallstricke. Die Karte verlinkt per Klick auf
 Google Maps (Routenplanung).
 
+## Vorschau
+
+`preview.html` ist eine generierte Ein-Datei-Vorschau (CSS/JS/Grafiken
+eingebettet, Impressum/Datenschutz integriert). Einfach im Browser öffnen –
+funktioniert komplett offline.
+
 ## Lokal testen
 
 ```bash

@@ -1,4 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 690" role="img" aria-label="Illustration: modernes Thermostat an der Wand">
+  <style>
+    @keyframes gp { 0%,100% { opacity:.7 } 50% { opacity:1 } }
+    .glow-pulse { animation: gp 5s ease-in-out infinite; }
+    @keyframes fl { 0%,100% { transform:scale(1) } 50% { transform:scale(1.2) translateY(-1.5px) } }
+    .flame { transform-box: fill-box; transform-origin: 50% 85%; animation: fl 1.5s ease-in-out infinite; }
+    @keyframes sw { 0%,100% { transform:rotate(-2.5deg) } 50% { transform:rotate(2.5deg) } }
+    .leaves { transform-box: fill-box; transform-origin: 50% 100%; animation: sw 5.5s ease-in-out infinite; }
+    @keyframes arcGlow { 0%,100% { opacity:.85 } 50% { opacity:1 } }
+    .arc { animation: arcGlow 3s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
   <defs>
     <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#1b2a45"/>
@@ -30,7 +41,7 @@
 
   <!-- Wand -->
   <rect width="600" height="690" fill="url(#wall)"/>
-  <rect width="600" height="690" fill="url(#glow)"/>
+  <rect width="600" height="690" fill="url(#glow)" class="glow-pulse"/>
   <!-- feine Fugenlinien -->
   <g stroke="#ffffff" stroke-opacity=".05" stroke-width="2">
     <line x1="0" y1="172" x2="600" y2="172"/>
@@ -60,12 +71,12 @@
     </g>
 
     <!-- aktiver Bogen -->
-    <path d="M 300 415 A 115 115 0 0 1 185 300" fill="none" stroke="url(#arc)" stroke-width="10" stroke-linecap="round" transform="rotate(135 300 300)"/>
+    <path class="arc" d="M 300 415 A 115 115 0 0 1 185 300" fill="none" stroke="url(#arc)" stroke-width="10" stroke-linecap="round" transform="rotate(135 300 300)"/>
 
     <!-- Anzeige -->
     <text x="300" y="298" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="58" font-weight="800" fill="#16233d">21,5°</text>
     <!-- Flamme -->
-    <path d="M300 322 c1.6 5-.9 9-4.3 12.6 -3.4 3.6-5.5 6.5-5.5 10.1 a9.8 9.8 0 0 0 19.6 .4 c0-3.3-1.4-6.2-3.3-8.9 .2 2.4-.6 4.5-2.7 5.5 .8-4.6-1-10.3-3.8-13.7z" fill="#ea580c" transform="translate(0,4)"/>
+    <path class="flame" d="M300 322 c1.6 5-.9 9-4.3 12.6 -3.4 3.6-5.5 6.5-5.5 10.1 a9.8 9.8 0 0 0 19.6 .4 c0-3.3-1.4-6.2-3.3-8.9 .2 2.4-.6 4.5-2.7 5.5 .8-4.6-1-10.3-3.8-13.7z" fill="#ea580c" transform="translate(0,4)"/>
     <text x="300" y="386" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="600" fill="#94a3b8">HEIZEN</text>
 
     <!-- Glanz -->
@@ -80,7 +91,7 @@
     <path d="M120 560 l6-38 h44 l6 38 z" fill="#c2643a"/>
     <path d="M120 560 l6-38 h44 l6 38 z" fill="#000" opacity=".12"/>
     <!-- Blätter -->
-    <g fill="url(#leaf)">
+    <g fill="url(#leaf)" class="leaves">
       <path d="M148 524 C 138 490 118 478 100 474 c4 26 18 46 44 54z"/>
       <path d="M150 524 C 152 486 168 466 190 458 c2 30-12 56-36 68z"/>
       <path d="M149 524 C 145 500 146 482 156 466 c10 16 10 40-2 58z"/>

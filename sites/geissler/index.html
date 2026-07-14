@@ -15,6 +15,19 @@
 </head>
 <body>
 
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <span class="pl-flame">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+      </span>
+      <p class="pl-name">Geißler <em>Heizungstechnik</em></p>
+      <div class="pl-track"><div class="pl-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
   <!-- ===== Topbar ===== -->
   <div class="topbar">
     <div class="wrap">
@@ -62,6 +75,11 @@
 
   <!-- ===== Hero ===== -->
   <section class="hero" id="start" style="padding:0">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="blob b1"></span>
+      <span class="blob b2"></span>
+      <canvas id="embers"></canvas>
+    </div>
     <div class="wrap">
       <div>
         <span class="hero-pill">
@@ -121,15 +139,32 @@
     </div>
   </section>
 
-  <!-- ===== Trust-Strip (Platzhalter-Partnerlogos) ===== -->
+  <!-- ===== Trust-Strip (Platzhalter-Partnerlogos, Laufband) ===== -->
   <div class="strip">
-    <div class="wrap">
-      <span class="label">Vertraut auf Technik von</span>
-      <span class="plogo" title="Platzhalter-Logo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
-      <span class="plogo" title="Platzhalter-Logo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
-      <span class="plogo" title="Platzhalter-Logo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
-      <span class="plogo" title="Platzhalter-Logo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
-      <span class="label">*Platzhalter – bitte echte Partner eintragen</span>
+    <p class="strip-label">Vertraut auf Technik von <em>· *Platzhalter – bitte echte Partner eintragen</em></p>
+    <div class="marquee">
+      <div class="mq-track">
+        <div class="mq-set">
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+        </div>
+        <div class="mq-set" aria-hidden="true">
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -191,7 +226,7 @@
   <!-- ===== Über uns ===== -->
   <section class="alt" id="ueber-uns">
     <div class="wrap split">
-      <div class="split-media reveal">
+      <div class="split-media reveal-zoom">
         <div class="m-big img-slot">
           <img src="img/heizkoerper-szene.svg"
                alt="Illustration: Heizkörper unter einem Fenster" loading="lazy" />
@@ -369,7 +404,7 @@
   <!-- ===== CTA ===== -->
   <section style="padding-top:0">
     <div class="wrap">
-      <div class="cta-banner reveal">
+      <div class="cta-banner reveal-zoom">
         <div>
           <h2>Heizung streikt oder Modernisierung geplant?</h2>
           <p>Rufen Sie uns an oder fordern Sie in 2 Minuten Ihr kostenloses Angebot an.</p>

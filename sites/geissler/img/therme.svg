@@ -1,4 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Illustration: moderne Gastherme an gefliester Wand">
+  <style>
+    @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+    .led { animation: blink 2.2s ease-in-out infinite; }
+    @keyframes fl { 0%,100% { transform:scale(1) } 50% { transform:scale(1.16) translateY(-1px) } }
+    .flame { transform-box: fill-box; transform-origin: 50% 85%; animation: fl 1.6s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
   <defs>
     <linearGradient id="fliesen" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#dfe7ee"/>
@@ -55,8 +62,8 @@
       <line x1="362" y1="316" x2="378" y2="316"/>
     </g>
     <!-- Statusleuchte + Flamme -->
-    <circle cx="228" cy="404" r="7" fill="#22c55e"/>
-    <path d="M292 388 c2 7-1.2 12.4-6 17.4 -4.7 5-7.6 9-7.6 14 a13.6 13.6 0 0 0 27.2 .5 c0-4.5-2-8.6-4.6-12.3 .3 3.3-.8 6.3-3.7 7.6 1.1-6.4-1.4-14.3-5.3-19.2z" fill="#ea580c"/>
+    <circle class="led" cx="228" cy="404" r="7" fill="#22c55e"/>
+    <path class="flame" d="M292 388 c2 7-1.2 12.4-6 17.4 -4.7 5-7.6 9-7.6 14 a13.6 13.6 0 0 0 27.2 .5 c0-4.5-2-8.6-4.6-12.3 .3 3.3-.8 6.3-3.7 7.6 1.1-6.4-1.4-14.3-5.3-19.2z" fill="#ea580c"/>
     <text x="358" y="412" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700" fill="#64748b">eco</text>
   </g>
 

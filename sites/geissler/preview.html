@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geißler Heizungstechnik | Heizung, Thermostate &amp; Service in Bochum</title>
+  <meta name="description" content="Geißler Heizungstechnik in Bochum – Installation und Reparatur von Heizsystemen und Thermostaten. Pünktlich, zuverlässig, 5,0 Sterne auf Google. Jetzt kostenloses Angebot anfordern." />
+  <meta name="theme-color" content="#0b1220" />
+  <meta property="og:title" content="Geißler Heizungstechnik | Heizung &amp; Service in Bochum" />
+  <meta property="og:description" content="Installation und Reparatur von Heizsystemen und Thermostaten in Bochum – pünktlich, sauber, zuverlässig." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23f97316%22 d=%22M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z%22/></svg>" />
+  <style>
+/* ============================================================
+   Geißler Heizungstechnik – modernes SaaS-Style Design
+   Farben: Navy/Slate + warmes Orange (Wärme/Heizung)
+   ============================================================ */
+
+:root {
+  --navy-950: #0b1220;
+  --navy-900: #0f1a2e;
+  --navy-800: #16233d;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #64748b;
+  --slate-400: #94a3b8;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50:  #f8fafc;
+  --orange-600: #ea580c;
+  --orange-500: #f97316;
+  --orange-400: #fb923c;
+  --orange-100: #ffedd5;
+  --orange-50:  #fff7ed;
+  --amber-400: #fbbf24;
+  --white: #ffffff;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-sm: 0 1px 2px rgba(15, 26, 46, .06), 0 1px 3px rgba(15, 26, 46, .08);
+  --shadow-md: 0 10px 30px -10px rgba(15, 26, 46, .18);
+  --shadow-lg: 0 25px 60px -15px rgba(15, 26, 46, .3);
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  color: var(--slate-700);
+  background: var(--white);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+
+a { color: inherit; text-decoration: none; }
+
+.wrap {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---------- Typo ---------- */
+h1, h2, h3 { color: var(--navy-900); line-height: 1.15; letter-spacing: -.02em; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 800; }
+h2 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); font-weight: 800; }
+h3 { font-size: 1.15rem; font-weight: 700; }
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--orange-600);
+  background: var(--orange-50);
+  border: 1px solid var(--orange-100);
+  border-radius: 999px;
+  padding: 6px 14px;
+  margin-bottom: 18px;
+}
+
+.section-head { max-width: 640px; margin-bottom: 48px; }
+.section-head.center { margin-left: auto; margin-right: auto; text-align: center; }
+.section-head p { margin-top: 14px; color: var(--slate-500); font-size: 1.05rem; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 999px;
+  padding: 14px 28px;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+  cursor: pointer;
+  border: none;
+  white-space: nowrap;
+}
+.btn svg { width: 18px; height: 18px; flex: none; }
+.btn-primary {
+  background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+  color: #fff;
+  box-shadow: 0 10px 25px -8px rgba(234, 88, 12, .55);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 30px -8px rgba(234, 88, 12, .6); }
+.btn-ghost {
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, .25);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover { background: rgba(255, 255, 255, .16); }
+.btn-outline {
+  background: #fff;
+  color: var(--navy-900);
+  border: 1.5px solid var(--slate-200);
+}
+.btn-outline:hover { border-color: var(--orange-400); color: var(--orange-600); }
+
+/* ---------- Topbar ---------- */
+.topbar {
+  background: var(--navy-950);
+  color: var(--slate-400);
+  font-size: .82rem;
+  padding: 8px 0;
+}
+.topbar .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.topbar a { display: inline-flex; align-items: center; gap: 7px; color: #fff; font-weight: 600; }
+.topbar a svg { width: 14px; height: 14px; }
+.topbar .tb-right { display: flex; gap: 22px; }
+@media (max-width: 640px) { .topbar .tb-right span:last-child { display: none; } }
+
+/* ---------- Nav ---------- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, .85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--slate-100);
+}
+.nav .wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+.brand { display: flex; align-items: center; gap: 11px; font-weight: 800; color: var(--navy-900); font-size: 1.12rem; letter-spacing: -.01em; }
+.brand .logo-badge {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+  display: grid; place-items: center;
+  box-shadow: 0 6px 14px -4px rgba(234, 88, 12, .5);
+}
+.brand .logo-badge svg { width: 22px; height: 22px; color: #fff; }
+.brand small { display: block; font-size: .68rem; font-weight: 600; color: var(--slate-500); letter-spacing: .08em; text-transform: uppercase; }
+
+.nav-links { display: flex; align-items: center; gap: 30px; }
+.nav-links a { font-weight: 600; font-size: .95rem; color: var(--slate-600); transition: color .15s; white-space: nowrap; }
+.nav-links a:hover { color: var(--orange-600); }
+.nav-cta { display: flex; align-items: center; gap: 14px; }
+.nav-cta .btn { padding: 11px 22px; font-size: .92rem; }
+
+.nav-burger {
+  display: none;
+  background: none; border: none; cursor: pointer;
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  color: var(--navy-900);
+}
+.nav-burger svg { width: 26px; height: 26px; }
+
+@media (max-width: 560px) {
+  .brand small { display: none; }
+  .nav-cta { gap: 8px; }
+  .nav-cta .btn-primary { padding: 10px 16px; font-size: .85rem; }
+  .cta-long { display: none; }
+}
+
+@media (max-width: 920px) {
+  .nav-links {
+    position: fixed;
+    inset: 72px 0 auto 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #fff;
+    border-bottom: 1px solid var(--slate-100);
+    box-shadow: var(--shadow-md);
+    padding: 10px 0;
+    display: none;
+  }
+  .nav-links.open { display: flex; }
+  .nav-links a { padding: 14px 28px; font-size: 1.05rem; }
+  .nav-burger { display: grid; place-items: center; }
+  .nav-cta .btn-outline { display: none; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  position: relative;
+  background:
+    radial-gradient(900px 480px at 85% -10%, rgba(249, 115, 22, .22), transparent 60%),
+    radial-gradient(700px 500px at -10% 110%, rgba(59, 130, 246, .14), transparent 60%),
+    linear-gradient(160deg, var(--navy-950) 0%, var(--navy-900) 55%, var(--navy-800) 100%);
+  color: #fff;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, black 30%, transparent 75%);
+  pointer-events: none;
+}
+.hero .wrap {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr .95fr;
+  gap: 60px;
+  align-items: center;
+  padding-top: 90px;
+  padding-bottom: 110px;
+}
+.hero h1 { color: #fff; }
+.hero h1 em { font-style: normal; color: var(--orange-400); }
+.hero .lede { margin: 22px 0 32px; font-size: 1.13rem; color: var(--slate-400); max-width: 500px; }
+.hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+.hero-pill {
+  display: inline-flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 999px;
+  padding: 7px 16px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--slate-200);
+  margin-bottom: 24px;
+}
+.hero-pill .stars { color: var(--amber-400); letter-spacing: 2px; font-size: .8rem; }
+
+.hero-trust {
+  display: flex; gap: 28px; flex-wrap: wrap;
+  margin-top: 42px;
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.hero-trust .t { display: flex; align-items: center; gap: 10px; font-size: .88rem; color: var(--slate-400); font-weight: 600; }
+.hero-trust .t svg { width: 19px; height: 19px; color: var(--orange-400); flex: none; }
+
+/* Hero media card stack */
+.hero-media { position: relative; }
+.hero-media .media-main {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid rgba(255,255,255,.12);
+  aspect-ratio: 4 / 4.6;
+  background: linear-gradient(145deg, var(--navy-800), var(--slate-700));
+}
+.hero-media .media-main img { width: 100%; height: 100%; object-fit: cover; }
+
+.float-card {
+  position: absolute;
+  background: rgba(255, 255, 255, .96);
+  color: var(--navy-900);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: .85rem;
+  font-weight: 600;
+  animation: floaty 5s ease-in-out infinite;
+}
+.float-card .ic {
+  width: 38px; height: 38px; flex: none;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  background: var(--orange-50);
+  color: var(--orange-600);
+}
+.float-card .ic svg { width: 20px; height: 20px; }
+.float-card strong { display: block; font-size: .95rem; }
+.float-card span { color: var(--slate-500); font-weight: 500; font-size: .78rem; }
+.fc-rating { top: 26px; left: -34px; }
+.fc-service { bottom: 34px; right: -26px; animation-delay: 2.5s; }
+@keyframes floaty {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-9px); }
+}
+
+@media (max-width: 920px) {
+  .hero .wrap { grid-template-columns: 1fr; padding-top: 60px; padding-bottom: 70px; gap: 48px; }
+  .hero-media { max-width: 440px; margin: 0 auto; width: 100%; }
+  .fc-rating { left: -8px; }
+  .fc-service { right: -8px; }
+}
+
+/* ---------- Logo/Partner strip ---------- */
+.strip {
+  border-bottom: 1px solid var(--slate-100);
+  padding: 26px 0;
+  background: var(--slate-50);
+}
+.strip .wrap {
+  display: flex; align-items: center; justify-content: center;
+  gap: 18px 44px; flex-wrap: wrap;
+}
+.strip .label { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--slate-400); font-weight: 700; }
+.strip .plogo {
+  font-weight: 800; font-size: 1.02rem; color: var(--slate-400);
+  display: inline-flex; align-items: center; gap: 8px;
+  opacity: .85;
+}
+.strip .plogo svg { width: 20px; height: 20px; }
+
+/* ---------- Sections ---------- */
+section { padding: 96px 0; }
+section.alt { background: var(--slate-50); }
+@media (max-width: 720px) { section { padding: 68px 0; } }
+
+/* ---------- Leistungen ---------- */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+@media (max-width: 920px) { .cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .cards { grid-template-columns: 1fr; } }
+
+.card {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 30px 28px;
+  box-shadow: var(--shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--orange-100);
+}
+.card .ic {
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--orange-50), var(--orange-100));
+  color: var(--orange-600);
+  display: grid; place-items: center;
+  margin-bottom: 20px;
+}
+.card .ic svg { width: 26px; height: 26px; }
+.card h3 { margin-bottom: 10px; }
+.card p { font-size: .95rem; color: var(--slate-500); }
+.card .more {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 16px; font-weight: 700; font-size: .88rem; color: var(--orange-600);
+}
+.card .more svg { width: 15px; height: 15px; transition: transform .15s; }
+.card:hover .more svg { transform: translateX(4px); }
+
+/* ---------- Split (Über uns) ---------- */
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  align-items: center;
+}
+@media (max-width: 920px) { .split { grid-template-columns: 1fr; gap: 44px; } }
+
+.split-media { position: relative; }
+.split-media .m-big {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  aspect-ratio: 4 / 3.4;
+  background: linear-gradient(145deg, var(--slate-200), var(--slate-100));
+}
+.split-media .m-big img { width: 100%; height: 100%; object-fit: cover; }
+.split-media .m-small {
+  position: absolute;
+  right: -22px; bottom: -30px;
+  width: 44%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 6px solid #fff;
+  box-shadow: var(--shadow-lg);
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(145deg, var(--slate-200), var(--slate-100));
+}
+.split-media .m-small img { width: 100%; height: 100%; object-fit: cover; }
+@media (max-width: 920px) {
+  .split-media .m-small { right: 6px; bottom: -24px; }
+  .split-media { margin-bottom: 24px; }
+}
+
+.checklist { list-style: none; margin-top: 26px; display: grid; gap: 14px; }
+.checklist li { display: flex; gap: 12px; align-items: flex-start; font-weight: 600; color: var(--slate-600); }
+.checklist li svg {
+  width: 22px; height: 22px; flex: none; margin-top: 2px;
+  color: var(--orange-600);
+}
+
+/* ---------- Stats ---------- */
+.stats {
+  background:
+    radial-gradient(700px 380px at 90% 0%, rgba(249, 115, 22, .18), transparent 60%),
+    linear-gradient(150deg, var(--navy-950), var(--navy-800));
+  border-radius: var(--radius-lg);
+  padding: 56px 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  color: #fff;
+}
+@media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); padding: 40px 28px; } }
+.stat { text-align: center; }
+.stat .num { font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 800; letter-spacing: -.02em; color: #fff; }
+.stat .num em { font-style: normal; color: var(--orange-400); }
+.stat .lbl { margin-top: 6px; color: var(--slate-400); font-size: .88rem; font-weight: 600; }
+
+/* ---------- Prozess ---------- */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  counter-reset: step;
+}
+@media (max-width: 860px) { .steps { grid-template-columns: 1fr; } }
+.step {
+  position: relative;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 34px 28px 30px;
+  box-shadow: var(--shadow-sm);
+}
+.step .n {
+  width: 46px; height: 46px;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 18px -6px rgba(234, 88, 12, .5);
+}
+.step h3 { margin-bottom: 8px; }
+.step p { font-size: .95rem; color: var(--slate-500); }
+
+/* ---------- Testimonials ---------- */
+.quotes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+}
+@media (max-width: 860px) { .quotes { grid-template-columns: 1fr; } }
+.quote {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 32px 30px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.quote .stars { color: var(--amber-400); font-size: 1rem; letter-spacing: 3px; }
+.quote blockquote { font-size: 1.02rem; color: var(--slate-600); font-style: italic; }
+.quote .who { display: flex; align-items: center; gap: 13px; margin-top: auto; }
+.quote .avatar {
+  width: 44px; height: 44px; flex: none;
+  border-radius: 999px;
+  display: grid; place-items: center;
+  font-weight: 800;
+  color: #fff;
+  font-size: 1rem;
+}
+.quote .who strong { display: block; color: var(--navy-900); font-size: .95rem; }
+.quote .who span { font-size: .8rem; color: var(--slate-500); }
+.g-badge {
+  margin-top: 34px;
+  display: flex; justify-content: center;
+}
+.g-badge .inner {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  padding: 12px 24px;
+  font-weight: 700;
+  color: var(--navy-900);
+  font-size: .95rem;
+}
+.g-badge .stars { color: var(--amber-400); letter-spacing: 2px; }
+.g-badge span.sub { color: var(--slate-500); font-weight: 500; font-size: .85rem; }
+
+/* ---------- FAQ ---------- */
+.faq { max-width: 760px; margin: 0 auto; display: grid; gap: 14px; }
+.faq-item {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.faq-item summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  padding: 20px 24px;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary svg { width: 20px; height: 20px; flex: none; color: var(--orange-600); transition: transform .2s; }
+.faq-item[open] summary svg { transform: rotate(45deg); }
+.faq-item .a { padding: 0 24px 22px; color: var(--slate-500); font-size: .96rem; }
+
+/* ---------- CTA banner ---------- */
+.cta-banner {
+  background:
+    radial-gradient(600px 300px at 15% 120%, rgba(249, 115, 22, .3), transparent 60%),
+    linear-gradient(140deg, var(--navy-950), var(--navy-800));
+  border-radius: var(--radius-lg);
+  color: #fff;
+  padding: 64px 48px;
+  display: grid;
+  grid-template-columns: 1.2fr .8fr;
+  gap: 40px;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+.cta-banner h2 { color: #fff; }
+.cta-banner p { margin-top: 12px; color: var(--slate-400); }
+.cta-banner .actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 860px) {
+  .cta-banner { grid-template-columns: 1fr; padding: 44px 28px; }
+  .cta-banner .actions { justify-content: flex-start; }
+}
+
+/* ---------- Kontakt ---------- */
+.contact-grid {
+  display: grid;
+  grid-template-columns: .9fr 1.1fr;
+  gap: 44px;
+  align-items: start;
+}
+@media (max-width: 920px) { .contact-grid { grid-template-columns: 1fr; } }
+
+.c-info { display: grid; gap: 16px; }
+.c-tile {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+}
+.c-tile .ic {
+  width: 44px; height: 44px; flex: none;
+  border-radius: 12px;
+  background: var(--orange-50);
+  color: var(--orange-600);
+  display: grid; place-items: center;
+}
+.c-tile .ic svg { width: 22px; height: 22px; }
+.c-tile strong { display: block; color: var(--navy-900); margin-bottom: 2px; }
+.c-tile p, .c-tile a.val { color: var(--slate-500); font-size: .95rem; }
+.c-tile a.val:hover { color: var(--orange-600); }
+.c-tile .ph { color: var(--slate-400); font-style: italic; }
+
+.map-box {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-sm);
+  aspect-ratio: 16 / 8;
+  background: var(--slate-100);
+  position: relative;
+}
+.map-box img { width: 100%; height: 100%; object-fit: cover; }
+.map-link {
+  position: absolute;
+  right: 14px; bottom: 14px;
+  z-index: 2;
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--navy-900);
+  color: #fff;
+  font-weight: 700;
+  font-size: .82rem;
+  border-radius: 999px;
+  padding: 9px 16px;
+  box-shadow: var(--shadow-md);
+  transition: background .15s;
+}
+.map-link:hover { background: var(--orange-600); }
+.map-link svg { width: 15px; height: 15px; }
+
+.c-form {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 36px 34px;
+}
+.c-form h3 { font-size: 1.35rem; margin-bottom: 6px; }
+.c-form .sub { color: var(--slate-500); font-size: .92rem; margin-bottom: 24px; }
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 560px) { .f-row { grid-template-columns: 1fr; } }
+.f-group { margin-bottom: 16px; }
+.f-group label { display: block; font-weight: 700; font-size: .84rem; color: var(--navy-900); margin-bottom: 7px; }
+.f-group input, .f-group select, .f-group textarea {
+  width: 100%;
+  font: inherit;
+  font-size: .95rem;
+  color: var(--navy-900);
+  background: var(--slate-50);
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.f-group input:focus, .f-group select:focus, .f-group textarea:focus {
+  outline: none;
+  border-color: var(--orange-400);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, .12);
+  background: #fff;
+}
+.f-group textarea { resize: vertical; min-height: 110px; }
+.f-note { font-size: .78rem; color: var(--slate-400); margin-top: 14px; }
+.form-ok {
+  display: none;
+  margin-top: 16px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  font-weight: 600;
+  font-size: .9rem;
+  border-radius: var(--radius-sm);
+  padding: 13px 16px;
+}
+.form-ok.show { display: block; }
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--navy-950);
+  color: var(--slate-400);
+  padding: 64px 0 0;
+  font-size: .92rem;
+}
+.f-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 48px;
+}
+@media (max-width: 920px) { .f-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .f-grid { grid-template-columns: 1fr; } }
+footer .brand { color: #fff; margin-bottom: 14px; }
+footer .brand small { color: var(--slate-500); }
+footer h4 { color: #fff; font-size: .95rem; margin-bottom: 16px; }
+footer ul { list-style: none; display: grid; gap: 10px; }
+footer ul a:hover { color: var(--orange-400); }
+.f-bottom {
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 22px 0;
+  display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  font-size: .82rem;
+  color: var(--slate-500);
+}
+
+/* ---------- Bild-Fallback (falls Stock-Foto nicht lädt) ---------- */
+.img-slot { position: relative; }
+.img-slot .fallback {
+  position: absolute; inset: 0;
+  display: none;
+  place-items: center;
+  background:
+    radial-gradient(400px 240px at 70% 20%, rgba(249, 115, 22, .25), transparent 60%),
+    linear-gradient(150deg, var(--navy-800), var(--slate-700));
+  color: rgba(255,255,255,.85);
+}
+.img-slot .fallback svg { width: 64px; height: 64px; opacity: .9; }
+.img-slot.no-img img { display: none; }
+.img-slot.no-img .fallback { display: grid; }
+
+/* ---------- Scroll-Reveal ---------- */
+.js .reveal { opacity: 0; transform: translateY(26px); transition: opacity .6s ease, transform .6s ease; }
+.js .reveal.in { opacity: 1; transform: none; }
+
+/* ---------- Legal pages ---------- */
+.legal { padding: 72px 0 96px; max-width: 800px; }
+.legal h1 { font-size: 2.2rem; margin-bottom: 8px; }
+.legal .updated { color: var(--slate-400); font-size: .88rem; margin-bottom: 40px; }
+.legal h2 { font-size: 1.35rem; margin: 40px 0 12px; }
+.legal p, .legal li { color: var(--slate-600); font-size: .98rem; }
+.legal ul { padding-left: 22px; margin: 10px 0; }
+.legal .placeholder {
+  background: var(--orange-50);
+  border: 1px dashed var(--orange-400);
+  color: var(--orange-600);
+  font-weight: 600;
+  border-radius: 6px;
+  padding: 1px 8px;
+}
+
+/* ============================================================
+   Cinematic Upgrade – Preloader, Partikel, Entrances, Marquee
+   ============================================================ */
+
+section[id] { scroll-margin-top: 90px; }
+
+/* ---------- Preloader ---------- */
+#preloader {
+  position: fixed; inset: 0; z-index: 300;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(700px 420px at 50% 32%, rgba(249, 115, 22, .16), transparent 60%),
+    var(--navy-950);
+  transition: opacity .7s ease, visibility .7s ease;
+}
+html:not(.js) #preloader { display: none; }
+#preloader.done { opacity: 0; visibility: hidden; }
+.pl-inner { text-align: center; color: #fff; }
+.pl-flame {
+  display: inline-grid; place-items: center;
+  width: 76px; height: 76px; border-radius: 22px;
+  background: linear-gradient(135deg, var(--orange-500), var(--orange-600));
+  box-shadow: 0 0 70px rgba(249, 115, 22, .55);
+  animation: plFlame 1.3s ease-in-out infinite;
+}
+.pl-flame svg { width: 42px; height: 42px; color: #fff; }
+@keyframes plFlame { 0%,100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.09) rotate(-2deg); } }
+.pl-name { margin-top: 20px; font-weight: 800; font-size: 1.3rem; letter-spacing: -.01em; }
+.pl-name em { font-style: normal; color: var(--orange-400); }
+.pl-track { width: 190px; height: 4px; border-radius: 99px; background: rgba(255,255,255,.12); margin: 18px auto 0; overflow: hidden; }
+.pl-fill { height: 100%; width: 0; border-radius: 99px; background: linear-gradient(90deg, var(--amber-400), var(--orange-600)); animation: plFill 1.15s ease forwards .1s; }
+@keyframes plFill { to { width: 100%; } }
+
+/* ---------- Scroll-Fortschritt ---------- */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0; z-index: 150;
+  background: linear-gradient(90deg, var(--amber-400), var(--orange-600));
+  box-shadow: 0 0 12px rgba(249, 115, 22, .6);
+}
+.nav.scrolled { box-shadow: 0 10px 30px -14px rgba(15, 26, 46, .22); }
+
+/* ---------- Hero: Blobs + Glut-Partikel ---------- */
+.hero-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: .55; }
+.blob.b1 {
+  width: 560px; height: 560px; right: -140px; top: -180px;
+  background: radial-gradient(circle, rgba(249, 115, 22, .5), transparent 65%);
+  animation: drift1 16s ease-in-out infinite alternate;
+}
+.blob.b2 {
+  width: 520px; height: 520px; left: -180px; bottom: -220px;
+  background: radial-gradient(circle, rgba(59, 130, 246, .38), transparent 65%);
+  animation: drift2 20s ease-in-out infinite alternate;
+}
+@keyframes drift1 { from { transform: translate(0,0) scale(1); } to { transform: translate(-90px, 70px) scale(1.15); } }
+@keyframes drift2 { from { transform: translate(0,0) scale(1); } to { transform: translate(80px, -60px) scale(1.12); } }
+#embers { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+/* ---------- Hero-Entrance ---------- */
+.hero h1 .w {
+  display: inline-block; opacity: 0;
+  transform: translateY(.55em); filter: blur(6px);
+  animation: wordIn .7s cubic-bezier(.2, .65, .25, 1) forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes wordIn { to { opacity: 1; transform: none; filter: none; } }
+.js .hero-pill, .js .hero .lede, .js .hero-ctas, .js .hero-trust { opacity: 0; animation: fadeUp .75s cubic-bezier(.2, .65, .25, 1) forwards; }
+.js .hero-pill  { animation-delay: .4s; }
+.js .hero .lede { animation-delay: 1.05s; }
+.js .hero-ctas  { animation-delay: 1.2s; }
+.js .hero-trust { animation-delay: 1.4s; }
+.js .hero-media .media-main { opacity: 0; animation: zoomIn .9s cubic-bezier(.2, .65, .25, 1) forwards .7s; }
+.js .float-card.fc-rating  { opacity: 0; animation: pop .55s cubic-bezier(.2, .65, .25, 1) forwards 1.5s, floaty 5s ease-in-out 2.05s infinite; }
+.js .float-card.fc-service { opacity: 0; animation: pop .55s cubic-bezier(.2, .65, .25, 1) forwards 1.7s, floaty 5s ease-in-out 2.6s infinite; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(.94) translateY(18px); } to { opacity: 1; transform: none; } }
+@keyframes pop { from { opacity: 0; transform: scale(.7); } to { opacity: 1; transform: scale(1); } }
+
+/* ---------- Logo-Flamme flackert ---------- */
+.logo-badge svg { animation: logoFlick 2.6s ease-in-out infinite; transform-origin: 50% 72%; }
+@keyframes logoFlick { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
+/* ---------- Marquee (Partner-Laufband) ---------- */
+.strip { padding: 24px 0 28px; }
+.strip-label {
+  text-align: center;
+  font-size: .76rem; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--slate-400); font-weight: 700;
+  margin-bottom: 14px; padding: 0 24px;
+}
+.strip-label em { font-style: normal; text-transform: none; letter-spacing: .02em; font-weight: 500; }
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.mq-track { display: flex; gap: 56px; width: max-content; animation: mq 30s linear infinite; }
+.mq-set { display: flex; gap: 56px; align-items: center; }
+@keyframes mq { to { transform: translateX(calc(-50% - 28px)); } }
+.marquee:hover .mq-track { animation-play-state: paused; }
+
+/* ---------- Buttons: Glanz-Sweep ---------- */
+.btn { position: relative; overflow: hidden; }
+.btn::after {
+  content: ""; position: absolute; top: 0; left: -90%;
+  width: 55%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform: skewX(-20deg);
+  transition: left .55s ease;
+  pointer-events: none;
+}
+.btn:hover::after { left: 140%; }
+
+/* ---------- Reveal-Zoom ---------- */
+.js .reveal-zoom { opacity: 0; transform: scale(.93) translateY(22px); transition: opacity .75s ease, transform .75s ease; }
+.js .reveal-zoom.in { opacity: 1; transform: none; }
+
+/* ---------- CTA-Banner: pulsierender Glow ---------- */
+.cta-banner::after {
+  content: ""; position: absolute;
+  width: 420px; height: 420px; border-radius: 50%;
+  top: -170px; right: -120px;
+  background: radial-gradient(circle, rgba(249, 115, 22, .32), transparent 60%);
+  animation: ctaGlow 6s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes ctaGlow { 0%,100% { transform: scale(1); opacity: .7; } 50% { transform: scale(1.28); opacity: 1; } }
+
+/* ---------- Stat-Zahlen: leichter Schein ---------- */
+.stat .num { text-shadow: 0 0 26px rgba(249, 115, 22, .35); }
+
+/* ---------- Reduzierte Bewegung ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  #embers, .blob { display: none; }
+  .mq-track { animation: none; }
+}
+
+</style>
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <span class="pl-flame">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+      </span>
+      <p class="pl-name">Geißler <em>Heizungstechnik</em></p>
+      <div class="pl-track"><div class="pl-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+49234460852" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        0234 460852
+      </a>
+      <div class="tb-right">
+        <span>Markstraße 413 · 44795 Bochum</span>
+        <span>Mo–Fr [Platzhalter: Öffnungszeiten]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="#start" class="brand" aria-label="Geißler Heizungstechnik – Startseite">
+        <span class="logo-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+        </span>
+        <span>Geißler<small>Heizungstechnik · Bochum</small></span>
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="#leistungen">Leistungen</a>
+        <a href="#ueber-uns">Über uns</a>
+        <a href="#ablauf">Ablauf</a>
+        <a href="#bewertungen">Bewertungen</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="tel:+49234460852" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+          Anrufen
+        </a>
+        <a href="#kontakt" class="btn btn-primary" style="gap:0">Angebot<span class="cta-long">&nbsp;anfordern</span></a>
+        <button class="nav-burger" id="nav-burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="start" style="padding:0">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="blob b1"></span>
+      <span class="blob b2"></span>
+      <canvas id="embers"></canvas>
+    </div>
+    <div class="wrap">
+      <div>
+        <span class="hero-pill">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          5,0 auf Google · 10 Rezensionen
+        </span>
+        <h1>Wärme, auf die Sie sich <em>verlassen</em> können.</h1>
+        <p class="lede">
+          Installation, Reparatur und Wartung von Heizsystemen und Thermostaten in
+          Bochum und Umgebung – pünktlich, sauber und mit handwerklichem Geschick,
+          das man heute nicht mehr oft findet.
+        </p>
+        <div class="hero-ctas">
+          <a href="#kontakt" class="btn btn-primary">
+            Kostenloses Angebot
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
+          <a href="tel:+49234460852" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            0234 460852
+          </a>
+        </div>
+        <div class="hero-trust">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-5m6 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Termintreue &amp; saubere Arbeit
+          </span>
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.4-3 8.1-7 9-4-.9-7-4.6-7-9V7l7-4Z"/></svg>
+            Fachbetrieb aus Bochum-Weitmar
+          </span>
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2m6-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Über [Platzhalter] Jahre Erfahrung
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="media-main img-slot">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNjkwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IklsbHVzdHJhdGlvbjogbW9kZXJuZXMgVGhlcm1vc3RhdCBhbiBkZXIgV2FuZCI+CiAgPHN0eWxlPgogICAgQGtleWZyYW1lcyBncCB7IDAlLDEwMCUgeyBvcGFjaXR5Oi43IH0gNTAlIHsgb3BhY2l0eToxIH0gfQogICAgLmdsb3ctcHVsc2UgeyBhbmltYXRpb246IGdwIDVzIGVhc2UtaW4tb3V0IGluZmluaXRlOyB9CiAgICBAa2V5ZnJhbWVzIGZsIHsgMCUsMTAwJSB7IHRyYW5zZm9ybTpzY2FsZSgxKSB9IDUwJSB7IHRyYW5zZm9ybTpzY2FsZSgxLjIpIHRyYW5zbGF0ZVkoLTEuNXB4KSB9IH0KICAgIC5mbGFtZSB7IHRyYW5zZm9ybS1ib3g6IGZpbGwtYm94OyB0cmFuc2Zvcm0tb3JpZ2luOiA1MCUgODUlOyBhbmltYXRpb246IGZsIDEuNXMgZWFzZS1pbi1vdXQgaW5maW5pdGU7IH0KICAgIEBrZXlmcmFtZXMgc3cgeyAwJSwxMDAlIHsgdHJhbnNmb3JtOnJvdGF0ZSgtMi41ZGVnKSB9IDUwJSB7IHRyYW5zZm9ybTpyb3RhdGUoMi41ZGVnKSB9IH0KICAgIC5sZWF2ZXMgeyB0cmFuc2Zvcm0tYm94OiBmaWxsLWJveDsgdHJhbnNmb3JtLW9yaWdpbjogNTAlIDEwMCU7IGFuaW1hdGlvbjogc3cgNS41cyBlYXNlLWluLW91dCBpbmZpbml0ZTsgfQogICAgQGtleWZyYW1lcyBhcmNHbG93IHsgMCUsMTAwJSB7IG9wYWNpdHk6Ljg1IH0gNTAlIHsgb3BhY2l0eToxIH0gfQogICAgLmFyYyB7IGFuaW1hdGlvbjogYXJjR2xvdyAzcyBlYXNlLWluLW91dCBpbmZpbml0ZTsgfQogICAgQG1lZGlhIChwcmVmZXJzLXJlZHVjZWQtbW90aW9uOiByZWR1Y2UpIHsgKiB7IGFuaW1hdGlvbjogbm9uZSAhaW1wb3J0YW50OyB9IH0KICA8L3N0eWxlPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWxsIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzFiMmE0NSIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41NSIgc3RvcC1jb2xvcj0iIzE2MjMzZCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwZjFhMmUiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8cmFkaWFsR3JhZGllbnQgaWQ9Imdsb3ciIGN4PSIuNSIgY3k9Ii40MiIgcj0iLjYyIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZjk3MzE2IiBzdG9wLW9wYWNpdHk9Ii4zOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9Ii41IiBzdG9wLWNvbG9yPSIjZjk3MzE2IiBzdG9wLW9wYWNpdHk9Ii4xIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2Y5NzMxNiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgICA8L3JhZGlhbEdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJyaW5nIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzJiM2I1YyIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxNDFmMzYiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImZhY2UiIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmRmZGZkIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2U5ZWRmMyIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYXJjIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMCI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZiYmYyNCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlYTU4MGMiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImxlYWYiIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjMmY2YjRmIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzFkNGEzNiIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDwhLS0gV2FuZCAtLT4KICA8cmVjdCB3aWR0aD0iNjAwIiBoZWlnaHQ9IjY5MCIgZmlsbD0idXJsKCN3YWxsKSIvPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjkwIiBmaWxsPSJ1cmwoI2dsb3cpIiBjbGFzcz0iZ2xvdy1wdWxzZSIvPgogIDwhLS0gZmVpbmUgRnVnZW5saW5pZW4gLS0+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utb3BhY2l0eT0iLjA1IiBzdHJva2Utd2lkdGg9IjIiPgogICAgPGxpbmUgeDE9IjAiIHkxPSIxNzIiIHgyPSI2MDAiIHkyPSIxNzIiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNTE4IiB4Mj0iNjAwIiB5Mj0iNTE4Ii8+CiAgICA8bGluZSB4MT0iMTUwIiB5MT0iMCIgeDI9IjE1MCIgeTI9IjY5MCIvPgogICAgPGxpbmUgeDE9IjQ1MCIgeTE9IjAiIHgyPSI0NTAiIHkyPSI2OTAiLz4KICA8L2c+CgogIDwhLS0gU2NoYXR0ZW4gZGVzIFRoZXJtb3N0YXRzIC0tPgogIDxlbGxpcHNlIGN4PSIzMDgiIGN5PSI0NTIiIHJ4PSIxNTAiIHJ5PSIyNiIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iLjI4Ii8+CgogIDwhLS0gVGhlcm1vc3RhdCAtLT4KICA8Zz4KICAgIDxjaXJjbGUgY3g9IjMwMCIgY3k9IjMwMCIgcj0iMTUwIiBmaWxsPSJ1cmwoI3JpbmcpIi8+CiAgICA8Y2lyY2xlIGN4PSIzMDAiIGN5PSIzMDAiIHI9IjE1MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMGIxMjIwIiBzdHJva2Utb3BhY2l0eT0iLjYiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iMzAwIiBjeT0iMzAwIiByPSIxMTgiIGZpbGw9InVybCgjZmFjZSkiLz4KCiAgICA8IS0tIFNrYWxhIC0tPgogICAgPGcgc3Ryb2tlPSIjYzNjY2Q5IiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICAgIDxsaW5lIHgxPSIzMDAiIHkxPSIxOTYiIHgyPSIzMDAiIHkyPSIyMDgiLz4KICAgICAgPGxpbmUgeDE9IjM4MiIgeTE9IjIzMCIgeDI9IjM3MyIgeTI9IjIzOCIvPgogICAgICA8bGluZSB4MT0iNDE2IiB5MT0iMzAwIiB4Mj0iNDA0IiB5Mj0iMzAwIi8+CiAgICAgIDxsaW5lIHgxPSIzODIiIHkxPSIzNzAiIHgyPSIzNzMiIHkyPSIzNjIiLz4KICAgICAgPGxpbmUgeDE9IjIxOCIgeTE9IjIzMCIgeDI9IjIyNyIgeTI9IjIzOCIvPgogICAgICA8bGluZSB4MT0iMTg0IiB5MT0iMzAwIiB4Mj0iMTk2IiB5Mj0iMzAwIi8+CiAgICAgIDxsaW5lIHgxPSIyMTgiIHkxPSIzNzAiIHgyPSIyMjciIHkyPSIzNjIiLz4KICAgIDwvZz4KCiAgICA8IS0tIGFrdGl2ZXIgQm9nZW4gLS0+CiAgICA8cGF0aCBjbGFzcz0iYXJjIiBkPSJNIDMwMCA0MTUgQSAxMTUgMTE1IDAgMCAxIDE4NSAzMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0idXJsKCNhcmMpIiBzdHJva2Utd2lkdGg9IjEwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHRyYW5zZm9ybT0icm90YXRlKDEzNSAzMDAgMzAwKSIvPgoKICAgIDwhLS0gQW56ZWlnZSAtLT4KICAgIDx0ZXh0IHg9IjMwMCIgeT0iMjk4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjU4IiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjMTYyMzNkIj4yMSw1wrA8L3RleHQ+CiAgICA8IS0tIEZsYW1tZSAtLT4KICAgIDxwYXRoIGNsYXNzPSJmbGFtZSIgZD0iTTMwMCAzMjIgYzEuNiA1LS45IDktNC4zIDEyLjYgLTMuNCAzLjYtNS41IDYuNS01LjUgMTAuMSBhOS44IDkuOCAwIDAgMCAxOS42IC40IGMwLTMuMy0xLjQtNi4yLTMuMy04LjkgLjIgMi40LS42IDQuNS0yLjcgNS41IC44LTQuNi0xLTEwLjMtMy44LTEzLjd6IiBmaWxsPSIjZWE1ODBjIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgwLDQpIi8+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjM4NiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InVpLXNhbnMtc2VyaWYsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iIzk0YTNiOCI+SEVJWkVOPC90ZXh0PgoKICAgIDwhLS0gR2xhbnogLS0+CiAgICA8cGF0aCBkPSJNMTk1IDIzNSBBIDEyOCAxMjggMCAwIDEgNDA1IDIzNSBBIDE1MCAxNTAgMCAwIDAgMTk1IDIzNSBaIiBmaWxsPSIjZmZmZmZmIiBvcGFjaXR5PSIuMTIiLz4KICA8L2c+CgogIDwhLS0gUmVnYWwgbWl0IFBmbGFuemUgdW50ZW4gLS0+CiAgPGc+CiAgICA8cmVjdCB4PSI3MCIgeT0iNTYwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE0IiByeD0iNyIgZmlsbD0iIzIyMzE0ZiIvPgogICAgPHJlY3QgeD0iNzAiIHk9IjU3NCIgd2lkdGg9IjIwMCIgaGVpZ2h0PSI2IiByeD0iMyIgZmlsbD0iIzBiMTIyMCIgb3BhY2l0eT0iLjUiLz4KICAgIDwhLS0gVG9wZiAtLT4KICAgIDxwYXRoIGQ9Ik0xMjAgNTYwIGw2LTM4IGg0NCBsNiAzOCB6IiBmaWxsPSIjYzI2NDNhIi8+CiAgICA8cGF0aCBkPSJNMTIwIDU2MCBsNi0zOCBoNDQgbDYgMzggeiIgZmlsbD0iIzAwMCIgb3BhY2l0eT0iLjEyIi8+CiAgICA8IS0tIEJsw6R0dGVyIC0tPgogICAgPGcgZmlsbD0idXJsKCNsZWFmKSIgY2xhc3M9ImxlYXZlcyI+CiAgICAgIDxwYXRoIGQ9Ik0xNDggNTI0IEMgMTM4IDQ5MCAxMTggNDc4IDEwMCA0NzQgYzQgMjYgMTggNDYgNDQgNTR6Ii8+CiAgICAgIDxwYXRoIGQ9Ik0xNTAgNTI0IEMgMTUyIDQ4NiAxNjggNDY2IDE5MCA0NTggYzIgMzAtMTIgNTYtMzYgNjh6Ii8+CiAgICAgIDxwYXRoIGQ9Ik0xNDkgNTI0IEMgMTQ1IDUwMCAxNDYgNDgyIDE1NiA0NjYgYzEwIDE2IDEwIDQwLTIgNTh6Ii8+CiAgICA8L2c+CiAgPC9nPgoKICA8IS0tIGtsZWluZXMgS2FiZWwtRGV0YWlsIHJlY2h0cyAtLT4KICA8ZyBzdHJva2U9IiMyMjMxNGYiIHN0cm9rZS13aWR0aD0iNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KICAgIDxwYXRoIGQ9Ik00NzAgNjIwIHEgMzAgLTE4IDI0IC01MiIvPgogIDwvZz4KICA8Y2lyY2xlIGN4PSI0NzAiIGN5PSI2MjIiIHI9IjEwIiBmaWxsPSIjMjIzMTRmIi8+Cjwvc3ZnPgo="
+               alt="Illustration: modernes Thermostat an der Wand" />
+        </div>
+        <div class="float-card fc-rating">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 16.9 5.9 20.4l1.5-6.8L2.2 9l6.9-.7L12 2Z"/></svg>
+          </span>
+          <span><strong>5,0 / 5,0</strong><span>Google-Bewertung</span></span>
+        </div>
+        <div class="float-card fc-service">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6Z"/></svg>
+          </span>
+          <span><strong>Meisterqualität</strong><span>Installation &amp; Reparatur</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Trust-Strip (Platzhalter-Partnerlogos, Laufband) ===== -->
+  <div class="strip">
+    <p class="strip-label">Vertraut auf Technik von <em>· *Platzhalter – bitte echte Partner eintragen</em></p>
+    <div class="marquee">
+      <div class="mq-track">
+        <div class="mq-set">
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+        </div>
+        <div class="mq-set" aria-hidden="true">
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
+          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Leistungen ===== -->
+  <section id="leistungen">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">Leistungen</span>
+        <h2>Alles rund um Ihre Heizung – aus einer Hand</h2>
+        <p>Von der ersten Beratung bis zur regelmäßigen Wartung: Wir kümmern uns darum, dass es bei Ihnen warm bleibt.</p>
+      </div>
+
+      <div class="cards">
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s1.5 3.5-1 6.2C9 11.4 8 13 8 14.8A4 4 0 0 0 12 19a4 4 0 0 0 4-4.2c0-1.3-.5-2.4-1.2-3.5.1 1-.3 1.9-1.2 2.3.3-1.9-.4-4.3-1.6-5.8C11.7 5.6 12 3 12 3Z"/><path d="M5 21h14"/></svg></span>
+          <h3>Installation von Heizsystemen</h3>
+          <p>Neue Heizungsanlagen – fachgerecht geplant und eingebaut. Effizient, langlebig und passend zu Ihrem Zuhause.</p>
+          <a class="more" href="#kontakt">Beratung anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+          <h3>Installation von Thermostaten</h3>
+          <p>Klassisch oder smart: Moderne Thermostate sparen Energie und regeln jede Raumtemperatur aufs Grad genau.</p>
+          <a class="more" href="#kontakt">Beratung anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6Z"/></svg></span>
+          <h3>Reparatur von Heizsystemen</h3>
+          <p>Heizung kalt oder laut? Wir finden die Ursache schnell und reparieren zuverlässig – damit Sie nicht frieren.</p>
+          <a class="more" href="#kontakt">Termin anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13a8 8 0 0 1 16 0M12 5V3m7.1 4.9 1.4-1.4M4.9 7.9 3.5 6.5M4 17h16M7 21h10"/><path d="M12 13v4"/></svg></span>
+          <h3>Reparatur von Thermostaten</h3>
+          <p>Defekte oder ungenaue Thermostate tauschen wir aus oder stellen sie neu ein – für konstante Wohlfühlwärme.</p>
+          <a class="more" href="#kontakt">Termin anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-5"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <h3>Wartung &amp; Service</h3>
+          <p>Regelmäßige Wartung hält Ihre Anlage effizient und beugt teuren Ausfällen vor – auf Wunsch mit Erinnerungsservice.</p>
+          <a class="more" href="#kontakt">Wartung vereinbaren <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+
+        <div class="card reveal">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18m0-18c-2 2.5-6 3-8 3v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6c-2 0-6-.5-8-3Z"/></svg></span>
+          <h3>Beratung &amp; Modernisierung</h3>
+          <p>Alte Anlage, hohe Kosten? Wir beraten Sie ehrlich zu Modernisierung, Energieeinsparung und Fördermöglichkeiten.</p>
+          <a class="more" href="#kontakt">Beratung anfragen <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Über uns ===== -->
+  <section class="alt" id="ueber-uns">
+    <div class="wrap split">
+      <div class="split-media reveal-zoom">
+        <div class="m-big img-slot">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4MDAgNjgwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IklsbHVzdHJhdGlvbjogSGVpemvDtnJwZXIgdW50ZXIgZWluZW0gRmVuc3RlciBtaXQgd2FybWVtIExpY2h0Ij4KICA8c3R5bGU+CiAgICBAa2V5ZnJhbWVzIHJpc2UgewogICAgICAwJSAgIHsgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDE2cHgpOyBvcGFjaXR5OiAwOyB9CiAgICAgIDI1JSAgeyBvcGFjaXR5OiAuNzU7IH0KICAgICAgMTAwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtMzBweCk7IG9wYWNpdHk6IDA7IH0KICAgIH0KICAgIC5odyB7IGFuaW1hdGlvbjogcmlzZSAzLjRzIGxpbmVhciBpbmZpbml0ZTsgfQogICAgLmh3MiB7IGFuaW1hdGlvbi1kZWxheTogMS4xczsgfQogICAgLmh3MyB7IGFuaW1hdGlvbi1kZWxheTogMi4yczsgfQogICAgQGtleWZyYW1lcyBzdW5wIHsgMCUsMTAwJSB7IHRyYW5zZm9ybTogc2NhbGUoMSk7IG9wYWNpdHk6MSB9IDUwJSB7IHRyYW5zZm9ybTogc2NhbGUoMS4xMik7IG9wYWNpdHk6Ljg1IH0gfQogICAgLnN1biB7IHRyYW5zZm9ybS1ib3g6IGZpbGwtYm94OyB0cmFuc2Zvcm0tb3JpZ2luOiBjZW50ZXI7IGFuaW1hdGlvbjogc3VucCA2cyBlYXNlLWluLW91dCBpbmZpbml0ZTsgfQogICAgQG1lZGlhIChwcmVmZXJzLXJlZHVjZWQtbW90aW9uOiByZWR1Y2UpIHsgKiB7IGFuaW1hdGlvbjogbm9uZSAhaW1wb3J0YW50OyB9IH0KICA8L3N0eWxlPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJyYXVtIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2Y0ZWRlMiIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNlN2RjY2IiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImhpbW1lbCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmQ5YTAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIuNTUiIHN0b3AtY29sb3I9IiNmY2E1NWQiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZjk3MzE2Ii8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJib2RlbiIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNjODliNmIiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjYjM4MzVhIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJoayIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZGZlNWVjIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJ3YWVybWUiIHgxPSIwIiB5MT0iMSIgeDI9IjAiIHkyPSIwIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZjk3MzE2IiBzdG9wLW9wYWNpdHk9Ii4yOCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmOTczMTYiIHN0b3Atb3BhY2l0eT0iMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDwhLS0gV2FuZCAmIEJvZGVuIC0tPgogIDxyZWN0IHdpZHRoPSI4MDAiIGhlaWdodD0iNjgwIiBmaWxsPSJ1cmwoI3JhdW0pIi8+CiAgPHJlY3QgeT0iNTYwIiB3aWR0aD0iODAwIiBoZWlnaHQ9IjEyMCIgZmlsbD0idXJsKCNib2RlbikiLz4KICA8cmVjdCB5PSI1NTYiIHdpZHRoPSI4MDAiIGhlaWdodD0iMTAiIGZpbGw9IiM4YTY2NDQiLz4KICA8IS0tIERpZWxlbiAtLT4KICA8ZyBzdHJva2U9IiNhMTc0NGUiIHN0cm9rZS13aWR0aD0iMiIgb3BhY2l0eT0iLjUiPgogICAgPGxpbmUgeDE9IjAiIHkxPSI2MDAiIHgyPSI4MDAiIHkyPSI2MDAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iNjQwIiB4Mj0iODAwIiB5Mj0iNjQwIi8+CiAgICA8bGluZSB4MT0iMTgwIiB5MT0iNTY2IiB4Mj0iMTYwIiB5Mj0iNjgwIi8+CiAgICA8bGluZSB4MT0iNDMwIiB5MT0iNTY2IiB4Mj0iNDIwIiB5Mj0iNjgwIi8+CiAgICA8bGluZSB4MT0iNjYwIiB5MT0iNTY2IiB4Mj0iNjcwIiB5Mj0iNjgwIi8+CiAgPC9nPgogIDwhLS0gU29ja2VsbGVpc3RlIC0tPgogIDxyZWN0IHk9IjU0MCIgd2lkdGg9IjgwMCIgaGVpZ2h0PSIxOCIgZmlsbD0iI2Y4ZjRlYyIvPgoKICA8IS0tIEZlbnN0ZXIgLS0+CiAgPGc+CiAgICA8cmVjdCB4PSIxNzAiIHk9IjYwIiB3aWR0aD0iNDYwIiBoZWlnaHQ9IjMzMCIgcng9IjEwIiBmaWxsPSIjZmZmZmZmIi8+CiAgICA8cmVjdCB4PSIxODYiIHk9Ijc2IiB3aWR0aD0iNDI4IiBoZWlnaHQ9IjI5OCIgcng9IjYiIGZpbGw9InVybCgjaGltbWVsKSIvPgogICAgPCEtLSBTb25uZSAtLT4KICAgIDxjaXJjbGUgY3g9IjMzMCIgY3k9IjIzMCIgcj0iNDYiIGZpbGw9IiNmZmYzZDYiLz4KICAgIDxjaXJjbGUgY2xhc3M9InN1biIgY3g9IjMzMCIgY3k9IjIzMCIgcj0iNjAiIGZpbGw9IiNmZmYzZDYiIG9wYWNpdHk9Ii4zNSIvPgogICAgPCEtLSBTa3lsaW5lIC0tPgogICAgPGcgZmlsbD0iI2Q5N2EyYiI+CiAgICAgIDxyZWN0IHg9IjE5NiIgeT0iMzAwIiB3aWR0aD0iNjAiIGhlaWdodD0iNzQiLz4KICAgICAgPHJlY3QgeD0iMjY4IiB5PSIzMjIiIHdpZHRoPSI0NCIgaGVpZ2h0PSI1MiIvPgogICAgICA8cmVjdCB4PSI0MTAiIHk9IjMwOCIgd2lkdGg9IjcwIiBoZWlnaHQ9IjY2Ii8+CiAgICAgIDxyZWN0IHg9IjQ5NCIgeT0iMzMwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDQiLz4KICAgICAgPHJlY3QgeD0iNTQ4IiB5PSIzMTIiIHdpZHRoPSI1OCIgaGVpZ2h0PSI2MiIvPgogICAgPC9nPgogICAgPCEtLSBTcHJvc3NlbiAtLT4KICAgIDxyZWN0IHg9IjM5MiIgeT0iNzYiIHdpZHRoPSIxNCIgaGVpZ2h0PSIyOTgiIGZpbGw9IiNmZmZmZmYiLz4KICAgIDxyZWN0IHg9IjE4NiIgeT0iMjE2IiB3aWR0aD0iNDI4IiBoZWlnaHQ9IjEyIiBmaWxsPSIjZmZmZmZmIi8+CiAgICA8IS0tIEZlbnN0ZXJiYW5rIC0tPgogICAgPHJlY3QgeD0iMTUyIiB5PSIzOTAiIHdpZHRoPSI0OTYiIGhlaWdodD0iMjAiIHJ4PSI2IiBmaWxsPSIjZjhmNGVjIi8+CiAgICA8cmVjdCB4PSIxNTIiIHk9IjQwOCIgd2lkdGg9IjQ5NiIgaGVpZ2h0PSI4IiByeD0iNCIgZmlsbD0iI2Q5Y2ZiZSIvPgogIDwvZz4KCiAgPCEtLSBMaWNodGtlZ2VsIC0tPgogIDxwYXRoIGQ9Ik0yMDAgMTAwIEwgNjIwIDEwMCBMIDc2MCA2ODAgTCA2MCA2ODAgWiIgZmlsbD0iI2ZmZGY5ZSIgb3BhY2l0eT0iLjE0Ii8+CgogIDwhLS0gYXVmc3RlaWdlbmRlIFfDpHJtZSDDvGJlciBkZW0gSGVpemvDtnJwZXIgLS0+CiAgPHJlY3QgeD0iMjIwIiB5PSIzMzAiIHdpZHRoPSIzNjAiIGhlaWdodD0iMTMwIiBmaWxsPSJ1cmwoI3dhZXJtZSkiLz4KICA8ZyBzdHJva2U9IiNmOTczMTYiIHN0cm9rZS1vcGFjaXR5PSIuNDUiIHN0cm9rZS13aWR0aD0iNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KICAgIDxwYXRoIGNsYXNzPSJodyIgZD0iTTMwMCA0MzAgcSAxMCAtMjIgMCAtNDQgcSAtMTAgLTIyIDAgLTQ0Ii8+CiAgICA8cGF0aCBjbGFzcz0iaHcgaHcyIiBkPSJNNDAwIDQzNiBxIDEwIC0yMiAwIC00NCBxIC0xMCAtMjIgMCAtNDQiLz4KICAgIDxwYXRoIGNsYXNzPSJodyBodzMiIGQ9Ik01MDAgNDMwIHEgMTAgLTIyIDAgLTQ0IHEgLTEwIC0yMiAwIC00NCIvPgogIDwvZz4KCiAgPCEtLSBIZWl6a8O2cnBlciAtLT4KICA8Zz4KICAgIDxyZWN0IHg9IjIyMCIgeT0iNDQwIiB3aWR0aD0iMzYwIiBoZWlnaHQ9IjEyMCIgcng9IjEyIiBmaWxsPSJ1cmwoI2hrKSIvPgogICAgPHJlY3QgeD0iMjIwIiB5PSI0NDAiIHdpZHRoPSIzNjAiIGhlaWdodD0iMTIwIiByeD0iMTIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5YzJjZSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8IS0tIEdsaWVkZXIgLS0+CiAgICA8ZyBmaWxsPSIjY2ZkN2UwIj4KICAgICAgPHJlY3QgeD0iMjM4IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iMjY2IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iMjk0IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iMzIyIiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iMzUwIiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iMzc4IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNDA2IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNDM0IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNDYyIiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNDkwIiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNTE4IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgICAgPHJlY3QgeD0iNTQ2IiB5PSI0NTIiIHdpZHRoPSIxNCIgaGVpZ2h0PSI5NiIgcng9IjciLz4KICAgIDwvZz4KICAgIDwhLS0gRsO8w59lICYgQW5zY2hsdXNzIC0tPgogICAgPHJlY3QgeD0iMjUwIiB5PSI1NjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxOCIgZmlsbD0iIzlhYTZiNCIvPgogICAgPHJlY3QgeD0iNTM4IiB5PSI1NjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxOCIgZmlsbD0iIzlhYTZiNCIvPgogICAgPCEtLSBUaGVybW9zdGF0dmVudGlsIC0tPgogICAgPHJlY3QgeD0iMTk2IiB5PSI0NzAiIHdpZHRoPSIyOCIgaGVpZ2h0PSIxNiIgcng9IjYiIGZpbGw9IiM5YWE2YjQiLz4KICAgIDxyZWN0IHg9IjE2OCIgeT0iNDYyIiB3aWR0aD0iMzQiIGhlaWdodD0iMzIiIHJ4PSI4IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNiOWMyY2UiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPHJlY3QgeD0iMTc2IiB5PSI0NzAiIHdpZHRoPSIxOCIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI2VhNTgwYyIvPgogICAgPHJlY3QgeD0iMTc2IiB5PSI0NzgiIHdpZHRoPSIxOCIgaGVpZ2h0PSI0IiByeD0iMiIgZmlsbD0iI2MzY2NkOSIvPgogIDwvZz4KCiAgPCEtLSBQZmxhbnplIHJlY2h0cyAtLT4KICA8Zz4KICAgIDxwYXRoIGQ9Ik02NzIgNTYwIGw4LTQ2IGg1NiBsOCA0NiB6IiBmaWxsPSIjYjM1YzM3Ii8+CiAgICA8ZyBmaWxsPSIjMmY2YjRmIj4KICAgICAgPHBhdGggZD0iTTcwNiA1MTQgQyA2OTIgNDcwIDY2OCA0NTYgNjQ2IDQ1MiBjNiAzMiAyNCA1NiA2MCA2MnoiLz4KICAgICAgPHBhdGggZD0iTTcxMCA1MTQgQyA3MTIgNDY4IDczMCA0NDQgNzU2IDQzNiBjNCAzNi0xNCA2Ni00NiA3OHoiLz4KICAgICAgPHBhdGggZD0iTTcwOCA1MTQgQyA3MDIgNDg0IDcwNCA0NjIgNzE2IDQ0MiBjMTQgMjAgMTIgNTAtOCA3MnoiLz4KICAgIDwvZz4KICA8L2c+Cjwvc3ZnPgo="
+               alt="Illustration: Heizkörper unter einem Fenster" loading="lazy" />
+        </div>
+        <div class="m-small img-slot">
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNjAwIiByb2xlPSJpbWciIGFyaWEtbGFiZWw9IklsbHVzdHJhdGlvbjogbW9kZXJuZSBHYXN0aGVybWUgYW4gZ2VmbGllc3RlciBXYW5kIj4KICA8c3R5bGU+CiAgICBAa2V5ZnJhbWVzIGJsaW5rIHsgMCUsMTAwJSB7IG9wYWNpdHk6IDEgfSA1MCUgeyBvcGFjaXR5OiAuMjUgfSB9CiAgICAubGVkIHsgYW5pbWF0aW9uOiBibGluayAyLjJzIGVhc2UtaW4tb3V0IGluZmluaXRlOyB9CiAgICBAa2V5ZnJhbWVzIGZsIHsgMCUsMTAwJSB7IHRyYW5zZm9ybTpzY2FsZSgxKSB9IDUwJSB7IHRyYW5zZm9ybTpzY2FsZSgxLjE2KSB0cmFuc2xhdGVZKC0xcHgpIH0gfQogICAgLmZsYW1lIHsgdHJhbnNmb3JtLWJveDogZmlsbC1ib3g7IHRyYW5zZm9ybS1vcmlnaW46IDUwJSA4NSU7IGFuaW1hdGlvbjogZmwgMS42cyBlYXNlLWluLW91dCBpbmZpbml0ZTsgfQogICAgQG1lZGlhIChwcmVmZXJzLXJlZHVjZWQtbW90aW9uOiByZWR1Y2UpIHsgKiB7IGFuaW1hdGlvbjogbm9uZSAhaW1wb3J0YW50OyB9IH0KICA8L3N0eWxlPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJmbGllc2VuIiB4MT0iMCIgeTE9IjAiIHgyPSIxIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2RmZTdlZSIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNjOWQ0ZGUiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdlcmFldCIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNmZmZmZmYiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZTZlYmYxIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJkaXNwbGF5IiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzE2MjMzZCIvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMwYjEyMjAiLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgoKICA8IS0tIGdlZmxpZXN0ZSBXYW5kIC0tPgogIDxyZWN0IHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiBmaWxsPSJ1cmwoI2ZsaWVzZW4pIi8+CiAgPGcgc3Ryb2tlPSIjZmZmZmZmIiBzdHJva2Utd2lkdGg9IjQiPgogICAgPGxpbmUgeDE9IjAiIHkxPSIxNTAiIHgyPSI2MDAiIHkyPSIxNTAiLz4KICAgIDxsaW5lIHgxPSIwIiB5MT0iMzAwIiB4Mj0iNjAwIiB5Mj0iMzAwIi8+CiAgICA8bGluZSB4MT0iMCIgeTE9IjQ1MCIgeDI9IjYwMCIgeTI9IjQ1MCIvPgogICAgPGxpbmUgeDE9IjE1MCIgeTE9IjAiIHgyPSIxNTAiIHkyPSI2MDAiLz4KICAgIDxsaW5lIHgxPSIzMDAiIHkxPSIwIiB4Mj0iMzAwIiB5Mj0iNjAwIi8+CiAgICA8bGluZSB4MT0iNDUwIiB5MT0iMCIgeDI9IjQ1MCIgeTI9IjYwMCIvPgogIDwvZz4KCiAgPCEtLSBTY2hhdHRlbiAtLT4KICA8cmVjdCB4PSIxNzgiIHk9Ijk2IiB3aWR0aD0iMjYwIiBoZWlnaHQ9IjM4MCIgcng9IjI2IiBmaWxsPSIjMDAwIiBvcGFjaXR5PSIuMTYiLz4KCiAgPCEtLSBUaGVybWUgLS0+CiAgPGc+CiAgICA8cmVjdCB4PSIxNzAiIHk9Ijg0IiB3aWR0aD0iMjYwIiBoZWlnaHQ9IjM4MCIgcng9IjI2IiBmaWxsPSJ1cmwoI2dlcmFldCkiLz4KICAgIDxyZWN0IHg9IjE3MCIgeT0iODQiIHdpZHRoPSIyNjAiIGhlaWdodD0iMzgwIiByeD0iMjYiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2I5YzJjZSIgc3Ryb2tlLXdpZHRoPSIyIi8+CiAgICA8IS0tIEzDvGZ0dW5nc3NjaGxpdHplIC0tPgogICAgPGcgZmlsbD0iI2QzZGFlMiI+CiAgICAgIDxyZWN0IHg9IjIwMCIgeT0iMTEyIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICAgIDxyZWN0IHg9IjIwMCIgeT0iMTI2IiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjYiIHJ4PSIzIi8+CiAgICA8L2c+CiAgICA8IS0tIERpc3BsYXkgLS0+CiAgICA8cmVjdCB4PSIyMTIiIHk9IjE3MCIgd2lkdGg9IjE3NiIgaGVpZ2h0PSI4NiIgcng9IjEyIiBmaWxsPSJ1cmwoI2Rpc3BsYXkpIi8+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjIxNiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InVpLXNhbnMtc2VyaWYsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIzNCIgZm9udC13ZWlnaHQ9IjgwMCIgZmlsbD0iI2ZiOTIzYyI+NTXCsEM8L3RleHQ+CiAgICA8dGV4dCB4PSIzMDAiIHk9IjI0MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InVpLXNhbnMtc2VyaWYsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZm9udC13ZWlnaHQ9IjYwMCIgZmlsbD0iIzk0YTNiOCI+Vk9STEFVRjwvdGV4dD4KICAgIDwhLS0gRHJlaGtub3BmIC0tPgogICAgPGNpcmNsZSBjeD0iMjUyIiBjeT0iMzE2IiByPSIzMCIgZmlsbD0iI2ZmZmZmZiIgc3Ryb2tlPSIjYjljMmNlIiBzdHJva2Utd2lkdGg9IjIiLz4KICAgIDxyZWN0IHg9IjI0OCIgeT0iMjkyIiB3aWR0aD0iOCIgaGVpZ2h0PSIyMCIgcng9IjQiIGZpbGw9IiNlYTU4MGMiLz4KICAgIDwhLS0gVGFzdGVuIC0tPgogICAgPGcgZmlsbD0iI2U2ZWJmMSIgc3Ryb2tlPSIjYjljMmNlIiBzdHJva2Utd2lkdGg9IjIiPgogICAgICA8cmVjdCB4PSIzMDYiIHk9IjI5OCIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2IiByeD0iOSIvPgogICAgICA8cmVjdCB4PSIzNTIiIHk9IjI5OCIgd2lkdGg9IjM2IiBoZWlnaHQ9IjM2IiByeD0iOSIvPgogICAgPC9nPgogICAgPGcgc3Ryb2tlPSIjNjQ3NDhiIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICAgIDxsaW5lIHgxPSIzMjQiIHkxPSIzMDgiIHgyPSIzMjQiIHkyPSIzMjQiLz4KICAgICAgPGxpbmUgeDE9IjMxNiIgeTE9IjMxNiIgeDI9IjMzMiIgeTI9IjMxNiIvPgogICAgICA8bGluZSB4MT0iMzYyIiB5MT0iMzE2IiB4Mj0iMzc4IiB5Mj0iMzE2Ii8+CiAgICA8L2c+CiAgICA8IS0tIFN0YXR1c2xldWNodGUgKyBGbGFtbWUgLS0+CiAgICA8Y2lyY2xlIGNsYXNzPSJsZWQiIGN4PSIyMjgiIGN5PSI0MDQiIHI9IjciIGZpbGw9IiMyMmM1NWUiLz4KICAgIDxwYXRoIGNsYXNzPSJmbGFtZSIgZD0iTTI5MiAzODggYzIgNy0xLjIgMTIuNC02IDE3LjQgLTQuNyA1LTcuNiA5LTcuNiAxNCBhMTMuNiAxMy42IDAgMCAwIDI3LjIgLjUgYzAtNC41LTItOC42LTQuNi0xMi4zIC4zIDMuMy0uOCA2LjMtMy43IDcuNiAxLjEtNi40LTEuNC0xNC4zLTUuMy0xOS4yeiIgZmlsbD0iI2VhNTgwYyIvPgogICAgPHRleHQgeD0iMzU4IiB5PSI0MTIiIGZvbnQtZmFtaWx5PSJ1aS1zYW5zLXNlcmlmLCBzeXN0ZW0tdWksIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiM2NDc0OGIiPmVjbzwvdGV4dD4KICA8L2c+CgogIDwhLS0gUm9ocmUgLS0+CiAgPGcgZmlsbD0iIzlhYTZiNCI+CiAgICA8cmVjdCB4PSIyMTYiIHk9IjQ2NCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjEzNiIvPgogICAgPHJlY3QgeD0iMjYyIiB5PSI0NjQiIHdpZHRoPSIxNiIgaGVpZ2h0PSIxMzYiLz4KICAgIDxyZWN0IHg9IjMyMiIgeT0iNDY0IiB3aWR0aD0iMTYiIGhlaWdodD0iMTM2Ii8+CiAgICA8cmVjdCB4PSIzNjgiIHk9IjQ2NCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjEzNiIvPgogIDwvZz4KICA8ZyBmaWxsPSIjN2U4YjlhIj4KICAgIDxyZWN0IHg9IjIxMiIgeT0iNDcyIiB3aWR0aD0iMjQiIGhlaWdodD0iMTIiIHJ4PSI0Ii8+CiAgICA8cmVjdCB4PSIyNTgiIHk9IjQ3MiIgd2lkdGg9IjI0IiBoZWlnaHQ9IjEyIiByeD0iNCIvPgogICAgPHJlY3QgeD0iMzE4IiB5PSI0NzIiIHdpZHRoPSIyNCIgaGVpZ2h0PSIxMiIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjM2NCIgeT0iNDcyIiB3aWR0aD0iMjQiIGhlaWdodD0iMTIiIHJ4PSI0Ii8+CiAgPC9nPgogIDwhLS0gQWJzcGVycnZlbnRpbCAtLT4KICA8Y2lyY2xlIGN4PSIzMzAiIGN5PSI1MzAiIHI9IjE2IiBmaWxsPSIjZWE1ODBjIi8+CiAgPHJlY3QgeD0iMzIyIiB5PSI1MjYiIHdpZHRoPSIxNiIgaGVpZ2h0PSI4IiByeD0iMyIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iLjciLz4KPC9zdmc+Cg=="
+               alt="Illustration: moderne Gastherme" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="reveal">
+        <span class="kicker">Über uns</span>
+        <h2>Handwerk mit Fachwissen – seit Generationen in Bochum zuhause</h2>
+        <p style="margin-top:14px; color:var(--slate-500)">
+          Die Firma Geißler steht in Bochum-Weitmar für zuverlässige Heizungstechnik.
+          Unsere Kunden schätzen die Kombination aus Fachwissen und handwerklichem
+          Geschick – und bleiben nicht selten über Jahre Stammkunden.
+          <em>[Platzhalter: Hier kurze Firmengeschichte / Vorstellung des Inhabers ergänzen.]</em>
+        </p>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pünktlich und zuverlässig – Arbeiten stets termingerecht ausgeführt</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Saubere und ordentliche Ausführung, auch bei bewohnten Objekten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Faire, transparente Preise ohne versteckte Kosten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Persönlicher Ansprechpartner statt anonymer Hotline</li>
+        </ul>
+        <div style="margin-top:32px">
+          <a href="#kontakt" class="btn btn-primary">Jetzt Kontakt aufnehmen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Stats ===== -->
+  <section style="padding-top:0" class="alt">
+    <div class="wrap">
+      <div class="stats reveal">
+        <div class="stat">
+          <div class="num"><span data-count="5" data-decimal="1">5,0</span><em>★</em></div>
+          <div class="lbl">Google-Bewertung</div>
+        </div>
+        <div class="stat">
+          <div class="num"><span data-count="10">10</span>+</div>
+          <div class="lbl">Rezensionen – alle 5 Sterne</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>[XX]</em></div>
+          <div class="lbl">Jahre Erfahrung (Platzhalter)</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>[XXX]</em>+</div>
+          <div class="lbl">Projekte in Bochum (Platzhalter)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Ablauf ===== -->
+  <section id="ablauf">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">So läuft's ab</span>
+        <h2>In drei Schritten zur neuen Wärme</h2>
+        <p>Unkompliziert, transparent und ohne Überraschungen – so arbeiten wir.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <span class="n">1</span>
+          <h3>Anfrage &amp; Erstberatung</h3>
+          <p>Rufen Sie an oder schreiben Sie uns. Wir besprechen Ihr Anliegen und klären erste Fragen direkt am Telefon.</p>
+        </div>
+        <div class="step reveal">
+          <span class="n">2</span>
+          <h3>Vor-Ort-Termin &amp; Angebot</h3>
+          <p>Wir schauen uns die Situation bei Ihnen an und erstellen ein faires, verbindliches Angebot – kostenlos.</p>
+        </div>
+        <div class="step reveal">
+          <span class="n">3</span>
+          <h3>Saubere Umsetzung</h3>
+          <p>Wir arbeiten pünktlich, sauber und zuverlässig – und übergeben erst, wenn alles einwandfrei läuft.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Bewertungen ===== -->
+  <section class="alt" id="bewertungen">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">Kundenstimmen</span>
+        <h2>Das sagen unsere Kunden auf Google</h2>
+        <p>Echte Rezensionen – 5,0 von 5 Sternen bei 10 Bewertungen.</p>
+      </div>
+
+      <div class="quotes">
+        <div class="quote reveal">
+          <span class="stars" aria-label="5 von 5 Sternen">★★★★★</span>
+          <blockquote>
+            „Die Firma Geisler hat alle Arbeiten stets pünktlich, zuverlässig und
+            mit hoher Qualität ausgeführt. Sehr zu empfehlen."
+          </blockquote>
+          <div class="who">
+            <span class="avatar" style="background:#7c3aed">M</span>
+            <span><strong>Michael M.</strong><span>Local Guide · Google-Rezension</span></span>
+          </div>
+        </div>
+
+        <div class="quote reveal">
+          <span class="stars" aria-label="5 von 5 Sternen">★★★★★</span>
+          <blockquote>
+            „Die Truppe der Firma Geißler hat sehr sauber und ordentlich gearbeitet.
+            Eine Kombination aus Fachwissen und handwerklichem Geschick, welches man
+            heute nicht mehr oft findet! Immer wieder gerne! Weiter so, ich bin und
+            bleibe Stammkunde."
+          </blockquote>
+          <div class="who">
+            <span class="avatar" style="background:#0891b2">M</span>
+            <span><strong>Martin</strong><span>Google-Rezension</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-badge reveal">
+        <div class="inner">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          5,0 / 5,0
+          <span class="sub">· 10 Rezensionen auf Google</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">FAQ</span>
+        <h2>Häufige Fragen</h2>
+      </div>
+
+      <div class="faq reveal">
+        <details class="faq-item">
+          <summary>In welchem Gebiet sind Sie tätig?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Unser Schwerpunkt liegt in Bochum und der näheren Umgebung. Fragen Sie gerne an – auch wenn Sie etwas weiter entfernt wohnen. <em>[Platzhalter: genaues Einzugsgebiet]</em></div>
+        </details>
+        <details class="faq-item">
+          <summary>Was kostet ein Vor-Ort-Termin mit Angebot?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Die Besichtigung und das Angebot sind für Sie kostenlos und unverbindlich. Sie zahlen erst, wenn Sie uns beauftragen.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Wie schnell bekomme ich einen Termin?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">In der Regel innerhalb weniger Werktage – bei einem Heizungsausfall bemühen wir uns um schnellstmögliche Hilfe. <em>[Platzhalter: konkrete Reaktionszeiten]</em></div>
+        </details>
+        <details class="faq-item">
+          <summary>Installieren Sie auch smarte Thermostate?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Ja – von klassischen Heizkörperthermostaten bis zu smarten, per App steuerbaren Systemen beraten wir Sie herstellerunabhängig und bauen die passende Lösung ein.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Warten Sie auch Anlagen, die Sie nicht eingebaut haben?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Selbstverständlich. Wir warten und reparieren auch Bestandsanlagen anderer Betriebe – nach einer kurzen Bestandsaufnahme vor Ort.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-banner reveal-zoom">
+        <div>
+          <h2>Heizung streikt oder Modernisierung geplant?</h2>
+          <p>Rufen Sie uns an oder fordern Sie in 2 Minuten Ihr kostenloses Angebot an.</p>
+        </div>
+        <div class="actions">
+          <a href="tel:+49234460852" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            0234 460852
+          </a>
+          <a href="#kontakt" class="btn btn-primary">Angebot anfordern</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Kontakt ===== -->
+  <section class="alt" id="kontakt" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Kontakt</span>
+        <h2>Wir sind für Sie da</h2>
+        <p>Telefonisch, per E-Mail oder über das Formular – wir melden uns schnellstmöglich zurück.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="c-info reveal">
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <div>
+              <strong>Adresse</strong>
+              <p>Markstraße 413<br />44795 Bochum (Weitmar)</p>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></span>
+            <div>
+              <strong>Telefon</strong>
+              <a class="val" href="tel:+49234460852">0234 460852</a>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span>
+            <div>
+              <strong>E-Mail</strong>
+              <p class="ph">[Platzhalter: info@geissler-heizung.de]</p>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+            <div>
+              <strong>Öffnungszeiten</strong>
+              <p class="ph">[Platzhalter: Mo–Fr 08:00–17:00 Uhr]</p>
+            </div>
+          </div>
+
+          <div class="map-box">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDYwMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMYWdlcGxhbjogTWFya3N0cmHDn2UgNDEzLCA0NDc5NSBCb2NodW0iPgogIDxzdHlsZT4KICAgIEBrZXlmcmFtZXMgcGluZyB7IDAlIHsgdHJhbnNmb3JtOiBzY2FsZSguNSk7IG9wYWNpdHk6IC41NSB9IDEwMCUgeyB0cmFuc2Zvcm06IHNjYWxlKDIpOyBvcGFjaXR5OiAwIH0gfQogICAgLnB1bHNlIHsgdHJhbnNmb3JtLWJveDogZmlsbC1ib3g7IHRyYW5zZm9ybS1vcmlnaW46IGNlbnRlcjsgYW5pbWF0aW9uOiBwaW5nIDIuNnMgZWFzZS1vdXQgaW5maW5pdGU7IH0KICAgIC5wdWxzZTIgeyBhbmltYXRpb24tZGVsYXk6IDEuM3M7IH0KICAgIEBrZXlmcmFtZXMgYm9iIHsgMCUsMTAwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgwKSB9IDUwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtOHB4KSB9IH0KICAgIC5waW4geyB0cmFuc2Zvcm0tYm94OiBmaWxsLWJveDsgdHJhbnNmb3JtLW9yaWdpbjogNTAlIDEwMCU7IGFuaW1hdGlvbjogYm9iIDIuNnMgZWFzZS1pbi1vdXQgaW5maW5pdGU7IH0KICAgIEBtZWRpYSAocHJlZmVycy1yZWR1Y2VkLW1vdGlvbjogcmVkdWNlKSB7ICogeyBhbmltYXRpb246IG5vbmUgIWltcG9ydGFudDsgfSB9CiAgPC9zdHlsZT4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZWVmMmY2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2UyZTlmMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0idXJsKCNiZykiLz4KCiAgPCEtLSBHcsO8bmZsw6RjaGUgLyBQYXJrIC0tPgogIDxwYXRoIGQ9Ik0wIDQzMCBRIDI2MCAzNDAgNDIwIDQ3MCBUIDkwMCA1NjAgTCAxMjAwIDYwMCBMIDAgNjAwIFoiIGZpbGw9IiNjZmU2ZDQiLz4KICA8cGF0aCBkPSJNOTgwIDAgUSAxMDgwIDEyMCAxMjAwIDkwIEwgMTIwMCAwIFoiIGZpbGw9IiNjZmU2ZDQiLz4KCiAgPCEtLSBXYXNzZXIgLS0+CiAgPHBhdGggZD0iTTAgOTAgUSAxNDAgNjAgMjAwIDExMCBUIDM4MCAxMjAgTCAzODAgMCBMIDAgMCBaIiBmaWxsPSIjY2ZlMGVlIi8+CgogIDwhLS0gTmViZW5zdHJhw59lbiAtLT4KICA8ZyBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMTQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJNMTIwIDAgViA2MDAiLz4KICAgIDxwYXRoIGQ9Ik0zMjAgNDAgUSA0MjAgMjIwIDM4MCA2MDAiLz4KICAgIDxwYXRoIGQ9Ik02NDAgMCBRIDYxMCAyMDAgNzAwIDM4MCBUIDc2MCA2MDAiLz4KICAgIDxwYXRoIGQ9Ik05MjAgMCBRIDkwMCAxODAgMTAxMCAzMDAgVCAxMjAwIDQyMCIvPgogICAgPHBhdGggZD0iTTAgMzAwIEggMTIwMCIgc3Ryb2tlLXdpZHRoPSIxMiIvPgogICAgPHBhdGggZD0iTTIwMCA0ODAgUSA1MDAgNDMwIDgyMCA1MDAiLz4KICA8L2c+CgogIDwhLS0gSGF1cHRzdHJhw59lOiBNYXJrc3RyYcOfZSAtLT4KICA8cGF0aCBpZD0ibWFya3N0ciIgZD0iTTAgMjEwIFEgMzMwIDE2MCA2MjAgMjIwIFQgMTIwMCAyNjAiIHN0cm9rZT0iI2Y2YzQ1MyIgc3Ryb2tlLXdpZHRoPSIyNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTAgMjEwIFEgMzMwIDE2MCA2MjAgMjIwIFQgMTIwMCAyNjAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIiBzdHJva2UtZGFzaGFycmF5PSIxOCAxNiIgb3BhY2l0eT0iLjgiLz4KICA8dGV4dCBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOGE2ZDFmIj4KICAgIDx0ZXh0UGF0aCBocmVmPSIjbWFya3N0ciIgc3RhcnRPZmZzZXQ9IjclIj5NIGEgciBrIHMgdCByIGEgw58gZTwvdGV4dFBhdGg+CiAgPC90ZXh0PgoKICA8IS0tIEdlYsOkdWRlIC0tPgogIDxnIGZpbGw9IiNkNWRjZTQiPgogICAgPHJlY3QgeD0iMTgwIiB5PSIyNDAiIHdpZHRoPSI3MCIgaGVpZ2h0PSI0NiIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjQzMCIgeT0iMTIwIiB3aWR0aD0iODAiIGhlaWdodD0iNTIiIHJ4PSI0Ii8+CiAgICA8cmVjdCB4PSI0NzAiIHk9IjI1MCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjQ0IiByeD0iNCIvPgogICAgPHJlY3QgeD0iNzYwIiB5PSIxMjAiIHdpZHRoPSI3MiIgaGVpZ2h0PSI1MCIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjgyMCIgeT0iMzMwIiB3aWR0aD0iODQiIGhlaWdodD0iNTQiIHJ4PSI0Ii8+CiAgICA8cmVjdCB4PSIxMDIwIiB5PSIxNjAiIHdpZHRoPSI3MCIgaGVpZ2h0PSI0NiIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjIxMCIgeT0iMzYwIiB3aWR0aD0iNjAiIGhlaWdodD0iNDIiIHJ4PSI0Ii8+CiAgPC9nPgogIDwhLS0gQsOkdW1lIGltIFBhcmsgLS0+CiAgPGcgZmlsbD0iIzllY2ZhYSI+CiAgICA8Y2lyY2xlIGN4PSIyMjAiIGN5PSI1MDAiIHI9IjE2Ii8+CiAgICA8Y2lyY2xlIGN4PSIzMDAiIGN5PSI1MzAiIHI9IjEyIi8+CiAgICA8Y2lyY2xlIGN4PSI1MjAiIGN5PSI1MjAiIHI9IjE1Ii8+CiAgICA8Y2lyY2xlIGN4PSI3MDAiIGN5PSI1NDUiIHI9IjEyIi8+CiAgICA8Y2lyY2xlIGN4PSIxMDgwIiBjeT0iNjAiIHI9IjE0Ii8+CiAgPC9nPgoKICA8IS0tIFN0YW5kb3J0LVBpbiAtLT4KICA8Zz4KICAgIDxjaXJjbGUgY2xhc3M9InB1bHNlIiBjeD0iNjIwIiBjeT0iMjIyIiByPSIzNCIgZmlsbD0iI2Y5NzMxNiIgb3BhY2l0eT0iLjE4Ii8+CiAgICA8Y2lyY2xlIGNsYXNzPSJwdWxzZSBwdWxzZTIiIGN4PSI2MjAiIGN5PSIyMjIiIHI9IjUyIiBmaWxsPSIjZjk3MzE2IiBvcGFjaXR5PSIuMDgiLz4KICAgIDxnIGNsYXNzPSJwaW4iPgogICAgICA8cGF0aCBkPSJNNjIwIDE2MCBjLTI0IDAtNDIgMTgtNDIgNDEgMCAzMCA0MiA2NSA0MiA2NSBzNDItMzUgNDItNjUgYzAtMjMtMTgtNDEtNDItNDF6IiBmaWxsPSIjZWE1ODBjIi8+CiAgICAgIDxjaXJjbGUgY3g9IjYyMCIgY3k9IjIwMSIgcj0iMTUiIGZpbGw9IiNmZmZmZmYiLz4KICAgICAgPHBhdGggZD0iTTYyMCAxOTMgYy44IDIuNi0uNSA0LjYtMi4yIDYuNCAtMS43IDEuOC0yLjggMy4zLTIuOCA1LjEgYTUgNSAwIDAgMCAxMCAuMiBjMC0xLjctLjctMy4yLTEuNy00LjUgLjEgMS4yLS4zIDIuMy0xLjQgMi44IC40LTIuMy0uNS03LjYtMS45LTEweiIgZmlsbD0iI2VhNTgwYyIvPgogICAgPC9nPgogIDwvZz4KCiAgPCEtLSBBZHJlc3MtS2FydGUgLS0+CiAgPGc+CiAgICA8cmVjdCB4PSI3MDAiIHk9IjEyMCIgd2lkdGg9IjMzMCIgaGVpZ2h0PSI5NiIgcng9IjE2IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkYmUyZWEiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iNzQ0IiBjeT0iMTY4IiByPSIyMiIgZmlsbD0iI2ZmZjdlZCIvPgogICAgPHBhdGggZD0iTTc0NCAxNTIgYy05IDAtMTYgNy0xNiAxNS41IDAgMTEuNSAxNiAyNC41IDE2IDI0LjUgczE2LTEzIDE2LTI0LjUgYzAtOC41LTctMTUuNS0xNi0xNS41eiBtMCAyMiBhNi41IDYuNSAwIDEgMSAwLTEzIDYuNSA2LjUgMCAwIDEgMCAxM3oiIGZpbGw9IiNlYTU4MGMiLz4KICAgIDx0ZXh0IHg9Ijc4MiIgeT0iMTYyIiBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIxIiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjMTYyMzNkIj5HZWnDn2xlciBIZWl6dW5nc3RlY2huaWs8L3RleHQ+CiAgICA8dGV4dCB4PSI3ODIiIHk9IjE5MiIgZm9udC1mYW1pbHk9InVpLXNhbnMtc2VyaWYsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY0NzQ4YiI+TWFya3N0cmHDn2UgNDEzIMK3IDQ0Nzk1IEJvY2h1bTwvdGV4dD4KICA8L2c+Cjwvc3ZnPgo=" alt="Lageplan: Markstraße 413, 44795 Bochum" loading="lazy" />
+            <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Markstra%C3%9Fe+413%2C+44795+Bochum"
+               target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              Route in Google Maps planen
+            </a>
+          </div>
+        </div>
+
+        <form class="c-form reveal" id="contact-form" novalidate>
+          <h3>Kostenloses Angebot anfordern</h3>
+          <p class="sub">Unverbindlich &amp; kostenlos – wir melden uns innerhalb von 24&nbsp;Stunden.*</p>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label for="f-name">Name</label>
+              <input id="f-name" name="name" type="text" placeholder="Max Mustermann" required />
+            </div>
+            <div class="f-group">
+              <label for="f-tel">Telefon</label>
+              <input id="f-tel" name="tel" type="tel" placeholder="0234 000000" />
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label for="f-mail">E-Mail</label>
+            <input id="f-mail" name="email" type="email" placeholder="max@beispiel.de" required />
+          </div>
+
+          <div class="f-group">
+            <label for="f-topic">Worum geht es?</label>
+            <select id="f-topic" name="topic">
+              <option>Neue Heizungsanlage</option>
+              <option>Thermostat-Installation</option>
+              <option>Reparatur</option>
+              <option>Wartung / Service</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+
+          <div class="f-group">
+            <label for="f-msg">Ihre Nachricht</label>
+            <textarea id="f-msg" name="message" placeholder="Beschreiben Sie kurz Ihr Anliegen …"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%">Anfrage senden</button>
+          <p class="form-ok" id="form-ok">Vielen Dank! Ihre Anfrage wurde übermittelt (Demo – noch ohne Versand).</p>
+          <p class="f-note">
+            *Demo-Formular ohne Backend – vor dem Livegang an E-Mail-Versand
+            (z.&nbsp;B. Formspree/Vercel-Function) anbinden. Mit dem Absenden stimmen Sie der
+            Verarbeitung Ihrer Daten gemäß <a href="datenschutz.html" style="text-decoration:underline">Datenschutzerklärung</a> zu.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="wrap">
+      <div class="f-grid">
+        <div>
+          <a href="#start" class="brand">
+            <span class="logo-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+            </span>
+            <span>Geißler<small>Heizungstechnik · Bochum</small></span>
+          </a>
+          <p>Installation, Reparatur und Wartung von Heizsystemen und Thermostaten – pünktlich, sauber und zuverlässig.</p>
+        </div>
+        <div>
+          <h4>Leistungen</h4>
+          <ul>
+            <li><a href="#leistungen">Heizungsinstallation</a></li>
+            <li><a href="#leistungen">Thermostate</a></li>
+            <li><a href="#leistungen">Reparatur</a></li>
+            <li><a href="#leistungen">Wartung &amp; Service</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Unternehmen</h4>
+          <ul>
+            <li><a href="#ueber-uns">Über uns</a></li>
+            <li><a href="#bewertungen">Bewertungen</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#kontakt">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li>Markstraße 413, 44795 Bochum</li>
+            <li><a href="tel:+49234460852">0234 460852</a></li>
+            <li>[Platzhalter: E-Mail]</li>
+          </ul>
+        </div>
+      </div>
+      <div class="f-bottom">
+        <span>© <span id="year">2026</span> Geißler Heizungstechnik · Bochum</span>
+        <span>
+          <a href="impressum.html">Impressum</a> ·
+          <a href="datenschutz.html">Datenschutz</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+/* Geißler Heizungstechnik – Interaktionen & cineastische Animationen */
+(function () {
+  'use strict';
+
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Preloader */
+  var pre = document.getElementById('preloader');
+  if (pre) {
+    var hidePre = function () {
+      pre.classList.add('done');
+      setTimeout(function () { if (pre.parentNode) pre.parentNode.removeChild(pre); }, 800);
+    };
+    if (reduceMotion) hidePre();
+    else setTimeout(hidePre, 1400);
+  }
+
+  /* Scroll-Fortschritt + Nav-Schatten */
+  var prog = document.getElementById('scroll-progress');
+  var nav = document.querySelector('.nav');
+  var onScroll = function () {
+    var el = document.documentElement;
+    var max = el.scrollHeight - el.clientHeight;
+    if (prog) prog.style.width = (max > 0 ? (el.scrollTop / max) * 100 : 0) + '%';
+    if (nav) nav.classList.toggle('scrolled', el.scrollTop > 8);
+  };
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* Headline: Wort für Wort einblenden */
+  var h1 = document.querySelector('.hero h1');
+  if (h1 && !reduceMotion) {
+    var wordIndex = 0;
+    (function wrapWords(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+            var s = document.createElement('span');
+            s.className = 'w';
+            s.style.setProperty('--d', (0.5 + wordIndex * 0.085).toFixed(3) + 's');
+            s.textContent = part;
+            wordIndex++;
+            frag.appendChild(s);
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          wrapWords(child);
+        }
+      });
+    })(h1);
+  }
+
+  /* Mobile-Navigation */
+  var burger = document.getElementById('nav-burger');
+  var links = document.getElementById('nav-links');
+  if (burger && links) {
+    burger.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    links.addEventListener('click', function (e) {
+      if (e.target.tagName === 'A') {
+        links.classList.remove('open');
+        burger.setAttribute('aria-expanded', 'false');
+      }
+    });
+  }
+
+  /* Scroll-Reveal mit Stagger */
+  var revealEls = document.querySelectorAll('.reveal, .reveal-zoom');
+  if ('IntersectionObserver' in window && revealEls.length && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      var visible = entries.filter(function (e) { return e.isIntersecting; });
+      visible.forEach(function (entry, i) {
+        io.unobserve(entry.target);
+        setTimeout(function () { entry.target.classList.add('in'); }, i * 90);
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add('in'); });
+  }
+
+  /* Statistiken hochzählen */
+  var counters = document.querySelectorAll('[data-count]');
+  if (counters.length && 'IntersectionObserver' in window && !reduceMotion) {
+    var cio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        cio.unobserve(en.target);
+        var el = en.target;
+        var target = parseFloat(el.getAttribute('data-count'));
+        var dec = parseInt(el.getAttribute('data-decimal') || '0', 10);
+        var t0 = null;
+        var step = function (t) {
+          if (t0 === null) t0 = t;
+          var p = Math.min(1, (t - t0) / 1500);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = (target * eased).toFixed(dec).replace('.', ',');
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      });
+    }, { threshold: 0.5 });
+    counters.forEach(function (c) { cio.observe(c); });
+  }
+
+  /* Glut-Partikel im Hero */
+  var canvas = document.getElementById('embers');
+  if (canvas && canvas.getContext && !reduceMotion) {
+    var ctx = canvas.getContext('2d');
+    var W = 0, H = 0, parts = [];
+    var resize = function () {
+      W = canvas.width = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    };
+    window.addEventListener('resize', resize);
+    resize();
+    var spawn = function (p, randomY) {
+      p.x = Math.random() * W;
+      p.y = randomY ? Math.random() * H : H + 20;
+      p.r = 1 + Math.random() * 2.2;
+      p.s = 0.3 + Math.random() * 0.8;
+      p.a = 0.1 + Math.random() * 0.35;
+      p.w = Math.random() * Math.PI * 2;
+      return p;
+    };
+    var count = Math.max(18, Math.min(46, Math.floor(window.innerWidth / 32)));
+    for (var i = 0; i < count; i++) parts.push(spawn({}, true));
+    (function tick() {
+      ctx.clearRect(0, 0, W, H);
+      for (var j = 0; j < parts.length; j++) {
+        var p = parts[j];
+        p.y -= p.s;
+        p.w += 0.02;
+        p.x += Math.sin(p.w) * 0.3;
+        if (p.y < -14) spawn(p, false);
+        var g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r * 3);
+        g.addColorStop(0, 'rgba(251,146,60,' + p.a.toFixed(3) + ')');
+        g.addColorStop(1, 'rgba(251,146,60,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      requestAnimationFrame(tick);
+    })();
+  }
+
+  /* 3D-Tilt auf Karten (nur Maus-Geräte) */
+  if (!reduceMotion && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    document.querySelectorAll('.card, .step, .quote').forEach(function (el) {
+      el.addEventListener('mousemove', function (e) {
+        var r = el.getBoundingClientRect();
+        var rx = ((e.clientY - r.top) / r.height - 0.5) * -6;
+        var ry = ((e.clientX - r.left) / r.width - 0.5) * 6;
+        el.style.transform = 'perspective(750px) translateY(-5px) rotateX(' + rx.toFixed(2) + 'deg) rotateY(' + ry.toFixed(2) + 'deg)';
+      });
+      el.addEventListener('mouseleave', function () { el.style.transform = ''; });
+    });
+  }
+
+  /* Demo-Formular (ohne Backend) */
+  var form = document.getElementById('contact-form');
+  var ok = document.getElementById('form-ok');
+  if (form && ok) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+      ok.classList.add('show');
+      form.reset();
+      setTimeout(function () { ok.classList.remove('show'); }, 6000);
+    });
+  }
+
+  /* Jahr im Footer */
+  var year = document.getElementById('year');
+  if (year) year.textContent = String(new Date().getFullYear());
+})();
+
+</script>
+
+  <!-- ===== Eingebaute Rechtsseiten (nur Vorschau) ===== -->
+  <div id="view-impressum" class="legal-view" hidden>
+    <div class="wrap legal">
+      <p><a href="index.html" class="btn btn-outline" style="margin-bottom:28px">&#8592; Zur&uuml;ck zur Startseite</a></p>
+      
+    <h1>Impressum</h1>
+    <p class="updated">Angaben gemäß § 5 DDG · <span class="placeholder">Entwurf – Platzhalter vor Livegang ersetzen</span></p>
+
+    <h2>Anbieter</h2>
+    <p>
+      <span class="placeholder">[Platzhalter: Firmierung, z. B. Wolfgang Geißler Heizungstechnik]</span><br />
+      Markstraße 413<br />
+      44795 Bochum
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>
+      Telefon: 0234 460852<br />
+      E-Mail: <span class="placeholder">[Platzhalter: info@geissler-heizung.de]</span>
+    </p>
+
+    <h2>Vertretungsberechtigt</h2>
+    <p><span class="placeholder">[Platzhalter: Inhaber / Geschäftsführer]</span></p>
+
+    <h2>Umsatzsteuer-ID</h2>
+    <p>Umsatzsteuer-Identifikationsnummer gemäß § 27a UStG:<br />
+      <span class="placeholder">[Platzhalter: DE-Nummer]</span></p>
+
+    <h2>Handwerksrolle / Kammer</h2>
+    <p>
+      Zuständige Kammer: <span class="placeholder">[Platzhalter: Handwerkskammer Dortmund]</span><br />
+      Berufsbezeichnung: <span class="placeholder">[Platzhalter: Installateur- und Heizungsbauer]</span><br />
+      Eintragung: <span class="placeholder">[Platzhalter: Handwerksrollen-Nr.]</span>
+    </p>
+
+    <h2>Verantwortlich für den Inhalt (§ 18 Abs. 2 MStV)</h2>
+    <p><span class="placeholder">[Platzhalter: Name, Anschrift wie oben]</span></p>
+
+    <h2>Streitschlichtung</h2>
+    <p>
+      Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+      https://ec.europa.eu/consumers/odr. Wir sind nicht bereit oder verpflichtet, an
+      Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
+    </p>
+
+    <h2>Bildnachweise</h2>
+    <p>Alle Illustrationen und Grafiken wurden individuell für diese Website erstellt und werden lokal gehostet.</p>
+  
+    </div>
+  </div>
+  <div id="view-datenschutz" class="legal-view" hidden>
+    <div class="wrap legal">
+      <p><a href="index.html" class="btn btn-outline" style="margin-bottom:28px">&#8592; Zur&uuml;ck zur Startseite</a></p>
+      
+    <h1>Datenschutzerklärung</h1>
+    <p class="updated">Stand: <span class="placeholder">[Platzhalter: Datum]</span> · <span class="placeholder">Entwurf – vor Livegang rechtlich prüfen lassen</span></p>
+
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      <span class="placeholder">[Platzhalter: Firmierung]</span><br />
+      Markstraße 413, 44795 Bochum<br />
+      Telefon: 0234 460852 · E-Mail: <span class="placeholder">[Platzhalter: E-Mail]</span>
+    </p>
+
+    <h2>2. Allgemeines zur Datenverarbeitung</h2>
+    <p>
+      Wir verarbeiten personenbezogene Daten unserer Besucher grundsätzlich nur, soweit dies
+      zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen
+      erforderlich ist. Rechtsgrundlagen sind Art. 6 Abs. 1 lit. a, b und f DSGVO.
+    </p>
+
+    <h2>3. Hosting und Server-Logfiles</h2>
+    <p>
+      Diese Website wird bei <span class="placeholder">[Platzhalter: Hoster, z. B. Vercel Inc.]</span> gehostet.
+      Beim Aufruf der Website werden automatisch Informationen (IP-Adresse, Datum und Uhrzeit,
+      Browsertyp, Referrer-URL) in Server-Logfiles gespeichert. Diese Daten dienen der
+      Sicherstellung eines störungsfreien Betriebs und werden nach kurzer Zeit gelöscht.
+    </p>
+
+    <h2>4. Kontaktformular und E-Mail-Kontakt</h2>
+    <p>
+      Wenn Sie uns über das Kontaktformular oder per E-Mail kontaktieren, verarbeiten wir die
+      von Ihnen angegebenen Daten (Name, Kontaktdaten, Nachricht) ausschließlich zur Bearbeitung
+      Ihrer Anfrage (Art. 6 Abs. 1 lit. b DSGVO). Die Daten werden gelöscht, sobald sie für die
+      Erreichung des Zwecks nicht mehr erforderlich sind und keine gesetzlichen
+      Aufbewahrungspflichten entgegenstehen.
+    </p>
+
+    <h2>5. Externe Links</h2>
+    <p>
+      Auf der Kontaktseite verlinken wir zur Routenplanung auf Google Maps (Google Ireland
+      Limited, Dublin, Irland). Es werden erst dann Daten an Google übertragen, wenn Sie den
+      Link aktiv anklicken. Alle Bilder und Karten dieser Website werden lokal gehostet;
+      beim bloßen Besuch der Seite werden keine Inhalte von Drittservern geladen.
+    </p>
+
+    <h2>6. Cookies und Tracking</h2>
+    <p>
+      Diese Website verwendet keine Tracking- oder Analyse-Cookies.
+    </p>
+
+    <h2>7. Ihre Rechte</h2>
+    <ul>
+      <li>Auskunft (Art. 15 DSGVO)</li>
+      <li>Berichtigung (Art. 16 DSGVO)</li>
+      <li>Löschung (Art. 17 DSGVO)</li>
+      <li>Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+      <li>Datenübertragbarkeit (Art. 20 DSGVO)</li>
+      <li>Widerspruch (Art. 21 DSGVO)</li>
+    </ul>
+    <p>
+      Außerdem haben Sie das Recht, sich bei einer Datenschutz-Aufsichtsbehörde zu beschweren,
+      z. B. bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen.
+    </p>
+  
+    </div>
+  </div>
+  <style>
+    .legal-view { background: #fff; }
+  </style>
+  <script>
+  /* Mini-Router: macht impressum.html / datenschutz.html in der Ein-Datei-Vorschau klickbar */
+  (function () {
+    var views = {
+      'impressum.html': document.getElementById('view-impressum'),
+      'datenschutz.html': document.getElementById('view-datenschutz')
+    };
+    var siteParts = [];
+    document.querySelectorAll('body > *').forEach(function (el) {
+      if (!el.classList || !el.classList.contains('legal-view')) siteParts.push(el);
+    });
+    function show(name) {
+      var isLegal = !!views[name];
+      siteParts.forEach(function (el) {
+        if (el.tagName === 'SCRIPT' || el.tagName === 'STYLE') return;
+        el.style.display = isLegal ? 'none' : '';
+      });
+      Object.keys(views).forEach(function (k) { views[k].hidden = (k !== name); });
+      window.scrollTo(0, 0);
+    }
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a');
+      if (!a) return;
+      var href = a.getAttribute('href') || '';
+      if (views[href]) { e.preventDefault(); show(href); }
+      else if (href === 'index.html' || href === '#start') { e.preventDefault(); show(null); }
+    });
+  })();
+  </script>
+</body>
+</html>
