@@ -190,6 +190,17 @@
     });
   }
 
+  /* Google-Profil-Links: neuer Tab, sonst direkte Weiterleitung
+     (falls eine Sandbox/Vorschau das Öffnen neuer Tabs blockiert) */
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="https://maps.app.goo.gl"]');
+    if (!a) return;
+    e.preventDefault();
+    var w = null;
+    try { w = window.open(a.href, '_blank', 'noopener'); } catch (err) { w = null; }
+    if (!w) window.location.href = a.href;
+  });
+
   /* Demo-Formular (ohne Backend) */
   var form = document.getElementById('contact-form');
   var ok = document.getElementById('form-ok');
