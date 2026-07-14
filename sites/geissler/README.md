@@ -28,7 +28,6 @@ Statisches HTML + CSS + JS, kein Build-Schritt nötig.
 - [ ] Öffnungszeiten (Topbar + Kontakt)
 - [ ] Jahre Erfahrung / Projektanzahl (Hero + Stats)
 - [ ] Firmengeschichte im Abschnitt „Über uns"
-- [ ] Partner-/Herstellerlogos im Trust-Strip (aktuell nur Beispiel-Namen)
 - [ ] Impressum vollständig ausfüllen (Firmierung, Inhaber, USt-ID, Kammer)
 - [ ] Datenschutzerklärung rechtlich prüfen lassen
 - [ ] Kontaktformular an Versand anbinden (z. B. Formspree oder Vercel Function)

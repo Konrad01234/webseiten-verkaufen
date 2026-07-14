@@ -312,24 +312,6 @@ h3 { font-size: 1.15rem; font-weight: 700; }
   .fc-service { right: -8px; }
 }
 
-/* ---------- Logo/Partner strip ---------- */
-.strip {
-  border-bottom: 1px solid var(--slate-100);
-  padding: 26px 0;
-  background: var(--slate-50);
-}
-.strip .wrap {
-  display: flex; align-items: center; justify-content: center;
-  gap: 18px 44px; flex-wrap: wrap;
-}
-.strip .label { font-size: .78rem; text-transform: uppercase; letter-spacing: .12em; color: var(--slate-400); font-weight: 700; }
-.strip .plogo {
-  font-weight: 800; font-size: 1.02rem; color: var(--slate-400);
-  display: inline-flex; align-items: center; gap: 8px;
-  opacity: .85;
-}
-.strip .plogo svg { width: 20px; height: 20px; }
-
 /* ---------- Sections ---------- */
 section { padding: 96px 0; }
 section.alt { background: var(--slate-50); }
@@ -724,7 +706,7 @@ footer ul a:hover { color: var(--orange-400); }
 }
 
 /* ============================================================
-   Cinematic Upgrade – Preloader, Partikel, Entrances, Marquee
+   Cinematic Upgrade – Preloader, Partikel, Entrances
    ============================================================ */
 
 section[id] { scroll-margin-top: 90px; }
@@ -805,25 +787,6 @@ html:not(.js) #preloader { display: none; }
 .logo-badge svg { animation: logoFlick 2.6s ease-in-out infinite; transform-origin: 50% 72%; }
 @keyframes logoFlick { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
 
-/* ---------- Marquee (Partner-Laufband) ---------- */
-.strip { padding: 24px 0 28px; }
-.strip-label {
-  text-align: center;
-  font-size: .76rem; text-transform: uppercase; letter-spacing: .12em;
-  color: var(--slate-400); font-weight: 700;
-  margin-bottom: 14px; padding: 0 24px;
-}
-.strip-label em { font-style: normal; text-transform: none; letter-spacing: .02em; font-weight: 500; }
-.marquee {
-  overflow: hidden;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-}
-.mq-track { display: flex; gap: 56px; width: max-content; animation: mq 30s linear infinite; }
-.mq-set { display: flex; gap: 56px; align-items: center; }
-@keyframes mq { to { transform: translateX(calc(-50% - 28px)); } }
-.marquee:hover .mq-track { animation-play-state: paused; }
-
 /* ---------- Buttons: Glanz-Sweep ---------- */
 .btn { position: relative; overflow: hidden; }
 .btn::after {
@@ -863,7 +826,6 @@ html:not(.js) #preloader { display: none; }
     transition-duration: .01ms !important;
   }
   #embers, .blob { display: none; }
-  .mq-track { animation: none; }
 }
 
 /* ---------- Hero: Inline-Thermostat ---------- */
@@ -1122,34 +1084,6 @@ html:not(.js) #preloader { display: none; }
     </div>
   </section>
 
-  <!-- ===== Trust-Strip (Platzhalter-Partnerlogos, Laufband) ===== -->
-  <div class="strip">
-    <p class="strip-label">Vertraut auf Technik von <em>· *Platzhalter – bitte echte Partner eintragen</em></p>
-    <div class="marquee">
-      <div class="mq-track">
-        <div class="mq-set">
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
-        </div>
-        <div class="mq-set" aria-hidden="true">
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Viessmann*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>Vaillant*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 18H3l9-18Z"/></svg>Buderus*</span>
-          <span class="plogo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7Z"/></svg>Bosch*</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- ===== Leistungen ===== -->
   <section id="leistungen">
