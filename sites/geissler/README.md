@@ -1,0 +1,48 @@
+# Geißler Heizungstechnik – Bochum
+
+Demo-/Verkaufswebseite im modernen SaaS-Look für die Firma **Wolfgang Geißler**
+(Heizungstechnik, Markstraße 413, 44795 Bochum · ☎ 0234 460852).
+
+Statisches HTML + CSS + JS, kein Build-Schritt nötig.
+
+## Inhalt
+
+| Datei              | Zweck                                        |
+| ------------------ | -------------------------------------------- |
+| `index.html`       | One-Pager (Hero, Leistungen, Über uns, Stats, Ablauf, Bewertungen, FAQ, Kontakt) |
+| `impressum.html`   | Impressum (Platzhalter)                      |
+| `datenschutz.html` | Datenschutzerklärung (Entwurf/Platzhalter)   |
+| `styles.css`       | Design (Navy + Orange, SaaS-Style)           |
+| `app.js`           | Mobile-Nav, Scroll-Reveal, Demo-Formular     |
+
+## Echte Daten (aus Google Maps übernommen)
+
+- Adresse: Markstraße 413, 44795 Bochum
+- Telefon: 0234 460852
+- Google-Bewertung: 5,0 ★ (10 Rezensionen) – zwei echte Rezensionen als Kundenstimmen eingebaut
+- Leistungen laut Google: Installation/Reparatur von Heizsystemen und Thermostaten
+
+## Vor dem Livegang ersetzen (alle mit `[Platzhalter…]` markiert)
+
+- [ ] E-Mail-Adresse (Kontakt, Footer, Impressum, Datenschutz)
+- [ ] Öffnungszeiten (Topbar + Kontakt)
+- [ ] Jahre Erfahrung / Projektanzahl (Hero + Stats)
+- [ ] Firmengeschichte im Abschnitt „Über uns"
+- [ ] Partner-/Herstellerlogos im Trust-Strip (aktuell nur Beispiel-Namen)
+- [ ] Impressum vollständig ausfüllen (Firmierung, Inhaber, USt-ID, Kammer)
+- [ ] Datenschutzerklärung rechtlich prüfen lassen
+- [ ] Kontaktformular an Versand anbinden (z. B. Formspree oder Vercel Function)
+- [ ] Stock-Fotos (Unsplash-Hotlinks) durch eigene Fotos ersetzen bzw. lokal hosten
+
+## Bilder
+
+Die Fotos werden aktuell direkt von `images.unsplash.com` geladen (Stock-Fotos).
+Lädt ein Bild nicht, greift automatisch ein gestalteter Fallback-Hintergrund.
+
+## Lokal testen
+
+```bash
+cd sites/geissler
+python3 -m http.server 8000
+# http://localhost:8000 öffnen
+```
