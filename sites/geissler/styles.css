@@ -852,3 +852,10 @@ html:not(.js) #preloader { display: none; }
 }
 .svc-note { margin-top: 30px; color: var(--slate-500); font-size: .98rem; }
 .svc-note a { color: var(--orange-600); font-weight: 700; white-space: nowrap; }
+
+/* ---------- Google-Profil-Links ---------- */
+a.hero-pill { transition: border-color .15s, background .15s; }
+a.hero-pill:hover { border-color: var(--orange-400); background: rgba(249, 115, 22, .14); }
+a.float-card:hover .ic { background: var(--orange-100); }
+.g-badge a.inner { transition: border-color .15s, box-shadow .15s, color .15s; }
+.g-badge a.inner:hover { border-color: var(--orange-400); box-shadow: var(--shadow-md); color: var(--orange-600); }

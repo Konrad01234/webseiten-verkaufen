@@ -866,6 +866,13 @@ html:not(.js) #preloader { display: none; }
 .svc-note { margin-top: 30px; color: var(--slate-500); font-size: .98rem; }
 .svc-note a { color: var(--orange-600); font-weight: 700; white-space: nowrap; }
 
+/* ---------- Google-Profil-Links ---------- */
+a.hero-pill { transition: border-color .15s, background .15s; }
+a.hero-pill:hover { border-color: var(--orange-400); background: rgba(249, 115, 22, .14); }
+a.float-card:hover .ic { background: var(--orange-100); }
+.g-badge a.inner { transition: border-color .15s, box-shadow .15s, color .15s; }
+.g-badge a.inner:hover { border-color: var(--orange-400); box-shadow: var(--shadow-md); color: var(--orange-600); }
+
 </style>
   <script>document.documentElement.classList.add('js');</script>
 </head>
@@ -938,10 +945,10 @@ html:not(.js) #preloader { display: none; }
     </div>
     <div class="wrap">
       <div>
-        <span class="hero-pill">
+        <a class="hero-pill" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener" title="Google-Profil öffnen">
           <span class="stars" aria-hidden="true">★★★★★</span>
           5,0 auf Google · 10 Rezensionen
-        </span>
+        </a>
         <h1>Wärme, auf die Sie sich <em>verlassen</em> können.</h1>
         <p class="lede">
           Installation, Reparatur und Wartung von Heizsystemen und Thermostaten in
@@ -1068,12 +1075,12 @@ html:not(.js) #preloader { display: none; }
             <circle cx="470" cy="622" r="10" fill="#22314f"/>
           </svg>
         </div>
-        <div class="float-card fc-rating">
+        <a class="float-card fc-rating" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener" title="Google-Profil öffnen">
           <span class="ic">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 16.9 5.9 20.4l1.5-6.8L2.2 9l6.9-.7L12 2Z"/></svg>
           </span>
           <span><strong>5,0 / 5,0</strong><span>Google-Bewertung</span></span>
-        </div>
+        </a>
         <div class="float-card fc-service">
           <span class="ic">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6Z"/></svg>
@@ -1270,11 +1277,12 @@ html:not(.js) #preloader { display: none; }
       </div>
 
       <div class="g-badge reveal">
-        <div class="inner">
+        <a class="inner" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener">
           <span class="stars" aria-hidden="true">★★★★★</span>
           5,0 / 5,0
-          <span class="sub">· 10 Rezensionen auf Google</span>
-        </div>
+          <span class="sub">· 10 Rezensionen auf Google – Profil ansehen</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
       </div>
     </div>
   </section>
@@ -1383,10 +1391,9 @@ html:not(.js) #preloader { display: none; }
 
           <div class="map-box">
             <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMjAwIDYwMCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJMYWdlcGxhbjogTWFya3N0cmHDn2UgNDEzLCA0NDc5NSBCb2NodW0iPgogIDxzdHlsZT4KICAgIEBrZXlmcmFtZXMgcGluZyB7IDAlIHsgdHJhbnNmb3JtOiBzY2FsZSguNSk7IG9wYWNpdHk6IC41NSB9IDEwMCUgeyB0cmFuc2Zvcm06IHNjYWxlKDIpOyBvcGFjaXR5OiAwIH0gfQogICAgLnB1bHNlIHsgdHJhbnNmb3JtLWJveDogZmlsbC1ib3g7IHRyYW5zZm9ybS1vcmlnaW46IGNlbnRlcjsgYW5pbWF0aW9uOiBwaW5nIDIuNnMgZWFzZS1vdXQgaW5maW5pdGU7IH0KICAgIC5wdWxzZTIgeyBhbmltYXRpb24tZGVsYXk6IDEuM3M7IH0KICAgIEBrZXlmcmFtZXMgYm9iIHsgMCUsMTAwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgwKSB9IDUwJSB7IHRyYW5zZm9ybTogdHJhbnNsYXRlWSgtOHB4KSB9IH0KICAgIC5waW4geyB0cmFuc2Zvcm0tYm94OiBmaWxsLWJveDsgdHJhbnNmb3JtLW9yaWdpbjogNTAlIDEwMCU7IGFuaW1hdGlvbjogYm9iIDIuNnMgZWFzZS1pbi1vdXQgaW5maW5pdGU7IH0KICAgIEBtZWRpYSAocHJlZmVycy1yZWR1Y2VkLW1vdGlvbjogcmVkdWNlKSB7ICogeyBhbmltYXRpb246IG5vbmUgIWltcG9ydGFudDsgfSB9CiAgPC9zdHlsZT4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iYmciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZWVmMmY2Ii8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI2UyZTlmMCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CgogIDxyZWN0IHdpZHRoPSIxMjAwIiBoZWlnaHQ9IjYwMCIgZmlsbD0idXJsKCNiZykiLz4KCiAgPCEtLSBHcsO8bmZsw6RjaGUgLyBQYXJrIC0tPgogIDxwYXRoIGQ9Ik0wIDQzMCBRIDI2MCAzNDAgNDIwIDQ3MCBUIDkwMCA1NjAgTCAxMjAwIDYwMCBMIDAgNjAwIFoiIGZpbGw9IiNjZmU2ZDQiLz4KICA8cGF0aCBkPSJNOTgwIDAgUSAxMDgwIDEyMCAxMjAwIDkwIEwgMTIwMCAwIFoiIGZpbGw9IiNjZmU2ZDQiLz4KCiAgPCEtLSBXYXNzZXIgLS0+CiAgPHBhdGggZD0iTTAgOTAgUSAxNDAgNjAgMjAwIDExMCBUIDM4MCAxMjAgTCAzODAgMCBMIDAgMCBaIiBmaWxsPSIjY2ZlMGVlIi8+CgogIDwhLS0gTmViZW5zdHJhw59lbiAtLT4KICA8ZyBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMTQiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCI+CiAgICA8cGF0aCBkPSJNMTIwIDAgViA2MDAiLz4KICAgIDxwYXRoIGQ9Ik0zMjAgNDAgUSA0MjAgMjIwIDM4MCA2MDAiLz4KICAgIDxwYXRoIGQ9Ik02NDAgMCBRIDYxMCAyMDAgNzAwIDM4MCBUIDc2MCA2MDAiLz4KICAgIDxwYXRoIGQ9Ik05MjAgMCBRIDkwMCAxODAgMTAxMCAzMDAgVCAxMjAwIDQyMCIvPgogICAgPHBhdGggZD0iTTAgMzAwIEggMTIwMCIgc3Ryb2tlLXdpZHRoPSIxMiIvPgogICAgPHBhdGggZD0iTTIwMCA0ODAgUSA1MDAgNDMwIDgyMCA1MDAiLz4KICA8L2c+CgogIDwhLS0gSGF1cHRzdHJhw59lOiBNYXJrc3RyYcOfZSAtLT4KICA8cGF0aCBpZD0ibWFya3N0ciIgZD0iTTAgMjEwIFEgMzMwIDE2MCA2MjAgMjIwIFQgMTIwMCAyNjAiIHN0cm9rZT0iI2Y2YzQ1MyIgc3Ryb2tlLXdpZHRoPSIyNiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgPHBhdGggZD0iTTAgMjEwIFEgMzMwIDE2MCA2MjAgMjIwIFQgMTIwMCAyNjAiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIiBzdHJva2UtZGFzaGFycmF5PSIxOCAxNiIgb3BhY2l0eT0iLjgiLz4KICA8dGV4dCBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iNzAwIiBmaWxsPSIjOGE2ZDFmIj4KICAgIDx0ZXh0UGF0aCBocmVmPSIjbWFya3N0ciIgc3RhcnRPZmZzZXQ9IjclIj5NIGEgciBrIHMgdCByIGEgw58gZTwvdGV4dFBhdGg+CiAgPC90ZXh0PgoKICA8IS0tIEdlYsOkdWRlIC0tPgogIDxnIGZpbGw9IiNkNWRjZTQiPgogICAgPHJlY3QgeD0iMTgwIiB5PSIyNDAiIHdpZHRoPSI3MCIgaGVpZ2h0PSI0NiIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjQzMCIgeT0iMTIwIiB3aWR0aD0iODAiIGhlaWdodD0iNTIiIHJ4PSI0Ii8+CiAgICA8cmVjdCB4PSI0NzAiIHk9IjI1MCIgd2lkdGg9IjY0IiBoZWlnaHQ9IjQ0IiByeD0iNCIvPgogICAgPHJlY3QgeD0iNzYwIiB5PSIxMjAiIHdpZHRoPSI3MiIgaGVpZ2h0PSI1MCIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjgyMCIgeT0iMzMwIiB3aWR0aD0iODQiIGhlaWdodD0iNTQiIHJ4PSI0Ii8+CiAgICA8cmVjdCB4PSIxMDIwIiB5PSIxNjAiIHdpZHRoPSI3MCIgaGVpZ2h0PSI0NiIgcng9IjQiLz4KICAgIDxyZWN0IHg9IjIxMCIgeT0iMzYwIiB3aWR0aD0iNjAiIGhlaWdodD0iNDIiIHJ4PSI0Ii8+CiAgPC9nPgogIDwhLS0gQsOkdW1lIGltIFBhcmsgLS0+CiAgPGcgZmlsbD0iIzllY2ZhYSI+CiAgICA8Y2lyY2xlIGN4PSIyMjAiIGN5PSI1MDAiIHI9IjE2Ii8+CiAgICA8Y2lyY2xlIGN4PSIzMDAiIGN5PSI1MzAiIHI9IjEyIi8+CiAgICA8Y2lyY2xlIGN4PSI1MjAiIGN5PSI1MjAiIHI9IjE1Ii8+CiAgICA8Y2lyY2xlIGN4PSI3MDAiIGN5PSI1NDUiIHI9IjEyIi8+CiAgICA8Y2lyY2xlIGN4PSIxMDgwIiBjeT0iNjAiIHI9IjE0Ii8+CiAgPC9nPgoKICA8IS0tIFN0YW5kb3J0LVBpbiAtLT4KICA8Zz4KICAgIDxjaXJjbGUgY2xhc3M9InB1bHNlIiBjeD0iNjIwIiBjeT0iMjIyIiByPSIzNCIgZmlsbD0iI2Y5NzMxNiIgb3BhY2l0eT0iLjE4Ii8+CiAgICA8Y2lyY2xlIGNsYXNzPSJwdWxzZSBwdWxzZTIiIGN4PSI2MjAiIGN5PSIyMjIiIHI9IjUyIiBmaWxsPSIjZjk3MzE2IiBvcGFjaXR5PSIuMDgiLz4KICAgIDxnIGNsYXNzPSJwaW4iPgogICAgICA8cGF0aCBkPSJNNjIwIDE2MCBjLTI0IDAtNDIgMTgtNDIgNDEgMCAzMCA0MiA2NSA0MiA2NSBzNDItMzUgNDItNjUgYzAtMjMtMTgtNDEtNDItNDF6IiBmaWxsPSIjZWE1ODBjIi8+CiAgICAgIDxjaXJjbGUgY3g9IjYyMCIgY3k9IjIwMSIgcj0iMTUiIGZpbGw9IiNmZmZmZmYiLz4KICAgICAgPHBhdGggZD0iTTYyMCAxOTMgYy44IDIuNi0uNSA0LjYtMi4yIDYuNCAtMS43IDEuOC0yLjggMy4zLTIuOCA1LjEgYTUgNSAwIDAgMCAxMCAuMiBjMC0xLjctLjctMy4yLTEuNy00LjUgLjEgMS4yLS4zIDIuMy0xLjQgMi44IC40LTIuMy0uNS03LjYtMS45LTEweiIgZmlsbD0iI2VhNTgwYyIvPgogICAgPC9nPgogIDwvZz4KCiAgPCEtLSBBZHJlc3MtS2FydGUgLS0+CiAgPGc+CiAgICA8cmVjdCB4PSI3MDAiIHk9IjEyMCIgd2lkdGg9IjMzMCIgaGVpZ2h0PSI5NiIgcng9IjE2IiBmaWxsPSIjZmZmZmZmIiBzdHJva2U9IiNkYmUyZWEiIHN0cm9rZS13aWR0aD0iMiIvPgogICAgPGNpcmNsZSBjeD0iNzQ0IiBjeT0iMTY4IiByPSIyMiIgZmlsbD0iI2ZmZjdlZCIvPgogICAgPHBhdGggZD0iTTc0NCAxNTIgYy05IDAtMTYgNy0xNiAxNS41IDAgMTEuNSAxNiAyNC41IDE2IDI0LjUgczE2LTEzIDE2LTI0LjUgYzAtOC41LTctMTUuNS0xNi0xNS41eiBtMCAyMiBhNi41IDYuNSAwIDEgMSAwLTEzIDYuNSA2LjUgMCAwIDEgMCAxM3oiIGZpbGw9IiNlYTU4MGMiLz4KICAgIDx0ZXh0IHg9Ijc4MiIgeT0iMTYyIiBmb250LWZhbWlseT0idWktc2Fucy1zZXJpZiwgc3lzdGVtLXVpLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjIxIiBmb250LXdlaWdodD0iODAwIiBmaWxsPSIjMTYyMzNkIj5HZWnDn2xlciBIZWl6dW5nc3RlY2huaWs8L3RleHQ+CiAgICA8dGV4dCB4PSI3ODIiIHk9IjE5MiIgZm9udC1mYW1pbHk9InVpLXNhbnMtc2VyaWYsIHN5c3RlbS11aSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxOCIgZmlsbD0iIzY0NzQ4YiI+TWFya3N0cmHDn2UgNDEzIMK3IDQ0Nzk1IEJvY2h1bTwvdGV4dD4KICA8L2c+Cjwvc3ZnPgo=" alt="Lageplan: Markstraße 413, 44795 Bochum" loading="lazy" />
-            <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Markstra%C3%9Fe+413%2C+44795+Bochum"
-               target="_blank" rel="noopener">
+            <a class="map-link" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
-              Route in Google Maps planen
+              Auf Google Maps öffnen
             </a>
           </div>
         </div>
