@@ -276,6 +276,17 @@ details .antwort { padding: 0 2px 22px; color: #57493C; line-height: 1.7; font-s
 .seitenkopf { position: relative; overflow: hidden; }
 .seitenkopf .brotkrume { font-size: 12px; letter-spacing: .28em; text-transform: uppercase; color: #C8A24E; }
 
+/* Wasserzeichen: Demo-Hinweis, bleibt beim Scrollen sichtbar */
+#wasserzeichen {
+  position: fixed; right: 14px; bottom: 14px; z-index: 75; pointer-events: none;
+  background: rgba(23,18,13,.82); color: #E3C87E; backdrop-filter: blur(4px);
+  border: 1px solid rgba(200,162,78,.5); padding: 8px 14px;
+  font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  box-shadow: 0 6px 20px -8px rgba(27,22,16,.5);
+  user-select: none;
+}
+#wasserzeichen strong { font-weight: 600; color: #F5EFE3; letter-spacing: .18em; }
+
 /* Zier-Trenner: Nadel & Faden mittig */
 .zier { display: flex; align-items: center; justify-content: center; gap: 18px; }
 .zier::before, .zier::after { content: ""; height: 1px; flex: 1; max-width: 180px; background: linear-gradient(90deg, transparent, rgba(168,134,58,.6)); }
@@ -285,6 +296,8 @@ details .antwort { padding: 0 2px 22px; color: #57493C; line-height: 1.7; font-s
 <body class="grain font-body antialiased">
 
 <div id="faden-fortschritt" aria-hidden="true"></div>
+
+<div id="wasserzeichen">Demo · erstellt von <strong>Signwire Media</strong></div>
 
 <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-[80] focus:top-3 focus:left-3 focus:bg-ink focus:text-ivory focus:px-4 focus:py-2">Zum Inhalt springen</a>
 
@@ -1192,6 +1205,7 @@ details .antwort { padding: 0 2px 22px; color: #57493C; line-height: 1.7; font-s
   <div class="border-t border-ivory/10 relative">
     <div class="max-w-6xl mx-auto px-5 sm:px-8 py-5 flex flex-col sm:flex-row justify-between gap-2 text-[13px] text-ivory/45">
       <p>© 2026 Schneider Atelier LE&amp;LA</p>
+      <p class="text-goldsoft/80">Demo-Website · erstellt von <strong class="font-medium text-goldsoft">Signwire Media</strong></p>
       <p>Impressum &amp; Datenschutz folgen zum Go-Live</p>
     </div>
   </div>
