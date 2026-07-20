@@ -76,6 +76,14 @@
     <!-- ===== Hero ===== -->
     <section class="hero">
       <div class="hero-bg" data-photo="img/hero.jpg"></div>
+      <div class="hero-hearts" aria-hidden="true">
+        <svg style="left:8%;top:70%;width:26px;height:26px;animation-duration:9s;animation-delay:.5s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+        <svg style="left:22%;top:40%;width:16px;height:16px;animation-duration:11s;animation-delay:2s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+        <svg style="left:44%;top:78%;width:32px;height:32px;animation-duration:13s;animation-delay:1s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+        <svg style="left:63%;top:52%;width:20px;height:20px;animation-duration:10s;animation-delay:3.4s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+        <svg style="left:78%;top:64%;width:28px;height:28px;animation-duration:12s;animation-delay:.2s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+        <svg style="left:90%;top:46%;width:15px;height:15px;animation-duration:14s;animation-delay:4s" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg>
+      </div>
       <div class="wrap">
         <div class="hero-inner">
           <span class="eyebrow">Café · Konditorei · Eventlocation in Erfurt</span>
@@ -118,6 +126,7 @@
           <ul class="checklist">
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg><span>Große Auswahl an Kaffeespezialitäten – auch pinke Latte Macchiato &amp; Rosenlimonade</span></li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg><span>Hausgemachte Torten und kleine herzhafte Speisen</span></li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg><span>Gehobenes Ambiente mit Livemusik am Klavier – Liebe zum Detail in jeder Ecke</span></li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg><span>Kinderfreundlich, Nichtraucherlokal und gemütliche Terrasse</span></li>
             <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg><span>Zum Mitnehmen &amp; Lieferservice – täglich von 9:30 bis 18 Uhr</span></li>
           </ul>
@@ -136,6 +145,18 @@
       </div>
     </section>
 
+    <!-- ===== Kennzahlen ===== -->
+    <section class="section" style="padding-top:0">
+      <div class="wrap">
+        <div class="stats stagger">
+          <div class="stat"><div class="num" data-count="4.9" data-decimals="1">4.9</div><div class="lab">Sterne auf Google</div></div>
+          <div class="stat"><div class="num" data-count="7">7</div><div class="lab">Tage die Woche offen</div></div>
+          <div class="stat"><div class="num" data-count="100" data-suffix="%">100%</div><div class="lab">Hausgemachte Torten</div></div>
+          <div class="stat"><div class="num" data-count="1" data-prefix="#">#1</div><div class="lab">Rosa Café in Erfurt</div></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ===== Angebot ===== -->
     <section class="section tint">
       <div class="wrap">
@@ -144,33 +165,33 @@
           <h2>Süßes Glück, <em>den ganzen Tag.</em></h2>
           <p class="lede">Vom Frühstück am Morgen bis zum Eisbecher am Nachmittag – frisch zubereitet und mit viel Liebe angerichtet.</p>
         </div>
-        <div class="cards">
-          <article class="card reveal">
+        <div class="cards stagger">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v6a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5Z"/><path d="M7 2v2M11 2v2M15 2v2"/></svg></div>
             <h3>Frühstück</h3>
             <p>Frisch, reichlich und schön angerichtet – herzhaft mit Brötchen, Käse, Schinken und Bio-Ei oder süß in den Tag. Dazu frisch gepresster Orangensaft.</p>
           </article>
-          <article class="card reveal">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M5 21v-6h14v6"/><path d="M6 15v-3c0-1 .8-2 2-2h8c1.2 0 2 1 2 2v3"/><path d="M12 10V7"/><path d="M12 7a1.5 1.5 0 0 0 1.5-1.5C13.5 4 12 3 12 3s-1.5 1-1.5 2.5A1.5 1.5 0 0 0 12 7Z"/></svg></div>
             <h3>Hausgemachte Torten</h3>
             <p>Feine Torten und kleine Kuchen aus unserer eigenen Herstellung – täglich frisch in der Vitrine, auf Wunsch auch als Bestelltorte für deinen Anlass.</p>
           </article>
-          <article class="card reveal">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="1.2"/><circle cx="13" cy="8" r="1.2"/><circle cx="8" cy="13" r="1.2"/><circle cx="13" cy="13" r="1.2"/><path d="M3.5 3.5 20 20"/><path d="M18 13a5 5 0 0 1-9.9 1M13 6a5 5 0 0 1 5 5"/><rect x="3" y="3" width="15" height="15" rx="7.5"/></svg></div>
             <h3>Bubble Waffeln &amp; Crêpes</h3>
             <p>Unsere beliebten Bubble Waffeln, klassische Waffeln und Crêpes – süß mit Früchten und Sahne oder herzhaft belegt.</p>
           </article>
-          <article class="card reveal">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11a5 5 0 1 1 10 0"/><path d="M7 11h10l-4.2 9.6a1 1 0 0 1-1.6 0Z"/></svg></div>
             <h3>Eis &amp; Milchshakes</h3>
             <p>Bunte Eisbecher, Kindereis und cremige Milchshakes – die süße Abkühlung für Groß und Klein.</p>
           </article>
-          <article class="card reveal">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9h1a3 3 0 0 1 0 6h-1"/><path d="M4 9h13v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z"/><path d="M8 2c0 1-.5 1.5-.5 2.5S8 6 8 6M12 2c0 1-.5 1.5-.5 2.5S12 6 12 6"/></svg></div>
             <h3>Kaffeespezialitäten</h3>
             <p>Vom Cappuccino bis zur pinken Latte Macchiato – dazu Rosenlimonade und viele weitere Getränke, die so hübsch sind wie sie schmecken.</p>
           </article>
-          <article class="card reveal">
+          <article class="card">
             <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21C7 17 3 13.5 3 9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 9 2.5c0 4-4 7.5-9 11.5Z"/></svg></div>
             <h3>Feiern &amp; Events</h3>
             <p>Geburtstag, Babyparty oder einfach ein Grund zum Anstoßen: Feiere in unserem Café – wir gestalten deinen Tag gemeinsam mit dir.</p>
@@ -218,27 +239,27 @@
             4,9 / 5 <small>· Google-Bewertungen</small>
           </p>
         </div>
-        <div class="quote-grid">
-          <figure class="quote reveal">
+        <div class="quote-grid stagger">
+          <figure class="quote">
             <div class="stars" aria-label="5 von 5 Sternen">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg>
             </div>
-            <blockquote>„Wunderschönes Frühstück mit reichlich Auswahl – dazu ein tolles Ambiente und richtig freundlicher Service."</blockquote>
-            <figcaption>Gästestimme · Google</figcaption>
+            <blockquote>„Ein wunderschöner Laden, mit Liebe geführt. Gemütliches gehobenes Ambiente mit Livemusik am Klavier und super leckeren herzhaften Speisen und süßen Kreationen. Ein zauberhaftes Café mit Liebe zum Detail."</blockquote>
+            <figcaption>K. S. · Google-Rezension</figcaption>
           </figure>
-          <figure class="quote reveal">
+          <figure class="quote">
             <div class="stars" aria-label="5 von 5 Sternen">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg>
             </div>
-            <blockquote>„Die Waffeln, das Eis und der Früchtekuchen sind ein Traum – man merkt die Liebe zum Detail in allem."</blockquote>
-            <figcaption>Gästestimme · Google</figcaption>
+            <blockquote>„Ich habe für meine Mama zum Geburtstag ein paar Törtchen gekauft – die waren sehr lecker. Gut vom Personal beraten und definitiv nicht enttäuscht, weshalb ich gerne wiederkomme."</blockquote>
+            <figcaption>Pascal Theiß · Google-Rezension</figcaption>
           </figure>
-          <figure class="quote reveal">
+          <figure class="quote">
             <div class="stars" aria-label="5 von 5 Sternen">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.8 1-5.8L3.5 9.2l5.9-.9L12 3Z"/></svg>
             </div>
-            <blockquote>„Entspannte Atmosphäre, charmante Einrichtung und superfreundliches Team – unser Lieblingscafé in Erfurt."</blockquote>
-            <figcaption>Gästestimme · Google</figcaption>
+            <blockquote>„Man fühlt sich vom Alltag komplett abgeschottet – so viel Liebe zum Detail. Süße Speisen wie auch Herzhaftes einfach lecker, dazu sehr nettes und aufmerksames Personal."</blockquote>
+            <figcaption>Gästin · Google-Rezension</figcaption>
           </figure>
         </div>
       </div>
@@ -272,6 +293,14 @@
       </div>
     </section>
   </main>
+
+  <!-- ===== Marquee ===== -->
+  <div class="marquee" aria-hidden="true">
+    <div class="marquee-track">
+      <span>Frühstück</span><span>Hausgemachte Torten</span><span>Bubble Waffeln</span><span>Crêpes</span><span>Eisbecher</span><span>Pinke Latte</span><span>Rosenlimonade</span><span>Livemusik am Klavier</span><span>Eventlocation</span>
+      <span>Frühstück</span><span>Hausgemachte Torten</span><span>Bubble Waffeln</span><span>Crêpes</span><span>Eisbecher</span><span>Pinke Latte</span><span>Rosenlimonade</span><span>Livemusik am Klavier</span><span>Eventlocation</span>
+    </div>
+  </div>
 
   <!-- ===== Footer ===== -->
   <footer>

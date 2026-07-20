@@ -432,13 +432,97 @@ footer { background: var(--plum); color: #ecd3db; margin-top: 0; }
 .foot-bottom a:hover { color: #fff; }
 
 /* ── Reveal-Animationen ──────────────────────── */
-.js .reveal, .js .reveal-l, .js .reveal-r {
-  opacity: 0; transform: translateY(26px);
-  transition: opacity .7s var(--ease), transform .7s var(--ease);
+.js .reveal, .js .reveal-l, .js .reveal-r, .js .reveal-scale {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity .75s var(--ease), transform .75s var(--ease);
 }
-.js .reveal-l { transform: translateX(-30px); }
-.js .reveal-r { transform: translateX(30px); }
-.js .reveal.in, .js .reveal-l.in, .js .reveal-r.in { opacity: 1; transform: none; }
+.js .reveal-l { transform: translateX(-34px); }
+.js .reveal-r { transform: translateX(34px); }
+.js .reveal-scale { transform: scale(.92); }
+.js .reveal.in, .js .reveal-l.in, .js .reveal-r.in, .js .reveal-scale.in { opacity: 1; transform: none; }
+
+/* Gestaffelte Reveals (Kinder nacheinander) */
+.js .stagger > * { opacity: 0; transform: translateY(26px); transition: opacity .6s var(--ease), transform .6s var(--ease); }
+.js .stagger.in > * { opacity: 1; transform: none; }
+.js .stagger.in > *:nth-child(1) { transition-delay: .05s; }
+.js .stagger.in > *:nth-child(2) { transition-delay: .12s; }
+.js .stagger.in > *:nth-child(3) { transition-delay: .19s; }
+.js .stagger.in > *:nth-child(4) { transition-delay: .26s; }
+.js .stagger.in > *:nth-child(5) { transition-delay: .33s; }
+.js .stagger.in > *:nth-child(6) { transition-delay: .40s; }
+
+/* Hover-Lift für Karten & Fotos */
+.card, .quote, .menu-item { transition: transform .35s var(--ease), box-shadow .35s var(--ease), border-color .3s ease; }
+.card:hover, .quote:hover { transform: translateY(-6px); }
+.menu-item:hover { transform: translateY(-3px); }
+.card:hover .card-icon { transform: rotate(-6deg) scale(1.08); }
+.card-icon { transition: transform .4s var(--ease); }
+
+/* Foto-Zoom bei Hover */
+.photo img { transition: transform .8s var(--ease); }
+.photo:hover img { transform: scale(1.06); }
+.gallery .photo { cursor: pointer; }
+.gallery .photo::after {
+  content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(74,20,36,.42));
+  opacity: 0; transition: opacity .4s ease;
+}
+.gallery .photo:hover::after { opacity: 1; }
+
+/* Animierter Hero-Gradient */
+.hero-bg:not(.has-photo) { background-size: 180% 180%; animation: heroPan 18s ease-in-out infinite; }
+@keyframes heroPan { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+/* Schwebende Deko-Herzen im Hero */
+.hero-hearts { position: absolute; inset: 0; z-index: 1; overflow: hidden; pointer-events: none; }
+.hero-hearts svg { position: absolute; color: #fff; opacity: 0; animation: floatUp linear infinite; }
+@keyframes floatUp {
+  0%   { transform: translateY(20px) scale(.7) rotate(0deg); opacity: 0; }
+  12%  { opacity: .35; }
+  85%  { opacity: .22; }
+  100% { transform: translateY(-120px) scale(1) rotate(18deg); opacity: 0; }
+}
+
+/* Hero-Text gestaffelt einblenden */
+.js .hero-inner > * { opacity: 0; transform: translateY(22px); animation: heroIn .9s var(--ease) forwards; }
+.js .hero-inner > *:nth-child(1) { animation-delay: 1.9s; }
+.js .hero-inner > *:nth-child(2) { animation-delay: 2.02s; }
+.js .hero-inner > *:nth-child(3) { animation-delay: 2.16s; }
+.js .hero-inner > *:nth-child(4) { animation-delay: 2.30s; }
+.js .hero-inner > *:nth-child(5) { animation-delay: 2.44s; }
+@keyframes heroIn { to { opacity: 1; transform: none; } }
+
+/* sanftes Dauer-Wippen für Badges/Icons */
+.split-badge svg { animation: heartbeat 2.4s ease-in-out infinite; transform-origin: center; }
+@keyframes heartbeat { 0%,100% { transform: scale(1); } 15% { transform: scale(1.22); } 30% { transform: scale(1); } 45% { transform: scale(1.15); } }
+
+/* Buttons: sanfter Shine */
+.btn-primary, .btn-cream { position: relative; overflow: hidden; }
+.btn-primary::after, .btn-cream::after {
+  content: ""; position: absolute; top: 0; left: -120%; width: 60%; height: 100%;
+  background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+  transform: skewX(-18deg); transition: left .6s ease;
+}
+.btn-primary:hover::after, .btn-cream:hover::after { left: 140%; }
+
+/* Zahlen-Zähler (Kennzahlen-Band) */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; margin-top: 2.4rem; }
+@media (max-width: 760px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+.stat { text-align: center; padding: 1.4rem 1rem; }
+.stat .num { font-family: var(--serif); font-weight: 700; color: var(--rose-deep); font-size: clamp(2.2rem, 5vw, 3rem); line-height: 1; }
+.stat .lab { font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: .4rem; }
+
+/* Marquee-Band mit Café-Schlagworten */
+.marquee { overflow: hidden; background: var(--plum); color: #f6b8cc; padding-block: .9rem; white-space: nowrap; }
+.marquee-track { display: inline-flex; gap: 2.6rem; animation: marquee 26s linear infinite; will-change: transform; }
+.marquee-track span { font-family: var(--script); font-size: 1.7rem; display: inline-flex; align-items: center; gap: 2.6rem; }
+.marquee-track span::after { content: "❀"; font-family: var(--sans); font-size: .9rem; color: var(--rose); }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
 @media (prefers-reduced-motion: reduce) {
-  .js .reveal, .js .reveal-l, .js .reveal-r { opacity: 1; transform: none; transition: none; }
+  .js .reveal, .js .reveal-l, .js .reveal-r, .js .reveal-scale,
+  .js .stagger > *, .js .hero-inner > * { opacity: 1; transform: none; transition: none; animation: none; }
+  .card:hover, .quote:hover, .menu-item:hover, .photo:hover img { transform: none; }
+  .hero-bg, .hero-hearts svg, .split-badge svg, .marquee-track { animation: none; }
+  .marquee-track { transform: none; }
 }

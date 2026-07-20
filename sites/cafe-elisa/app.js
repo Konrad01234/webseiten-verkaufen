@@ -70,17 +70,46 @@
       probe.src = heroBg.getAttribute("data-photo");
     }
 
-    /* ---------- Reveal beim Scrollen ---------- */
-    var reveal = document.querySelectorAll(".reveal, .reveal-l, .reveal-r");
+    /* ---------- Reveal beim Scrollen (inkl. Stagger) ---------- */
+    var reveal = document.querySelectorAll(".reveal, .reveal-l, .reveal-r, .reveal-scale, .stagger");
     if ("IntersectionObserver" in window && reveal.length && !reduce) {
       var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (e) {
-          if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            if (e.target.hasAttribute("data-counts")) runCounts(e.target);
+            io.unobserve(e.target);
+          }
         });
       }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
       reveal.forEach(function (el) { io.observe(el); });
     } else {
       reveal.forEach(function (el) { el.classList.add("in"); });
+    }
+
+    /* ---------- Zahlen hochzählen ---------- */
+    function runCounts(scope) {
+      scope.querySelectorAll("[data-count]").forEach(function (el) {
+        var target = parseFloat(el.getAttribute("data-count"));
+        var dec = parseInt(el.getAttribute("data-decimals") || "0", 10);
+        var pre = el.getAttribute("data-prefix") || "";
+        var suf = el.getAttribute("data-suffix") || "";
+        var dur = 1400, start = null;
+        function step(ts) {
+          if (!start) start = ts;
+          var p = Math.min((ts - start) / dur, 1);
+          var eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = pre + (target * eased).toFixed(dec) + suf;
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = pre + target.toFixed(dec) + suf;
+        }
+        requestAnimationFrame(step);
+      });
+    }
+    var statBlock = document.querySelector(".stats");
+    if (statBlock) {
+      statBlock.setAttribute("data-counts", "1");
+      if (reduce) runCounts(statBlock);
     }
 
     /* ---------- Nav-Schatten + Scroll-Fortschritt + Parallax ---------- */
