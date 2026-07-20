@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fay Café · Düsseldorf | Kaffee, Brunch, Matcha, Kuchen und Liebe</title>
+  <meta name="description" content="Fay Café in Düsseldorf – Wagnerstraße 9, direkt am Schadow-Karree. Specialty Coffee, cremiges Matcha, hausgemachte Kuchen und Brunch in stilvollem Ambiente. Kaffee, Brunch, Matcha, Kuchen und Liebe." />
+  <meta name="theme-color" content="#2a1c14" />
+  <meta property="og:title" content="Fay Café · Düsseldorf" />
+  <meta property="og:description" content="Kaffee, Brunch, Matcha, Kuchen und Liebe – mitten in Düsseldorf am Schadow-Karree." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Preloader -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-cup">
+      <div class="pl-steam"><span></span><span></span><span></span></div>
+      <svg viewBox="0 0 60 54" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20h38v14a12 12 0 0 1-12 12H20A12 12 0 0 1 8 34V20Z"/><path d="M46 24h6a6 6 0 0 1 0 12h-6"/></svg>
+    </div>
+    <p class="pl-name">Fay Café</p>
+    <span class="pl-sub">Düsseldorf</span>
+    <span class="pl-track"><span class="pl-fill"></span></span>
+  </div>
+
+  <!-- Fullscreen mobile nav -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html">Start</a>
+    <a href="speisekarte.html">Karte</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tag">Kaffee · Brunch · Matcha · Kuchen · Liebe</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+4915738282017" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        +49 1573 8282017
+      </a>
+      <div class="tb-right">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          Wagnerstraße 9 · am Schadow-Karree
+        </span>
+        <span>Täglich geöffnet</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nav -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Fay Café – Startseite">
+        <span class="b-name">Fay<span class="b-dot">.</span></span>
+        <span class="b-tag">Café · Düsseldorf</span>
+      </a>
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html" class="active">Start</a>
+        <a href="speisekarte.html">Karte</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-rose">Tisch anfragen</a>
+        <button class="nav-toggle" aria-label="Menü öffnen">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-blob b1"></div>
+      <div class="hero-blob b2"></div>
+      <div class="hero-blob b3"></div>
+
+      <div class="hero-cup" aria-hidden="true">
+        <svg class="steam" viewBox="0 0 80 60"><path d="M25 55 C15 45 35 35 25 22 C18 12 30 5 26 0"/><path d="M40 55 C30 45 50 35 40 22 C33 12 45 5 41 0"/><path d="M55 55 C45 45 65 35 55 22 C48 12 60 5 56 0"/></svg>
+        <svg class="cup-art" viewBox="0 0 200 180" fill="none">
+          <ellipse cx="100" cy="150" rx="72" ry="14" fill="rgba(0,0,0,.35)"/>
+          <path d="M40 60h96v52a44 44 0 0 1-44 44H84a44 44 0 0 1-44-44V60Z" fill="#f0e5d6"/>
+          <path d="M40 60h96v10a44 44 0 0 1-44 12H84A44 44 0 0 1 40 70V60Z" fill="#6f4a30"/>
+          <ellipse cx="88" cy="63" rx="48" ry="10" fill="#3a2416"/>
+          <ellipse cx="88" cy="61" rx="48" ry="10" fill="#5a3a26"/>
+          <path d="M136 74h12a22 22 0 0 1 0 44h-12" stroke="#f0e5d6" stroke-width="9" fill="none"/>
+        </svg>
+      </div>
+
+      <div class="wrap">
+        <div class="hero-inner">
+          <span class="hero-eyebrow">Specialty Coffee · Düsseldorf-Stadtmitte</span>
+          <h1>
+            <span class="line"><span>Kaffee, Brunch,</span></span>
+            <span class="line"><span><em>Matcha, Kuchen</em></span></span>
+            <span class="line"><span>und ganz viel Liebe.</span></span>
+          </h1>
+          <p class="hero-lead">Dein Lieblingsplatz am Schadow-Karree – wo jeder Cappuccino von Hand gezogen, jeder Kuchen frisch gebacken und jeder Gast persönlich begrüßt wird.</p>
+          <div class="hero-cta">
+            <a href="speisekarte.html" class="btn btn-rose">Zur Karte
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </a>
+            <a href="kontakt.html" class="btn btn-light">Besuch dich vorbei</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-scroll" aria-hidden="true">
+        <span class="mouse"></span>
+        Scroll
+      </div>
+    </section>
+
+    <!-- ===== Marquee ===== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track">
+        <span>Handgezogener Espresso</span><span>Cremiges Matcha</span><span>Kuchen wie hausgemacht</span><span>Brunch bis mittags</span><span>Iced Coffee 2 für 1</span><span>Mitten in Düsseldorf</span>
+        <span>Handgezogener Espresso</span><span>Cremiges Matcha</span><span>Kuchen wie hausgemacht</span><span>Brunch bis mittags</span><span>Iced Coffee 2 für 1</span><span>Mitten in Düsseldorf</span>
+      </div>
+    </div>
+
+    <!-- ===== Signature / Intro ===== -->
+    <section class="section cream">
+      <div class="wrap split">
+        <div class="reveal-l">
+          <span class="eyebrow">Willkommen bei Fay</span>
+          <h2>Ein kleines Stück <em>Slow Living</em> mitten in der Stadt.</h2>
+          <p>Zwischen Königsallee und Schadowstraße haben wir einen Ort geschaffen, an dem die Zeit ein bisschen langsamer läuft. Warmes Licht, sanfte Rosétöne, der Duft von frisch gemahlenem Kaffee – und Kuchen, die jeden Morgen neu entstehen.</p>
+          <p>Ob schneller Flat White zum Mitnehmen, ausgiebiger Brunch mit Freundinnen oder ein cremiges Matcha am Nachmittag: Bei Fay bist du immer richtig.</p>
+          <p class="sig">— das Team von Fay Café</p>
+        </div>
+        <div class="reveal-r art-panel art-blush" data-tilt>
+          <div class="shine"></div>
+          <div class="ring">
+            <svg class="cup-lg" viewBox="0 0 200 180" fill="none">
+              <path d="M40 55h100v58a48 48 0 0 1-48 48H88a48 48 0 0 1-48-48V55Z" fill="#fffaf4"/>
+              <ellipse cx="90" cy="58" rx="50" ry="11" fill="#e8c9a0"/>
+              <path d="M90 46c-8 6-8 12 0 16 8-4 8-10 0-16Z" fill="#c98b6f"/>
+              <path d="M140 70h12a24 24 0 0 1 0 48h-12" stroke="#fffaf4" stroke-width="10" fill="none"/>
+            </svg>
+          </div>
+          <span class="tag">Signature Rosé Latte</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Highlights ===== -->
+    <section class="section paper">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Warum Fay</span>
+          <h2>Drei Dinge, die wir <em>besonders</em> lieben</h2>
+          <p>Kompromisslos in der Qualität, herzlich im Umgang – so schmeckt Fay.</p>
+        </div>
+        <div class="cards">
+          <article class="card reveal" data-delay="1">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13v4a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6v-4Z"/><path d="M17 11h2a3 3 0 0 1 0 6h-2"/><path d="M8 3c-1 1.5 1 2.5 0 4M12 3c-1 1.5 1 2.5 0 4"/></svg></span>
+            <h3>Specialty Coffee</h3>
+            <p>Espresso, Cappuccino, Cortado, Flat White – frisch gemahlen, von Hand gezogen und mit Latte-Art serviert.</p>
+          </article>
+          <article class="card reveal" data-delay="2">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10l-1 9a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3L7 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M10 12c1.5 1 2.5 1 4 0"/></svg></span>
+            <h3>Cremiges Matcha</h3>
+            <p>Ceremonial-Grade Matcha, sanft aufgeschäumt – als Iced Latte, warm oder in unseren Kuchen des Tages.</p>
+          </article>
+          <article class="card reveal" data-delay="3">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-6a8 8 0 0 0-16 0v6Z"/><path d="M4 20h16"/><path d="M9 6c-1-1 0-2.5 1-3M13 6c-1-1 0-2.5 1-3"/></svg></span>
+            <h3>Kuchen mit Liebe</h3>
+            <p>Jeden Tag frisch gebacken – von Carrot Cake bis Chai-Cheesecake, viele Sorten auch vegan.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Stats band ===== -->
+    <section class="section dark">
+      <div class="hero-blob b3" style="opacity:.28"></div>
+      <div class="wrap">
+        <div class="stats">
+          <div class="stat reveal" data-delay="1">
+            <div class="num"><span data-count="7">0</span></div>
+            <div class="lbl">Tage die Woche geöffnet</div>
+          </div>
+          <div class="stat reveal" data-delay="2">
+            <div class="num">8<small>:00</small></div>
+            <div class="lbl">Frühstart mit Kaffee</div>
+          </div>
+          <div class="stat reveal" data-delay="3">
+            <div class="num"><span data-count="100">0</span><small>%</small></div>
+            <div class="lbl">Kuchen hausgemacht</div>
+          </div>
+          <div class="stat reveal" data-delay="4">
+            <div class="num" style="font-size:clamp(1.8rem,4.5vw,2.6rem)">★★★★★</div>
+            <div class="lbl">Gäste-Liebling</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Menu teaser ===== -->
+    <section class="section cream">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="eyebrow">Ein Vorgeschmack</span>
+          <h2>Von <em>Espresso</em> bis Iced Matcha</h2>
+          <p>Ein kleiner Auszug – die ganze Karte wechselt saisonal und bei den Kuchen sogar täglich.</p>
+        </div>
+        <div class="menu-grid">
+          <div class="menu-block reveal-l">
+            <h3><span class="dot"></span> Kaffee &amp; Espresso</h3>
+            <div class="menu-item"><span class="mi-name">Espresso</span><span class="mi-lead"></span><span class="mi-price">2,8</span></div>
+            <div class="menu-item"><span class="mi-name">Cappuccino</span><span class="mi-lead"></span><span class="mi-price">3,6</span></div>
+            <div class="menu-item"><span class="mi-name">Flat White</span><span class="mi-lead"></span><span class="mi-price">3,9</span></div>
+            <div class="menu-item"><span class="mi-name">Cortado</span><span class="mi-lead"></span><span class="mi-price">3,4</span></div>
+            <div class="menu-item"><span class="mi-name">Latte Macchiato</span><span class="mi-lead"></span><span class="mi-price">4,2</span></div>
+          </div>
+          <div class="menu-block reveal-r">
+            <h3><span class="dot"></span> Matcha &amp; Iced</h3>
+            <div class="menu-item"><span class="mi-name">Matcha Latte <span class="badge new">Signature</span></span><span class="mi-lead"></span><span class="mi-price">4,8</span></div>
+            <div class="menu-item"><span class="mi-name">Iced Matcha</span><span class="mi-lead"></span><span class="mi-price">4,9</span></div>
+            <div class="menu-item"><span class="mi-name">Iced Latte</span><span class="mi-lead"></span><span class="mi-price">4,4</span></div>
+            <div class="menu-item"><span class="mi-name">Iced Americano</span><span class="mi-lead"></span><span class="mi-price">3,8</span></div>
+            <div class="menu-item"><span class="mi-name">Chai Latte</span><span class="mi-lead"></span><span class="mi-price">4,5</span></div>
+          </div>
+        </div>
+        <p class="menu-note">Preise als Orientierung – bitte final mit der aktuellen Karte im Café abgleichen.</p>
+        <div class="center mt-lg reveal">
+          <a href="speisekarte.html" class="btn btn-primary">Ganze Karte ansehen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Gallery mosaic ===== -->
+    <section class="section paper">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Impressionen</span>
+          <h2>Momente bei <em>Fay</em></h2>
+          <p>Sanftes Licht, cremiger Schaum, süße Pausen – so sieht ein Tag bei uns aus.</p>
+        </div>
+        <div class="mosaic reveal-scale">
+          <div class="tile big" data-label="Latte Art"><span class="fill g-espresso"></span></div>
+          <div class="tile" data-label="Matcha"><span class="fill g-matcha"></span></div>
+          <div class="tile tall" data-label="Rosé Latte"><span class="fill g-blush"></span></div>
+          <div class="tile" data-label="Cheesecake"><span class="fill g-cake"></span></div>
+          <div class="tile" data-label="Flat White"><span class="fill g-latte"></span></div>
+          <div class="tile tall" data-label="Brunch"><span class="fill g-brunch"></span></div>
+          <div class="tile" data-label="Carrot Cake"><span class="fill g-cake"></span></div>
+          <div class="tile" data-label="Iced Coffee"><span class="fill g-latte"></span></div>
+        </div>
+        <p class="menu-note center">Platzhalter-Ansicht – hier kommen später eure echten Fotos aus dem Café und von Instagram rein.</p>
+      </div>
+    </section>
+
+    <!-- ===== Reviews ===== -->
+    <section class="section sand">
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Was Gäste sagen</span>
+          <h2>Ein bisschen <em>Liebe</em> zurück</h2>
+        </div>
+        <div class="reviews">
+          <article class="review reveal" data-delay="1">
+            <div class="stars">★★★★★</div>
+            <p>„Der schönste Ort für eine Kaffeepause in der Stadt – der Matcha ist ein Traum und das Team so herzlich."</p>
+            <div class="who"><span class="av" style="background:var(--blush-2)">L</span><span><b>Lea M.</b><span>Google-Rezension</span></span></div>
+          </article>
+          <article class="review reveal" data-delay="2">
+            <div class="stars">★★★★★</div>
+            <p>„Kuchen wie bei Oma, aber schicker. Der Carrot Cake ist der beste, den ich in Düsseldorf hatte."</p>
+            <div class="who"><span class="av" style="background:var(--matcha)">J</span><span><b>Jonas K.</b><span>Google-Rezension</span></span></div>
+          </article>
+          <article class="review reveal" data-delay="3">
+            <div class="stars">★★★★★</div>
+            <p>„Perfekt zwischen Shopping und Kö. Süßes Ambiente, guter Kaffee, super Service. Kommen wieder!"</p>
+            <div class="who"><span class="av" style="background:var(--caramel)">S</span><span><b>Sophie R.</b><span>Google-Rezension</span></span></div>
+          </article>
+        </div>
+        <p class="menu-note center">Beispielhafte Stimmen – vor Veröffentlichung durch echte Google-Rezensionen ersetzen.</p>
+      </div>
+    </section>
+
+    <!-- ===== Location & hours ===== -->
+    <section class="section dark" id="besuch">
+      <div class="wrap">
+        <div class="loc-grid">
+          <div class="reveal-l">
+            <span class="today-pill"><span class="live"></span> Heute für dich da</span>
+            <div class="sec-head" style="margin-bottom:1.6rem">
+              <span class="eyebrow">Besuch uns</span>
+              <h2>Mitten in Düsseldorf, <em>am Schadow-Karree</em></h2>
+            </div>
+            <ul class="hours-list">
+              <li data-day="mo"><span class="day">Montag</span><span class="hrs">08:00 – 16:30</span></li>
+              <li data-day="di"><span class="day">Dienstag</span><span class="hrs">08:00 – 20:00</span></li>
+              <li data-day="mi"><span class="day">Mittwoch</span><span class="hrs">08:00 – 20:00</span></li>
+              <li data-day="do"><span class="day">Donnerstag</span><span class="hrs">08:00 – 20:00</span></li>
+              <li data-day="fr"><span class="day">Freitag</span><span class="hrs">08:00 – 20:00</span></li>
+              <li data-day="sa"><span class="day">Samstag</span><span class="hrs">08:00 – 16:30</span></li>
+              <li data-day="so"><span class="day">Sonntag</span><span class="hrs">08:30 – 15:00</span></li>
+            </ul>
+          </div>
+          <a class="map-card reveal-r" href="https://www.google.com/maps/search/?api=1&query=Fay+Caf%C3%A9+Wagnerstra%C3%9Fe+9+D%C3%BCsseldorf" target="_blank" rel="noopener" aria-label="Auf Google Maps öffnen">
+            <div class="map-lines"></div>
+            <div class="map-pin"><span class="lbl">Fay Café</span><span class="dot"></span></div>
+            <div class="addr">
+              <b>Fay Café</b>
+              <span>Wagnerstraße 9 · 40212 Düsseldorf</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA band ===== -->
+    <section class="cta-band section dark">
+      <div class="hero-blob b1" style="opacity:.4"></div>
+      <div class="hero-blob b2" style="opacity:.35"></div>
+      <div class="wrap reveal">
+        <h2>Zeit für <em>deinen</em> Moment.</h2>
+        <p>Komm vorbei, hol dir deinen Lieblingskaffee oder frag einen Tisch für deinen nächsten Brunch an – wir freuen uns auf dich.</p>
+        <div class="hero-cta" style="justify-content:center">
+          <a href="kontakt.html" class="btn btn-rose">Tisch anfragen</a>
+          <a href="tel:+4915738282017" class="btn btn-light">Anrufen</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div class="f-brand">
+          <div class="b-name">Fay<span class="b-dot">.</span></div>
+          <p class="f-tag">Kaffee, Brunch, Matcha, Kuchen und Liebe.</p>
+          <p>Dein Specialty-Café mitten in Düsseldorf – Wagnerstraße 9, direkt am Schadow-Karree zwischen Kö und Schadowstraße.</p>
+          <div class="socials">
+            <a href="https://www.instagram.com/faycafetime/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <a href="tel:+4915738282017" aria-label="Telefon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Café</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="speisekarte.html">Karte</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Öffnungszeiten</h4>
+          <ul>
+            <li>Mo &nbsp; 08:00 – 16:30</li>
+            <li>Di–Fr &nbsp; 08:00 – 20:00</li>
+            <li>Sa &nbsp; 08:00 – 16:30</li>
+            <li>So &nbsp; 08:30 – 15:00</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="https://www.google.com/maps/search/?api=1&query=Fay+Caf%C3%A9+Wagnerstra%C3%9Fe+9+D%C3%BCsseldorf" target="_blank" rel="noopener">Wagnerstraße 9<br>40212 Düsseldorf</a></li>
+            <li><a href="tel:+4915738282017">+49 1573 8282017</a></li>
+            <li><a href="mailto:hallo@faycafe.de">hallo@faycafe.de</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> Fay Café · Düsseldorf</span>
+        <span>
+          <a href="impressum.html">Impressum</a> &nbsp;·&nbsp;
+          <a href="datenschutz.html">Datenschutz</a> &nbsp;·&nbsp;
+          <a href="#" data-cookie-reopen>Cookies</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Cookie banner -->
+  <div id="cookie" role="dialog" aria-label="Cookie-Hinweis">
+    <p>Wir verwenden nur technisch notwendige Cookies, damit die Seite funktioniert. Mehr in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>
+    <div class="row">
+      <button class="btn btn-rose" data-cookie="accept">Alles klar</button>
+      <button class="btn btn-light" style="color:var(--cream);border-color:var(--line-dark)" data-cookie="essential">Nur notwendige</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
