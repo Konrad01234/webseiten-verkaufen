@@ -27,9 +27,10 @@ Wagnerstraße 9 (direkt am Schadow-Karree).
   Text-Zeilen-Reveal, Laufband (Marquee), gestaffelte Scroll-Reveals, Parallax, mitschrumpfende Navbar,
   Scroll-Fortschritt, Count-up-Zähler, Karten-Tilt, Hover-Sheen, heute-hervorgehobene Öffnungszeiten,
   pulsierender Karten-Pin. Respektiert `prefers-reduced-motion`.
-- **Bilder:** Aktuell reine CSS/SVG-Kunst als Platzhalter (Tassen, Gradient-Kacheln), damit die Seite
-  ohne externe Assets funktioniert. Die Platzhalter sind so aufgebaut, dass echte Fotos 1:1 eingesetzt
-  werden können.
+- **Bilder:** Echte Café-Fotos in `img/` (`fay-01.jpg` … `fay-18.jpg`), verwendet mit Genehmigung des
+  Cafés. Aus Google-Maps-Screenshots freigestellt (UI-Ränder entfernt) und web-optimiert (JPG).
+  Hero = `fay-02`, Signatur-Panel = `fay-08`, Galerie = 01/06/07/11/13/15/17/18, Über-uns-Panels
+  = `fay-17`/`fay-09`, Subhero-Bilder = 06/01/16.
 
 ## Verifizierte Daten (Quelle: öffentliche Web-/Google-Maps-Angaben)
 
@@ -38,21 +39,16 @@ Wagnerstraße 9 (direkt am Schadow-Karree).
 - **Telefon:** +49 1573 8282017
 - **Instagram:** @faycafetime · **Web:** faycafe.de
 - **Öffnungszeiten:** Mo 08:00–16:30 · Di–Fr 08:00–20:00 · Sa 08:00–16:30 · So 08:30–15:00
-- **Angebot:** Espresso/Cappuccino/Flat White/Cortado/Latte, Matcha, Iced Coffee (2-für-1),
-  hausgemachte & vegane Kuchen (Carrot Cake, Chai-Cheesecake, Oreo/Blueberry), Brunch.
+- **Angebot & Preise (Preistafel im Café):** Doppio 3,8 · Americano 3,8 · Macchiato 4,8 ·
+  Cappuccino 4,8 · Cortado 5,0 · Flat White 5,5 · Chai Latte 5,8; Matcha Latte, Saffron/Strawberry/
+  Mango Matcha; Iced Latte/Americano/Chai; hausgemachte & vegane Kuchen (Carrot Cake, Chai-Cheesecake,
+  Oreo/Blueberry), Brunch (Avocado-Brot, Pancakes …).
+- **Rezensionen:** echte Google-Bewertungen (Akseniya Arif ★★★★★, Hell Anne ★★★★★,
+  Mensch Meyer ★★★★).
 
-> **Vor Livegang bitte final abgleichen:** Preise auf der Karte, exakte Öffnungszeiten,
-> Impressums- und Datenschutzangaben. Diese wurden aus öffentlich verfügbaren Quellen
-> zusammengetragen und sollten mit dem Café bestätigt werden.
-
-## Echte Fotos einsetzen
-
-Die Session-Firewall blockt Google-Maps-/Instagram-Bildhosts – Fotos konnten nicht automatisch
-geladen werden. So werden sie ergänzt:
-
-1. Fotos (für die eine Nutzungserlaubnis vorliegt) in `sites/fay/img/` ablegen.
-2. Im HTML den jeweiligen `art-panel`/`tile`/Hero-Block gegen ein `<img>` bzw. eine
-   `background-image` tauschen (die Slots sind kommentierbar markiert bzw. eindeutig benannt).
+> **Vor Livegang bitte final abgleichen:** vollständige Preisliste (Matcha-Specials & Iced-Preise
+> waren auf dem Foto teils angeschnitten – Schätzwerte im Tiertakt der Tafel), exakte Öffnungszeiten
+> sowie Impressums- und Datenschutzangaben.
 
 ## Lokal testen
 
