@@ -6,7 +6,9 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 
 ```
 sites/
-└── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── eiscafefranco/ Eiscafé Franco (statisches HTML)
+└── cafe-elisa/    Café Elisa – Erfurt (statisches HTML + CSS + JS)
 ```
 
 ## Vercel-Setup
