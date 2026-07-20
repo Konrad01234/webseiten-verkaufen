@@ -50,6 +50,15 @@ Wagnerstraße 9 (direkt am Schadow-Karree).
 > waren auf dem Foto teils angeschnitten – Schätzwerte im Tiertakt der Tafel), exakte Öffnungszeiten
 > sowie Impressums- und Datenschutzangaben.
 
+## SEO & Technik
+
+- `favicon.svg` – Fay-Monogramm (Kaffeetasse), theme-color gesetzt.
+- Open-Graph- & Twitter-Cards (Vorschaubild = `img/fay-02.jpg`) für schöne Link-Vorschauen.
+- JSON-LD `CafeOrCoffeeShop` auf der Startseite (Adresse, Telefon, Öffnungszeiten,
+  Instagram, Google-Maps-Link) für Rich Results.
+- `sitemap.xml` + `robots.txt` (Impressum/Datenschutz auf `noindex`).
+- `vercel.json`: `cleanUrls`, langes Caching für `/img`, Basis-Security-Header.
+
 ## Lokal testen
 
 ```bash
