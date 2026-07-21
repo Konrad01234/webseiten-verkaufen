@@ -252,6 +252,15 @@ textarea{resize:vertical;min-height:120px}
 .cookie-actions{display:flex;gap:.6rem;flex:none}
 .cookie-actions .btn{min-height:44px;padding:.6rem 1.1rem;font-size:.82rem}
 
+/* placeholder photo slots (für spätere echte Fotos) */
+.ph-photo{position:relative;overflow:hidden;border:2px dashed rgba(30,58,143,.32);border-radius:var(--radius);background:linear-gradient(160deg,#e8eef8,#dbe4f2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.55rem;color:var(--blue);min-height:230px;text-align:center;padding:1.6rem}
+.ph-photo::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,rgba(30,58,143,.04) 0 12px,transparent 12px 24px);pointer-events:none}
+.ph-photo svg.cam{width:46px;height:46px;opacity:.6}
+.ph-photo b{font-family:var(--serif);text-transform:uppercase;font-size:.98rem;letter-spacing:.01em;position:relative}
+.ph-photo span{font-size:.82rem;color:var(--muted);max-width:26ch;position:relative}
+.ph-badge{position:absolute;top:10px;right:10px;z-index:2;background:var(--gold);color:#fff;font-size:.64rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.22rem .5rem;border-radius:5px}
+.ph-photo.wide{min-height:280px}
+
 /* credit note */
 .credit{font-size:.8rem;color:var(--muted);text-align:center;margin-top:2.4rem}
 
@@ -311,7 +320,7 @@ textarea{resize:vertical;min-height:120px}
   <a href="#leistungen">Leistungen</a>
   <a href="#ueber">Über uns</a>
   <a href="#einblicke">Einblicke</a>
-  <a href="#bewertungen">Bewertungen</a>
+  <a href="#team">Team</a>
   <a href="#kontakt">Kontakt</a>
 </div>
 
@@ -334,7 +343,7 @@ textarea{resize:vertical;min-height:120px}
       <a href="#leistungen">Leistungen</a>
       <a href="#ueber">Über uns</a>
       <a href="#einblicke">Einblicke</a>
-      <a href="#bewertungen">Bewertungen</a>
+      <a href="#team">Team</a>
       <a href="#kontakt">Kontakt</a>
     </nav>
     <div class="nav-cta">
@@ -471,26 +480,21 @@ textarea{resize:vertical;min-height:120px}
     </div>
   </section>
 
-  <!-- reviews -->
-  <section class="section section--alt" id="bewertungen">
+  <!-- team (Foto-Platzhalter) -->
+  <section class="section section--alt" id="team">
     <div class="wrap">
-      <div class="section-head center reveal"><span class="eyebrow">Kundenstimmen</span><h2>Das sagen unsere Kunden</h2><p>Echte Google-Bewertungen aus Bonn.</p></div>
-      <div class="reviews">
-        <article class="review reveal">
-          <div class="stars" aria-label="5 von 5 Sternen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg></div>
-          <blockquote>„Auf ganzer Linie überzeugt! Super sympathischer Ansprechpartner, sehr schneller Service (mein Auto war am gleichen Tag wieder fit) und guter Preis. Sehr zu empfehlen. Danke!"</blockquote>
-          <div class="who"><span class="avatar" style="background:#1e3a8f">JO</span><span><span class="nm">Jannik Otto</span><br><span class="gbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg>9 Rezensionen · vor 7 Monaten</span></span></div>
-        </article>
-        <article class="review reveal d1">
-          <div class="stars" aria-label="5 von 5 Sternen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg></div>
-          <blockquote>„War zum Reifenwechsel dort. Es hat zwar länger gedauert, aber da alles transparent und freundlich kommuniziert wurde, war das kein Problem. Die Mitarbeiter wirkten kompetent und freundlich. Preis-Leistung passte auch."</blockquote>
-          <div class="who"><span class="avatar" style="background:#c01f7d">FB</span><span><span class="nm">Flo Braun</span><br><span class="gbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg>4 Rezensionen · vor 9 Monaten</span></span></div>
-        </article>
-        <article class="review reveal d2">
-          <div class="stars" aria-label="5 von 5 Sternen"><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg><svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg></div>
-          <blockquote>„Sehr netter Kontakt – obwohl bisher kein Kunde dort, wurde mir heute sofort schnell weitergeholfen, als meine Batterie das Zeitliche gesegnet hat. Vielen Dank für den tollen Service!"</blockquote>
-          <div class="who"><span class="avatar" style="background:#1e3a8f">DA</span><span><span class="nm">Disa Arndis</span><br><span class="gbadge"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v4h-4"/></svg>Local Guide · 17 Rezensionen</span></span></div>
-        </article>
+      <div class="section-head center reveal">
+        <span class="eyebrow">Unser Team</span>
+        <h2>Die Menschen hinter A + S</h2>
+        <p>Hier stellen wir uns bald persönlich vor. Die markierten Flächen zeigen, wo später echte Fotos stehen – Team, Werkstatt und Empfang.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="ph-photo reveal"><span class="ph-badge">Platzhalter</span><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg><b>Geschäftsführung</b><span>Foto folgt – hier kommt später ein echtes Portrait hin.</span></div>
+        <div class="ph-photo reveal d1"><span class="ph-badge">Platzhalter</span><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg><b>Werkstatt-Team</b><span>Foto folgt – Platz für ein Teamfoto aus der Werkstatt.</span></div>
+        <div class="ph-photo reveal d2"><span class="ph-badge">Platzhalter</span><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg><b>Ihr Ansprechpartner</b><span>Foto folgt – hier kommt Ihr Ansprechpartner an der Theke hin.</span></div>
+      </div>
+      <div class="grid" style="margin-top:clamp(1.2rem,2.6vw,1.7rem)">
+        <div class="ph-photo wide reveal"><span class="ph-badge">Platzhalter</span><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/></svg><b>Werkstatt &amp; Empfang</b><span>Breites Platzhalter-Bild – ideal für eine Innenaufnahme Ihrer Werkstatt oder des Empfangsbereichs.</span></div>
       </div>
     </div>
   </section>
