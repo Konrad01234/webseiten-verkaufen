@@ -16,7 +16,7 @@
 <body>
   <div id="nav-overlay" role="dialog" aria-label="Navigation">
     <button class="ov-close" aria-label="Menü schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
-    <a href="index.html">Start</a><a href="speisekarte.html">Karte</a><a href="ueber-uns.html">Über uns</a><a href="kontakt.html">Kontakt</a>
+    <a href="index.html">Start</a><a href="kaffee.html">Kaffee</a><a href="matcha.html">Matcha</a><a href="brunch.html">Brunch</a><a href="kuchen.html">Kuchen</a><a href="speisekarte.html">Karte</a><a href="galerie.html">Galerie</a><a href="bewertungen.html">Bewertungen</a><a href="ueber-uns.html">Über uns</a><a href="kontakt.html">Kontakt</a>
     <span class="ov-tag">Kaffee · Brunch · Matcha · Kuchen · Liebe</span>
   </div>
 
@@ -29,7 +29,26 @@
 
   <header class="nav"><div class="wrap">
     <a href="index.html" class="brand"><span class="b-name">Fay<span class="b-dot">.</span></span><span class="b-tag">Café · Düsseldorf</span></a>
-    <nav class="nav-links"><a href="index.html">Start</a><a href="speisekarte.html">Karte</a><a href="ueber-uns.html">Über uns</a><a href="kontakt.html">Kontakt</a></nav>
+    <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <div class="nav-drop">
+          <button class="nav-drop-t" type="button" aria-haspopup="true">Angebot
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="nav-drop-menu">
+            <a href="kaffee.html">Kaffee</a>
+            <a href="matcha.html">Matcha</a>
+            <a href="brunch.html">Brunch</a>
+            <a href="kuchen.html">Kuchen</a>
+            <div class="div"></div>
+            <a href="speisekarte.html">Ganze Karte</a>
+          </div>
+        </div>
+        <a href="galerie.html">Galerie</a>
+        <a href="bewertungen.html">Bewertungen</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
     <div class="nav-cta"><a href="kontakt.html" class="btn btn-rose">Tisch anfragen</a>
       <button class="nav-toggle" aria-label="Menü öffnen"><svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     </div>

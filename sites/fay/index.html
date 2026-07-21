@@ -104,8 +104,22 @@
         <span class="b-tag">Café · Düsseldorf</span>
       </a>
       <nav class="nav-links" aria-label="Hauptnavigation">
-        <a href="index.html" class="active">Start</a>
-        <a href="speisekarte.html">Karte</a>
+        <a href="index.html">Start</a>
+        <div class="nav-drop">
+          <button class="nav-drop-t" type="button" aria-haspopup="true">Angebot
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="nav-drop-menu">
+            <a href="kaffee.html">Kaffee</a>
+            <a href="matcha.html">Matcha</a>
+            <a href="brunch.html">Brunch</a>
+            <a href="kuchen.html">Kuchen</a>
+            <div class="div"></div>
+            <a href="speisekarte.html">Ganze Karte</a>
+          </div>
+        </div>
+        <a href="galerie.html">Galerie</a>
+        <a href="bewertungen.html">Bewertungen</a>
         <a href="ueber-uns.html">Über uns</a>
         <a href="kontakt.html">Kontakt</a>
       </nav>
@@ -184,21 +198,24 @@
           <p>Kompromisslos in der Qualität, herzlich im Umgang – so schmeckt Fay.</p>
         </div>
         <div class="cards">
-          <article class="card reveal" data-delay="1">
+          <a href="kaffee.html" class="card reveal" data-delay="1">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10h13v4a6 6 0 0 1-6 6H10a6 6 0 0 1-6-6v-4Z"/><path d="M17 11h2a3 3 0 0 1 0 6h-2"/><path d="M8 3c-1 1.5 1 2.5 0 4M12 3c-1 1.5 1 2.5 0 4"/></svg></span>
             <h3>Specialty Coffee</h3>
             <p>Espresso, Cappuccino, Cortado, Flat White – frisch gemahlen, von Hand gezogen und mit Latte-Art serviert.</p>
-          </article>
-          <article class="card reveal" data-delay="2">
+            <span class="card-cue">Zur Kaffee-Seite →</span>
+          </a>
+          <a href="matcha.html" class="card reveal" data-delay="2">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10l-1 9a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3L7 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M10 12c1.5 1 2.5 1 4 0"/></svg></span>
             <h3>Cremiges Matcha</h3>
-            <p>Ceremonial-Grade Matcha, sanft aufgeschäumt – als Iced Latte, warm oder in unseren Kuchen des Tages.</p>
-          </article>
-          <article class="card reveal" data-delay="3">
+            <p>Ceremonial-Grade Matcha, sanft aufgeschäumt – als Iced Latte, warm oder als fruchtiges Signature.</p>
+            <span class="card-cue">Zur Matcha-Seite →</span>
+          </a>
+          <a href="kuchen.html" class="card reveal" data-delay="3">
             <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16v-6a8 8 0 0 0-16 0v6Z"/><path d="M4 20h16"/><path d="M9 6c-1-1 0-2.5 1-3M13 6c-1-1 0-2.5 1-3"/></svg></span>
             <h3>Kuchen mit Liebe</h3>
             <p>Jeden Tag frisch gebacken – von Carrot Cake bis Chai-Cheesecake, viele Sorten auch vegan.</p>
-          </article>
+            <span class="card-cue">Zur Kuchen-Seite →</span>
+          </a>
         </div>
       </div>
     </section>
@@ -281,6 +298,11 @@
           <div class="tile" data-label="Espresso-Handwerk"><span class="fill" style="background-image:url('img/fay-17.jpg')"></span></div>
           <div class="tile" data-label="Auf der Terrasse"><span class="fill" style="background-image:url('img/fay-15.jpg')"></span></div>
         </div>
+        <div class="center mt-lg reveal">
+          <a href="galerie.html" class="btn btn-primary">Ganze Galerie ansehen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -308,7 +330,12 @@
             <div class="who"><span class="av" style="background:var(--caramel)">M</span><span><b>Mensch Meyer</b><span>Google-Rezension · Brunch</span></span></div>
           </article>
         </div>
-        <p class="menu-note center">Echte Google-Rezensionen. <a href="https://www.google.com/maps/search/?api=1&query=Fay+Caf%C3%A9+Wagnerstra%C3%9Fe+9+D%C3%BCsseldorf" target="_blank" rel="noopener" style="color:var(--rose-deep)">Alle Bewertungen auf Google ansehen ↗</a></p>
+        <p class="menu-note center">Echte Google-Rezensionen.</p>
+        <div class="center mt-lg reveal">
+          <a href="bewertungen.html" class="btn btn-primary">Alle Bewertungen ansehen
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
       </div>
     </section>
 

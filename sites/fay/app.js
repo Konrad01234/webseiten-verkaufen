@@ -27,6 +27,22 @@
     if (overlay) overlay.querySelectorAll("a").forEach(function (a) { a.addEventListener("click", closeNav); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeNav(); });
 
+    /* ---------- Active nav state + "Angebot" dropdown ---------- */
+    var here = (location.pathname.split("/").pop() || "").toLowerCase() || "index.html";
+    document.querySelectorAll(".nav-links a[href], .nav-drop-menu a[href]").forEach(function (a) {
+      if ((a.getAttribute("href") || "").toLowerCase() === here) {
+        a.classList.add("active");
+        var d = a.closest(".nav-drop");
+        if (d) { var t = d.querySelector(".nav-drop-t"); if (t) t.classList.add("active"); }
+      }
+    });
+    var dropT = document.querySelector(".nav-drop-t");
+    var drop = document.querySelector(".nav-drop");
+    if (dropT && drop) {
+      dropT.addEventListener("click", function (e) { e.stopPropagation(); drop.classList.toggle("open"); });
+      document.addEventListener("click", function () { drop.classList.remove("open"); });
+    }
+
     /* ---------- Reveal on scroll ---------- */
     var reveal = document.querySelectorAll(".reveal, .reveal-l, .reveal-r, .reveal-scale");
     if ("IntersectionObserver" in window && reveal.length && !reduce) {

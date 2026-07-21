@@ -23,7 +23,13 @@ GitHub zeigt HTML nur als Quelltext – über **raw.githack** wird die Seite ech
 
 | Datei | Inhalt |
 |-------|--------|
-| `index.html` | Startseite – animierter Hero, Marquee, Konzept, Highlights, Zahlen, Karten-Teaser, Galerie, Reviews, Öffnungszeiten + Karte, CTA |
+| `index.html` | Startseite – animierter Hero, Marquee, Konzept, Highlights (verlinkt), Zahlen, Karten-Teaser, Galerie-Teaser, Reviews-Teaser, Öffnungszeiten + Karte, CTA |
+| `kaffee.html` | Themenseite Kaffee & Espresso (Text, Karte, Mini-Galerie) |
+| `matcha.html` | Themenseite Matcha & Specials |
+| `brunch.html` | Themenseite Brunch & Herzhaft |
+| `kuchen.html` | Themenseite Kuchen & Süßes (inkl. vegan) |
+| `galerie.html` | Große Galerie mit allen Fotos |
+| `bewertungen.html` | Echte Google-Rezensionen + Rating-Übersicht |
 | `speisekarte.html` | Vollständige Karte: Kaffee, Matcha & Specials, Iced, Kuchen, Brunch |
 | `ueber-uns.html` | Geschichte, Werte, Ambiente, Lage |
 | `kontakt.html` | Kontaktdaten, Öffnungszeiten, Anfahrt, Anfrageformular (mailto) |
