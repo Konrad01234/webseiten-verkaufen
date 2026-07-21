@@ -1,47 +1,35 @@
 # 🔍 Live-Vorschau – A + S Autoservice GmbH
 
-Da GitHub HTML-Seiten nicht direkt anzeigt, kannst du die Website über den kostenlosen
-Renderer **htmlpreview.github.io** live aus diesem Repository ansehen.
-**Einfach auf einen Link unten klicken** – die Seite öffnet sich fertig gestylt im Browser.
+## ⭐ Komplette Website als EINE Datei (empfohlen)
 
-> Hinweis: Die Links zeigen den Stand des Branches `claude/session-5zxhau`.
-> Beim Klick werden HTML, CSS und JS live aus GitHub geladen und gerendert.
+Die ganze Seite steckt in einer einzigen, in sich geschlossenen HTML-Datei
+(**`a-plus-s-autoservice.html`**) – CSS, JavaScript und alle Fotos sind eingebettet.
+Einfach anklicken und die fertige Seite öffnet sich im Browser:
 
-## Seiten
+**➡️ [Website live ansehen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/a-plus-s-autoservice.html)**
 
-| Seite | Live-Vorschau |
-|-------|---------------|
-| 🏠 **Startseite** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/index.html) |
-| 🔧 **Leistungen** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/leistungen.html) |
-| 👥 **Über uns** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/ueber-uns.html) |
-| ⭐ **Bewertungen** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/bewertungen.html) |
-| 📞 **Kontakt** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/kontakt.html) |
-| 📄 **Impressum** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/impressum.html) |
-| 🔒 **Datenschutz** | [Öffnen](https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/session-5zxhau/sites/a-plus-s-autoservice/datenschutz.html) |
+> Diese Version nutzt die **echten Markenfarben (Blau + Magenta)**, das **echte Logo**
+> und **echte Fotos** aus der Werkstatt und vom Standort. Da alles in einer Datei liegt,
+> rendert die Vorschau ohne Probleme – inkl. funktionierender Sprung-Navigation.
+
+Die Datei kann man auch einfach herunterladen und per Doppelklick offline im Browser öffnen.
 
 ---
 
-## Noch besser: echte Vorschau per GitHub Pages
+## Mehrseitige Version (mit echten Unterseiten)
 
-`htmlpreview` rendert jede Seite einzeln – die **Navigation zwischen den Seiten** funktioniert
-dort aber nicht immer sauber. Für eine vollständige, klickbare Vorschau mit funktionierendem
-Menü gibt es zwei saubere Wege:
+Falls du lieber die Variante mit einzelnen Unterseiten möchtest (Start, Leistungen,
+Über uns, Bewertungen, Kontakt, Impressum, Datenschutz), liegen diese ebenfalls im Ordner.
+Am besten lokal oder per GitHub Pages / Vercel ansehen:
 
-### Variante A – lokal ansehen (sofort, offline)
+### Lokal (sofort)
 ```bash
 cd sites/a-plus-s-autoservice
 python3 -m http.server 8000
-# im Browser öffnen: http://localhost:8000
+# http://localhost:8000
 ```
 
-### Variante B – GitHub Pages (öffentliche URL, dauerhaft)
-1. Diesen Branch nach `main` mergen (oder Pages für diesen Branch aktivieren).
-2. Auf GitHub: **Settings → Pages → Build and deployment → Source: „Deploy from a branch"**.
-3. Branch wählen, Ordner `/ (root)` → Speichern.
-4. Nach ~1 Minute ist die Seite unter
-   `https://konrad01234.github.io/webseiten-verkaufen/sites/a-plus-s-autoservice/`
-   erreichbar – mit voll funktionierender Navigation.
-
-### Variante C – Vercel (empfohlen für „echt live")
-Neues Vercel-Projekt, **Root Directory** = `sites/a-plus-s-autoservice`,
-Framework Preset **Other**. Jeder Push deployt automatisch.
+### GitHub Pages / Vercel
+- **GitHub Pages:** Settings → Pages → Source „Deploy from a branch", Ordner `/ (root)` →
+  erreichbar unter `https://konrad01234.github.io/webseiten-verkaufen/sites/a-plus-s-autoservice/`
+- **Vercel:** neues Projekt, Root Directory `sites/a-plus-s-autoservice`, Preset „Other".
