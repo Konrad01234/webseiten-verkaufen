@@ -285,6 +285,28 @@ p { margin: 0 0 1em; }
 .card h3 { margin-bottom: .4rem; }
 .card p { color: var(--muted); font-size: .97rem; margin: 0; }
 
+/* ── Themen-Hub (Startseite) ─────────────────── */
+.hub { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.3rem; margin-top: 2.6rem; }
+@media (max-width: 900px) { .hub { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .hub { grid-template-columns: 1fr; } }
+.hub a {
+  position: relative; display: block; overflow: hidden; border-radius: var(--radius);
+  aspect-ratio: 3 / 3.7; box-shadow: var(--shadow-sm); background: var(--surface-2);
+  transition: box-shadow .35s var(--ease), transform .35s var(--ease);
+}
+.hub a:hover { box-shadow: var(--shadow-md); transform: translateY(-5px); }
+.hub img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+.hub a:hover img { transform: scale(1.08); }
+.hub .cap {
+  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.2rem; color: #fff;
+  background: linear-gradient(180deg, rgba(67,20,32,.05) 35%, rgba(67,20,32,.78));
+}
+.hub .cap strong { font-family: var(--serif); font-size: 1.5rem; line-height: 1.1; }
+.hub .cap span { font-size: .85rem; opacity: .92; display: inline-flex; align-items: center; gap: .35rem; margin-top: .2rem; }
+.hub .cap svg { width: 15px; height: 15px; transition: transform .3s var(--ease); }
+.hub a:hover .cap svg { transform: translateX(4px); }
+
 /* ── Band / CTA-Sektion ──────────────────────── */
 .band {
   position: relative; overflow: hidden; color: #fff;
@@ -522,7 +544,8 @@ footer { background: var(--plum); color: #ecd3db; margin-top: 0; }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal, .js .reveal-l, .js .reveal-r, .js .reveal-scale,
   .js .stagger > *, .js .hero-inner > * { opacity: 1; transform: none; transition: none; animation: none; }
-  .card:hover, .quote:hover, .menu-item:hover, .photo:hover img { transform: none; }
+  .card:hover, .quote:hover, .menu-item:hover, .photo:hover img,
+  .hub a:hover, .hub a:hover img { transform: none; }
   .hero-bg, .hero-hearts svg, .split-badge svg, .marquee-track { animation: none; }
   .marquee-track { transform: none; }
 }
