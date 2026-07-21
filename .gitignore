@@ -1,2 +1,5 @@
 .DS_Store
 .claude/
+
+# Vorschau-Screenshots (lokal, nicht deployen)
+sites/*/preview/
