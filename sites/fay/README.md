@@ -4,6 +4,21 @@ Mehrseitige, statische und stark animierte („cineastische") Website für das
 **Fay Café** in Düsseldorf – Specialty Coffee, Matcha, hausgemachte Kuchen & Brunch,
 Wagnerstraße 9 (direkt am Schadow-Karree).
 
+![Fay Café Website – Vorschau](preview-hero.jpg)
+
+## 👀 Live-Vorschau (direkt aus GitHub)
+
+GitHub zeigt HTML nur als Quelltext – über **raw.githack** wird die Seite echt gerendert:
+
+- **Vorschau-Übersicht:** [preview.html](https://raw.githack.com/Konrad01234/webseiten-verkaufen/claude/fake-kaffee-website-2vsxv1/sites/fay/preview.html)
+- [Startseite](https://raw.githack.com/Konrad01234/webseiten-verkaufen/claude/fake-kaffee-website-2vsxv1/sites/fay/index.html) ·
+  [Karte](https://raw.githack.com/Konrad01234/webseiten-verkaufen/claude/fake-kaffee-website-2vsxv1/sites/fay/speisekarte.html) ·
+  [Über uns](https://raw.githack.com/Konrad01234/webseiten-verkaufen/claude/fake-kaffee-website-2vsxv1/sites/fay/ueber-uns.html) ·
+  [Kontakt](https://raw.githack.com/Konrad01234/webseiten-verkaufen/claude/fake-kaffee-website-2vsxv1/sites/fay/kontakt.html)
+
+> `preview.html` ist eine self-contained Showcase-Seite (Screenshots eingebettet) – ideal
+> zum Herzeigen/Verschicken an das Café. Für den echten Livegang wird die Seite auf Vercel deployed.
+
 ## Seiten
 
 | Datei | Inhalt |
