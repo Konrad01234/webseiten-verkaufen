@@ -6,8 +6,19 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 
 ```
 sites/
-└── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── davids/          Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── eiscafefranco/   Eiscafé Franco
+└── af-automobile/   A&F Automobile – KFZ-Meisterbetrieb München (Multipage, cinematisch)
 ```
+
+### af-automobile
+
+Freier KFZ-Meisterbetrieb in München (Adlzreiterstraße 17). Sechs Unterseiten
+(Start, Leistungen, Werkstatt, Galerie, Bewertungen, Kontakt), cinematische
+Scroll-Animationen (GSAP + Lenis, lokal gehostet), selbst-gehostete Fonts,
+Lightbox-Galerie und WhatsApp-Kontakt. In `promo/` liegt ein fertiges
+Scroll-Video (1080×2340, MP4) für WhatsApp. Vercel Root Directory:
+`sites/af-automobile`, Framework Preset `Other`.
 
 ## Vercel-Setup
 
