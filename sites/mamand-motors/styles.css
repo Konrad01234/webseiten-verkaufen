@@ -156,6 +156,8 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
   transition: opacity .7s var(--ease), visibility .7s;
 }
 #preloader.hidden { opacity: 0; visibility: hidden; }
+.pl-badge { width: clamp(84px, 16vw, 110px); height: auto; object-fit: contain; animation: plpulse 2.1s ease-in-out infinite; }
+@keyframes plpulse { 0%,100% { opacity: .82; transform: scale(1); } 50% { opacity: 1; transform: scale(1.06); } }
 .pl-logo { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 5vw, 2.4rem); letter-spacing: -.02em; }
 .pl-logo span { color: var(--accent); }
 .pl-track { width: 180px; height: 3px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; }
@@ -194,7 +196,7 @@ h1, h2, h3, h4 { font-family: var(--font-display); font-weight: 700; line-height
 .nav.scrolled .wrap { padding: .7rem 0; }
 
 .brand { display: inline-flex; align-items: center; gap: .7rem; font-family: var(--font-display); font-weight: 700; font-size: 1.28rem; letter-spacing: -.02em; }
-.brand-mark { width: 40px; height: 40px; flex: none; }
+.brand-mark { width: 42px; height: 42px; flex: none; object-fit: contain; }
 .brand span { color: var(--accent); }
 .brand small { display: block; font-family: var(--font-body); font-weight: 500; font-size: .58rem; letter-spacing: .32em; text-transform: uppercase; color: var(--muted); margin-top: 1px; }
 
