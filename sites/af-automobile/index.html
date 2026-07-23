@@ -54,32 +54,26 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="container">
-    <div class="hero__grid">
-      <div class="hero__lead">
-        <p class="kicker">KFZ-Meisterbetrieb · München · seit Jahren</p>
-        <h1 class="display">Ehrliche Schrauber.<br><em>Keine Märchen.</em></h1>
-        <p class="lead">Vom Ölwechsel bis zur HU, vom Reifen bis zur Karosserie – A&amp;F Automobile ist der freie Meisterbetrieb in der Adlzreiterstraße, der Klartext redet und faire Preise macht. Alle Marken, E-Autos und Klassiker.</p>
-        <div class="btn-row">
-          <a href="https://wa.me/491776443019" target="_blank" rel="noopener" class="btn btn--primary btn--lg">Termin per WhatsApp</a>
-          <a href="leistungen.html" class="btn btn--ghost btn--lg">Leistungen
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        </div>
-        <div class="plate" aria-hidden="true"><span class="plate__eu"><i>★</i><b>D</b></span><span class="plate__no">M · AF 1</span></div>
-      </div>
-      <figure class="hero__fig">
-        <picture>
-          <source srcset="img/photos/web/IMG_2307.webp" type="image/webp">
-          <img src="img/photos/web/IMG_2307.jpg" alt="Showroom und Werkstatt von A&F Automobile München" fetchpriority="high">
-        </picture>
-        <figcaption><span>Fig. 01 — Werkstatt &amp; Showroom</span><span>München</span></figcaption>
-      </figure>
+  <div class="hero__photo">
+    <picture>
+      <source srcset="img/photos/web/IMG_2307.webp" type="image/webp">
+      <img src="img/photos/web/IMG_2307.jpg" alt="Showroom und Werkstatt von A&F Automobile München" fetchpriority="high">
+    </picture>
+  </div>
+  <div class="container hero__content">
+    <p class="kicker">KFZ-Meisterbetrieb · München</p>
+    <h1 class="display">Ehrliche Schrauber.<br><em>Keine Märchen.</em></h1>
+    <p class="lead">Vom Ölwechsel bis zur HU, vom Reifen bis zur Karosserie – A&amp;F Automobile ist der freie Meisterbetrieb in der Adlzreiterstraße, der Klartext redet und faire Preise macht. Alle Marken, E-Autos und Klassiker.</p>
+    <div class="btn-row">
+      <a href="https://wa.me/491776443019" target="_blank" rel="noopener" class="btn btn--wa btn--lg">Termin per WhatsApp</a>
+      <a href="leistungen.html" class="btn btn--ghost btn--lg">Leistungen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
   </div>
   <div class="hero__meta container">
     <div class="m"><b>5,0</b><span>★ Google-Bewertung</span></div>
     <div class="m"><b>Alle Marken</b><span>inkl. E-Autos &amp; Klassiker</span></div>
-    <div class="m"><b>Meister</b><span>Eingetragener Betrieb</span></div>
+    <div class="m"><b>Adlzreiter&shy;straße</b><span>80337 München</span></div>
   </div>
 </section>
 
@@ -92,10 +86,10 @@
 </div>
 
 <!-- ============ INTRO / WHY ============ -->
-<section class="section" id="warum">
+<section class="section section--dark" id="warum">
   <div class="container">
     <div class="split">
-      <div class="split__media reveal" data-parallax="8">
+      <div class="split__media reveal rv" data-parallax="8">
         <picture>
           <source srcset="img/photos/web/IMG_2304.webp" type="image/webp">
           <img src="img/photos/web/IMG_2304.jpg" alt="Das Team von A&F Automobile in der Werkstatt">
@@ -184,11 +178,23 @@
   </div>
 </section>
 
+<!-- ============ IMAGE BREAK ============ -->
+<section class="imgbreak">
+  <picture>
+    <source srcset="img/photos/web/IMG_2295.webp" type="image/webp">
+    <img src="img/photos/web/IMG_2295.jpg" alt="Ferrari F430 im Showroom von A&F Automobile" data-parallax="20">
+  </picture>
+  <div class="imgbreak__cap"><div class="container">
+    <p class="kicker">Vom Alltagsauto bis zum Traumwagen</p>
+    <h2 class="h-xl">Wir schrauben an allem,<br>was Räder hat.</h2>
+  </div></div>
+</section>
+
 <!-- ============ WORKSHOP SHOWCASE ============ -->
 <section class="section" id="werkstatt">
   <div class="container">
     <div class="split split--rev">
-      <div class="split__media reveal" data-parallax="6">
+      <div class="split__media reveal rv" data-parallax="6">
         <picture>
           <source srcset="img/photos/web/IMG_2298.webp" type="image/webp">
           <img src="img/photos/web/IMG_2298.jpg" alt="Moderne Werkstatt mit zwei Hebebühnen und Hexagon-LED-Decke">
@@ -214,7 +220,7 @@
 </section>
 
 <!-- ============ PROCESS ============ -->
-<section class="section--tight">
+<section class="section--tight section--dark">
   <div class="container">
     <div class="section-head center">
       <p class="eyebrow center-line">So einfach geht's</p>

@@ -26,9 +26,11 @@
   --ink-3:#7d7e80;        /* muted */
   --navy:#122f57;         /* A&F blue */
   --navy-2:#1c437a;
+  --asphalt:#131519;      /* dark chapter ground */
+  --asphalt-2:#1c1f25;
   --blue-link:#1b4c8a;
-  --orange:#d9481d;       /* signal / garage orange */
-  --orange-ink:#b23a15;
+  --orange:#f04e23;       /* brighter signal orange */
+  --orange-ink:#c93c16;
   --line:#191a1c;         /* rules use ink */
   --line-soft:rgba(25,26,28,.22);
   --wa:#1f8f4e;
@@ -158,26 +160,64 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
 .mobile-menu a .n{font-family:var(--font-mono);font-size:.9rem;color:var(--orange);font-weight:600}
 .mobile-menu__foot{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
 
-/* ---------- Hero ---------- */
-.hero{border-bottom:var(--bd);padding-top:clamp(36px,5vw,60px)}
-.hero__grid{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(24px,4vw,56px);align-items:end;
-  padding-bottom:clamp(28px,4vw,48px)}
-.hero h1{margin:0 0 22px}
+/* ---------- Hero (full-bleed cinematic) ---------- */
+.hero{position:relative;min-height:clamp(560px,92vh,940px);display:flex;flex-direction:column;justify-content:flex-end;
+  color:#fff;overflow:hidden;border-bottom:var(--bd);background:var(--asphalt)}
+.hero__photo{position:absolute;inset:0;z-index:0;overflow:hidden}
+.hero__photo img{width:100%;height:100%;object-fit:cover;filter:brightness(.6) contrast(1.06) saturate(1.05);
+  transform:scale(1.06);animation:heroZoom 14s ease-out forwards}
+@keyframes heroZoom{to{transform:scale(1)}}
+.hero__photo::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,16,18,.6) 0,rgba(15,16,18,.12) 30%,rgba(15,16,18,.55) 72%,rgba(15,16,18,.92) 100%)}
+.hero__content{position:relative;z-index:2;width:100%;padding:clamp(40px,7vw,80px) 0 clamp(20px,3vw,34px)}
+.hero .kicker{color:#fff}
+.hero .kicker::before{background:var(--orange)}
+.hero h1{margin:0 0 22px;color:#fff;max-width:15ch;text-shadow:0 2px 30px rgba(0,0,0,.35)}
 .hero h1 em{font-style:normal;color:var(--orange)}
-.hero .lead{margin-bottom:28px;color:var(--ink-2)}
-.hero__lead .plate{margin-top:30px}
-.hero__fig{margin:0;border:var(--bd);background:#fff;position:relative}
-.hero__fig img{width:100%;aspect-ratio:5/4;object-fit:cover;filter:contrast(1.03) saturate(1.02)}
-.hero__fig figcaption{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink-2);padding:10px 14px;border-top:var(--bd);background:var(--card);display:flex;justify-content:space-between;gap:10px}
-/* hero ledger */
-.hero__meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:var(--bd)}
-.hero__meta .m{padding:18px 22px;border-right:var(--bd-soft)}
+.hero .lead{margin-bottom:30px;color:#e7e8ea;max-width:50ch}
+.hero .btn--ghost{color:#fff;border-color:#fff}
+.hero .btn--ghost:hover{background:#fff;color:var(--ink)}
+.hero .plate{margin-top:4px}
+/* hero ledger on dark */
+.hero__meta{position:relative;z-index:2;display:grid;grid-template-columns:repeat(3,1fr);
+  border-top:1px solid rgba(255,255,255,.28)}
+.hero__meta .m{padding:20px 22px;border-right:1px solid rgba(255,255,255,.16)}
 .hero__meta .m:first-child{padding-left:0}
 .hero__meta .m:last-child{border-right:0}
-.hero__meta .m b{display:block;font-family:var(--font-display);font-size:1.9rem;text-transform:uppercase;line-height:1;color:var(--ink)}
-.hero__meta .m span{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-.hero__scrim,.scroll-cue{display:none}
+.hero__meta .m b{display:block;font-family:var(--font-display);font-size:2rem;text-transform:uppercase;line-height:1;color:#fff}
+.hero__meta .m span{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.62)}
+.hero__scrim,.scroll-cue,.hero__grid,.hero__fig,.hero__lead{}
+
+/* ---------- Dark chapter section ---------- */
+.section--dark{background:var(--asphalt);color:#fff;border-top:var(--bd);border-bottom:var(--bd)}
+.section--dark .h-xl,.section--dark .h-lg,.section--dark h2,.section--dark h3{color:#fff}
+.section--dark .lead{color:#c7c9cd}
+.section--dark .kicker,.section--dark .eyebrow{color:#fff}
+.section--dark .index-bar{color:#fff;border-color:rgba(255,255,255,.3)}
+.section--dark .index-bar span:last-child{color:rgba(255,255,255,.5)}
+.section--dark .checklist{border-color:rgba(255,255,255,.2)}
+.section--dark .checklist li{border-color:rgba(255,255,255,.14);color:#c7c9cd}
+.section--dark .checklist li b{color:#fff}
+.section--dark .split__media{border-color:#fff}
+.section--dark .btn--ghost{color:#fff;border-color:#fff}
+.section--dark .btn--ghost:hover{background:#fff;color:var(--ink)}
+.section--dark .stats{border-color:rgba(255,255,255,.3)}
+.section--dark .stat{border-color:rgba(255,255,255,.16)}
+.section--dark .stat b{color:#fff}
+.section--dark .stat span{color:rgba(255,255,255,.6)}
+.section--dark .steps{border-color:rgba(255,255,255,.16)}
+.section--dark .step{background:var(--asphalt-2);border-color:rgba(255,255,255,.16)}
+.section--dark .step p{color:#c1c4c9}
+.section--dark .tagpill{background:#fff;color:var(--ink)}
+
+/* ---------- Full-bleed image break (parallax) ---------- */
+.imgbreak{position:relative;height:clamp(320px,52vw,560px);overflow:hidden;border-bottom:var(--bd);background:var(--asphalt)}
+.imgbreak img{position:absolute;inset:-12% 0;width:100%;height:124%;object-fit:cover;filter:brightness(.7) contrast(1.05);will-change:transform}
+.imgbreak__cap{position:absolute;left:0;right:0;bottom:0;z-index:2}
+.imgbreak__cap .container{padding-block:clamp(20px,3vw,32px)}
+.imgbreak::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(15,16,18,.85))}
+.imgbreak h2{position:relative;z-index:2;color:#fff}
+.imgbreak .kicker{color:#fff}.imgbreak .kicker::before{background:var(--orange)}
 
 /* ---------- Marquee (echoes their banner) ---------- */
 .marquee{background:var(--navy);color:#fff;border-bottom:var(--bd);overflow:hidden;padding:14px 0}
@@ -347,13 +387,27 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
   font-family:var(--font-mono);font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:#cdd7e6}
 .badge svg{width:15px;height:15px;color:var(--orange)}
 
-/* ---------- Reveal (restrained) ---------- */
-.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease}
+/* ---------- Motion ---------- */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
 .reveal.in{opacity:1;transform:none}
-.reveal[data-d="1"]{transition-delay:.06s}.reveal[data-d="2"]{transition-delay:.12s}
-.reveal[data-d="3"]{transition-delay:.18s}.reveal[data-d="4"]{transition-delay:.24s}
+.reveal[data-d="1"]{transition-delay:.08s}.reveal[data-d="2"]{transition-delay:.16s}
+.reveal[data-d="3"]{transition-delay:.24s}.reveal[data-d="4"]{transition-delay:.32s}
 .line-reveal,.line-reveal>span{display:block}
-@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+/* image wipe reveal */
+.split__media,.hero__fig{overflow:hidden}
+.split__media img,.imgbreak img{clip-path:inset(0 0 0 0)}
+.split__media.rv img{clip-path:inset(0 100% 0 0);transition:clip-path 1s cubic-bezier(.76,0,.24,1),transform 1.2s ease}
+.split__media.rv.in img{clip-path:inset(0 0 0 0)}
+.split__media img{transition:transform .8s ease}
+/* card hover lift */
+.card{transition:background .18s,color .18s,transform .3s cubic-bezier(.2,.7,.2,1)}
+.card--link:hover{transform:translateY(-6px)}
+.split__media:hover img{transform:scale(1.05)}
+@media (prefers-reduced-motion:reduce){
+  .reveal{opacity:1;transform:none;transition:none}
+  .split__media.rv img{clip-path:none}
+  .hero__photo img{animation:none;transform:none}
+}
 
 /* ---------- Responsive ---------- */
 @media (max-width:980px){
@@ -427,31 +481,25 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
 <div class="page" id="start">
 <!-- ============ HERO ============ -->
 <section class="hero">
-  <div class="container">
-    <div class="hero__grid">
-      <div class="hero__lead">
-        <p class="kicker">KFZ-Meisterbetrieb · München · seit Jahren</p>
-        <h1 class="display">Ehrliche Schrauber.<br><em>Keine Märchen.</em></h1>
-        <p class="lead">Vom Ölwechsel bis zur HU, vom Reifen bis zur Karosserie – A&amp;F Automobile ist der freie Meisterbetrieb in der Adlzreiterstraße, der Klartext redet und faire Preise macht. Alle Marken, E-Autos und Klassiker.</p>
-        <div class="btn-row">
-          <a href="https://wa.me/491776443019" target="_blank" rel="noopener" class="btn btn--primary btn--lg">Termin per WhatsApp</a>
-          <a href="#leistungen" class="btn btn--ghost btn--lg">Leistungen
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-        </div>
-        <div class="plate" aria-hidden="true"><span class="plate__eu"><i>★</i><b>D</b></span><span class="plate__no">M · AF 1</span></div>
-      </div>
-      <figure class="hero__fig">
-        <picture>
-          <img src="" data-img="IMG_2307" alt="Showroom und Werkstatt von A&F Automobile München" fetchpriority="high">
-        </picture>
-        <figcaption><span>Fig. 01 — Werkstatt &amp; Showroom</span><span>München</span></figcaption>
-      </figure>
+  <div class="hero__photo">
+    <picture>
+      <img src="" data-img="IMG_2307" alt="Showroom und Werkstatt von A&F Automobile München" fetchpriority="high">
+    </picture>
+  </div>
+  <div class="container hero__content">
+    <p class="kicker">KFZ-Meisterbetrieb · München</p>
+    <h1 class="display">Ehrliche Schrauber.<br><em>Keine Märchen.</em></h1>
+    <p class="lead">Vom Ölwechsel bis zur HU, vom Reifen bis zur Karosserie – A&amp;F Automobile ist der freie Meisterbetrieb in der Adlzreiterstraße, der Klartext redet und faire Preise macht. Alle Marken, E-Autos und Klassiker.</p>
+    <div class="btn-row">
+      <a href="https://wa.me/491776443019" target="_blank" rel="noopener" class="btn btn--wa btn--lg">Termin per WhatsApp</a>
+      <a href="#leistungen" class="btn btn--ghost btn--lg">Leistungen
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
     </div>
   </div>
   <div class="hero__meta container">
     <div class="m"><b>5,0</b><span>★ Google-Bewertung</span></div>
     <div class="m"><b>Alle Marken</b><span>inkl. E-Autos &amp; Klassiker</span></div>
-    <div class="m"><b>Meister</b><span>Eingetragener Betrieb</span></div>
+    <div class="m"><b>Adlzreiter&shy;straße</b><span>80337 München</span></div>
   </div>
 </section>
 
@@ -464,10 +512,10 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
 </div>
 
 <!-- ============ INTRO / WHY ============ -->
-<section class="section" id="warum">
+<section class="section section--dark" id="warum">
   <div class="container">
     <div class="split">
-      <div class="split__media reveal" data-parallax="8">
+      <div class="split__media reveal rv" data-parallax="8">
         <picture>
           <img src="" data-img="IMG_2304" alt="Das Team von A&F Automobile in der Werkstatt">
         </picture>
@@ -555,11 +603,22 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
   </div>
 </section>
 
+<!-- ============ IMAGE BREAK ============ -->
+<section class="imgbreak">
+  <picture>
+    <img src="" data-img="IMG_2295" alt="Ferrari F430 im Showroom von A&F Automobile" data-parallax="20">
+  </picture>
+  <div class="imgbreak__cap"><div class="container">
+    <p class="kicker">Vom Alltagsauto bis zum Traumwagen</p>
+    <h2 class="h-xl">Wir schrauben an allem,<br>was Räder hat.</h2>
+  </div></div>
+</section>
+
 <!-- ============ WORKSHOP SHOWCASE ============ -->
 <section class="section" id="werkstatt">
   <div class="container">
     <div class="split split--rev">
-      <div class="split__media reveal" data-parallax="6">
+      <div class="split__media reveal rv" data-parallax="6">
         <picture>
           <img src="" data-img="IMG_2298" alt="Moderne Werkstatt mit zwei Hebebühnen und Hexagon-LED-Decke">
         </picture>
@@ -584,7 +643,7 @@ body.menu-open .mobile-menu{opacity:1;visibility:visible}
 </section>
 
 <!-- ============ PROCESS ============ -->
-<section class="section--tight">
+<section class="section--tight section--dark">
   <div class="container">
     <div class="section-head center">
       <p class="eyebrow center-line">So einfach geht's</p>

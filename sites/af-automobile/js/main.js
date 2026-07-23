@@ -39,6 +39,28 @@
     revEls.forEach(function (el) { el.classList.add('in'); });
   }
 
+  /* lightweight parallax */
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var plxEls = Array.prototype.slice.call(document.querySelectorAll('img[data-parallax]'));
+  if (plxEls.length && !reduce) {
+    var ticking = false;
+    function updateParallax() {
+      var vh = window.innerHeight;
+      plxEls.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        var speed = parseFloat(el.getAttribute('data-parallax')) || 10;
+        var progress = (r.top + r.height / 2 - vh / 2) / vh; // -1..1 around center
+        el.style.transform = 'translate3d(0,' + (-progress * speed) + '%,0)';
+      });
+      ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(updateParallax); }
+    }, { passive: true });
+    updateParallax();
+  }
+
   /* counters */
   var counters = document.querySelectorAll('[data-count]');
   if (counters.length && 'IntersectionObserver' in window) {
