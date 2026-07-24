@@ -135,7 +135,7 @@ strong { color: #fff; font-weight: 600; }
 
 /* Chrom-Text */
 .chrome {
-  background: linear-gradient(178deg, #fff 4%, #DCE2EA 34%, #7C8593 54%, #FFFFFF 74%, #C4CBD6 100%);
+  background: linear-gradient(178deg, #fff 4%, #E4E9EF 34%, #9BA6B4 54%, #FFFFFF 74%, #CFD6E0 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -635,7 +635,7 @@ section { position: relative; }
 /* ---------- Statistik ---------- */
 .stats {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
   gap: 1px;
   background: var(--line);
   border: 1px solid var(--line);
@@ -656,9 +656,9 @@ section { position: relative; }
 
 /* ---------- Karten ---------- */
 .grid { display: grid; gap: 1.15rem; }
-.g-2 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-.g-3 { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
-.g-4 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.g-2 { grid-template-columns: repeat(auto-fit, minmax(min(430px, 100%), 1fr)); }
+.g-3 { grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); }
+.g-4 { grid-template-columns: repeat(auto-fit, minmax(min(230px, 100%), 1fr)); }
 
 .card {
   position: relative;
@@ -864,32 +864,7 @@ section { position: relative; }
 .score-bar i { display: block; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, .09); overflow: hidden; }
 .score-bar i b { display: block; height: 100%; border-radius: 6px; background: linear-gradient(90deg, #FFC13B, #FF9E2C); width: 0; transition: width 1.4s var(--ease); }
 
-/* ---------- Kritik-Seite ---------- */
-.crit {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-.crit > div { padding: 1.8rem 1.7rem; }
-.crit-in { background: rgba(224, 48, 60, .055); border-right: 1px solid var(--line); }
-.crit-out { background: rgba(22, 160, 92, .05); }
-.crit h4 {
-  display: flex;
-  align-items: center;
-  gap: .55rem;
-  font-size: .78rem;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
-}
-.crit-in h4 { color: #FF8189; }
-.crit-out h4 { color: #4ED495; }
-.crit h4 svg { width: 16px; height: 16px; }
-.crit p { font-size: .945rem; }
-
+/* ---------- Zitatkarte ---------- */
 .quote-card {
   position: relative;
   padding: 2.4rem 2.2rem 2.2rem;
@@ -954,7 +929,7 @@ section { position: relative; }
 /* Split-Abschnitt */
 .split {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr));
   gap: clamp(2rem, 5vw, 4.2rem);
   align-items: center;
 }
@@ -972,6 +947,7 @@ section { position: relative; }
 .badge-float {
   position: absolute;
   bottom: 18px; left: 18px;
+  max-width: calc(100% - 36px);
   display: flex;
   align-items: center;
   gap: .7rem;
@@ -982,6 +958,8 @@ section { position: relative; }
   border: 1px solid var(--line-2);
   font-size: .82rem;
 }
+.badge-float svg { width: 18px; height: 18px; flex: none; color: var(--red); }
+.badge-float > span { display: block; }
 .badge-float b { color: #fff; display: block; font-size: .92rem; }
 .badge-float span { color: var(--muted); }
 
@@ -1115,8 +1093,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   letter-spacing: .08em;
   text-transform: uppercase;
   color: #FFD98A;
-  white-space: nowrap;
   vertical-align: middle;
+  max-width: 100%;
+  text-wrap: balance;
 }
 
 /* ---------- Rechtstexte ---------- */
@@ -1217,8 +1196,6 @@ footer {
   body { font-size: 16px; }
   .waterfall { columns: 1; }
   .gal { columns: 1; }
-  .crit { grid-template-columns: 1fr; }
-  .crit-in { border-right: 0; border-bottom: 1px solid var(--line); }
   .field-2 { grid-template-columns: 1fr; }
   .foot-grid { grid-template-columns: 1fr; }
   .step { grid-template-columns: 54px 1fr; gap: 1rem; }
