@@ -8,7 +8,15 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 sites/
 ├── davids/            Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
 └── ramona-daurelio/   Karosserie + Lack D'Aurelio – Kfz-Meisterbetrieb Potsdam (statisches HTML + CSS + JS)
+
+assets/
+└── stock/             Gemeinsame Stockfoto-Bibliothek für alle Seiten (inkl. Bildnachweis)
 ```
+
+Bilder, die in mehreren Seiten verwendet werden sollen, gehören nach
+`assets/stock/`. Von dort wird pro Seite eine Kopie in `sites/<name>/img/`
+gelegt, weil Vercel nur den jeweiligen Root-Ordner deployt. Details und die
+Lizenzregeln stehen in `assets/stock/README.md`.
 
 ## Vercel-Setup
 

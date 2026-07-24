@@ -66,9 +66,22 @@ Bitte auf die Lizenz achten – Unsplash- und Pexels-Lizenz erlauben die kommerz
 Nutzung ohne Namensnennung, bei Pixabay und anderen Quellen im Einzelfall prüfen.
 Am stärksten wären natürlich eigene Aufnahmen aus der Werkstatt.
 
-> **Hinweis:** Die Stockfotos konnten in dieser Arbeitsumgebung nicht heruntergeladen
-> werden – Unsplash, Pexels und Pixabay sind durch die Netzwerk-Policy der Umgebung
-> gesperrt. Deshalb die Platzhalter.
+Ist ein Bild eingesetzt, gehört es zusätzlich in den Bildnachweis:
+`assets/stock/CREDITS.md` (Quelle und Lizenz) sowie in den Abschnitt
+„Bildnachweis" im `impressum.html`. In der Galerie wird jedes Stockfoto
+automatisch mit dem Etikett „Stockfoto" an der Bildunterschrift ausgewiesen –
+die Kennzeichnung steckt in der Liste `gallery` im Seitengenerator.
+
+Die Originale gehören in die gemeinsame Bibliothek `assets/stock/`, damit sie
+auch für andere Webseiten dieses Repos verwendet werden können. Wie das
+funktioniert, steht in `assets/stock/README.md`.
+
+> **Hinweis:** Die Stockfotos konnten in dieser Arbeitsumgebung nicht
+> heruntergeladen werden – Unsplash, Pexels, Pixabay und Wikimedia sind durch die
+> Netzwerk-Policy gesperrt, ebenso das CDN, über das generierte Bilder
+> ausgeliefert werden. Deshalb die Platzhalter. Fünf passende, KI-generierte
+> Bilder liegen bereits im Higgsfield-Konto bereit, siehe
+> `assets/stock/CREDITS.md`.
 
 ## Bewertungen
 
