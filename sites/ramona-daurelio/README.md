@@ -101,22 +101,38 @@ zeigt daher:
 - den Reklamationsweg in vier Schritten
 - zwei Originalzitate von Ramona D'Aurelio aus ihren Google-Antworten
 
+## Grundsatz: keine erfundenen Angaben
+
+Auf der Seite stehen ausschließlich Angaben, die belegt sind – aus dem
+Google-Unternehmensprofil, den Fotos des Betriebs oder den Original-Bewertungen.
+Was nicht vorliegt, wird **nicht erfunden**, sondern sichtbar als „wird ergänzt"
+gekennzeichnet. Das betrifft Kontaktdaten, Schließzeiten, Registerangaben,
+Umsatzsteuer-ID und Kammer.
+
+Unter dem Wasserfall auf `bewertungen.html` steht der Abschnitt „Uns ist wichtig,
+dass Sie alle Bewertungen sehen": daneben eine echte Ein-Sterne-Bewertung als
+Screenshot samt Antwort von Ramona D'Aurelio (`img/bewertung-kritik.jpg`, Nachname
+unkenntlich gemacht). Im Wasserfall selbst stehen weiterhin nur gute Bewertungen.
+
 ## Was noch geändert werden muss
 
 Alle offenen Stellen sind auf den Seiten sichtbar markiert – entweder mit einem
 gelben Hinweiskasten oder mit einem kleinen `Platzhalter`-Etikett direkt am Text:
 
-- **Kontaktdaten**: Telefon, E-Mail und Anschrift sind erfunden (`0331 000 00 00`,
-  `info@daurelio-potsdam.de`, `Musterstraße 00`). Betrifft Footer, Kontaktseite,
-  Impressum und Datenschutz.
-- **Öffnungszeiten**: „Mo–Do 7:45–17:00, Fr 7:45–15:00" ist geschätzt. Aus dem
-  Google-Profil belegt ist nur der Öffnungsbeginn 7:45 Uhr.
+- **Kontaktdaten**: Telefon, E-Mail und Anschrift fehlen. Es steht **nichts
+  Erfundenes** auf der Seite – die Felder zeigen „wird ergänzt". Eintragen lassen
+  sie sich zentral im Seitengenerator (Konstanten `TEL_TXT`, `TEL_HREF`, `MAIL`,
+  `STRASSE`, `ORT`); Footer, Kontaktseite, Impressum und Datenschutz ziehen nach.
+  Solange keine E-Mail-Adresse hinterlegt ist, ist der Formularversand deaktiviert
+  und sagt das auch.
+- **Öffnungszeiten**: Belegt ist nur der Öffnungsbeginn 7:45 Uhr (Mo–Fr) aus dem
+  Google-Profil. Die Schließzeiten fehlen und werden nicht geraten.
 - **Impressum und Datenschutzerklärung**: Entwürfe, die vor einer Veröffentlichung
   vervollständigt und rechtlich geprüft werden müssen (Register, USt-ID, Kammer,
   Hosting-Anbieter).
-- **Versicherungs-Partnerliste**: Die Namen im Laufband stammen teils vom
-  Partnerwerkstatt-Aushang im Empfang (HUK-COBURG, VHV, Gothaer, Debeka), teils sind
-  sie ergänzt. Bitte bestätigen und kürzen.
+- **Versicherungs-Partnerliste**: Im Laufband stehen nur die vier Namen, die auf dem
+  Partnerwerkstatt-Aushang im Empfang lesbar sind (HUK-COBURG, VHV, Gothaer, Debeka).
+  Bitte bestätigen und ergänzen.
 - **Betriebsdaten**: Gründungsjahr, Teamgröße, Meisterbrief-Angaben fehlen.
 - **Karte** auf der Kontaktseite: erst einbinden, wenn die Adresse steht.
 - **Stockfotos**: fünf Platzhalterbilder ersetzen – siehe Abschnitt „Stockfotos

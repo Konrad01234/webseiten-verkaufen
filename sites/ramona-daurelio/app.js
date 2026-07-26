@@ -214,6 +214,21 @@
   if (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
+
+      var status = $('#form-status');
+      var mail = (form.dataset.mail || '').trim();
+
+      /* Ohne hinterlegte Empfängeradresse wird nichts verschickt – lieber
+         ehrlich sagen, als eine leere mailto:-Adresse öffnen. */
+      if (!mail) {
+        if (status) {
+          status.hidden = false;
+          status.textContent = 'Für diese Website ist noch keine E-Mail-Adresse hinterlegt. '
+            + 'Sobald sie eingetragen ist, geht die Anfrage direkt an die Werkstatt.';
+        }
+        return;
+      }
+
       var d = new FormData(form);
       var get = function (k) { return (d.get(k) || '').toString().trim(); };
 
@@ -232,16 +247,13 @@
         '— gesendet über die Website'
       ].join('\n');
 
-      var mail = form.dataset.mail || 'info@example.de';
       window.location.href = 'mailto:' + mail
         + '?subject=' + encodeURIComponent('Anfrage über die Website – ' + (get('anliegen') || 'Allgemein'))
         + '&body='    + encodeURIComponent(body);
 
-      var status = $('#form-status');
       if (status) {
         status.hidden = false;
-        status.textContent = 'Dein E-Mail-Programm öffnet sich mit der fertigen Anfrage. '
-          + 'Falls nicht, ruf uns einfach an.';
+        status.textContent = 'Ihr E-Mail-Programm öffnet sich mit der fertigen Anfrage.';
       }
     });
   }

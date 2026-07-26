@@ -926,6 +926,24 @@ section { position: relative; }
 }
 .gal figure:hover figcaption { opacity: 1; transform: translateY(0); }
 
+/* Screenshot einer Bewertung */
+.review-shot {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.review-shot img { width: 100%; height: auto; display: block; }
+.review-shot figcaption {
+  padding: .95rem 1.1rem 1.05rem;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  font-size: .82rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 /* Kennzeichnung von Stockfotos – dauerhaft sichtbar, nicht nur beim Hover */
 .stock-tag {
   position: absolute;
