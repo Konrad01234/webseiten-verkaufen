@@ -22,6 +22,7 @@ Inhaberin: **Ramona D'Aurelio**.
 | `fonts.css` + `fonts/` | Lokal gehostete Schriften (Sora, Inter, Yellowtail) |
 | `app.js` | Navigation, Scroll-Animationen, Zähler, Seitenübergang, Formular |
 | `img/` | Logo + Fotos |
+| `vorschau.html` | **Alles-in-einem-Vorschau**: alle 10 Seiten, Schriften und Bilder in einer Datei eingebettet, Navigation clientseitig. Wird generiert – nicht von Hand bearbeiten. |
 
 ## Design
 
@@ -149,6 +150,21 @@ gelben Hinweiskasten oder mit einem kleinen `Platzhalter`-Etikett direkt am Text
   Google-Servern** raus.
 - Responsiv (390 / 768 / 1024 / 1440 px), kein horizontales Scrollen.
 - Semantisches Markup, Fokus-Zustände, `aria`-Attribute, Tastaturbedienung im Menü.
+
+## Vorschau ohne Server
+
+`vorschau.html` ist eine eigenständige Kopie der kompletten Website: alle
+Unterseiten, Schriften und Bilder sind als Data-URIs eingebettet, die Navigation
+läuft clientseitig. Die Datei lässt sich per Doppelklick öffnen, verschicken oder
+über einen HTML-Proxy anzeigen:
+
+```
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/Konrad01234/webseiten-verkaufen/claude/ramona-brunch-website-t54try/sites/ramona-daurelio/vorschau.html
+```
+
+Weil nichts nachgeladen wird, kann dabei auch nichts fehlen. Die Datei ist rund
+2,5 MB groß und zeigt unten einen Hinweisbalken. Sie ist **kein** Ersatz für das
+echte Deployment – dort werden die Bilder in voller Auflösung ausgeliefert.
 
 ## Lokal testen
 
