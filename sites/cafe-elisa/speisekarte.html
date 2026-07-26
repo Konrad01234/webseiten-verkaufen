@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speisekarte | Café Elisa Erfurt</title>
+  <meta name="description" content="Die Speisekarte des Café Elisa in Erfurt: Frühstück, hausgemachte Torten, Bubble Waffeln, Crêpes, Eisbecher, Milchshakes und Kaffeespezialitäten." />
+  <meta name="theme-color" content="#c2496d" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <!-- ===== Overlay-Navigation ===== -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html">Start</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="speisekarte.html">Speisekarte</a>
+    <a href="eventlocation.html">Eventlocation</a>
+    <a href="galerie.html">Galerie</a>
+    <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">Versüße dir deinen Tag</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+491608528627" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        0160 8528627
+      </a>
+      <div class="tb-right">
+        <span>Neuwerkstraße 28 · 99084 Erfurt</span>
+        <span>Täglich geöffnet – kein Ruhetag</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Café Elisa – Startseite">
+        <span class="brand-name">Café Elisa</span>
+        <span class="brand-sub">Erfurt</span>
+      </a>
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="speisekarte.html" class="active">Speisekarte</a>
+        <a href="eventlocation.html">Eventlocation</a>
+        <a href="galerie.html">Galerie</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary">Besuch planen</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="pagehero">
+      <div class="wrap">
+        <span class="eyebrow">Frisch & hausgemacht</span>
+        <h1>Unsere <em>Speisekarte</em></h1>
+        <div class="crumbs"><a href="index.html">Start</a> · Speisekarte</div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="wrap">
+        <p class="lede reveal">Ein kleiner Vorgeschmack auf das, was dich bei uns erwartet. Die vollständige Karte mit allen aktuellen Preisen und Tagesangeboten bekommst du bei uns im Café – unsere Vitrine wechselt täglich.</p>
+
+        <div class="menu-section reveal">
+          <div class="menu-head">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 0 1 0 8h-1"/><path d="M3 8h14v6a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5Z"/><path d="M7 2v2M11 2v2M15 2v2"/></svg></div>
+            <h2>Frühstück</h2>
+          </div>
+          <div class="menu-list">
+          <div class="menu-item"><strong>Elisa-Frühstück</strong><span>Herzhaft in den Tag: Käse, Schinken, Salami, Bio-Ei, Butter, zwei Brötchen nach Wahl und ein Glas Orangensaft.</span></div>
+          <div class="menu-item"><strong>Süßes Frühstück</strong><span>Für alle Naschkatzen – mit süßen Aufstrichen, frischem Gebäck und Früchten.</span></div>
+          <div class="menu-item"><strong>Frühstück für zwei</strong><span>Gemeinsam schlemmen: eine liebevoll angerichtete Auswahl für den Start zu zweit.</span></div>
+          <div class="menu-item"><strong>Kleine Extras</strong><span>Bio-Eier, frische Brötchen, Aufschnitt und mehr – stell dir dein Frühstück so zusammen, wie du magst.</span></div>
+          </div>
+        </div>
+        <div class="menu-section reveal">
+          <div class="menu-head">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21h16"/><path d="M5 21v-6h14v6"/><path d="M6 15v-3c0-1 .8-2 2-2h8c1.2 0 2 1 2 2v3"/><path d="M12 10V7"/><path d="M12 7a1.5 1.5 0 0 0 1.5-1.5C13.5 4 12 3 12 3s-1.5 1-1.5 2.5A1.5 1.5 0 0 0 12 7Z"/></svg></div>
+            <h2>Torten & Kuchen</h2>
+          </div>
+          <div class="menu-list">
+          <div class="menu-item"><strong>Hausgemachte Torten</strong><span>Täglich frisch aus unserer eigenen Herstellung – von cremig bis fruchtig.</span></div>
+          <div class="menu-item"><strong>Kleine Kuchen & Törtchen</strong><span>Feine Küchlein für den kleinen süßen Moment zwischendurch.</span></div>
+          <div class="menu-item"><strong>Saisonale Spezialitäten</strong><span>Je nach Jahreszeit: fruchtige, nussige oder schokoladige Überraschungen aus der Backstube.</span></div>
+          <div class="menu-item"><strong>Torten auf Bestellung</strong><span>Deine Wunschtorte für Geburtstag, Babyparty & Co. – sprich uns einfach an.</span></div>
+          </div>
+        </div>
+        <div class="menu-section reveal">
+          <div class="menu-head">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="15" height="15" rx="7.5"/><path d="M6 10.5h9M10.5 6v9"/></svg></div>
+            <h2>Bubble Waffeln, Waffeln & Crêpes</h2>
+          </div>
+          <div class="menu-list">
+          <div class="menu-item"><strong>Bubble Waffeln</strong><span>Unser Klassiker – warm, fluffig und nach Wunsch mit Eis, Früchten, Sahne und Soßen.</span></div>
+          <div class="menu-item"><strong>Klassische Waffeln</strong><span>Goldbraun gebacken, mit Puderzucker, Kirschen oder Sahne.</span></div>
+          <div class="menu-item"><strong>Crêpes süß</strong><span>Hauchdünn und frisch von der Platte – mit Schokocreme, Zimt & Zucker oder Früchten.</span></div>
+          <div class="menu-item"><strong>Crêpes herzhaft</strong><span>Die deftige Variante – herzhaft gefüllt, perfekt für den kleinen Hunger.</span></div>
+          </div>
+        </div>
+        <div class="menu-section reveal">
+          <div class="menu-head">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11a5 5 0 1 1 10 0"/><path d="M7 11h10l-4.2 9.6a1 1 0 0 1-1.6 0Z"/></svg></div>
+            <h2>Eis & Milchshakes</h2>
+          </div>
+          <div class="menu-list">
+          <div class="menu-item"><strong>Eisbecher</strong><span>Bunte Becher mit cremigem Eis, Früchten, Sahne und liebevoller Deko.</span></div>
+          <div class="menu-item"><strong>Kindereis</strong><span>Kleine Portionen für kleine Gäste – mit einem Lächeln serviert.</span></div>
+          <div class="menu-item"><strong>Milchshakes</strong><span>Cremig gemixt in vielen Sorten – der süße Durstlöscher.</span></div>
+          </div>
+        </div>
+        <div class="menu-section reveal">
+          <div class="menu-head">
+            <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 9h1a3 3 0 0 1 0 6h-1"/><path d="M4 9h13v7a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4Z"/><path d="M8 2c0 1-.5 1.5-.5 2.5S8 6 8 6M12 2c0 1-.5 1.5-.5 2.5S12 6 12 6"/></svg></div>
+            <h2>Kaffee & Getränke</h2>
+          </div>
+          <div class="menu-list">
+          <div class="menu-item"><strong>Kaffeespezialitäten</strong><span>Espresso, Cappuccino, Latte Macchiato & mehr – auf Wunsch auch als pinke Latte.</span></div>
+          <div class="menu-item"><strong>Pinke Latte Macchiato</strong><span>Unser Instagram-Star: so hübsch wie lecker.</span></div>
+          <div class="menu-item"><strong>Rosenlimonade</strong><span>Blumig-frisch und hausgemacht hübsch – die Elisa-Erfrischung.</span></div>
+          <div class="menu-item"><strong>Heiße Schokolade, Tee & Softdrinks</strong><span>Dazu eine Auswahl alkoholfreier und alkoholischer Getränke.</span></div>
+          </div>
+        </div>
+        <div class="menu-note reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg>
+          <span><strong>Gut zu wissen:</strong> Alles gibt es auch zum Mitnehmen – und unser Lieferservice bringt dir dein süßes Glück täglich von 09:30 bis 18:00 Uhr nach Hause. Fragen zu Zutaten oder Allergenen? Sprich uns gern an: <a href="tel:+491608528627">0160 8528627</a>.</span>
+        </div>
+        <div class="center" style="margin-top:2.6rem">
+          <a href="kontakt.html" class="btn btn-primary">Besuch planen</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <p class="foot-brand">Café Elisa</p>
+          <p>Versüße dir deinen Tag –<br>das rosa Café in Erfurt.</p>
+          <a class="foot-social" href="https://www.instagram.com/cafeelisa_/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".8" fill="currentColor" stroke="none"/></svg>
+            @cafeelisa_
+          </a>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <p>Neuwerkstraße 28<br>99084 Erfurt</p>
+          <p><a href="tel:+491608528627">0160 8528627</a><br>
+          <a href="mailto:info@cafeelisa.de">info@cafeelisa.de</a></p>
+        </div>
+        <div>
+          <h4>Öffnungszeiten</h4>
+          <p>Mo – Fr: 09:15 – 18:00<br>Sa: 08:30 – 18:00<br>So: 08:45 – 18:00</p>
+          <p>Kein Ruhetag</p>
+        </div>
+        <div>
+          <h4>Seiten</h4>
+          <ul>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="speisekarte.html">Speisekarte</a></li>
+            <li><a href="eventlocation.html">Eventlocation</a></li>
+            <li><a href="galerie.html">Galerie</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> Café Elisa, Erfurt</span>
+        <span><a href="impressum.html">Impressum</a> · <a href="datenschutz.html">Datenschutz</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

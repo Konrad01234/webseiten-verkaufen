@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Illustration: moderne Gastherme an gefliester Wand">
+  <style>
+    @keyframes blink { 0%,100% { opacity: 1 } 50% { opacity: .25 } }
+    .led { animation: blink 2.2s ease-in-out infinite; }
+    @keyframes fl { 0%,100% { transform:scale(1) } 50% { transform:scale(1.16) translateY(-1px) } }
+    .flame { transform-box: fill-box; transform-origin: 50% 85%; animation: fl 1.6s ease-in-out infinite; }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+  </style>
+  <defs>
+    <linearGradient id="fliesen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#dfe7ee"/>
+      <stop offset="1" stop-color="#c9d4de"/>
+    </linearGradient>
+    <linearGradient id="geraet" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e6ebf1"/>
+    </linearGradient>
+    <linearGradient id="display" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16233d"/>
+      <stop offset="1" stop-color="#0b1220"/>
+    </linearGradient>
+  </defs>
+
+  <!-- geflieste Wand -->
+  <rect width="600" height="600" fill="url(#fliesen)"/>
+  <g stroke="#ffffff" stroke-width="4">
+    <line x1="0" y1="150" x2="600" y2="150"/>
+    <line x1="0" y1="300" x2="600" y2="300"/>
+    <line x1="0" y1="450" x2="600" y2="450"/>
+    <line x1="150" y1="0" x2="150" y2="600"/>
+    <line x1="300" y1="0" x2="300" y2="600"/>
+    <line x1="450" y1="0" x2="450" y2="600"/>
+  </g>
+
+  <!-- Schatten -->
+  <rect x="178" y="96" width="260" height="380" rx="26" fill="#000" opacity=".16"/>
+
+  <!-- Therme -->
+  <g>
+    <rect x="170" y="84" width="260" height="380" rx="26" fill="url(#geraet)"/>
+    <rect x="170" y="84" width="260" height="380" rx="26" fill="none" stroke="#b9c2ce" stroke-width="2"/>
+    <!-- Lüftungsschlitze -->
+    <g fill="#d3dae2">
+      <rect x="200" y="112" width="200" height="6" rx="3"/>
+      <rect x="200" y="126" width="200" height="6" rx="3"/>
+    </g>
+    <!-- Display -->
+    <rect x="212" y="170" width="176" height="86" rx="12" fill="url(#display)"/>
+    <text x="300" y="216" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="34" font-weight="800" fill="#fb923c">55°C</text>
+    <text x="300" y="240" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="13" font-weight="600" fill="#94a3b8">VORLAUF</text>
+    <!-- Drehknopf -->
+    <circle cx="252" cy="316" r="30" fill="#ffffff" stroke="#b9c2ce" stroke-width="2"/>
+    <rect x="248" y="292" width="8" height="20" rx="4" fill="#ea580c"/>
+    <!-- Tasten -->
+    <g fill="#e6ebf1" stroke="#b9c2ce" stroke-width="2">
+      <rect x="306" y="298" width="36" height="36" rx="9"/>
+      <rect x="352" y="298" width="36" height="36" rx="9"/>
+    </g>
+    <g stroke="#64748b" stroke-width="3" stroke-linecap="round">
+      <line x1="324" y1="308" x2="324" y2="324"/>
+      <line x1="316" y1="316" x2="332" y2="316"/>
+      <line x1="362" y1="316" x2="378" y2="316"/>
+    </g>
+    <!-- Statusleuchte + Flamme -->
+    <circle class="led" cx="228" cy="404" r="7" fill="#22c55e"/>
+    <path class="flame" d="M292 388 c2 7-1.2 12.4-6 17.4 -4.7 5-7.6 9-7.6 14 a13.6 13.6 0 0 0 27.2 .5 c0-4.5-2-8.6-4.6-12.3 .3 3.3-.8 6.3-3.7 7.6 1.1-6.4-1.4-14.3-5.3-19.2z" fill="#ea580c"/>
+    <text x="358" y="412" font-family="ui-sans-serif, system-ui, sans-serif" font-size="15" font-weight="700" fill="#64748b">eco</text>
+  </g>
+
+  <!-- Rohre -->
+  <g fill="#9aa6b4">
+    <rect x="216" y="464" width="16" height="136"/>
+    <rect x="262" y="464" width="16" height="136"/>
+    <rect x="322" y="464" width="16" height="136"/>
+    <rect x="368" y="464" width="16" height="136"/>
+  </g>
+  <g fill="#7e8b9a">
+    <rect x="212" y="472" width="24" height="12" rx="4"/>
+    <rect x="258" y="472" width="24" height="12" rx="4"/>
+    <rect x="318" y="472" width="24" height="12" rx="4"/>
+    <rect x="364" y="472" width="24" height="12" rx="4"/>
+  </g>
+  <!-- Absperrventil -->
+  <circle cx="330" cy="530" r="16" fill="#ea580c"/>
+  <rect x="322" y="526" width="16" height="8" rx="3" fill="#fff" opacity=".7"/>
+</svg>

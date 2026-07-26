@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 72" width="120" height="72" fill="none" role="img" aria-label="A&amp;F Automobile Logo">
+  <defs>
+    <linearGradient id="afg" x1="0" y1="0" x2="120" y2="72" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5fa0ff"/>
+      <stop offset="1" stop-color="#2f74ff"/>
+    </linearGradient>
+  </defs>
+  <!-- sleek coupe silhouette, single continuous stroke -->
+  <path d="M8 50
+           C10 40 16 37 24 36
+           C31 27 40 21 54 21
+           C69 21 80 27 90 36
+           C99 37 108 40 112 47
+           C114 50 113 52 110 52"
+        stroke="url(#afg)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M8 50 C6 52 6 55 9 55 L102 55"
+        stroke="url(#afg)" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- window line -->
+  <path d="M34 35 C40 27 47 24 54 24 C63 24 72 27 79 34"
+        stroke="url(#afg)" stroke-width="2.6" stroke-linecap="round" opacity="0.75"/>
+  <!-- wheels -->
+  <circle cx="34" cy="55" r="9" fill="#080a0e" stroke="url(#afg)" stroke-width="4.2"/>
+  <circle cx="86" cy="55" r="9" fill="#080a0e" stroke="url(#afg)" stroke-width="4.2"/>
+  <circle cx="34" cy="55" r="2.4" fill="#5fa0ff"/>
+  <circle cx="86" cy="55" r="2.4" fill="#5fa0ff"/>
+</svg>

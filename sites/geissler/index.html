@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Geißler Heizungstechnik | Heizung, Thermostate &amp; Service in Bochum</title>
+  <meta name="description" content="Geißler Heizungstechnik in Bochum – Installation und Reparatur von Heizsystemen und Thermostaten. Pünktlich, zuverlässig, 5,0 Sterne auf Google. Jetzt kostenloses Angebot anfordern." />
+  <meta name="theme-color" content="#0b1220" />
+  <meta property="og:title" content="Geißler Heizungstechnik | Heizung &amp; Service in Bochum" />
+  <meta property="og:description" content="Installation und Reparatur von Heizsystemen und Thermostaten in Bochum – pünktlich, sauber, zuverlässig." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22><path fill=%22%23f97316%22 d=%22M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z%22/></svg>" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <span class="pl-flame">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+      </span>
+      <p class="pl-name">Geißler <em>Heizungstechnik</em></p>
+      <div class="pl-track"><div class="pl-fill"></div></div>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+49234460852" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        0234 460852
+      </a>
+      <div class="tb-right">
+        <span>Markstraße 413 · 44795 Bochum</span>
+        <span>Mo–Fr [Platzhalter: Öffnungszeiten]</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="#start" class="brand" aria-label="Geißler Heizungstechnik – Startseite">
+        <span class="logo-badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+        </span>
+        <span>Geißler<small>Heizungstechnik · Bochum</small></span>
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="#leistungen">Leistungen</a>
+        <a href="#ueber-uns">Über uns</a>
+        <a href="#ablauf">Ablauf</a>
+        <a href="#bewertungen">Bewertungen</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="tel:+49234460852" class="btn btn-outline">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+          Anrufen
+        </a>
+        <a href="#kontakt" class="btn btn-primary" style="gap:0">Angebot<span class="cta-long">&nbsp;anfordern</span></a>
+        <button class="nav-burger" id="nav-burger" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-links">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="start" style="padding:0">
+    <div class="hero-bg" aria-hidden="true">
+      <span class="blob b1"></span>
+      <span class="blob b2"></span>
+      <canvas id="embers"></canvas>
+    </div>
+    <div class="wrap">
+      <div>
+        <a class="hero-pill" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener" title="Google-Profil öffnen">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          5,0 auf Google · 10 Rezensionen
+        </a>
+        <h1>Wärme, auf die Sie sich <em>verlassen</em> können.</h1>
+        <p class="lede">
+          Installation, Reparatur und Wartung von Heizsystemen und Thermostaten in
+          Bochum und Umgebung – pünktlich, sauber und mit handwerklichem Geschick,
+          das man heute nicht mehr oft findet.
+        </p>
+        <div class="hero-ctas">
+          <a href="#kontakt" class="btn btn-primary">
+            Kostenloses Angebot
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+          </a>
+          <a href="tel:+49234460852" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            0234 460852
+          </a>
+        </div>
+        <div class="hero-trust">
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-5m6 3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Termintreue &amp; saubere Arbeit
+          </span>
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4v5c0 4.4-3 8.1-7 9-4-.9-7-4.6-7-9V7l7-4Z"/></svg>
+            Fachbetrieb aus Bochum-Weitmar
+          </span>
+          <span class="t">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 2m6-2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+            Über [Platzhalter] Jahre Erfahrung
+          </span>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="media-main img-slot">
+          <svg viewBox="0 0 600 690" role="img" aria-label="Animiertes Thermostat: Temperatur dreht auf 21,5 Grad hoch">
+            <style>
+              @keyframes th-gp { 0%,100% { opacity:.7 } 50% { opacity:1 } }
+              .th-glow { animation: th-gp 5s ease-in-out infinite; }
+              @keyframes th-fl { 0%,100% { transform:scale(1) } 50% { transform:scale(1.2) translateY(-1.5px) } }
+              .th-flame { transform-box: fill-box; transform-origin: 50% 85%; animation: th-fl 1.5s ease-in-out infinite; }
+              @keyframes th-sw { 0%,100% { transform:rotate(-2.5deg) } 50% { transform:rotate(2.5deg) } }
+              .th-leaves { transform-box: fill-box; transform-origin: 50% 100%; animation: th-sw 5.5s ease-in-out infinite; }
+              @media (prefers-reduced-motion: reduce) { .th-glow, .th-flame, .th-leaves { animation: none !important; } }
+            </style>
+            <defs>
+              <linearGradient id="th-wall" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#1b2a45"/>
+                <stop offset=".55" stop-color="#16233d"/>
+                <stop offset="1" stop-color="#0f1a2e"/>
+              </linearGradient>
+              <radialGradient id="th-glowg" cx=".5" cy=".42" r=".62">
+                <stop offset="0" stop-color="#f97316" stop-opacity=".38"/>
+                <stop offset=".5" stop-color="#f97316" stop-opacity=".1"/>
+                <stop offset="1" stop-color="#f97316" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="th-ring" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#2b3b5c"/>
+                <stop offset="1" stop-color="#141f36"/>
+              </linearGradient>
+              <linearGradient id="th-face" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fdfdfd"/>
+                <stop offset="1" stop-color="#e9edf3"/>
+              </linearGradient>
+              <linearGradient id="th-arcg" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#fbbf24"/>
+                <stop offset="1" stop-color="#ea580c"/>
+              </linearGradient>
+              <linearGradient id="th-leaf" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#2f6b4f"/>
+                <stop offset="1" stop-color="#1d4a36"/>
+              </linearGradient>
+            </defs>
+
+            <rect width="600" height="690" fill="url(#th-wall)"/>
+            <rect width="600" height="690" fill="url(#th-glowg)" class="th-glow"/>
+            <g stroke="#ffffff" stroke-opacity=".05" stroke-width="2">
+              <line x1="0" y1="172" x2="600" y2="172"/>
+              <line x1="0" y1="518" x2="600" y2="518"/>
+              <line x1="150" y1="0" x2="150" y2="690"/>
+              <line x1="450" y1="0" x2="450" y2="690"/>
+            </g>
+
+            <ellipse cx="308" cy="452" rx="150" ry="26" fill="#000" opacity=".28"/>
+
+            <g>
+              <circle cx="300" cy="300" r="150" fill="url(#th-ring)"/>
+              <circle cx="300" cy="300" r="150" fill="none" stroke="#0b1220" stroke-opacity=".6" stroke-width="2"/>
+              <circle cx="300" cy="300" r="118" fill="url(#th-face)"/>
+
+              <g stroke="#c3ccd9" stroke-width="3" stroke-linecap="round">
+                <line x1="300" y1="196" x2="300" y2="208"/>
+                <line x1="382" y1="230" x2="373" y2="238"/>
+                <line x1="416" y1="300" x2="404" y2="300"/>
+                <line x1="382" y1="370" x2="373" y2="362"/>
+                <line x1="218" y1="230" x2="227" y2="238"/>
+                <line x1="184" y1="300" x2="196" y2="300"/>
+                <line x1="218" y1="370" x2="227" y2="362"/>
+              </g>
+
+              <path id="thermo-arc" pathLength="100" d="M 300 415 A 115 115 0 0 1 185 300" fill="none" stroke="url(#th-arcg)" stroke-width="10" stroke-linecap="round" transform="rotate(135 300 300)"/>
+
+              <text id="thermo-temp" x="300" y="298" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="58" font-weight="800" fill="#16233d">21,5°</text>
+              <path class="th-flame" d="M300 326 c1.6 5-.9 9-4.3 12.6 -3.4 3.6-5.5 6.5-5.5 10.1 a9.8 9.8 0 0 0 19.6 .4 c0-3.3-1.4-6.2-3.3-8.9 .2 2.4-.6 4.5-2.7 5.5 .8-4.6-1-10.3-3.8-13.7z" fill="#ea580c"/>
+              <text x="300" y="386" text-anchor="middle" font-family="ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="600" fill="#94a3b8">HEIZEN</text>
+
+              <path d="M195 235 A 128 128 0 0 1 405 235 A 150 150 0 0 0 195 235 Z" fill="#ffffff" opacity=".12"/>
+            </g>
+
+            <g>
+              <rect x="70" y="560" width="200" height="14" rx="7" fill="#22314f"/>
+              <rect x="70" y="574" width="200" height="6" rx="3" fill="#0b1220" opacity=".5"/>
+              <path d="M120 560 l6-38 h44 l6 38 z" fill="#c2643a"/>
+              <path d="M120 560 l6-38 h44 l6 38 z" fill="#000" opacity=".12"/>
+              <g fill="url(#th-leaf)" class="th-leaves">
+                <path d="M148 524 C 138 490 118 478 100 474 c4 26 18 46 44 54z"/>
+                <path d="M150 524 C 152 486 168 466 190 458 c2 30-12 56-36 68z"/>
+                <path d="M149 524 C 145 500 146 482 156 466 c10 16 10 40-2 58z"/>
+              </g>
+            </g>
+
+            <g stroke="#22314f" stroke-width="6" fill="none" stroke-linecap="round">
+              <path d="M470 620 q 30 -18 24 -52"/>
+            </g>
+            <circle cx="470" cy="622" r="10" fill="#22314f"/>
+          </svg>
+        </div>
+        <a class="float-card fc-rating" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener" title="Google-Profil öffnen">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.3 6.9.7-5.2 4.6 1.5 6.8L12 16.9 5.9 20.4l1.5-6.8L2.2 9l6.9-.7L12 2Z"/></svg>
+          </span>
+          <span><strong>5,0 / 5,0</strong><span>Google-Bewertung</span></span>
+        </a>
+        <div class="float-card fc-service">
+          <span class="ic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6Z"/></svg>
+          </span>
+          <span><strong>Meisterqualität</strong><span>Installation &amp; Reparatur</span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== Leistungen ===== -->
+  <section id="leistungen">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Unsere Leistungen</span>
+        <h2>Was wir für Sie tun</h2>
+        <p>Vier Dinge machen wir jeden Tag – und deshalb machen wir sie richtig.
+           Ohne Callcenter, ohne Subunternehmer: Bei uns kommt der, mit dem Sie telefoniert haben.</p>
+      </div>
+
+      <div class="services">
+        <div class="svc reveal">
+          <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s1.5 3.5-1 6.2C9 11.4 8 13 8 14.8A4 4 0 0 0 12 19a4 4 0 0 0 4-4.2c0-1.3-.5-2.4-1.2-3.5.1 1-.3 1.9-1.2 2.3.3-1.9-.4-4.3-1.6-5.8C11.7 5.6 12 3 12 3Z"/><path d="M5 21h14"/></svg></span>
+          <div>
+            <h3>Heizung einbauen</h3>
+            <p>Neue Anlage oder Austausch des alten Kessels: Wir schauen uns Ihr Haus an,
+               planen die passende Lösung und montieren sie – sauber und termingerecht.</p>
+            <p class="svc-tags"><span>Gasthermen</span><span>Brennwertkessel</span><span>Heizkörper</span></p>
+          </div>
+        </div>
+
+        <div class="svc reveal">
+          <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-2.4 2.6-2.6Z"/></svg></span>
+          <div>
+            <h3>Heizung reparieren</h3>
+            <p>Anlage bleibt kalt, Druck fällt ab, der Brenner springt nicht an?
+               Wir finden den Fehler und beheben ihn – in den meisten Fällen schon beim ersten Termin.</p>
+            <p class="svc-tags"><span>Fehlersuche</span><span>Ersatzteile</span><span>schnelle Hilfe</span></p>
+          </div>
+        </div>
+
+        <div class="svc reveal">
+          <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+          <div>
+            <h3>Thermostate montieren</h3>
+            <p>Vom klassischen Drehregler bis zur programmierbaren Regelung: richtig eingestellt
+               heizt jeder Raum so, wie Sie es wollen – und Sie sparen spürbar Energie.</p>
+            <p class="svc-tags"><span>Heizkörperthermostate</span><span>Raumregler</span><span>smarte Modelle</span></p>
+          </div>
+        </div>
+
+        <div class="svc reveal">
+          <span class="svc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-5"/><circle cx="12" cy="12" r="9"/></svg></span>
+          <div>
+            <h3>Warten &amp; instand halten</h3>
+            <p>Einmal im Jahr durchsehen, entlüften, Verschleißteile tauschen –
+               so kommt es gar nicht erst zum Ausfall mitten im Winter.</p>
+            <p class="svc-tags"><span>Jahreswartung</span><span>Entlüftung</span><span>Thermostat-Tausch</span></p>
+          </div>
+        </div>
+      </div>
+
+      <p class="svc-note reveal">
+        Etwas anderes? Rufen Sie einfach durch: <a href="tel:+49234460852">0234 460852</a>.
+        Wenn wir es nicht machen, sagen wir Ihnen ehrlich, wer es kann.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== Über uns ===== -->
+  <section class="alt" id="ueber-uns">
+    <div class="wrap split">
+      <div class="split-media reveal-zoom">
+        <div class="m-big img-slot">
+          <img src="img/heizkoerper-szene.svg"
+               alt="Illustration: Heizkörper unter einem Fenster" loading="lazy" />
+        </div>
+        <div class="m-small img-slot">
+          <img src="img/therme.svg"
+               alt="Illustration: moderne Gastherme" loading="lazy" />
+        </div>
+      </div>
+
+      <div class="reveal">
+        <span class="kicker">Über uns</span>
+        <h2>Handwerk mit Fachwissen – seit Generationen in Bochum zuhause</h2>
+        <p style="margin-top:14px; color:var(--slate-500)">
+          Die Firma Geißler steht in Bochum-Weitmar für zuverlässige Heizungstechnik.
+          Unsere Kunden schätzen die Kombination aus Fachwissen und handwerklichem
+          Geschick – und bleiben nicht selten über Jahre Stammkunden.
+          <em>[Platzhalter: Hier kurze Firmengeschichte / Vorstellung des Inhabers ergänzen.]</em>
+        </p>
+        <ul class="checklist">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Pünktlich und zuverlässig – Arbeiten stets termingerecht ausgeführt</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Saubere und ordentliche Ausführung, auch bei bewohnten Objekten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Faire, transparente Preise ohne versteckte Kosten</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Persönlicher Ansprechpartner statt anonymer Hotline</li>
+        </ul>
+        <div style="margin-top:32px">
+          <a href="#kontakt" class="btn btn-primary">Jetzt Kontakt aufnehmen</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Stats ===== -->
+  <section style="padding-top:0" class="alt">
+    <div class="wrap">
+      <div class="stats reveal">
+        <div class="stat">
+          <div class="num"><span data-count="5" data-decimal="1">5,0</span><em>★</em></div>
+          <div class="lbl">Google-Bewertung</div>
+        </div>
+        <div class="stat">
+          <div class="num"><span data-count="10">10</span>+</div>
+          <div class="lbl">Rezensionen – alle 5 Sterne</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>[XX]</em></div>
+          <div class="lbl">Jahre Erfahrung (Platzhalter)</div>
+        </div>
+        <div class="stat">
+          <div class="num"><em>[XXX]</em>+</div>
+          <div class="lbl">Projekte in Bochum (Platzhalter)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Ablauf ===== -->
+  <section id="ablauf">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">So läuft's ab</span>
+        <h2>In drei Schritten zur neuen Wärme</h2>
+        <p>Unkompliziert, transparent und ohne Überraschungen – so arbeiten wir.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <span class="n">1</span>
+          <h3>Anfrage &amp; Erstberatung</h3>
+          <p>Rufen Sie an oder schreiben Sie uns. Wir besprechen Ihr Anliegen und klären erste Fragen direkt am Telefon.</p>
+        </div>
+        <div class="step reveal">
+          <span class="n">2</span>
+          <h3>Vor-Ort-Termin &amp; Angebot</h3>
+          <p>Wir schauen uns die Situation bei Ihnen an und erstellen ein faires, verbindliches Angebot – kostenlos.</p>
+        </div>
+        <div class="step reveal">
+          <span class="n">3</span>
+          <h3>Saubere Umsetzung</h3>
+          <p>Wir arbeiten pünktlich, sauber und zuverlässig – und übergeben erst, wenn alles einwandfrei läuft.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Bewertungen ===== -->
+  <section class="alt" id="bewertungen">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">Kundenstimmen</span>
+        <h2>Das sagen unsere Kunden auf Google</h2>
+        <p>Echte Rezensionen – 5,0 von 5 Sternen bei 10 Bewertungen.</p>
+      </div>
+
+      <div class="quotes">
+        <div class="quote reveal">
+          <span class="stars" aria-label="5 von 5 Sternen">★★★★★</span>
+          <blockquote>
+            „Die Firma Geisler hat alle Arbeiten stets pünktlich, zuverlässig und
+            mit hoher Qualität ausgeführt. Sehr zu empfehlen."
+          </blockquote>
+          <div class="who">
+            <span class="avatar" style="background:#7c3aed">M</span>
+            <span><strong>Michael M.</strong><span>Local Guide · Google-Rezension</span></span>
+          </div>
+        </div>
+
+        <div class="quote reveal">
+          <span class="stars" aria-label="5 von 5 Sternen">★★★★★</span>
+          <blockquote>
+            „Die Truppe der Firma Geißler hat sehr sauber und ordentlich gearbeitet.
+            Eine Kombination aus Fachwissen und handwerklichem Geschick, welches man
+            heute nicht mehr oft findet! Immer wieder gerne! Weiter so, ich bin und
+            bleibe Stammkunde."
+          </blockquote>
+          <div class="who">
+            <span class="avatar" style="background:#0891b2">M</span>
+            <span><strong>Martin</strong><span>Google-Rezension</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="g-badge reveal">
+        <a class="inner" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener">
+          <span class="stars" aria-hidden="true">★★★★★</span>
+          5,0 / 5,0
+          <span class="sub">· 10 Rezensionen auf Google – Profil ansehen</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:15px;height:15px"><path d="M7 17 17 7M9 7h8v8"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section id="faq">
+    <div class="wrap">
+      <div class="section-head center reveal">
+        <span class="kicker">FAQ</span>
+        <h2>Häufige Fragen</h2>
+      </div>
+
+      <div class="faq reveal">
+        <details class="faq-item">
+          <summary>In welchem Gebiet sind Sie tätig?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Unser Schwerpunkt liegt in Bochum und der näheren Umgebung. Fragen Sie gerne an – auch wenn Sie etwas weiter entfernt wohnen. <em>[Platzhalter: genaues Einzugsgebiet]</em></div>
+        </details>
+        <details class="faq-item">
+          <summary>Was kostet ein Vor-Ort-Termin mit Angebot?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Die Besichtigung und das Angebot sind für Sie kostenlos und unverbindlich. Sie zahlen erst, wenn Sie uns beauftragen.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Wie schnell bekomme ich einen Termin?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">In der Regel innerhalb weniger Werktage – bei einem Heizungsausfall bemühen wir uns um schnellstmögliche Hilfe. <em>[Platzhalter: konkrete Reaktionszeiten]</em></div>
+        </details>
+        <details class="faq-item">
+          <summary>Installieren Sie auch smarte Thermostate?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Ja – von klassischen Heizkörperthermostaten bis zu smarten, per App steuerbaren Systemen beraten wir Sie herstellerunabhängig und bauen die passende Lösung ein.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Warten Sie auch Anlagen, die Sie nicht eingebaut haben?
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+          </summary>
+          <div class="a">Selbstverständlich. Wir warten und reparieren auch Bestandsanlagen anderer Betriebe – nach einer kurzen Bestandsaufnahme vor Ort.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA ===== -->
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-banner reveal-zoom">
+        <div>
+          <h2>Heizung streikt oder Modernisierung geplant?</h2>
+          <p>Rufen Sie uns an oder fordern Sie in 2 Minuten Ihr kostenloses Angebot an.</p>
+        </div>
+        <div class="actions">
+          <a href="tel:+49234460852" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            0234 460852
+          </a>
+          <a href="#kontakt" class="btn btn-primary">Angebot anfordern</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Kontakt ===== -->
+  <section class="alt" id="kontakt" style="padding-top:0">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <span class="kicker">Kontakt</span>
+        <h2>Wir sind für Sie da</h2>
+        <p>Telefonisch, per E-Mail oder über das Formular – wir melden uns schnellstmöglich zurück.</p>
+      </div>
+
+      <div class="contact-grid">
+        <div class="c-info reveal">
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <div>
+              <strong>Adresse</strong>
+              <p>Markstraße 413<br />44795 Bochum (Weitmar)</p>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></span>
+            <div>
+              <strong>Telefon</strong>
+              <a class="val" href="tel:+49234460852">0234 460852</a>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg></span>
+            <div>
+              <strong>E-Mail</strong>
+              <p class="ph">[Platzhalter: info@geissler-heizung.de]</p>
+            </div>
+          </div>
+          <div class="c-tile">
+            <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l2.5 2.5"/></svg></span>
+            <div>
+              <strong>Öffnungszeiten</strong>
+              <p class="ph">[Platzhalter: Mo–Fr 08:00–17:00 Uhr]</p>
+            </div>
+          </div>
+
+          <div class="map-box">
+            <img src="img/karte.svg" alt="Lageplan: Markstraße 413, 44795 Bochum" loading="lazy" />
+            <a class="map-link" href="https://maps.app.goo.gl/9LMZptGTKQsm2wX36" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg>
+              Auf Google Maps öffnen
+            </a>
+          </div>
+        </div>
+
+        <form class="c-form reveal" id="contact-form" novalidate>
+          <h3>Kostenloses Angebot anfordern</h3>
+          <p class="sub">Unverbindlich &amp; kostenlos – wir melden uns innerhalb von 24&nbsp;Stunden.*</p>
+
+          <div class="f-row">
+            <div class="f-group">
+              <label for="f-name">Name</label>
+              <input id="f-name" name="name" type="text" placeholder="Max Mustermann" required />
+            </div>
+            <div class="f-group">
+              <label for="f-tel">Telefon</label>
+              <input id="f-tel" name="tel" type="tel" placeholder="0234 000000" />
+            </div>
+          </div>
+
+          <div class="f-group">
+            <label for="f-mail">E-Mail</label>
+            <input id="f-mail" name="email" type="email" placeholder="max@beispiel.de" required />
+          </div>
+
+          <div class="f-group">
+            <label for="f-topic">Worum geht es?</label>
+            <select id="f-topic" name="topic">
+              <option>Neue Heizungsanlage</option>
+              <option>Thermostat-Installation</option>
+              <option>Reparatur</option>
+              <option>Wartung / Service</option>
+              <option>Sonstiges</option>
+            </select>
+          </div>
+
+          <div class="f-group">
+            <label for="f-msg">Ihre Nachricht</label>
+            <textarea id="f-msg" name="message" placeholder="Beschreiben Sie kurz Ihr Anliegen …"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%">Anfrage senden</button>
+          <p class="form-ok" id="form-ok">Vielen Dank! Ihre Anfrage wurde übermittelt (Demo – noch ohne Versand).</p>
+          <p class="f-note">
+            *Demo-Formular ohne Backend – vor dem Livegang an E-Mail-Versand
+            (z.&nbsp;B. Formspree/Vercel-Function) anbinden. Mit dem Absenden stimmen Sie der
+            Verarbeitung Ihrer Daten gemäß <a href="datenschutz.html" style="text-decoration:underline">Datenschutzerklärung</a> zu.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Footer ===== -->
+  <footer>
+    <div class="wrap">
+      <div class="f-grid">
+        <div>
+          <a href="#start" class="brand">
+            <span class="logo-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2s1 3.2-1.5 6C8.2 10.5 7 12.4 7 14.5A5 5 0 0 0 12 19.5a5 5 0 0 0 5-5c0-1.6-.7-3-1.6-4.3.1 1.2-.3 2.3-1.4 2.8.4-2.3-.5-5.2-2-7C11.6 4.6 12 2 12 2Z"/></svg>
+            </span>
+            <span>Geißler<small>Heizungstechnik · Bochum</small></span>
+          </a>
+          <p>Installation, Reparatur und Wartung von Heizsystemen und Thermostaten – pünktlich, sauber und zuverlässig.</p>
+        </div>
+        <div>
+          <h4>Leistungen</h4>
+          <ul>
+            <li><a href="#leistungen">Heizungsinstallation</a></li>
+            <li><a href="#leistungen">Thermostate</a></li>
+            <li><a href="#leistungen">Reparatur</a></li>
+            <li><a href="#leistungen">Wartung &amp; Service</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Unternehmen</h4>
+          <ul>
+            <li><a href="#ueber-uns">Über uns</a></li>
+            <li><a href="#bewertungen">Bewertungen</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#kontakt">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li>Markstraße 413, 44795 Bochum</li>
+            <li><a href="tel:+49234460852">0234 460852</a></li>
+            <li>[Platzhalter: E-Mail]</li>
+          </ul>
+        </div>
+      </div>
+      <div class="f-bottom">
+        <span>© <span id="year">2026</span> Geißler Heizungstechnik · Bochum</span>
+        <span>
+          <a href="impressum.html">Impressum</a> ·
+          <a href="datenschutz.html">Datenschutz</a>
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

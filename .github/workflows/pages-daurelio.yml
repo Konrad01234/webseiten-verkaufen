@@ -1,0 +1,56 @@
+name: Deploy D'Aurelio site to GitHub Pages
+
+# Veroeffentlicht sites/ramona-daurelio unter
+# https://konrad01234.github.io/webseiten-verkaufen/
+#
+# EINMALIG NOETIG, bevor dieser Workflow durchlaeuft:
+#   Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions"
+# Das Actions-Token darf eine Pages-Site nicht selbst anlegen
+# ("Resource not accessible by integration"), deshalb dieser eine Klick.
+# Danach deployt jeder Push auf diesen Branch automatisch.
+#
+# Die Seiten tragen derzeit <meta name="robots" content="noindex, nofollow">,
+# damit die Vorschau nicht in Suchmaschinen landet, solange Kontaktdaten,
+# Impressum und Datenschutzerklaerung unvollstaendig sind.
+
+on:
+  push:
+    branches:
+      - claude/ramona-brunch-website-t54try
+    paths:
+      - 'sites/ramona-daurelio/**'
+      - '.github/workflows/pages-daurelio.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: sites/ramona-daurelio
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

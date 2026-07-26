@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A + S Autoservice GmbH | KFZ-Meisterbetrieb in Bonn</title>
+  <meta name="description" content="A + S Autoservice GmbH – Ihre KFZ-Meisterwerkstatt in Bonn. Inspektion, Reifenservice, Klimaservice, Bremsen, Diagnose & mehr. Alle Fabrikate, faire Preise, freundlicher Service. Jetzt Termin anfragen." />
+  <meta name="theme-color" content="#101a2e" />
+  <meta property="og:title" content="A + S Autoservice GmbH | KFZ-Meisterbetrieb in Bonn" />
+  <meta property="og:description" content="Kompetenter Rundum-Service für alle Fabrikate – transparent, freundlich und zum fairen Preis. Bornheimer Str. 139, 53119 Bonn." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="img/favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <p class="pl-name">A<em>+</em>S <span style="font-weight:400">Autoservice</span></p>
+    <span class="pl-loc">KFZ-Meisterbetrieb · Bonn</span>
+    <div class="pl-track"><div class="pl-fill"></div></div>
+  </div>
+
+  <!-- ===== Fullscreen nav overlay ===== -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html" class="active">Start</a>
+    <a href="leistungen.html">Leistungen</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="bewertungen.html">Bewertungen</a>
+    <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">A + S Autoservice GmbH · Bonn</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Top bar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+492282893493" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        0228 289 34 93
+      </a>
+      <div class="tb-right">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>Bornheimer Str. 139, 53119 Bonn</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Mo–Fr geöffnet · Sa bis 13 Uhr</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="A + S Autoservice GmbH – Startseite">
+        <img class="brand-logo-img" src="img/logo.png" alt="A + S Autoservice GmbH – KFZ-Meisterbetrieb Bonn" width="150" height="46" />
+      </a>
+
+      <nav class="nav-links" id="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html" class="active">Start</a>
+        <a href="leistungen.html">Leistungen</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="bewertungen.html">Bewertungen</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary">Termin anfragen</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-photo" style="background-image:url('img/building.jpg')"></div>
+      <div class="hero-grid"></div>
+      <svg class="hero-deco one" data-parallax="0.10" viewBox="0 0 640 320" fill="none" aria-hidden="true">
+        <!-- stylised car silhouette line art -->
+        <path d="M60 210 L110 210 C130 160 165 135 235 132 L390 130 C440 130 470 148 500 178 L560 190 C585 194 600 205 600 222 L600 210" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M60 210 L600 210" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>
+        <path d="M235 132 L262 178 L455 178 L500 178" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M356 132 L360 178" stroke="currentColor" stroke-width="2.4"/>
+        <circle cx="185" cy="210" r="40" stroke="currentColor" stroke-width="3"/>
+        <circle cx="185" cy="210" r="16" stroke="currentColor" stroke-width="2.4"/>
+        <circle cx="480" cy="210" r="40" stroke="currentColor" stroke-width="3"/>
+        <circle cx="480" cy="210" r="16" stroke="currentColor" stroke-width="2.4"/>
+      </svg>
+      <div class="wrap">
+        <div class="hero-inner">
+          <span class="eyebrow">KFZ-Meisterbetrieb · Bonn-Nordstadt</span>
+          <h1>Ihre Werkstatt,<br>der Sie <em>vertrauen</em> können.</h1>
+          <p class="lede">Von der Inspektion bis zum Reifenwechsel: Bei A + S Autoservice kümmern wir uns kompetent, transparent und freundlich um Ihr Fahrzeug – für alle Fabrikate und zum fairen Preis.</p>
+          <div class="hero-actions">
+            <a href="kontakt.html" class="btn btn-primary">Termin anfragen
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </a>
+            <a href="leistungen.html" class="btn btn-ghost-light">Unsere Leistungen</a>
+          </div>
+          <div class="hero-meta">
+            <div class="mi">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="m12 3 2.9 6 6.6.7-4.9 4.4 1.4 6.5L12 17.8 6 20.6l1.4-6.5L2.5 9.7 9 9 12 3Z"/></svg>
+              <span><strong>5,0 Sterne</strong>Top bewertet bei Google</span>
+            </div>
+            <div class="mi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg>
+              <span><strong>Meisterbetrieb</strong>Geprüfte Qualität &amp; Garantie</span>
+            </div>
+            <div class="mi">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>
+              <span><strong>Alle Fabrikate</strong>Eine Werkstatt für alles</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="scroll-ind" aria-hidden="true"><span>Entdecken</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m6 13 6 6 6-6"/></svg>
+      </div>
+    </section>
+
+    <!-- ===== Trust stats ===== -->
+    <section class="section section--alt" style="padding-block:clamp(2.6rem,5vw,3.6rem)">
+      <div class="wrap">
+        <div class="stats reveal">
+          <div class="stat"><div class="n"><span data-to="5" data-decimals="1" data-suffix="">0</span>★</div><div class="lbl">Google-Bewertung</div></div>
+          <div class="stat"><div class="n"><span data-to="100" data-suffix="%">0</span></div><div class="lbl">Alle Fabrikate</div></div>
+          <div class="stat"><div class="n"><span data-to="4" data-suffix="">0</span></div><div class="lbl">Hebebühnen &amp; Montageplätze</div></div>
+          <div class="stat"><div class="n">1×</div><div class="lbl">Ansprechpartner für alles</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Intro / Meisterbetrieb ===== -->
+    <section class="section">
+      <div class="wrap split">
+        <div class="split-media reveal-l">
+          <div class="frame has-photo">
+            <img src="img/work_strut.jpg" alt="Arbeit am Fahrwerk in der Werkstatt der A + S Autoservice GmbH" loading="lazy" />
+            <span class="frame-tag">Aus unserer Werkstatt</span>
+          </div>
+        </div>
+        <div class="split-body reveal-r">
+          <span class="eyebrow">Willkommen bei A + S Autoservice</span>
+          <h2>Ehrliche Werkstatt-Arbeit mitten in Bonn</h2>
+          <p class="lede">Als inhabergeführter KFZ-Meisterbetrieb an der Bornheimer Straße stehen wir für sauberes Handwerk und einen Umgang, der zählt: Wir erklären, was gemacht werden muss – und was nicht.</p>
+          <p>Ob Wartung nach Herstellervorgabe, ein plötzlicher Defekt oder der saisonale Reifenwechsel: Bei uns bekommen Sie kompetente Beratung, transparente Preise und einen Service, der schnell und zuverlässig ist. Genau das bestätigen uns unsere Kundinnen und Kunden Tag für Tag.</p>
+          <div class="chips">
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>Transparente Kostenvoranschläge</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>Freundliche Beratung</span>
+            <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5L20 7"/></svg>Schnelle Termine</span>
+          </div>
+          <div style="margin-top:1.8rem">
+            <a href="ueber-uns.html" class="btn btn-outline">Mehr über uns
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Why us ===== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <span class="eyebrow">Warum A + S Autoservice</span>
+          <h2>Gute Gründe, uns zu vertrauen</h2>
+        </div>
+        <div class="grid grid-4">
+          <article class="card reveal">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11v8H4zM15 10h3l3 3v2h-6z"/><circle cx="7" cy="17" r="2"/><circle cx="17.5" cy="17" r="2"/></svg></div>
+            <h3>Schnell fertig</h3>
+            <p>„Mein Auto war am gleichen Tag wieder fit." Wir arbeiten zügig, ohne Abstriche bei der Qualität.</p>
+          </article>
+          <article class="card reveal d1">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-8 4 16 2-8h6"/></svg></div>
+            <h3>Transparent</h3>
+            <p>Sie erfahren vorab, was gemacht wird und was es kostet – ehrlich und nachvollziehbar.</p>
+          </article>
+          <article class="card reveal d2">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10Z"/></svg></div>
+            <h3>Freundlich</h3>
+            <p>Sympathische Ansprechpartner, die sich Zeit nehmen – auch wenn Sie zum ersten Mal bei uns sind.</p>
+          </article>
+          <article class="card reveal d3">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l1 6-7 12L5 9Z"/><path d="M9 3 12 9l3-6"/></svg></div>
+            <h3>Faire Preise</h3>
+            <p>Top Leistung muss nicht teuer sein. Preis und Leistung passen bei uns zusammen.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Photo band (gemeinfreies Stockfoto) ===== -->
+    <section class="photoband">
+      <div class="pb-img" style="background-image:url('img/stock_engine.jpg')"></div>
+      <div class="wrap reveal">
+        <span class="eyebrow">Technik ist unsere Leidenschaft</span>
+        <h2>Motor, Fahrwerk &amp; Elektronik</h2>
+        <p>Von der kleinen Wartung bis zur komplexen Reparatur – wir kennen die Technik moderner Fahrzeuge und arbeiten mit Präzision.</p>
+        <a href="leistungen.html" class="btn btn-primary">Unsere Leistungen
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>
+        </a>
+      </div>
+      <span class="credit-inline">Symbolbild · free-images.com (gemeinfrei)</span>
+    </section>
+
+    <!-- ===== Einblicke ===== -->
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <span class="eyebrow">Einblicke</span>
+          <h2>Rund ums Fahrzeug</h2>
+          <p>Ein Eindruck davon, wofür wir jeden Tag mit Leidenschaft arbeiten.</p>
+        </div>
+        <div class="gallery-r">
+          <div class="gtile reveal"><img src="img/gal_workshop.jpg" alt="Fahrzeug in der Werkstatt" loading="lazy" /><span class="cap">In der Werkstatt</span></div>
+          <div class="gtile reveal d1"><img src="img/gal_care.jpg" alt="Fahrzeugpflege" loading="lazy" /><span class="cap">Fahrzeugpflege</span></div>
+          <div class="gtile reveal d2"><img src="img/gal_wheels.jpg" alt="Räder und Felgen" loading="lazy" /><span class="cap">Räder &amp; Felgen</span></div>
+          <div class="gtile reveal d3"><img src="img/gal_detail.jpg" alt="Fahrzeug im Detail" loading="lazy" /><span class="cap">Liebe zum Detail</span></div>
+        </div>
+        <p class="credit" style="margin-top:1.2rem">Symbolbilder · Quelle: TemplatesJungle (kostenlose Nutzung)</p>
+      </div>
+    </section>
+
+    <!-- ===== Process ===== -->
+    <section class="section section--alt">
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <span class="eyebrow">So einfach geht's</span>
+          <h2>In vier Schritten zum Termin</h2>
+        </div>
+        <div class="steps">
+          <div class="step reveal">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></div>
+            <h3>Kontakt</h3>
+            <p>Rufen Sie an oder senden Sie uns eine kurze Anfrage über das Formular.</p>
+          </div>
+          <div class="step reveal d1">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
+            <h3>Termin</h3>
+            <p>Wir finden gemeinsam einen passenden Termin – oft schon sehr kurzfristig.</p>
+          </div>
+          <div class="step reveal d2">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4a4 4 0 0 0-5.5 5L4 13.5a2 2 0 0 0 0 3l3.5 3.5a2 2 0 0 0 3 0L15 15.5A4 4 0 0 0 20 10l-2.5 2.5-2.5-.5-.5-2.5L17 7Z"/></svg></div>
+            <h3>Service</h3>
+            <p>Unser Meisterteam kümmert sich zuverlässig um Ihr Fahrzeug.</p>
+          </div>
+          <div class="step reveal d3">
+            <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11v8H4zM15 10h3l3 3v2h-6z"/><circle cx="7" cy="17" r="2"/><circle cx="17.5" cy="17" r="2"/></svg></div>
+            <h3>Losfahren</h3>
+            <p>Sie holen Ihr Auto ab – sicher, geprüft und wieder voll einsatzbereit.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="cta-band section">
+      <div class="hero-grid"></div>
+      <div class="wrap reveal">
+        <span class="eyebrow" style="color:var(--gold-bright);justify-content:center;display:inline-flex">Wir sind für Sie da</span>
+        <h2>Bringen Sie Ihr Auto in gute Hände</h2>
+        <p>Ob Wartung, Reparatur oder Reifenwechsel – rufen Sie uns an oder fragen Sie unverbindlich einen Termin an. Wir kümmern uns darum.</p>
+        <div class="cta-actions">
+          <a href="tel:+492282893493" class="btn btn-cream">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+            0228 289 34 93
+          </a>
+          <a href="kontakt.html" class="btn btn-ghost-light">Termin anfragen</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div>
+          <a href="index.html" class="brand" aria-label="A + S Autoservice GmbH">
+            <img class="brand-logo-img" src="img/logo.png" alt="A + S Autoservice GmbH – KFZ-Meisterbetrieb Bonn" width="150" height="46" />
+          </a>
+          <p>Ihr KFZ-Meisterbetrieb an der Bornheimer Straße in Bonn. Kompetent, transparent und freundlich – für alle Fabrikate.</p>
+          <div class="socials">
+            <a href="https://www.google.com/maps" target="_blank" rel="noopener" aria-label="Google Maps">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="leistungen.html">Leistungen</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="bewertungen.html">Bewertungen</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Öffnungszeiten</h4>
+          <ul>
+            <li>Mo – Do · 08 – 17 Uhr</li>
+            <li>Fr · 08 – 16 Uhr</li>
+            <li>Sa · 08 – 13 Uhr</li>
+            <li>So · geschlossen</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul class="fcontact">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>Bornheimer Str. 139<br>53119 Bonn</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+              <a href="tel:+492282893493">0228 289 34 93</a>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              <a href="mailto:info@a-s-autoservice.de">info@a-s-autoservice.de</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> A + S Autoservice GmbH · Alle Rechte vorbehalten</span>
+        <div class="legal">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="#" data-cookie-open>Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="cookie" id="cookie-banner" role="dialog" aria-label="Cookie-Hinweis">
+    <div class="cookie-inner">
+      <div class="cookie-text">
+        <strong>Wir verwenden Cookies</strong>
+        <p>Wir nutzen Cookies, um diese Website bereitzustellen und – mit Ihrer Einwilligung – zu verbessern. Mehr in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>
+      </div>
+      <div class="cookie-actions">
+        <button class="btn btn-outline" data-cookie="essential">Nur notwendige</button>
+        <button class="btn btn-primary" data-cookie="all">Alle akzeptieren</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

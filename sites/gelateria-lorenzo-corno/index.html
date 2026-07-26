@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gelateria Lorenzo Corno | Handgemachtes Eis in München-Schwabing</title>
+  <meta name="description" content="Gelateria Lorenzo Corno in München-Schwabing – handgemachtes italienisches Gelato nach kalabrischer Tradition. Eismacher in München seit 1986. Hohenzollernstraße 44, täglich 11:30–22:30 Uhr." />
+  <meta name="theme-color" content="#1a120b" />
+  <meta property="og:title" content="Gelateria Lorenzo Corno | München-Schwabing" />
+  <meta property="og:description" content="Handgemachtes italienisches Gelato – Eismacher in München seit 1986. Hohenzollernstraße 44." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="img/makro-kugeln.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preload" as="image" href="img/makro-kugeln.jpg" fetchpriority="high" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "IceCreamShop",
+    "name": "Gelateria Lorenzo Corno",
+    "description": "Handgemachtes italienisches Gelato nach kalabrischer Tradition – Eismacher in München seit 1986.",
+    "address": { "@type": "PostalAddress", "streetAddress": "Hohenzollernstraße 44", "postalCode": "80801", "addressLocality": "München", "addressCountry": "DE" },
+    "telephone": "+491776756438",
+    "openingHours": "Mo-Su 11:30-22:30",
+    "servesCuisine": "Gelato",
+    "priceRange": "€",
+    "sameAs": ["https://www.instagram.com/gelateria_lorenzo_corno/"],
+    "geo": { "@type": "GeoCoordinates", "latitude": 48.160112, "longitude": 11.579728 },
+    "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "300" }
+  }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 2c5 0 9 3.6 9 8 0 .7-.1 1.4-.3 2H7.3c-.2-.6-.3-1.3-.3-2 0-4.4 4-8 9-8z' fill='%23c4506b'/%3E%3Cpath d='M7.5 13h17L16 30z' fill='%23d9a05b'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <!-- ===== Cinematic Intro (Vorhang) ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-top"></div>
+    <div class="pl-bottom"></div>
+    <div class="pl-inner">
+      <span class="pl-kicker">Gelateria · München-Schwabing</span>
+      <span class="pl-name">Lorenzo <em>Corno</em></span>
+      <span class="pl-line"></span>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Header (über dem Hero transparent) ===== -->
+  <header class="nav" id="nav">
+    <div class="wrap">
+      <a href="#start" class="brand" aria-label="Gelateria Lorenzo Corno – zum Seitenanfang">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M16 2c5 0 9 3.6 9 8 0 .7-.1 1.4-.3 2H7.3c-.2-.6-.3-1.3-.3-2 0-4.4 4-8 9-8z" fill="#e78fa3"/>
+          <path d="M7.5 13h17L16 30z" fill="#d9a05b"/>
+        </svg>
+        <span class="brand-text">Lorenzo <em>Corno</em></span>
+      </a>
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="#start">Start</a>
+        <a href="#impressionen">Impressionen</a>
+        <a href="#lorenzo">Über Lorenzo</a>
+        <a href="#sorten">Sorten</a>
+        <a href="#stimmen">Stimmen</a>
+        <a href="#besuch">Besuch</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#besuch" class="btn btn-primary">Vorbeikommen</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== Fullscreen nav overlay (mobil) ===== -->
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="#start">Start</a>
+    <a href="#impressionen">Impressionen</a>
+    <a href="#lorenzo">Über Lorenzo</a>
+    <a href="#sorten">Sorten</a>
+    <a href="#stimmen">Stimmen</a>
+    <a href="#besuch">Besuch</a>
+    <span class="ov-tagline">Eismacher in München seit 1986</span>
+  </div>
+
+  <main>
+
+    <!-- ===== Hero (Vollbild, Ken-Burns) ===== -->
+    <section class="hero" id="start">
+      <div class="hero-media" aria-hidden="true">
+        <img src="img/makro-kugeln.jpg" alt="" class="hero-slide s1" fetchpriority="high" decoding="async" />
+        <img src="img/theke-pistazie.jpg" alt="" class="hero-slide s2" loading="lazy" decoding="async" />
+        <img src="img/cono-schoko-mango.jpg" alt="" class="hero-slide s3" loading="lazy" decoding="async" />
+      </div>
+      <div class="hero-veil" aria-hidden="true"></div>
+      <div class="wrap hero-content">
+        <p class="hero-kicker">Seit 1986 · Handgemacht in Schwabing</p>
+        <h1>Gelato, wie es<br /><em>Italien</em> meint.</h1>
+        <p class="hero-lead">Handwerk aus Kalabrien, jeden Tag frisch hinter der Theke gerührt.
+          In Sorten, die es sonst nirgendwo gibt.</p>
+        <div class="hero-actions">
+          <a href="#impressionen" class="btn btn-light">Eintauchen</a>
+          <a href="#besuch" class="btn btn-outline">Öffnungszeiten &amp; Anfahrt</a>
+        </div>
+      </div>
+      <a class="hero-scrollcue" href="#impressionen" aria-label="Weiter scrollen">
+        <span>Scrollen</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14m0 0 6-6m-6 6-6-6"/></svg>
+      </a>
+    </section>
+
+    <!-- ===== Laufband ===== -->
+    <section class="marquee" aria-label="Auswahl unserer Sorten">
+      <div class="marquee-track" aria-hidden="true">
+        <span>Pistazie &amp; weiße Schokolade</span><i>—</i>
+        <span>Schokolade &amp; Ingwer</span><i>—</i>
+        <span>Café Krokant</span><i>—</i>
+        <span>Rose &amp; Hibiskus</span><i>—</i>
+        <span>Zitrone &amp; Basilikum</span><i>—</i>
+        <span>Schwarzer Sesam</span><i>—</i>
+        <span>Mango-Sorbet</span><i>—</i>
+        <span>Kürbiskern</span><i>—</i>
+        <span>Pistazie &amp; weiße Schokolade</span><i>—</i>
+        <span>Schokolade &amp; Ingwer</span><i>—</i>
+        <span>Café Krokant</span><i>—</i>
+        <span>Rose &amp; Hibiskus</span><i>—</i>
+        <span>Zitrone &amp; Basilikum</span><i>—</i>
+        <span>Schwarzer Sesam</span><i>—</i>
+        <span>Mango-Sorbet</span><i>—</i>
+        <span>Kürbiskern</span><i>—</i>
+      </div>
+    </section>
+
+    <!-- ===== Impressionen ===== -->
+    <section class="section gallery" id="impressionen">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Impressionen</p>
+          <h2>Ein Blick in die Theke.</h2>
+          <p class="section-sub">Momente aus der Gelateria – festgehalten von Gästen vor Ort.</p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="g-tall reveal"><img src="img/makro-kugeln.jpg" alt="Cremige Gelato-Kugeln in Nahaufnahme" loading="lazy" /><figcaption>Cremig, handgemacht, jeden Tag frisch</figcaption></figure>
+          <figure class="reveal"><img src="img/becher-kuerbiskern.jpg" alt="Kürbiskern-Eis im blütenförmigen Waffelbecher" loading="lazy" /><figcaption>Kürbiskern – eine Rarität</figcaption></figure>
+          <figure class="reveal"><img src="img/cono-schoko-mango.jpg" alt="Waffel mit Schokolade-Ingwer und Mango-Sorbet" loading="lazy" /><figcaption>Schokolade-Ingwer &amp; Mango-Sorbet</figcaption></figure>
+          <figure class="g-wide reveal"><img src="img/theke-vegan.jpg" alt="Vegane Sorbets in der Auslage: Mango, Erdbeere, Kokos, Zitrone-Basilikum" loading="lazy" /><figcaption>Vegane Sorbets – mit grünen Schildern</figcaption></figure>
+          <figure class="reveal"><img src="img/becher-joghurt.jpg" alt="Joghurt-Heidelbeer-Eis im Waffelbecher" loading="lazy" /><figcaption>Joghurt &amp; Heidelbeer</figcaption></figure>
+          <figure class="reveal"><img src="img/cono-kokos-erdbeer.jpg" alt="Waffel mit Kokos, Erdbeer und Mango" loading="lazy" /><figcaption>Kokos, Erdbeer &amp; Mango</figcaption></figure>
+          <figure class="g-tall reveal"><img src="img/becher-vanille-erdbeer.jpg" alt="Vanille und Erdbeersorbet im Waffelbecher auf Holztisch" loading="lazy" /><figcaption>Vanille &amp; Erdbeersorbet</figcaption></figure>
+          <figure class="reveal"><img src="img/theke-pistazie.jpg" alt="Frisch gemachte Sorten in der Eistheke" loading="lazy" /><figcaption>Über 20 Sorten in der Auslage</figcaption></figure>
+          <figure class="reveal"><img src="img/laden-eingang.jpg" alt="Eingang der Gelateria mit üppiger Begrünung" loading="lazy" /><figcaption>Willkommen in der Gelateria</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Szene: Kirche ===== -->
+    <section class="scene" data-scene>
+      <div class="scene-media"><img data-parallax src="img/becher-kirche.jpg" alt="Zwei Waffelbecher Eis vor der Kirche St. Ursula" /></div>
+      <div class="scene-veil" aria-hidden="true"></div>
+      <div class="wrap scene-content">
+        <p class="scene-kicker reveal">Der Lieblingsplatz der Locals</p>
+        <h2 class="reveal mask"><span>Am liebsten auf den Stufen<br />der St.-Ursula-Kirche.</span></h2>
+        <p class="reveal">Zwei Minuten vom Laden, am Kaiserplatz – dort schmeckt das Gelato am besten.</p>
+      </div>
+    </section>
+
+    <!-- ===== Über Lorenzo ===== -->
+    <section class="section about" id="lorenzo">
+      <div class="wrap about-grid">
+        <div class="about-media reveal">
+          <img src="img/laden-markise.jpg" alt="Die grüne Markise der Gelateria Lorenzo Corno an der Hohenzollernstraße" loading="lazy" />
+          <div class="about-stamp"><strong>1986</strong><span>seit</span></div>
+        </div>
+        <div class="about-copy">
+          <p class="eyebrow reveal">Über Lorenzo</p>
+          <h2 class="reveal d-1">Ein Stück Kalabrien,<br />mitten in Schwabing.</h2>
+          <p class="reveal d-2">Lorenzo Corno stammt aus der Nähe von Cosenza in Kalabrien und macht in München
+            Eis nach der ursprünglichen Tradition Süditaliens – <strong>Eismacher seit 1986</strong>. Das gesamte
+            Gelato entsteht von Hand, in kleinen Mengen, direkt hinter der Verkaufstheke.</p>
+          <p class="reveal d-3">Neben Klassikern wartet die Theke mit Kreationen, die man so schnell nicht vergisst –
+            und wer freundlich fragt, für den rührt Lorenzo auch mal eine Sorte auf Wunsch. Zu jedem Eis
+            gibt&rsquo;s ein Probierlöffelchen einer anderen Sorte obendrauf.</p>
+          <ul class="about-facts">
+            <li class="reveal d-2"><span class="af-num"><span class="count" data-count="100" data-suffix="%">0</span></span><span class="af-txt">handgemacht, direkt hinter der Theke</span></li>
+            <li class="reveal d-3"><span class="af-num"><span class="count" data-count="40" data-suffix="+">0</span></span><span class="af-txt">Jahre Eishandwerk in München</span></li>
+            <li class="reveal d-4"><span class="af-num"><span class="count" data-count="4.8" data-decimals="1" data-suffix="&nbsp;★">0,0</span></span><span class="af-txt">bei über 300 Google-Bewertungen</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Sorten ===== -->
+    <section class="section flavors" id="sorten">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Unsere Sorten</p>
+          <h2>Kreationen, die es <em>nur hier</em> gibt.</h2>
+          <p class="section-sub">Die Auswahl wechselt mit Saison und Laune des Maestros – diese Lieblinge tauchen immer wieder auf.</p>
+        </div>
+        <div class="flavor-grid">
+          <article class="flavor-card reveal" style="--fc:#9fb87a;--fc2:#c1d4a3"><span class="scoop"></span><h3>Pistazie &amp; weiße Schokolade</h3><p>Der meistgelobte Klassiker – nussig, cremig, unwiderstehlich.</p></article>
+          <article class="flavor-card reveal d-1" style="--fc:#6b4630;--fc2:#96684c"><span class="scoop"></span><h3>Schokolade &amp; Ingwer</h3><p>Dunkle Schokolade mit feuriger Ingwerschärfe – intensiv und lang im Abgang.</p></article>
+          <article class="flavor-card reveal d-2" style="--fc:#8f6f52;--fc2:#c2a180"><span class="scoop"></span><h3>Café Krokant</h3><p>Espresso-Eis mit knusprigem Krokant – der Favorit vieler Stammgäste.</p></article>
+          <article class="flavor-card reveal d-3" style="--fc:#d98ca4;--fc2:#ecb7c6"><span class="scoop"></span><h3>Rose &amp; Hibiskus</h3><p>Blumig und zart – wie ein Spaziergang durch einen Sommergarten.</p></article>
+          <article class="flavor-card reveal d-1" style="--fc:#4a4a4a;--fc2:#7a7a7a"><span class="scoop"></span><h3>Schwarzer Sesam</h3><p>Nussig-geröstet mit asiatischer Note – cremig wie ein Espresso am Abend.</p></article>
+          <article class="flavor-card reveal d-2" style="--fc:#e0c04b;--fc2:#f0d886"><span class="scoop"></span><h3>Zitrone &amp; Basilikum</h3><p>Veganes Sorbet, spritzig-frisch mit einem Hauch Kräuter.</p></article>
+          <article class="flavor-card reveal d-3" style="--fc:#e0b64b;--fc2:#f0d489"><span class="scoop"></span><h3>Kürbiskern</h3><p>Fein-nussig und ungewöhnlich – über diese Sorte spricht ganz Schwabing.</p></article>
+          <article class="flavor-card reveal d-4" style="--fc:#b06a8e;--fc2:#d59ab8"><span class="scoop"></span><h3>Joghurt &amp; Heidelbeer</h3><p>Frischer Joghurt trifft fruchtige Heidelbeeren – im Waffelblüten-Becher.</p></article>
+        </div>
+        <p class="flavors-note reveal">Dazu vegane Sorbets mit grünen Schildern – Mango, Erdbeere, Kokos, Zitrone-Basilikum, Mojito –
+          und mit etwas Glück eine Sorte, die es morgen schon nicht mehr gibt.</p>
+      </div>
+    </section>
+
+    <!-- ===== Szene: Theke ===== -->
+    <section class="scene scene--sm" data-scene>
+      <div class="scene-media"><img data-parallax src="img/theke-schraeg.jpg" alt="Die volle Eistheke der Gelateria Lorenzo Corno" /></div>
+      <div class="scene-veil" aria-hidden="true"></div>
+      <div class="wrap scene-content">
+        <h2 class="reveal mask"><span>Alles entsteht<br />hinter dieser Theke.</span></h2>
+      </div>
+    </section>
+
+    <!-- ===== Stimmen ===== -->
+    <section class="section voices" id="stimmen">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <p class="eyebrow">Das sagen unsere Gäste</p>
+          <h2>4,8 Sterne sprechen für sich.</h2>
+        </div>
+        <div class="voice-grid">
+          <figure class="voice-card reveal">
+            <div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+            <blockquote>„Das Eis ist unglaublich lecker. Café Krokant, Pistazie-Weiße Schokolade, Rose-Hibiskus und Griechischer Joghurt sind meine absoluten Favoriten."</blockquote>
+            <figcaption>Félicia M. · Google</figcaption>
+          </figure>
+          <figure class="voice-card reveal d-1">
+            <div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+            <blockquote>„Das beste Gelato, das ich je gegessen habe – und ich hatte es auf der ganzen Welt. Die Haselnuss war unglaublich!"</blockquote>
+            <figcaption>Sunny J. · Local Guide</figcaption>
+          </figure>
+          <figure class="voice-card reveal d-2">
+            <div class="stars" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+            <blockquote>„Sehr angetan. Die Sorten Sesam, Pistazie / weiße Schokolade und Zitrone-Basilikum sind sehr zu empfehlen."</blockquote>
+            <figcaption>Max B. · Google</figcaption>
+          </figure>
+        </div>
+        <p class="voices-cta reveal"><a class="btn btn-ghost" href="https://www.google.com/maps/search/?api=1&amp;query=Gelateria+Lorenzo+Corno+Hohenzollernstra%C3%9Fe+44+M%C3%BCnchen" target="_blank" rel="noopener">Alle Bewertungen auf Google</a></p>
+      </div>
+    </section>
+
+    <!-- ===== Besuch ===== -->
+    <section class="section visit" id="besuch">
+      <div class="wrap visit-grid">
+        <div class="visit-copy">
+          <p class="eyebrow reveal">Besuch uns</p>
+          <h2 class="reveal d-1">Wir freuen uns<br />auf dich.</h2>
+          <p class="reveal d-2">Mitten in Schwabing-West, zwischen Hohenzollernplatz und Kurfürstenplatz. Am besten kommst du einfach vorbei – das Eis wartet schon.</p>
+          <div class="visit-cards">
+            <div class="visit-card reveal d-1">
+              <span class="vc-label">Adresse</span>
+              <span class="vc-main">Hohenzollernstraße 44<br />80801 München</span>
+              <a href="https://www.google.com/maps/search/?api=1&amp;query=Gelateria+Lorenzo+Corno+Hohenzollernstra%C3%9Fe+44+M%C3%BCnchen" target="_blank" rel="noopener">Route planen →</a>
+            </div>
+            <div class="visit-card reveal d-2">
+              <span class="vc-label">Öffnungszeiten</span>
+              <span class="vc-main">Täglich 11:30 – 22:30 Uhr</span>
+              <em>Winterpause ca. Nov. – Feb.</em>
+            </div>
+            <div class="visit-card reveal d-3">
+              <span class="vc-label">Telefon</span>
+              <span class="vc-main"><a href="tel:+491776756438">0177 675 64 38</a></span>
+            </div>
+            <div class="visit-card reveal d-4">
+              <span class="vc-label">Instagram</span>
+              <span class="vc-main"><a href="https://www.instagram.com/gelateria_lorenzo_corno/" target="_blank" rel="noopener">@gelateria_lorenzo_corno</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="visit-map reveal d-2">
+          <iframe title="Karte: Gelateria Lorenzo Corno, Hohenzollernstraße 44, München"
+            src="https://www.google.com/maps?q=Gelateria+Lorenzo+Corno,+Hohenzollernstra%C3%9Fe+44,+80801+M%C3%BCnchen&amp;output=embed"
+            loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Abschluss ===== -->
+    <section class="scene closing" data-scene>
+      <div class="scene-media"><img data-parallax src="img/cono-kokos-erdbeer.jpg" alt="" /></div>
+      <div class="scene-veil closing-veil" aria-hidden="true"></div>
+      <div class="wrap closing-content">
+        <h2 class="reveal mask"><span>Heute schon<br />ein Eis gehabt?</span></h2>
+        <p class="reveal d-1">Täglich 11:30 – 22:30 Uhr · Hohenzollernstraße 44, München</p>
+        <a href="https://www.google.com/maps/search/?api=1&amp;query=Gelateria+Lorenzo+Corno+Hohenzollernstra%C3%9Fe+44+M%C3%BCnchen" target="_blank" rel="noopener" class="btn btn-light reveal d-2">Jetzt Route planen</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-grid">
+      <div class="f-brand">
+        <span class="brand-text">Lorenzo <em>Corno</em></span>
+        <p>Handgemachtes Gelato nach kalabrischer Tradition.<br />Eismacher in München seit 1986.</p>
+      </div>
+      <div class="f-col">
+        <h4>Kontakt</h4>
+        <p>Hohenzollernstraße 44<br />80801 München</p>
+        <p><a href="tel:+491776756438">0177 675 64 38</a></p>
+      </div>
+      <div class="f-col">
+        <h4>Öffnungszeiten</h4>
+        <p>Täglich 11:30 – 22:30 Uhr</p>
+        <p>Winterpause ca. Nov. – Feb.</p>
+      </div>
+      <div class="f-col">
+        <h4>Rechtliches</h4>
+        <p><a href="impressum.html">Impressum</a></p>
+        <p><a href="datenschutz.html">Datenschutz</a></p>
+      </div>
+    </div>
+    <div class="wrap footer-base">
+      <span>© <span id="year">2026</span> Gelateria Lorenzo Corno, München</span>
+      <a href="#start" class="to-top" aria-label="Zum Seitenanfang">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20V4m0 0-6 6m6-6 6 6"/></svg>
+      </a>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

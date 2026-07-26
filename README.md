@@ -1,40 +1,44 @@
 # webseiten-verkaufen
 
-Monorepo mit allen Webseiten. Jede Webseite liegt in einem eigenen Ordner unter
-`sites/<name>/` und ist für sich lauffähig – ein Ordner = eine Webseite = ein
-Deployment.
+Monorepo mit **allen** Webseiten. Bisher lag jede Seite in einem eigenen Branch –
+jetzt liegen alle zusammen in diesem einen Branch unter `sites/`.
+Ein Ordner = eine Webseite = ein Deployment.
 
-## Struktur
+## Alle Seiten auf einen Blick
 
-```
-sites/
-├── davids/                  Davids im Landhaus – Restaurant Neuss
-├── eiscafefranco/           Eiscafé de Franco – Eisdiele
-├── burger/                  Burger Brothers – Burger-Restaurant Berlin (statisch)
-├── burger-brothers-nextjs/  Burger Brothers – dieselbe Seite als Next.js-App
-├── handwerker/              Meisterbetrieb Schmidt – Handwerksbetrieb
-└── zero-titanium/           ZERO° Titanium – Produkt-Landingpage (Thermosflasche)
-```
+| Ordner | Seite | Branche / Ort | Technik | Start |
+| --- | --- | --- | --- | --- |
+| `sites/davids` | Davids im Landhaus | Restaurant, Neuss | HTML/CSS/JS | `index.html` |
+| `sites/cafe-elisa` | Café Elisa | Café & Eventlocation, Erfurt | HTML/CSS/JS | `index.html` |
+| `sites/fay` | Fay Café | Café & Brunch, Düsseldorf | HTML/CSS/JS | `index.html` |
+| `sites/eiscafefranco` | Eiscafé de Franco | Eisdiele | statischer Export (`*.dc.html`) | `startseite.dc.html` |
+| `sites/gelateria-lorenzo-corno` | Gelateria Lorenzo Corno | Eisdiele, München-Schwabing | HTML/CSS/JS | `index.html` |
+| `sites/burger` | Burger Brothers | Burger-Restaurant, Berlin | HTML/CSS (statisch) | `index.html` |
+| `sites/burger-brothers-nextjs` | Burger Brothers | dieselbe Seite als App | Next.js + TS + Tailwind | `app/page.tsx` |
+| `sites/af-automobile` | A&F Automobile | Kfz-Meisterbetrieb, München | HTML + GSAP/Lenis, Promo-Videos | `index.html` |
+| `sites/a-plus-s-autoservice` | A + S Autoservice GmbH | Kfz-Meisterbetrieb, Bonn | HTML/CSS/JS | `index.html` |
+| `sites/kfz-moeckl` | Kfz-Möckl GmbH | Autowerkstatt, Augsburg | HTML/CSS/JS | `index.html` |
+| `sites/mamand-motors` | Mamand Motors | Kfz-Meisterwerkstatt, Köln | HTML/CSS/JS | `index.html` |
+| `sites/ramona-daurelio` | Karosserie + Lack D'Aurelio | Unfall & Lack, Potsdam | HTML/CSS/JS | `index.html` |
+| `sites/geissler` | Geißler Heizungstechnik | Heizung & Service, Bochum | HTML/CSS/JS | `index.html` |
+| `sites/handwerker` | Meisterbetrieb Schmidt | Handwerksbetrieb | HTML/CSS/JS | `index.html` |
+| `sites/orthosmile` | OrthoSmile | Kieferorthopädie, München | eine HTML-Datei (CSS/JS inline) | `index.html` |
+| `sites/lela` | Schneider Atelier LE&LA | Demo-Website | eine HTML-Datei (komplett) | `index.html` |
+| `sites/av8` | AV8 | Produktseite Kokoswasser | HTML/CSS/JS + GSAP | `index.html` |
+| `sites/zero-titanium` | ZERO° Titanium | Produkt-Landingpage Thermosflasche | eine HTML-Datei + Bilder | `index.html` |
 
-## Die einzelnen Seiten
-
-| Ordner | Seite | Technik | Einstiegsdatei |
-| --- | --- | --- | --- |
-| `sites/davids` | Davids im Landhaus (Restaurant, Neuss) | statisches HTML + CSS + JS, eigene Bilder unter `img/` | `index.html` |
-| `sites/eiscafefranco` | Eiscafé de Franco | statischer HTML-Export (`*.dc.html`) | `startseite.dc.html` |
-| `sites/burger` | Burger Brothers (Berlin) | statisches HTML + CSS, CSS zusätzlich inline | `index.html` |
-| `sites/burger-brothers-nextjs` | Burger Brothers | Next.js + TypeScript + Tailwind (`npm install && npm run dev`) | `app/page.tsx` |
-| `sites/handwerker` | Meisterbetrieb Schmidt | statisches HTML + CSS + JS, Bilder unter `images/` | `index.html` |
-| `sites/zero-titanium` | ZERO° Titanium (Produkt-Landingpage) | eine HTML-Datei, Bilder relativ daneben | `index.html` |
+Gemeinsam genutzt: `assets/stock/` (Stockfotos inkl. `CREDITS.md`).
 
 Hinweise:
 
 - `sites/burger` und `sites/burger-brothers-nextjs` sind **dieselbe** Webseite in
-  zwei Varianten: einmal rein statisch (kein Build nötig) und einmal als
-  Next.js-App. Für ein Deployment reicht eine der beiden.
+  zwei Varianten – statisch (kein Build) und als Next.js-App. Zum Deployen
+  reicht eine davon.
 - `sites/eiscafefranco` hat keine `index.html`; Startseite ist
-  `startseite.dc.html`. Beim Hosten also entweder die Datei umbenennen oder im
-  Hoster ein Rewrite auf `startseite.dc.html` setzen.
+  `startseite.dc.html`. Beim Hosten die Datei umbenennen oder im Hoster ein
+  Rewrite darauf setzen.
+- `sites/orthosmile` und `sites/av8` kamen aus dem Repo `updates`, wo sie in
+  eigenen Branches lagen.
 
 ## Vercel-Setup
 
@@ -47,9 +51,8 @@ Für jede Seite ein eigenes Vercel-Projekt:
    Nur `sites/burger-brothers-nextjs` braucht das Preset `Next.js`.
 4. Production Branch: den Branch setzen, auf dem die Seiten liegen
 
-Danach deployed jeder Push auf den Branch alle Projekte parallel. Wenn du mit
-**Ignored Build Step** arbeiten willst (damit nur die geänderte Seite neu
-gebaut wird), trage pro Projekt in den Vercel-Settings ein:
+Damit nur die geänderte Seite neu gebaut wird, pro Projekt unter
+**Ignored Build Step** eintragen:
 
 ```bash
 git diff HEAD^ HEAD --quiet ./
@@ -57,14 +60,22 @@ git diff HEAD^ HEAD --quiet ./
 
 ## GitHub Pages
 
-`.github/workflows/pages.yml` deployt aktuell nur `sites/davids` (manuell über
-Actions → „Run workflow"). GitHub Pages kann pro Repo nur eine Seite hosten –
-für die anderen Seiten den `path` im Workflow umstellen oder Vercel nutzen.
+Unter `.github/workflows/` liegt je ein manuell startbarer Workflow
+(Actions → Workflow wählen → „Run workflow"):
+
+| Workflow | deployt |
+| --- | --- |
+| `pages.yml` | `sites/davids` |
+| `pages-af-automobile.yml` | `sites/af-automobile` |
+| `pages-daurelio.yml` | `sites/ramona-daurelio` |
+
+GitHub Pages kann pro Repo nur **eine** Seite gleichzeitig hosten – der zuletzt
+gelaufene Workflow gewinnt. Für mehrere Seiten parallel Vercel nutzen.
 
 ## Lokal testen
 
 ```bash
-cd sites/davids          # oder burger, handwerker, zero-titanium, eiscafefranco
+cd sites/davids          # oder jeden anderen Ordner aus der Tabelle
 python3 -m http.server 8000
 # http://localhost:8000 öffnen
 ```
