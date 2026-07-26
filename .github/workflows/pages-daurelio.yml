@@ -3,8 +3,11 @@ name: Deploy D'Aurelio site to GitHub Pages
 # Veroeffentlicht sites/ramona-daurelio unter
 # https://konrad01234.github.io/webseiten-verkaufen/
 #
-# "enablement: true" schaltet GitHub Pages beim ersten Lauf selbst frei,
-# es ist also kein Klick in den Repo-Settings noetig.
+# EINMALIG NOETIG, bevor dieser Workflow durchlaeuft:
+#   Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions"
+# Das Actions-Token darf eine Pages-Site nicht selbst anlegen
+# ("Resource not accessible by integration"), deshalb dieser eine Klick.
+# Danach deployt jeder Push auf diesen Branch automatisch.
 #
 # Die Seiten tragen derzeit <meta name="robots" content="noindex, nofollow">,
 # damit die Vorschau nicht in Suchmaschinen landet, solange Kontaktdaten,
