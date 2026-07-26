@@ -40,8 +40,11 @@ FAQ und Querverweisen – kein One-Pager.
   mitschrumpfende Navbar, gestaffelte Reveals, Zähler, Laufband mit
   Bewertungszitaten, animierte Ablauf-Timeline, Button-Sheen, Karten-Hover.
   Respektiert `prefers-reduced-motion` vollständig.
-- **Statt Fotos:** Es liegt kein eigenes Bildmaterial vor (siehe „Offene Punkte").
-  Als Platzhalter dienen bewusst gestaltete Blueprint-Grafiken (SVG) im
+- **Fotos:** sieben generische Werkstatt-Stockfotos (siehe „Bildnachweis").
+  Sie stehen im Hero (Ken-Burns-Zoom hinter blauer Abdunklung), als Panel auf fünf
+  Leistungsseiten, auf der Gebrauchtwagenseite und im Foto-Laufband „Aus der
+  Werkstatt" auf der Startseite. Wo kein passendes Foto vorliegt (HU/AU, Über uns),
+  stehen weiterhin gestaltete Blueprint-Grafiken (SVG) im
   Konstruktionszeichnungs-Stil – kein „fehlendes Bild"-Eindruck.
 
 ## Inhalte / Quellen
@@ -64,6 +67,35 @@ Alle Aussagen der Website (Kostenklarheit, keine Reparatur ohne Zustimmung,
 Termin oft am selben Tag) sind aus diesen Rezensionen belegt – es wurden keine
 Auszeichnungen, Zertifikate oder Zahlen erfunden.
 
+## Bildnachweis
+
+Die sieben Fotos in `img/` sind generische Werkstatt-Stockfotos und wurden aus
+`sites/a-plus-s-autoservice/img/` übernommen (Branch `claude/session-5zxhau`):
+
+| Datei | Quelle | Motiv | Auflösung |
+|-------|--------|-------|-----------|
+| `motor.jpg` | `stock_engine.jpg` | Zylinderkopf mit Ventilfedern | 1600 × 1063 |
+| `bremse.jpg` | `work_brake.jpg` | Bremssattel und Bremsscheibe | 554 × 307 |
+| `reifen.jpg` | `work_tyre.jpg` | Reifen und Radhaus von unten | 559 × 608 |
+| `fahrwerk.jpg` | `work_strut.jpg` | Federbein / Stoßdämpfer | 554 × 626 |
+| `diagnose.jpg` | `work_module.jpg` | Elektronisches Steuermodul | 554 × 690 |
+| `politur.jpg` | `gal_detail.jpg` | Eingeschäumte Heckpartie | 497 × 480 |
+| `felge.jpg` | `gal_wheels.jpg` | Eingeschäumte Felge | 318 × 480 |
+
+Alle sieben zeigen **keine Firmenschilder, keine Kennzeichen und keine
+erkennbaren Personen** – deshalb sind sie hier unbedenklich einsetzbar.
+
+**Bewusst NICHT übernommen** wurden Fotos, die fremde Betriebe zeigen: die
+Aufnahmen von `sites/ramona-daurelio/` (Fassade, Halle, Empfang, Tresen – das
+Schild „Karosserie + Lack D'Aurelio" ist lesbar), von `sites/mamand-motors/`
+(Werkstattschild und Kennzeichen erkennbar), von `sites/af-automobile/` sowie
+`a-plus-s-autoservice/img/building.jpg`. Sie würden Kunden eine fremde Werkstatt
+als die von Kfz-Möckl präsentieren.
+
+Ebenfalls nicht verwendbar: die fünf Dateien `sites/ramona-daurelio/img/stock-*.jpg`.
+Das sind **keine Fotos**, sondern gestaltete Platzhalterbilder mit der Aufschrift
+„Platzhalter · Stockfoto einsetzen" – dort wurden die Stockfotos nie beschafft.
+
 ## ⚠️ Offene Punkte vor der Veröffentlichung
 
 1. **Öffnungszeiten** sind eine plausible Annahme (`Mo–Do 08:00–17:30`,
@@ -73,10 +105,17 @@ Auszeichnungen, Zertifikate oder Zahlen erfunden.
    Haftpflichtversicherung sind als `[bitte ergänzen]` markiert. Für eine GmbH
    sind Registergericht und Registernummer **gesetzlich verpflichtend**.
 3. **Datenschutz:** Name und Anschrift des Hosting-Anbieters ergänzen (Ziffer 4).
-4. **Fotos:** Echte Bilder von Werkstatt, Halle, Team und Fahrzeugen fehlen. Die
-   blau-gelb bemalte Fassade ist ein starkes Wiedererkennungsmerkmal und sollte
-   im Hero verwendet werden. Die vorhandenen Google-Maps-Screenshots sind dafür
-   nicht nutzbar (Urheberrecht Dritter, zu geringe Auflösung).
+4. **Eigene Fotos** wären trotz der Stockfotos deutlich besser. Zwei Punkte:
+   - Die **blau-gelb bemalte Fassade** an der Ulmer Straße ist ein starkes
+     Wiedererkennungsmerkmal und gehört eigentlich in den Hero. Die vorhandenen
+     Google-Maps-Screenshots sind dafür nicht nutzbar (Urheberrecht Dritter,
+     zu geringe Auflösung).
+   - Sechs der sieben Stockfotos haben nur **300–690 px Kantenlänge**. Auf
+     Retina-Displays wirken sie leicht unscharf. Zum Austauschen genügt es, die
+     Dateien in `img/` unter gleichem Namen zu überschreiben – am HTML muss
+     nichts geändert werden. Die `width`/`height`-Angaben liegen in `build.py`
+     im Dict `PHOTOS` und sollten mitgepflegt werden.
+   - Es fehlen noch Team- und Hallenaufnahmen sowie Fotos für HU/AU.
 5. **Logo:** Es liegt keine Logodatei vor. Aktuell steht ein selbst gebautes
    Wortmarken-Signet („M" auf blauem Rundquadrat) in Nav, Footer und als Favicon.
 6. **Google Fonts** werden von Google-Servern geladen (in der

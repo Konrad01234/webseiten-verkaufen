@@ -336,6 +336,29 @@ body::before {
   from { transform: scale(1.02) translate3d(0, var(--py, 0px), 0); }
   to   { transform: scale(1.1) translate3d(-2%, calc(var(--py, 0px) - 1.5%), 0); }
 }
+/* Foto-Ebene hinter dem Verlauf (Ken-Burns) */
+.hero-photo {
+  position: absolute; inset: -8%; z-index: 0; pointer-events: none;
+  background-size: cover; background-position: center 42%;
+  animation: kenBurns 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes kenBurns {
+  from { transform: scale(1.04) translate3d(0, var(--py, 0px), 0); }
+  to   { transform: scale(1.17) translate3d(0, var(--py, 0px), 0); }
+}
+/* Mit Foto wird der Verlauf zur lesbarkeitssichernden Abdunklung */
+.hero.has-photo .hero-bg {
+  background:
+    radial-gradient(56% 70% at 80% 10%, rgba(47,123,201,.34), transparent 62%),
+    radial-gradient(48% 60% at 6% 98%,  rgba(255,198,26,.12), transparent 60%),
+    linear-gradient(98deg, rgba(4,16,31,.96) 0%, rgba(5,20,36,.88) 40%, rgba(4,16,31,.58) 100%),
+    linear-gradient(180deg, rgba(4,16,31,.46), rgba(4,16,31,.86));
+  animation: none;
+  inset: 0;
+}
+.hero.has-photo .hero-grid { opacity: .2; }
+
 /* Technisches Raster */
 .hero-grid {
   position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: .34;
@@ -457,6 +480,32 @@ body::before {
 .mq-item strong { color: var(--chalk); font-weight: 600; }
 @keyframes mqLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
+/* ── Foto-Laufband ──────────────────────────── */
+.pstrip { overflow: hidden; position: relative; }
+.pstrip::before, .pstrip::after {
+  content: ""; position: absolute; top: 0; bottom: 0; z-index: 2; pointer-events: none;
+  width: clamp(40px, 8vw, 130px);
+}
+.pstrip::before { left: 0;  background: linear-gradient(to right, var(--navy-900), transparent); }
+.pstrip::after  { right: 0; background: linear-gradient(to left,  var(--navy-900), transparent); }
+.pstrip-row { display: flex; gap: 14px; width: max-content; animation: pstripLeft 52s linear infinite; }
+.pstrip:hover .pstrip-row { animation-play-state: paused; }
+@keyframes pstripLeft { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.pshot {
+  flex: none; width: clamp(230px, 27vw, 330px); aspect-ratio: 4 / 3;
+  overflow: hidden; border-radius: var(--radius-sm);
+  border: 1px solid var(--line-dark); background: #04101f; position: relative;
+}
+.pshot img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+.pshot:hover img { transform: scale(1.08); }
+.pshot figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  padding: 1.4rem .9rem .7rem;
+  background: linear-gradient(transparent, rgba(4,16,31,.92));
+  font-size: .82rem; font-weight: 600; color: var(--chalk);
+  letter-spacing: .02em;
+}
+
 /* ── Karten / Grid ──────────────────────────── */
 .grid { display: grid; gap: clamp(1.1rem, 2.4vw, 1.7rem); }
 .grid-2 { grid-template-columns: repeat(2, 1fr); }
@@ -533,6 +582,23 @@ a.card { display: block; }
 }
 .panel svg.art { width: 74%; height: 74%; position: relative; z-index: 2; animation: floaty 8s ease-in-out infinite; }
 @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+/* Panel mit Foto statt Blueprint-Grafik */
+.panel--photo { background: #04101f; }
+.panel--photo img.ph {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; z-index: 1;
+  transition: transform .8s var(--ease);
+}
+.panel--photo:hover img.ph { transform: scale(1.05); }
+.panel--photo::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    radial-gradient(70% 80% at 78% 12%, rgba(47,123,201,.24), transparent 66%),
+    linear-gradient(180deg, rgba(4,16,31,.1) 40%, rgba(4,16,31,.72));
+}
+.panel--photo .pgrid { z-index: 2; opacity: .16; }
+.panel--photo .ptag { z-index: 4; }
+
 .panel .ptag {
   position: absolute; z-index: 3; left: 16px; bottom: 16px;
   font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase;
@@ -878,7 +944,8 @@ textarea { resize: vertical; min-height: 120px; }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
   .js .reveal, .js .reveal-l, .js .reveal-r, .js .reveal-scale { opacity: 1 !important; transform: none !important; }
-  .hero-bg, .hero-sweep, .marquee-row, .panel svg.art { animation: none !important; }
+  .hero-bg, .hero-sweep, .marquee-row, .panel svg.art,
+  .hero-photo, .pstrip-row { animation: none !important; }
   .js .hero-car [data-draw] { stroke-dashoffset: 0 !important; animation: none !important; }
   .scroll-progress, .scroll-ind { display: none !important; }
   .steps::before { transform: scaleX(1) !important; }

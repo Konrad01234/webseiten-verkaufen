@@ -418,6 +418,62 @@ def checks(items, cls="checks"):
         cls, "\n".join('          <li>%s<span>%s</span></li>' % (ic("check"), t) for t in items))
 
 
+# ── Fotos ────────────────────────────────────────────────────────────────────
+# Generische Stockfotos, übernommen aus sites/a-plus-s-autoservice (Branch
+# claude/session-5zxhau). Keine Firma, keine Kennzeichen, keine erkennbaren
+# Personen darauf. Fotos fremder Betriebe wurden bewusst NICHT übernommen.
+PHOTOS = {
+    "motor.jpg":    ("Zylinderkopf mit Ventilfedern eines geöffneten Motors", 1600, 1063),
+    "bremse.jpg":   ("Bremssattel und Bremsscheibe eines aufgebockten Fahrzeugs", 554, 307),
+    "reifen.jpg":   ("Reifen und Radhaus von unten auf der Hebebühne", 559, 608),
+    "fahrwerk.jpg": ("Federbein und Stoßdämpfer am Fahrzeug", 554, 626),
+    "diagnose.jpg": ("Elektronisches Steuermodul in der Hand eines Mechanikers", 554, 690),
+    "politur.jpg":  ("Eingeschäumte Fahrzeugheckpartie bei der Aufbereitung", 497, 480),
+    "felge.jpg":    ("Eingeschäumte Felge bei der Radreinigung", 318, 480),
+}
+
+# Welche Leistungsseite bekommt welches Foto (None = Blueprint-Grafik)
+SERVICE_PHOTO = {
+    "hu-au":      None,
+    "inspektion": "motor.jpg",
+    "bremsen":    "bremse.jpg",
+    "reifen":     "reifen.jpg",
+    "fahrwerk":   "fahrwerk.jpg",
+    "reparatur":  "diagnose.jpg",
+}
+
+
+def photo_panel(fname, tag, extra=""):
+    """Panel mit Foto statt Blueprint-Grafik."""
+    alt, w, h = PHOTOS[fname]
+    return '''<div class="panel panel--photo%s">
+            <img class="ph" src="img/%s" alt="%s" width="%d" height="%d" loading="lazy" decoding="async" />
+            <div class="pgrid" aria-hidden="true"></div>
+            <span class="ptag">%s</span>
+          </div>''' % (extra, fname, alt, w, h, tag)
+
+
+def photo_strip():
+    """Endlos laufendes Foto-Band (doppelt für die nahtlose Schleife)."""
+    order = ["motor.jpg", "bremse.jpg", "fahrwerk.jpg", "reifen.jpg",
+             "diagnose.jpg", "politur.jpg", "felge.jpg"]
+    caps = {"motor.jpg": "Motorinstandsetzung", "bremse.jpg": "Bremsanlage",
+            "fahrwerk.jpg": "Fahrwerk", "reifen.jpg": "Reifen &amp; Räder",
+            "diagnose.jpg": "Diagnose &amp; Elektronik", "politur.jpg": "Aufbereitung",
+            "felge.jpg": "Räder"}
+    shots = []
+    for rep in range(2):
+        for f in order:
+            alt, w, h = PHOTOS[f]
+            shots.append(
+                '<figure class="pshot"><img src="img/%s" alt="%s" width="%d" height="%d" '
+                'loading="lazy" decoding="async"%s /><figcaption>%s</figcaption></figure>'
+                % (f, alt, w, h, ' aria-hidden="true"' if rep else "", caps[f]))
+    return '''      <div class="pstrip">
+        <div class="pstrip-row">%s</div>
+      </div>''' % "".join(shots)
+
+
 # ── Grundgerüst ──────────────────────────────────────────────────────────────
 SHELL = '''<!DOCTYPE html>
 <html lang="de">
@@ -505,8 +561,10 @@ def render(filename, title, desc, body, active, service_active=None, preloader=F
 # ═════════════════════════════════════════════════════════════════════════════
 # STARTSEITE
 # ═════════════════════════════════════════════════════════════════════════════
-INDEX_BODY = '''    <section class="hero">
-      <div class="hero-bg" data-parallax="0.2" aria-hidden="true"></div>
+INDEX_BODY = '''    <section class="hero has-photo">
+      <div class="hero-photo" data-parallax="0.18" aria-hidden="true"
+           style="background-image:url('img/motor.jpg')"></div>
+      <div class="hero-bg" aria-hidden="true"></div>
       <div class="hero-grid" aria-hidden="true"></div>
       <div class="hero-sweep" aria-hidden="true"></div>
       ''' + CAR_SVG + '''
@@ -584,8 +642,19 @@ INDEX_BODY = '''    <section class="hero">
       </div>
     </section>
 
-    <!-- ===== Zahlen ===== -->
+    <!-- ===== Aus der Werkstatt ===== -->
     <section class="section section--dark section--tight">
+      <div class="wrap">
+        <div class="section-head center reveal" style="margin-bottom:2rem">
+          <span class="eyebrow" style="color:var(--yellow)">Aus der Werkstatt</span>
+          <h2 style="color:#fff">Die Arbeit, um die es geht</h2>
+        </div>
+      </div>
+''' + photo_strip() + '''
+    </section>
+
+    <!-- ===== Zahlen ===== -->
+    <section class="section section--dark section--tight" style="padding-top:0">
       <div class="wrap">
         <div class="stats">
           <div class="stat reveal">
@@ -864,11 +933,7 @@ def service_page(slug, eyebrow, h1, hero_p, sec_eyebrow, sec_h2, lede, intro_par
           %s
         </div>
         <div class="split-media reveal-r">
-          <div class="panel">
-            <div class="pgrid" aria-hidden="true"></div>
-            %s
-            <span class="ptag">%s</span>
-          </div>
+          %s
         </div>
       </div>
     </section>
@@ -935,7 +1000,12 @@ def service_page(slug, eyebrow, h1, hero_p, sec_eyebrow, sec_h2, lede, intro_par
 
 ''' % (sec_eyebrow, sec_h2, lede,
        "\n          ".join("<p>%s</p>" % p for p in intro_paras),
-       PANEL_ART[slug], panel_tag,
+       (photo_panel(SERVICE_PHOTO[slug], panel_tag) if SERVICE_PHOTO.get(slug)
+        else '''<div class="panel">
+            <div class="pgrid" aria-hidden="true"></div>
+            %s
+            <span class="ptag">%s</span>
+          </div>''' % (PANEL_ART[slug], panel_tag)),
        scope_title, checks(scope),
        TEL_URI, ic("phone"), TEL,
        signs_title, sign_cards, note_html,
@@ -1320,17 +1390,7 @@ GEBRAUCHT_BODY = page_hero(
             muss sagen, dass es voll und ganz die Zeit wert war.“</p>
         </div>
         <div class="split-media reveal-r">
-          <div class="panel panel--yellow">
-            <div class="pgrid" aria-hidden="true"></div>
-            <svg class="art" viewBox="0 0 220 190" fill="none" stroke="currentColor" stroke-width="2.8"
-                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <circle cx="62" cy="124" r="26" stroke="rgba(148,196,240,.8)"/>
-              <circle cx="62" cy="124" r="10" stroke="rgba(148,196,240,.5)"/>
-              <path d="m82 106 58-58M128 42l20 20M148 30l20 20" stroke="#ffc61a" stroke-width="4.5"/>
-              <path d="M16 166h188" stroke="rgba(148,196,240,.3)" stroke-dasharray="4 10"/>
-            </svg>
-            <span class="ptag">Geprüft im eigenen Haus</span>
-          </div>
+          ''' + photo_panel("politur.jpg", "Geprüft im eigenen Haus") + '''
         </div>
       </div>
     </section>
