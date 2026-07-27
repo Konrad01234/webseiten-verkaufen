@@ -11,10 +11,7 @@ Ein Ordner = eine Webseite = ein Deployment.
 | `sites/davids` | Davids im Landhaus | Restaurant, Neuss | HTML/CSS/JS | `index.html` |
 | `sites/cafe-elisa` | Café Elisa | Café & Eventlocation, Erfurt | HTML/CSS/JS | `index.html` |
 | `sites/fay` | Fay Café | Café & Brunch, Düsseldorf | HTML/CSS/JS | `index.html` |
-| `sites/eiscafefranco` | Eiscafé de Franco | Eisdiele | statischer Export (`*.dc.html`) | `startseite.dc.html` |
 | `sites/gelateria-lorenzo-corno` | Gelateria Lorenzo Corno | Eisdiele, München-Schwabing | HTML/CSS/JS | `index.html` |
-| `sites/burger` | Burger Brothers | Burger-Restaurant, Berlin | HTML/CSS (statisch) | `index.html` |
-| `sites/burger-brothers-nextjs` | Burger Brothers | dieselbe Seite als App | Next.js + TS + Tailwind | `app/page.tsx` |
 | `sites/af-automobile` | A&F Automobile | Kfz-Meisterbetrieb, München | HTML + GSAP/Lenis, Promo-Videos | `index.html` |
 | `sites/a-plus-s-autoservice` | A + S Autoservice GmbH | Kfz-Meisterbetrieb, Bonn | HTML/CSS/JS | `index.html` |
 | `sites/kfz-moeckl` | Kfz-Möckl GmbH | Autowerkstatt, Augsburg | HTML/CSS/JS | `index.html` |
@@ -31,12 +28,7 @@ Gemeinsam genutzt: `assets/stock/` (Stockfotos inkl. `CREDITS.md`).
 
 Hinweise:
 
-- `sites/burger` und `sites/burger-brothers-nextjs` sind **dieselbe** Webseite in
-  zwei Varianten – statisch (kein Build) und als Next.js-App. Zum Deployen
-  reicht eine davon.
-- `sites/eiscafefranco` hat keine `index.html`; Startseite ist
-  `startseite.dc.html`. Beim Hosten die Datei umbenennen oder im Hoster ein
-  Rewrite darauf setzen.
+- Alle Seiten sind statisches HTML – kein Build-Schritt nötig.
 - `sites/orthosmile` und `sites/av8` kamen aus dem Repo `updates`, wo sie in
   eigenen Branches lagen.
 
@@ -47,8 +39,7 @@ Für jede Seite ein eigenes Vercel-Projekt:
 1. In Vercel **Add New Project** → dieses Repo auswählen
 2. **Root Directory** auf den jeweiligen Ordner setzen, z. B.
    Projekt „davids" → Root Directory `sites/davids`
-3. **Framework Preset**: `Other` (statisches HTML, kein Build nötig).
-   Nur `sites/burger-brothers-nextjs` braucht das Preset `Next.js`.
+3. **Framework Preset**: `Other` (statisches HTML, kein Build nötig)
 4. Production Branch: den Branch setzen, auf dem die Seiten liegen
 
 Damit nur die geänderte Seite neu gebaut wird, pro Projekt unter
@@ -78,12 +69,4 @@ gelaufene Workflow gewinnt. Für mehrere Seiten parallel Vercel nutzen.
 cd sites/davids          # oder jeden anderen Ordner aus der Tabelle
 python3 -m http.server 8000
 # http://localhost:8000 öffnen
-```
-
-Für die Next.js-Variante:
-
-```bash
-cd sites/burger-brothers-nextjs
-npm install
-npm run dev
 ```
