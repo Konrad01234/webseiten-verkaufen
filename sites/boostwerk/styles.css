@@ -326,6 +326,62 @@ section { position: relative; padding: clamp(5rem, 11vw, 9rem) 0; }
 @keyframes cue { 0%,100% { transform: scaleY(.35); opacity: .5 } 50% { transform: scaleY(1); opacity: 1 } }
 
 /* =========================================================================
+   Seitenkopf der Unterseiten (kompakter Hero)
+   ========================================================================= */
+.page-hero {
+  position: relative; min-height: min(48svh, 430px);
+  display: grid; align-items: end;
+  padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(2.4rem, 4vw, 3.2rem);
+  overflow: hidden; isolation: isolate;
+}
+.page-hero .hero-media { inset: 0; }
+.page-hero .hero-media img { height: 100%; animation: none; object-position: center 60%; }
+.page-hero .hero-media::after {
+  background:
+    linear-gradient(180deg, rgba(6,7,10,.90) 0%, rgba(6,7,10,.62) 38%, rgba(6,7,10,.88) 78%, var(--bg) 100%),
+    linear-gradient(96deg, rgba(6,7,10,.90) 8%, rgba(6,7,10,.42) 60%, rgba(6,7,10,.25) 100%);
+}
+.ph-inner { max-width: 800px; }
+.page-hero h1 { font-size: clamp(2.2rem, 5.4vw, 3.9rem); margin-bottom: .45em; }
+.page-hero .lead { color: #c6cddb; }
+
+.breadcrumb { font-size: .8rem; color: var(--dim); margin-bottom: 1.2rem; letter-spacing: .04em; }
+.breadcrumb a { color: var(--muted); transition: color .25s; }
+.breadcrumb a:hover { color: var(--boost); }
+.breadcrumb span { margin: 0 .45rem; opacity: .5; }
+
+/* =========================================================================
+   Häufige Fragen (Akkordeon)
+   ========================================================================= */
+.faq { display: grid; gap: .75rem; max-width: 860px; }
+.faq details {
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  background: linear-gradient(160deg, var(--surface), var(--bg-2));
+  overflow: hidden; transition: border-color .3s, box-shadow .3s;
+}
+.faq details[open] { border-color: rgba(255,77,28,.32); box-shadow: var(--shadow-md); }
+.faq summary {
+  list-style: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.2rem;
+  padding: 1.15rem 1.4rem;
+  font-family: Archivo, sans-serif; font-weight: 700; font-size: 1rem; line-height: 1.4;
+  transition: color .25s;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary:hover { color: var(--boost-warm); }
+.faq summary::after {
+  content: ""; flex: none; width: 10px; height: 10px;
+  border-right: 2px solid var(--boost); border-bottom: 2px solid var(--boost);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform .35s var(--ease);
+}
+.faq details[open] summary::after { transform: rotate(-135deg) translate(-2px, -2px); }
+.faq-body { padding: 0 1.4rem 1.35rem; }
+.faq-body p { margin: 0; font-size: .95rem; }
+.js .faq details[open] .faq-body { animation: faqIn .45s var(--ease-out); }
+@keyframes faqIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+
+/* =========================================================================
    Marken-Laufband
    ========================================================================= */
 .marquee { padding: 1.9rem 0; border-block: 1px solid var(--line-soft); background: var(--bg-2); overflow: hidden; }
@@ -495,6 +551,8 @@ section { position: relative; padding: clamp(5rem, 11vw, 9rem) 0; }
 .wf-col.c3 { animation: wfup 38s linear infinite; }
 @keyframes wfup   { from { transform: translateY(0);    } to { transform: translateY(-50%); } }
 @keyframes wfdown { from { transform: translateY(-50%); } to { transform: translateY(0);    } }
+/* Kurzfassung auf der Startseite */
+.waterfall.compact { height: clamp(430px, 58vh, 600px); }
 @media (max-width: 900px) { .waterfall { grid-template-columns: repeat(2, 1fr); } .wf-col.c3 { display: none; } }
 @media (max-width: 600px) { .waterfall { grid-template-columns: 1fr; height: 560px; } .wf-col.c2 { display: none; } }
 

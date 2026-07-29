@@ -10,13 +10,18 @@
   var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
 
   /* ---------------------------------------------------------------------
-     Preloader – füllt den Balken und gibt den Hero-Einlauf frei
+     Preloader – füllt den Balken und gibt den Hero-Einlauf frei.
+     Läuft nur auf der Startseite; die Unterseiten starten direkt.
      --------------------------------------------------------------------- */
   (function preloader() {
     var box  = $("#preloader");
     var fill = $(".pl-fill");
     var hero = $(".hero");
-    if (!box) return;
+
+    if (!box) {                       // Unterseite: Hero sofort freigeben
+      if (hero) hero.classList.add("ready");
+      return;
+    }
 
     var pct = 0;
     var timer = setInterval(function () {
@@ -334,37 +339,26 @@
   })();
 
   /* ---------------------------------------------------------------------
-     Aktiven Menüpunkt beim Scrollen markieren + Jahr im Footer
+     Häufige Fragen: immer nur eine Antwort offen halten
      --------------------------------------------------------------------- */
-  (function activeLink() {
+  (function faq() {
+    var items = $$(".faq details");
+    if (items.length < 2) return;
+
+    items.forEach(function (d) {
+      d.addEventListener("toggle", function () {
+        if (!d.open) return;
+        items.forEach(function (other) { if (other !== d) other.open = false; });
+      });
+    });
+  })();
+
+  /* ---------------------------------------------------------------------
+     Jahreszahl im Footer
+     --------------------------------------------------------------------- */
+  (function year() {
     var y = $("#year");
     if (y) y.textContent = new Date().getFullYear();
-
-    var links = $$(".nav-links a");
-    if (!links.length || !("IntersectionObserver" in window)) return;
-
-    var map = {};
-    links.forEach(function (a) {
-      var id = a.getAttribute("href");
-      if (id && id.charAt(0) === "#") {
-        var sec = document.querySelector(id);
-        if (sec) map[id.slice(1)] = a;
-      }
-    });
-
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        links.forEach(function (a) { a.classList.remove("active"); });
-        var a = map[e.target.id];
-        if (a) a.classList.add("active");
-      });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-
-    Object.keys(map).forEach(function (id) {
-      var sec = document.getElementById(id);
-      if (sec) io.observe(sec);
-    });
   })();
 
 })();

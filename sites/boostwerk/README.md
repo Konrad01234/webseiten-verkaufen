@@ -1,19 +1,28 @@
 # Boostwerk Köln – Website
 
-Cineastische Einseiten-Website (SaaS-Landingpage-Stil) für die freie Kfz-Werkstatt
+Cineastische, mehrseitige Website im SaaS-Landingpage-Stil für die freie Kfz-Werkstatt
 **Boostwerk Köln**, Pauline-Christmann-Straße 5, 51107 Köln-Ostheim.
 
-## Dateien
+## Seiten
 
 | Datei | Inhalt |
 |-------|--------|
-| `index.html` | Startseite: Hero, Leistungen, Ablauf, Werkstatt, Rezensions-Wasserfall, Kontakt |
+| `index.html` | Startseite – Hero, vier Leistungen als Auszug, Werkstatt-Teaser, Ablauf, Rezensions-Wasserfall (Kurzfassung) |
+| `leistungen.html` | Alle acht Leistungen im Detail, Ablauf in drei Schritten, häufige Fragen (Akkordeon) |
+| `werkstatt.html` | Über die Werkstatt, animierte Hebebühne, vier Versprechen, Anfahrt mit Foto und Karte |
+| `rezensionen.html` | Google-Bewertung und der vollständige Rezensions-Wasserfall |
+| `kontakt.html` | Kontaktdaten, Öffnungszeiten, Karte und Anfrageformular |
 | `impressum.html` | Impressum – **Pflichtangaben noch einzutragen** |
 | `datenschutz.html` | Datenschutzerklärung, passend zum tatsächlichen Stand der Seite |
-| `styles.css` | Design-System + alle Animationen |
-| `app.js` | Preloader, Reveals, Zähler, Tilt, Wasserfall, Formular, Cookie-Hinweis |
+| `styles.css` | Design-System + alle Animationen (gemeinsam für alle Seiten) |
+| `app.js` | Preloader, Reveals, Zähler, Tilt, Wasserfall, FAQ, Formular, Cookie-Hinweis |
 | `reviews.js` | **Datenquelle für die Rezensionen** – hier die echten Google-Texte eintragen |
 | `img/` | Bilder + Favicon |
+
+Alle Seiten teilen sich Kopfleiste, Navigation, Footer und das SVG-Icon-Set. Wird dort
+etwas geändert (z. B. eine neue Telefonnummer), muss die Änderung in allen HTML-Dateien
+nachgezogen werden – die Seiten sind bewusst reines HTML ohne Build-Schritt.
+Der aktive Menüpunkt wird pro Seite über `class="active"` gesetzt.
 
 ## ⚠️ Vor dem Livegang zu erledigen
 
@@ -52,12 +61,15 @@ Betreiber liefern kann:
 - **Stil:** dunkel, cineastisch – Nachtblau/Schwarz mit „Boost-Orange“ (#ff4d1c),
   abgeleitet aus dem Logo und dem Sonnenuntergang auf dem Hallenfoto.
 - **Typografie:** Archivo (Überschriften, schwer & leicht kursiv wie das Logo) + Inter (Text).
-- **Animationen:** Preloader, Ken-Burns-Hero mit Parallax und Lichtstreifen,
-  Scroll-Fortschritt, mitschrumpfende Navbar, gestaffelte Reveals, Count-up-Zähler,
-  Marken-Laufband, 3D-Tilt auf den Leistungskarten, wachsende Ablauf-Linie,
+- **Animationen:** Preloader (nur Startseite), Ken-Burns-Hero mit Parallax und
+  Lichtstreifen, Scroll-Fortschritt, mitschrumpfende Navbar, gestaffelte Reveals,
+  Count-up-Zähler, Marken-Laufband, 3D-Tilt auf den Leistungskarten, wachsende
+  Ablauf-Linie, FAQ-Akkordeon (es bleibt immer nur eine Antwort offen),
   animierte SVG-Hebebühne (Fahrzeug fährt beim Scrollen hoch) und der
   **Rezensions-Wasserfall**: drei Spalten, die unterschiedlich schnell laufen,
   Mitte gegenläufig, Pause bei Hover.
+- Die Unterseiten bekommen statt des großen Heros einen kompakten Seitenkopf
+  (`.page-hero`) mit Brotkrumen-Navigation.
 - `prefers-reduced-motion` wird respektiert – alle Bewegungen schalten sich dann ab.
 
 ## Bilder
