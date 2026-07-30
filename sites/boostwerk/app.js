@@ -167,21 +167,41 @@
   })();
 
   /* ---------------------------------------------------------------------
-     Hero-Parallax: Foto wandert langsamer als der Rest
+     Parallax: Hero-Foto und die Foto-Bänder wandern langsamer als der Rest
      --------------------------------------------------------------------- */
   (function parallax() {
-    var img = $(".hero-media img");
-    if (!img || reduced) return;
+    if (reduced) return;
+
+    var hero  = $(".hero-media img");
+    var bands = $$(".band img");
+    if (!hero && !bands.length) return;
+
     var ticking = false;
 
     function move() {
-      var y = window.scrollY;
-      if (y < window.innerHeight * 1.3) img.style.translate = "0 " + (y * 0.22) + "px";
+      var vh = window.innerHeight;
+
+      if (hero) {
+        var y = window.scrollY;
+        if (y < vh * 1.3) hero.style.translate = "0 " + (y * 0.22) + "px";
+      }
+
+      bands.forEach(function (img) {
+        var r = img.parentElement.getBoundingClientRect();
+        if (r.bottom < -100 || r.top > vh + 100) return;
+        // -1 … +1, je nachdem wo das Band im Fenster steht
+        var p = (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2);
+        img.style.translate = "0 " + (p * -6) + "%";
+      });
+
       ticking = false;
     }
+
     window.addEventListener("scroll", function () {
       if (!ticking) { ticking = true; requestAnimationFrame(move); }
     }, { passive: true });
+    window.addEventListener("resize", move, { passive: true });
+    move();
   })();
 
   /* ---------------------------------------------------------------------

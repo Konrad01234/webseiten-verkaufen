@@ -48,7 +48,12 @@ Betreiber liefern kann:
 4. **Hoster** → `datenschutz.html`, Abschnitt 4
    Name und Anschrift des Hosting-Anbieters eintragen.
 
-5. **Angaben prüfen** – aus öffentlichen Verzeichnissen übernommen, nicht bestätigt:
+5. **Galerie-Fotos ersetzen oder lizenzieren** → `img/fotos/`
+   Die acht Fotos in den Galerien und Bildbändern sind fremde Stockfotos mit
+   ungeklärter Lizenz und auf der Seite gelb markiert. Details und Alternativen:
+   `assets/fotos/BILDNACHWEIS.md`.
+
+6. **Angaben prüfen** – aus öffentlichen Verzeichnissen übernommen, nicht bestätigt:
    - Telefonnummern `0176 866 643 46` und `0155 633 100 06`
    - Öffnungszeiten Mo–Fr 9–18 Uhr, Sa 9–15 Uhr
      (eine zweite Quelle nannte Mo–Sa 8–18 Uhr – bitte festlegen)
@@ -74,22 +79,63 @@ Betreiber liefern kann:
 
 ## Bilder
 
-Es lag nur **ein** Foto vor (Screenshot des Google-Profils). Daraus wurden
-zugeschnitten und aufbereitet:
+### Echte Fotos der Werkstatt (Status: in Ordnung)
+
+Aus dem einen vorliegenden Foto (Screenshot des Google-Profils) zugeschnitten:
 
 | Datei | Verwendung |
 |-------|------------|
-| `img/hero.jpg` | Hero – Halle im Abendlicht |
-| `img/halle.jpg` | Abschnitt „Anfahrt“ |
+| `img/hero.jpg` | Hero der Startseite + Seitenköpfe der Unterseiten |
+| `img/halle.jpg` | Abschnitt „Anfahrt“ auf `werkstatt.html` |
 | `img/logo.jpg` | Leuchtschild der Werkstatt, im Footer |
 | `img/schild.jpg`, `img/banner.jpg` | Reserve, aktuell nicht eingebunden |
 | `img/favicon.svg` | Browser-Icon (eigens erstellt) |
 
-Weitere Bilder (z. B. Hebebühne, Werkstattinnenraum) konnten **nicht** aus dem
-Internet beschafft werden – die Netzwerk-Policy dieser Umgebung blockiert
-sämtliche externen Downloads. Statt Stockfotos wurde die Hebebühne deshalb als
-animierte SVG-Grafik gebaut. Sobald echte Werkstattfotos vorliegen, lassen sie
-sich in den Abschnitt „Werkstatt“ einsetzen und ersetzen die Illustration.
+### ⚠️ Galerie-Fotos (Status: Platzhalter, Lizenz ungeklärt)
+
+Unter `img/fotos/` liegen acht Werkstattfotos, die in den Galerien und
+Bildbändern verwendet werden. Es sind **fremde Stock- und Pressefotos**, keine
+Bilder von Boostwerk Köln – teils waren die Quellen noch im Screenshot sichtbar
+(`kerridgecs.com`, `smogtechinstitute.com`, `nzherald.co.nz`).
+
+Sie sind eingebaut, damit das Layout beurteilt werden kann, und tragen auf der
+Seite ein gelbes Label **„Platzhalter · Lizenz klären“**. Vor dem Livegang
+müssen sie ersetzt oder lizenziert werden. Zum Entfernen des Labels einfach die
+CSS-Klasse `is-placeholder` am jeweiligen `<figure class="shot">` bzw.
+`<div class="band">` löschen.
+
+Vollständige Herkunftsliste und die Wege zu rechtssicheren Fotos:
+**`assets/fotos/BILDNACHWEIS.md`** (Repo-Wurzel).
+
+| Datei in `img/fotos/` | Eingesetzt auf |
+|-----------------------|----------------|
+| `hebebuehnen-halle.jpg` | `index.html` (Einblick), `werkstatt.html` (Rundgang) |
+| `werkzeugwand.jpg` | `index.html`, `werkstatt.html` |
+| `motor-arbeit.jpg` | `index.html`, `werkstatt.html` |
+| `diagnose-tablet.jpg` | `index.html` |
+| `diagnose-station.jpg` | `werkstatt.html` |
+| `motorraum.jpg` | `werkstatt.html` |
+| `diagnose-laptop.jpg` | `werkstatt.html`, Foto-Band `leistungen.html` |
+| `werkzeugwand-detail.jpg` | Foto-Band `werkstatt.html` |
+
+### Wiederverwendung für andere Seiten
+
+Die Originale in bester Auflösung liegen zentral unter
+`assets/fotos/kfz-werkstatt/` in der Repo-Wurzel – nicht in diesem Seitenordner.
+Für eine weitere Werkstatt-Seite also von dort eine verkleinerte Kopie nach
+`sites/<name>/img/` legen (Web-Versionen hier: 1100 px breit, JPEG Q82,
+progressiv) und den Eintrag in `BILDNACHWEIS.md` ergänzen.
+
+Achtung: `assets/` liegt außerhalb der Vercel-Root-Directory und wird deshalb
+**nicht** mit ausgeliefert – das ist gewollt, die Originale sollen nicht öffentlich
+abrufbar sein.
+
+### Hebebühne als SVG
+
+Die animierte Hebebühne auf `index.html` und `werkstatt.html` ist eine eigens
+gezeichnete SVG-Grafik (Fahrzeug fährt beim Scrollen hoch). Sie bleibt auch dann
+sinnvoll, wenn echte Fotos dazukommen – anders als ein Foto lässt sie sich
+animieren und ist rechtlich unbedenklich.
 
 ## Technik
 

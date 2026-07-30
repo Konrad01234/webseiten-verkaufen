@@ -8,7 +8,28 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 sites/
 ├── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
 └── boostwerk/     Boostwerk Köln – Kfz-Werkstatt Köln-Ostheim (statisches HTML + CSS + JS)
+
+assets/
+└── fotos/         Gemeinsame Foto-Bibliothek für alle Seiten (Originale)
+    ├── BILDNACHWEIS.md      Lizenzregister – für jedes Bild Herkunft und Status
+    └── kfz-werkstatt/       Werkstattmotive
 ```
+
+## Bilder
+
+`assets/fotos/` ist die zentrale Bibliothek für Fotos, die auf mehreren Seiten
+verwendet werden können. Dort liegen die **Originale**; für den Einsatz wandert
+jeweils eine verkleinerte Kopie in `sites/<name>/img/`.
+
+Der Ordner liegt absichtlich **außerhalb** der Vercel-Root-Directories und wird
+daher nicht mit ausgeliefert.
+
+> **Wichtig:** Jedes Bild braucht vor der Veröffentlichung eine geklärte
+> Rechtelage – in Deutschland ist die Nutzung fremder Fotos ein häufiger
+> Abmahngrund, und es haftet der Website-Betreiber. Deshalb ist zu jedem Bild in
+> `assets/fotos/BILDNACHWEIS.md` festgehalten, woher es kommt. Bilder mit dem
+> Status `UNGEKLÄRT` tragen auf der Seite ein sichtbares gelbes Platzhalter-Label
+> und dürfen nicht live gehen.
 
 ## Vercel-Setup
 
