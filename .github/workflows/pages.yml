@@ -1,8 +1,18 @@
-name: Deploy Davids site to GitHub Pages
+name: Vorschau auf GitHub Pages
 
-# Hinweis: Vor dem ersten Lauf muss GitHub Pages einmalig aktiviert werden:
-# Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions".
-# Danach diesen Workflow manuell starten (Actions -> diesen Workflow -> "Run workflow").
+# Rollt ALLE Seiten aus sites/ als Vorschau aus, jede in einem Unterordner:
+#   https://<user>.github.io/webseiten-verkaufen/            -> Übersicht
+#   https://<user>.github.io/webseiten-verkaufen/davids/     -> Davids im Landhaus
+#   https://<user>.github.io/webseiten-verkaufen/boostwerk/  -> Boostwerk Köln
+#
+# Einmalige Vorbereitung:
+#   Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions"
+#
+# Danach: Actions -> "Vorschau auf GitHub Pages" -> "Run workflow"
+#         und dort den gewünschten Branch auswählen (z. B. einen Feature-Branch).
+#
+# Hinweis: Die Vorschau enthält eine robots.txt, die Suchmaschinen aussperrt –
+# unfertige Seiten sollen nicht bei Google landen.
 
 on:
   workflow_dispatch:
@@ -25,12 +35,78 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
+      - name: Seiten zusammenstellen
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+
+          # Suchmaschinen aussperren – das ist nur eine Vorschau
+          printf 'User-agent: *\nDisallow: /\n' > _site/robots.txt
+
+          # Kopf der Übersichtsseite
+          cat > _site/index.html <<'HTML'
+          <!DOCTYPE html>
+          <html lang="de">
+          <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width,initial-scale=1">
+          <meta name="robots" content="noindex,nofollow">
+          <title>Vorschau – Webseiten</title>
+          <style>
+            :root { color-scheme: dark }
+            body { margin:0; min-height:100vh; display:grid; place-content:center;
+                   background:#0a0b0e; color:#eef1f6; padding:2rem;
+                   font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif }
+            .box { width:min(100%,560px) }
+            h1 { font-size:1.6rem; margin:0 0 .3rem; letter-spacing:-.02em }
+            p.sub { margin:0 0 2rem; color:#98a1b2; font-size:.94rem }
+            ul { list-style:none; padding:0; margin:0; display:grid; gap:.75rem }
+            a.card { display:block; padding:1.1rem 1.3rem; border-radius:14px;
+                     border:1px solid rgba(255,255,255,.1); background:#12151c;
+                     color:inherit; text-decoration:none; transition:.25s }
+            a.card:hover { border-color:#ff4d1c; transform:translateY(-2px) }
+            a.card strong { display:block; font-size:1.05rem }
+            a.card span { color:#98a1b2; font-size:.88rem }
+            footer { margin-top:2rem; font-size:.8rem; color:#6b7486 }
+          </style>
+          </head>
+          <body>
+          <div class="box">
+            <h1>Vorschau</h1>
+            <p class="sub">Statische Seiten aus diesem Repository. Kein Produktivstand.</p>
+            <ul>
+          HTML
+
+          # Jede Seite aus sites/ kopieren und in die Übersicht eintragen
+          for dir in sites/*/; do
+            name=$(basename "$dir")
+            [ -f "$dir/index.html" ] || continue
+            cp -r "$dir" "_site/$name"
+            titel=$(sed -n 's:.*<title>\(.*\)</title>.*:\1:p' "$dir/index.html" | head -n1)
+            [ -n "$titel" ] || titel="$name"
+            printf '      <li><a class="card" href="%s/"><strong>%s</strong><span>%s</span></a></li>\n' \
+              "$name" "$name" "$titel" >> _site/index.html
+            echo "aufgenommen: $name  ($titel)"
+          done
+
+          # Fuß der Übersichtsseite
+          cat >> _site/index.html <<'HTML'
+            </ul>
+            <footer>Vorschau via GitHub Pages · für Suchmaschinen gesperrt</footer>
+          </div>
+          </body>
+          </html>
+          HTML
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "sites/davids"
+          path: "_site"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
