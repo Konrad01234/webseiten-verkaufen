@@ -10,10 +10,41 @@ sites/
 └── boostwerk/     Boostwerk Köln – Kfz-Werkstatt Köln-Ostheim (statisches HTML + CSS + JS)
 
 assets/
-└── fotos/         Gemeinsame Foto-Bibliothek für alle Seiten (Originale)
-    ├── BILDNACHWEIS.md      Lizenzregister – für jedes Bild Herkunft und Status
-    └── kfz-werkstatt/       Werkstattmotive
+├── fotos/         Gemeinsame Foto-Bibliothek für alle Seiten (Originale)
+│   ├── BILDNACHWEIS.md      Lizenzregister – für jedes Bild Herkunft und Status
+│   └── kfz-werkstatt/       Werkstattmotive
+└── fonts/         Schriften zum lokalen Einbinden (Archivo, Inter) + Lizenzen
+
+tools/
+└── bilder.py      Fotos auf Web-Maße bringen und als WebP + JPEG speichern
 ```
+
+## Werkzeuge
+
+```bash
+# Fotos für eine Seite aufbereiten (webp + jpg, EXIF-Drehung, Zielbreite)
+python3 tools/bilder.py ~/fotos --ziel sites/boostwerk/img/fotos
+
+# Vorher anschauen, ohne zu schreiben
+python3 tools/bilder.py ~/fotos --ziel sites/boostwerk/img/fotos --probe
+```
+
+Presets: `hero` 1800 px, `band` 1600 px, `galerie` 1100 px, `portraet` 900 px,
+`logo` 600 px. Braucht einmalig `pip install Pillow`.
+
+## Schriften
+
+`assets/fonts/` enthält Archivo und Inter als Variable Fonts im woff2-Format,
+dazu die Lizenztexte (SIL Open Font License 1.1). Sie sind dafür gedacht,
+**lokal** eingebunden zu werden statt über Google Fonts.
+
+> Das ist kein Detail: Das Einbinden von Google Fonts überträgt die IP-Adresse
+> jedes Besuchers an Google. Das LG München hat dafür 2022 Schadenersatz
+> zugesprochen, danach gingen reihenweise Abmahnschreiben an kleine Firmenseiten
+> raus. Für jede neue Seite gilt deshalb: Schriften aus `assets/fonts/` in den
+> Seitenordner kopieren und per `@font-face` einbinden – nicht per `@import` von
+> `fonts.googleapis.com`. Ein fertiges Beispiel steht oben in
+> `sites/boostwerk/styles.css`.
 
 ## Bilder
 

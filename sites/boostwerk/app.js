@@ -298,6 +298,43 @@
   })();
 
   /* ---------------------------------------------------------------------
+     Zwei-Klick-Karte
+     Der OpenStreetMap-iframe steht nicht im HTML, sondern wird erst nach
+     einem Klick eingesetzt. Vorher geht keine IP-Adresse an OSM.
+     Die Zustimmung wird lokal gemerkt, damit sie nicht jedes Mal nötig ist.
+     --------------------------------------------------------------------- */
+  (function mapConsent() {
+    var boxes = $$("[data-map]");
+    if (!boxes.length) return;
+
+    var KEY = "bw-map-ok";
+    function stored() { try { return localStorage.getItem(KEY) === "1"; } catch (e) { return false; } }
+    function remember() { try { localStorage.setItem(KEY, "1"); } catch (e) {} }
+
+    function load(box) {
+      var src = box.getAttribute("data-map-src");
+      if (!src) return;
+      var frame = document.createElement("iframe");
+      frame.title = "Karte: Boostwerk Köln, Pauline-Christmann-Straße 5, 51107 Köln";
+      frame.loading = "lazy";
+      frame.referrerPolicy = "no-referrer-when-downgrade";
+      frame.src = src;
+      box.classList.remove("map-consent");
+      box.innerHTML = "";
+      box.appendChild(frame);
+    }
+
+    boxes.forEach(function (box) {
+      if (stored()) { load(box); return; }
+      var btn = $("[data-map-load]", box);
+      if (btn) btn.addEventListener("click", function () {
+        remember();
+        boxes.forEach(load);          // auf der Seite ggf. mehrere Karten
+      });
+    });
+  })();
+
+  /* ---------------------------------------------------------------------
      Öffnungszeiten: heutigen Tag hervorheben
      --------------------------------------------------------------------- */
   (function today() {
@@ -308,35 +345,153 @@
     if (row) row.classList.add("today");
   })();
 
-  /* ---------------------------------------------------------------------
-     Kontaktformular → vorausgefüllte E-Mail (kein Backend nötig)
-     --------------------------------------------------------------------- */
+  /* =====================================================================
+     KONTAKTFORMULAR
+     =====================================================================
+
+     ⚙️  HIER EINTRAGEN – zwei Werte, dann läuft der echte Versand:
+
+         FORM_ENDPOINT  URL des Formular-Dienstes (EU-Anbieter wählen,
+                        siehe README). Solange leer, fällt das Formular
+                        automatisch auf mailto zurück.
+         KONTAKT_MAIL   echte E-Mail-Adresse der Werkstatt. Wird für den
+                        mailto-Rückfall und als Notfall-Link gebraucht.
+
+     Der Versand läuft ohne Seitenneuladen; der Besucher bleibt im Formular
+     und bekommt direkt eine Rückmeldung.
+     ===================================================================== */
+  var FORM_ENDPOINT = "";                              // z. B. "https://…/f/abc123"
+  var KONTAKT_MAIL  = "info@boostwerk-koeln.de";       // ⚠️ PLATZHALTER, bitte ersetzen
+
   (function form() {
     var f = $("#form");
     if (!f) return;
 
+    var status = $("#form-status");
+    var submit = $('button[type="submit"]', f);
+    var labelOriginal = submit ? submit.innerHTML : "";
+
+    function val(id) { var el = $(id); return el ? el.value.trim() : ""; }
+
+    function say(kind, html) {
+      if (!status) return;
+      status.className = "form-status " + kind;
+      status.innerHTML = html;
+      status.hidden = false;
+      status.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
+    }
+
+    function busy(on) {
+      if (!submit) return;
+      submit.disabled = on;
+      submit.style.opacity = on ? ".65" : "";
+      submit.innerHTML = on ? "Wird gesendet …" : labelOriginal;
+    }
+
+    /* --- eigene Pflichtfeldprüfung, damit die Meldungen zum Design passen --- */
+    function check() {
+      var ok = true;
+      [["#f-name", "Bitte trag deinen Namen ein."],
+       ["#f-tel",  "Ohne Telefonnummer können wir dich nicht zurückrufen."]
+      ].forEach(function (pair) {
+        var el = $(pair[0]);
+        if (!el) return;
+        var box = el.closest(".field");
+        var old = $(".field-error", box);
+        if (old) old.remove();
+        box.classList.remove("invalid");
+
+        if (!el.value.trim()) {
+          box.classList.add("invalid");
+          var m = document.createElement("span");
+          m.className = "field-error";
+          m.textContent = pair[1];
+          box.appendChild(m);
+          if (ok) el.focus();
+          ok = false;
+        }
+      });
+
+      var mail = $("#f-mail");
+      if (mail && mail.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(mail.value.trim())) {
+        var mbox = mail.closest(".field");
+        mbox.classList.add("invalid");
+        var me = document.createElement("span");
+        me.className = "field-error";
+        me.textContent = "Diese E-Mail-Adresse sieht nicht richtig aus.";
+        mbox.appendChild(me);
+        ok = false;
+      }
+      return ok;
+    }
+
+    function daten() {
+      return {
+        name:     val("#f-name"),
+        telefon:  val("#f-tel"),
+        email:    val("#f-mail"),
+        fahrzeug: val("#f-car"),
+        leistung: val("#f-service"),
+        nachricht: val("#f-msg"),
+        _subject: "Terminanfrage über die Website – " + val("#f-service")
+      };
+    }
+
+    function alsText(d) {
+      return [
+        "Name: " + d.name,
+        "Telefon: " + d.telefon,
+        "E-Mail: " + d.email,
+        "Fahrzeug: " + d.fahrzeug,
+        "Leistung: " + d.leistung,
+        "", "Nachricht:", d.nachricht
+      ].join("\n");
+    }
+
+    /* --- Rückfall ohne Endpunkt: vorausgefüllte E-Mail öffnen --- */
+    function perMailProgramm(d) {
+      window.location.href = "mailto:" + KONTAKT_MAIL +
+        "?subject=" + encodeURIComponent(d._subject) +
+        "&body="    + encodeURIComponent(alsText(d));
+      say("ok",
+        "<strong>Fast geschafft.</strong> Dein E-Mail-Programm sollte sich mit der " +
+        "fertigen Nachricht geöffnet haben – bitte dort noch auf Senden klicken. " +
+        "Passiert nichts? Ruf uns einfach an: " +
+        '<a href="tel:+4917686664346">0176 866 643 46</a>');
+    }
+
     f.addEventListener("submit", function (e) {
       e.preventDefault();
-      if (!f.reportValidity()) return;
 
-      var v = function (id) { var el = $(id); return el ? el.value.trim() : ""; };
-      var body = [
-        "Name: "      + v("#f-name"),
-        "Telefon: "   + v("#f-tel"),
-        "E-Mail: "    + v("#f-mail"),
-        "Fahrzeug: "  + v("#f-car"),
-        "Leistung: "  + v("#f-service"),
-        "",
-        "Nachricht:",
-        v("#f-msg")
-      ].join("\n");
+      // Bots füllen das versteckte Feld aus – dann tun wir nur so, als ob
+      var hp = $("#f-website");
+      if (hp && hp.value) { say("ok", "Danke für deine Anfrage."); f.reset(); return; }
 
-      // ⚠️ PLATZHALTER – diese Adresse ist geraten und muss durch die echte
-      //    E-Mail-Adresse der Werkstatt ersetzt werden, sonst gehen Anfragen ins Leere.
-      var to = "info@boostwerk-koeln.de";
-      window.location.href = "mailto:" + to +
-        "?subject=" + encodeURIComponent("Terminanfrage – " + v("#f-service")) +
-        "&body="    + encodeURIComponent(body);
+      if (!check()) return;
+      var d = daten();
+
+      if (!FORM_ENDPOINT) { perMailProgramm(d); return; }
+
+      busy(true);
+      fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(d)
+      })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          f.reset();
+          say("ok",
+            "<strong>Danke, deine Anfrage ist da.</strong> Wir melden uns zurück – " +
+            "in der Regel noch am selben Werktag.");
+        })
+        .catch(function () {
+          say("err",
+            "<strong>Das hat leider nicht geklappt.</strong> Bitte ruf uns kurz an: " +
+            '<a href="tel:+4917686664346">0176 866 643 46</a> – oder schick uns eine ' +
+            'E-Mail an <a href="mailto:' + KONTAKT_MAIL + '">' + KONTAKT_MAIL + "</a>.");
+        })
+        .then(function () { busy(false); });
     });
   })();
 

@@ -8,6 +8,8 @@
 <meta name="robots" content="noindex,follow" />
 <meta name="theme-color" content="#06070a" />
 <link rel="icon" href="img/favicon.svg" type="image/svg+xml" />
+<link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -38,12 +40,13 @@
       <h1>Datenschutzerklärung</h1>
 
       <p class="todo">
-        <strong>Vor der Veröffentlichung prüfen.</strong> Dieser Text beschreibt genau den
-        Stand dieser statischen Website (kein Tracking, keine Cookies außer einer lokalen
-        Einstellung, Karte von OpenStreetMap). Werden später Dienste ergänzt – etwa Google Maps,
-        Google Analytics, ein Buchungstool oder ein Kontaktformular mit Server – muss dieser
-        Text entsprechend erweitert werden. Die Kontaktdaten des Verantwortlichen sind noch
-        einzutragen.
+        <strong>Vor der Veröffentlichung ausfüllen.</strong> Noch offen sind die mit
+        <code>[…]</code> markierten Felder: Rechtsform und Inhaber, E-Mail-Adresse, der
+        Hosting-Anbieter (Abschnitt 4) und der Formular-Anbieter (Abschnitt 8).<br>
+        Der übrige Text beschreibt exakt den technischen Stand dieser Website: keine Cookies,
+        kein Tracking, Schriften lokal eingebunden, Karte erst nach Klick. Kommen später
+        Dienste dazu – etwa Google Maps, ein Statistik-Werkzeug, ein Buchungstool oder ein
+        WhatsApp-Button –, muss dieser Text entsprechend erweitert werden.
       </p>
 
       <h2>1. Verantwortlicher</h2>
@@ -54,6 +57,7 @@
         Pauline-Christmann-Straße 5<br>
         51107 Köln<br>
         Telefon: <a href="tel:+4917686664346">0176 866 643 46</a><br>
+        Telefon: <a href="tel:+4915563310006">0155 633 100 06</a><br>
         E-Mail: [E-Mail-Adresse eintragen]
       </address>
 
@@ -98,42 +102,82 @@
 
       <h2>5. Cookies und lokale Speicherung</h2>
       <p>
-        Diese Website setzt <strong>keine Tracking- oder Marketing-Cookies</strong>. Gespeichert
-        wird lediglich im lokalen Speicher Ihres Browsers (localStorage), ob Sie den Hinweis
-        am Seitenende bereits bestätigt haben. Diese Information verlässt Ihr Gerät nicht und
-        kann jederzeit über die Einstellungen Ihres Browsers gelöscht werden. Rechtsgrundlage
-        ist § 25 Abs. 2 Nr. 2 TDDDG (technisch erforderliche Speicherung).
+        Diese Website setzt <strong>keine Cookies</strong> – weder für Tracking noch für
+        Marketing. Im lokalen Speicher Ihres Browsers (localStorage) werden lediglich zwei
+        Einstellungen abgelegt:
+      </p>
+      <ul>
+        <li>ob Sie den Hinweis am Seitenende bereits bestätigt haben,</li>
+        <li>ob Sie dem Laden der Anfahrtskarte zugestimmt haben (siehe Abschnitt 7).</li>
+      </ul>
+      <p>
+        Beide Angaben verlassen Ihr Gerät nicht und lassen keinen Rückschluss auf Ihre Person
+        zu. Sie können sie jederzeit über die Einstellungen Ihres Browsers löschen.
+        Rechtsgrundlage ist § 25 Abs. 2 Nr. 2 TDDDG (unbedingt erforderliche Speicherung)
+        bzw. für die Kartenzustimmung § 25 Abs. 1 TDDDG (Ihre Einwilligung).
       </p>
 
-      <h2>6. Schriftarten (Google Fonts)</h2>
+      <h2>6. Schriftarten</h2>
       <p>
-        Zur einheitlichen Darstellung werden die Schriftarten „Archivo“ und „Inter“ über
-        Google Fonts geladen. Dabei stellt Ihr Browser eine Verbindung zu Servern von
-        Google Ireland Limited bzw. Google LLC her; Ihre IP-Adresse wird dabei übertragen.
-        Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einer
-        einheitlichen Darstellung).
-      </p>
-      <p class="todo">
-        <strong>Hinweis:</strong> Möchten Sie diese Übertragung vermeiden, können die beiden
-        Schriften lokal auf dem eigenen Server abgelegt werden. Dann kann dieser Abschnitt
-        entfallen. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>
+        Die verwendeten Schriftarten „Archivo“ und „Inter“ sind <strong>lokal auf unserem
+        Server gespeichert</strong> und werden von dort ausgeliefert. Es besteht
+        <strong>keine Verbindung zu Google Fonts</strong> oder einem anderen externen
+        Anbieter; es werden dabei keine Daten an Dritte übertragen. Beide Schriften stehen
+        unter der SIL Open Font License 1.1.
       </p>
 
-      <h2>7. Kartendarstellung (OpenStreetMap)</h2>
+      <h2 id="karte">7. Kartendarstellung (OpenStreetMap)</h2>
       <p>
-        Die Anfahrtskarte wird über OpenStreetMap eingebunden (OpenStreetMap Foundation,
-        St John's Innovation Centre, Cowley Road, Cambridge, CB4 0WS, Vereinigtes Königreich).
-        Beim Laden der Karte wird Ihre IP-Adresse an die Server von OpenStreetMap übertragen.
-        Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse daran, Ihnen die
-        Anfahrt zu erleichtern). Datenschutzerklärung:
+        Auf den Seiten „Kontakt“ und „Werkstatt“ bieten wir eine Anfahrtskarte von
+        OpenStreetMap an (OpenStreetMap Foundation, St John’s Innovation Centre, Cowley Road,
+        Cambridge, CB4 0WS, Vereinigtes Königreich).
+      </p>
+      <p>
+        Die Karte wird <strong>nicht automatisch geladen</strong>. Sie sehen zunächst nur einen
+        Platzhalter mit einem Hinweis. Erst wenn Sie auf „Karte laden“ klicken, wird die Karte
+        nachgeladen und dabei Ihre IP-Adresse an OpenStreetMap übertragen. Ohne diesen Klick
+        findet keinerlei Datenübertragung an OpenStreetMap statt.
+      </p>
+      <p>
+        Rechtsgrundlage ist damit Ihre Einwilligung nach Art. 6 Abs. 1 lit. a DSGVO in
+        Verbindung mit § 25 Abs. 1 TDDDG. Sie können die Einwilligung jederzeit widerrufen,
+        indem Sie den lokalen Speicher Ihres Browsers für diese Website löschen.
+        Datenschutzerklärung von OpenStreetMap:
         <a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">osmfoundation.org/wiki/Privacy_Policy</a>
       </p>
 
-      <h2>8. Kontaktaufnahme und Terminanfrage</h2>
+      <h2 id="formular">8. Kontaktaufnahme und Terminanfrage</h2>
       <p>
-        Das Anfrageformular auf dieser Website sendet <strong>keine Daten an einen Server</strong>.
-        Beim Absenden öffnet sich Ihr eigenes E-Mail-Programm mit einer vorbereiteten Nachricht,
-        die Sie selbst verschicken. Erst mit dem Versand dieser E-Mail erhalten wir Ihre Angaben.
+        Über das Anfrageformular können Sie uns Ihr Anliegen schicken. Verarbeitet werden die
+        Angaben, die Sie dort eintragen: Name, Telefonnummer, optional E-Mail-Adresse,
+        Fahrzeugdaten, gewünschte Leistung und Ihre Nachricht. Pflicht sind nur Name und
+        Telefonnummer – alles Weitere ist freiwillig.
+      </p>
+      <p>
+        Wir nutzen für den Versand den Dienst
+        <strong>[Name und Anschrift des Formular-Anbieters eintragen]</strong>. Dieser
+        verarbeitet die Formulardaten ausschließlich in unserem Auftrag, um sie an unser
+        Postfach weiterzuleiten. Es besteht ein Vertrag über Auftragsverarbeitung nach
+        Art. 28 DSGVO. Die Verarbeitung findet auf Servern innerhalb der Europäischen Union
+        statt.
+      </p>
+      <p>
+        Zum Schutz vor automatisiert versendetem Spam enthält das Formular ein für Sie
+        unsichtbares Zusatzfeld. Wird es ausgefüllt, verwerfen wir die Anfrage. Eine
+        Auswertung Ihres Verhaltens findet dabei nicht statt.
+      </p>
+      <p>
+        Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, sofern Ihre Anfrage auf einen Vertrag
+        abzielt, sonst Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Beantwortung
+        von Anfragen). Die Angabe der Daten ist weder gesetzlich noch vertraglich
+        vorgeschrieben; ohne Name und Telefonnummer können wir Ihre Anfrage jedoch nicht
+        bearbeiten.
+      </p>
+      <p class="todo">
+        <strong>Noch einzutragen:</strong> Name und Anschrift des Formular-Anbieters sowie der
+        Hinweis, ob mit ihm ein Auftragsverarbeitungsvertrag geschlossen wurde. Solange kein
+        Anbieter eingerichtet ist, öffnet das Formular ersatzweise das E-Mail-Programm des
+        Besuchers – dann ist dieser Abschnitt entsprechend zu kürzen.
       </p>
       <p>
         Wenn Sie uns per E-Mail, Telefon oder Messenger kontaktieren, verarbeiten wir die von

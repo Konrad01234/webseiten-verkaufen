@@ -18,6 +18,7 @@ Cineastische, mehrseitige Website im SaaS-Landingpage-Stil für die freie Kfz-We
 | `app.js` | Preloader, Reveals, Zähler, Tilt, Wasserfall, FAQ, Formular, Cookie-Hinweis |
 | `reviews.js` | **Datenquelle für die Rezensionen** – hier die echten Google-Texte eintragen |
 | `img/` | Bilder + Favicon |
+| `fonts/` | Schriften lokal (Archivo, Inter) + Lizenztexte |
 
 Alle Seiten teilen sich Kopfleiste, Navigation, Footer und das SVG-Icon-Set. Wird dort
 etwas geändert (z. B. eine neue Telefonnummer), muss die Änderung in allen HTML-Dateien
@@ -35,10 +36,31 @@ Betreiber liefern kann:
    Warnhinweis ein. Sind alle Einträge echt und das Feld überall entfernt,
    verschwindet der Hinweis automatisch.
 
-2. **E-Mail-Adresse** → `app.js`, Funktion `form()`
-   Dort steht `info@boostwerk-koeln.de` als **geratene** Adresse. Ohne Korrektur
-   laufen alle Formular-Anfragen ins Leere. Die Adresse gehört außerdem ins
-   Impressum und in die Datenschutzerklärung.
+2. **E-Mail-Adresse und Formular-Versand** → `app.js`, oberhalb von `form()`
+   Dort stehen zwei Werte:
+
+   ```js
+   var FORM_ENDPOINT = "";                          // URL des Formular-Dienstes
+   var KONTAKT_MAIL  = "info@boostwerk-koeln.de";   // ⚠️ geraten, bitte ersetzen
+   ```
+
+   - `KONTAKT_MAIL` ist eine **geratene** Adresse. Ohne Korrektur laufen alle
+     Anfragen ins Leere. Sie gehört außerdem ins Impressum und in die
+     Datenschutzerklärung.
+   - `FORM_ENDPOINT` leer heißt: das Formular öffnet ersatzweise das
+     E-Mail-Programm des Besuchers. Das klappt nicht überall zuverlässig –
+     auf dem Handy oft gar nicht. Sobald hier die URL eines Formular-Dienstes
+     steht, wird die Anfrage direkt verschickt, ohne Seitenneuladen, mit
+     Erfolgs- und Fehlermeldung im Formular.
+
+   **Anbieter aussuchen:** Es sollte ein Dienst mit Servern in der EU sein, der
+   einen Auftragsverarbeitungsvertrag (AVV) anbietet – sonst wird die
+   Datenschutzerklärung komplizierter. Der Endpunkt muss ein JSON-`POST`
+   entgegennehmen; das Formular schickt die Felder `name`, `telefon`, `email`,
+   `fahrzeug`, `leistung`, `nachricht` und `_subject`. Vor der Entscheidung bitte
+   beim Anbieter selbst nachlesen, wo tatsächlich gehostet wird und ob ein AVV
+   bereitsteht – das ändert sich gelegentlich. Anschließend Name und Anschrift
+   des Anbieters in `datenschutz.html`, Abschnitt 8 eintragen.
 
 3. **Impressum** → `impressum.html`
    Alle mit `[…]` markierten Felder (Rechtsform, Inhaber, USt-IdNr., ggf.
@@ -46,7 +68,9 @@ Betreiber liefern kann:
    Impressum ist abmahnfähig.
 
 4. **Hoster** → `datenschutz.html`, Abschnitt 4
-   Name und Anschrift des Hosting-Anbieters eintragen.
+   Name und Anschrift des Hosting-Anbieters eintragen. Der Betreiber muss mit
+   dem Hoster außerdem einen Auftragsverarbeitungsvertrag abschließen – bei
+   Vercel ist das ein Häkchen im Dashboard, bei deutschen Hostern meist ein PDF.
 
 5. **Galerie-Fotos ersetzen oder lizenzieren** → `img/fotos/`
    Die acht Fotos in den Galerien und Bildbändern sind fremde Stockfotos mit
@@ -118,36 +142,96 @@ Vollständige Herkunftsliste und die Wege zu rechtssicheren Fotos:
 | `diagnose-laptop.jpg` | `werkstatt.html`, Foto-Band `leistungen.html` |
 | `werkzeugwand-detail.jpg` | Foto-Band `werkstatt.html` |
 
+### Fotos austauschen
+
+Alle Fotos liegen doppelt vor: als `.webp` (spart 18–39 %) und als `.jpg` für
+den Rückfall. Eingebunden wird beides über `<picture>`. Zum Aufbereiten neuer
+Fotos gibt es ein Werkzeug in der Repo-Wurzel:
+
+```bash
+# Neue Handyfotos als Galeriebilder aufbereiten (webp + jpg)
+python3 tools/bilder.py ~/fotos/boostwerk --ziel sites/boostwerk/img/fotos
+
+# Erst mal nur schauen, was passieren würde
+python3 tools/bilder.py ~/fotos --ziel sites/boostwerk/img/fotos --probe
+
+# Ein Bild als breites Foto-Band, mit festem Namen
+python3 tools/bilder.py halle.jpg --ziel sites/boostwerk/img \
+    --preset band --name halle-aussen
+```
+
+Das Werkzeug dreht Handyfotos richtig (EXIF), verkleinert auf die Zielbreite,
+passt Kontrast und Sättigung leicht an das dunkle Layout an und schreibt beide
+Formate. Presets: `hero` 1800 px, `band` 1600 px, `galerie` 1100 px,
+`portraet` 900 px, `logo` 600 px. Mit `--zuschnitt 3:2` lässt sich ein
+Seitenverhältnis erzwingen.
+
+Behalten die neuen Dateien die bestehenden Namen, muss im HTML nichts geändert
+werden – nur das gelbe `is-placeholder` am `<figure>` bzw. `<div class="band">`
+entfernen.
+
 ### Wiederverwendung für andere Seiten
 
 Die Originale in bester Auflösung liegen zentral unter
 `assets/fotos/kfz-werkstatt/` in der Repo-Wurzel – nicht in diesem Seitenordner.
-Für eine weitere Werkstatt-Seite also von dort eine verkleinerte Kopie nach
-`sites/<name>/img/` legen (Web-Versionen hier: 1100 px breit, JPEG Q82,
-progressiv) und den Eintrag in `BILDNACHWEIS.md` ergänzen.
+Für eine weitere Werkstatt-Seite von dort mit `tools/bilder.py` Kopien nach
+`sites/<name>/img/` erzeugen und den Eintrag in `BILDNACHWEIS.md` ergänzen.
 
 Achtung: `assets/` liegt außerhalb der Vercel-Root-Directory und wird deshalb
 **nicht** mit ausgeliefert – das ist gewollt, die Originale sollen nicht öffentlich
 abrufbar sein.
 
-### Hebebühne als SVG
+### Eigene Grafiken statt Fotos
 
-Die animierte Hebebühne auf `index.html` und `werkstatt.html` ist eine eigens
-gezeichnete SVG-Grafik (Fahrzeug fährt beim Scrollen hoch). Sie bleibt auch dann
-sinnvoll, wenn echte Fotos dazukommen – anders als ein Foto lässt sie sich
-animieren und ist rechtlich unbedenklich.
+Zwei Elemente sind gezeichnet und deshalb rechtlich unbedenklich sowie in jeder
+Größe scharf:
+
+- **Hebebühne** auf `index.html` und `werkstatt.html` – animiertes SVG, das
+  Fahrzeug fährt beim Scrollen hoch. Bleibt auch sinnvoll, wenn echte Fotos
+  dazukommen: ein Foto lässt sich nicht animieren.
+- **Logo** im Footer – SVG-Symbol `#i-logo`, an das Werkstattschild angelehnt
+  (Wortmarke in Archivo 900 kursiv, roter Schraubenschlüssel, Zahnrad,
+  Fahrzeug-Silhouette). Ersetzt das alte `img/logo.jpg`, das im Footer schon
+  sichtbar unscharf war. Die hellen Flächen nehmen `currentColor`, die
+  Aussparungen die Variable `--logo-bg` – auf hellem Grund also einfach beides
+  tauschen. `img/logo.jpg` bleibt als Referenz auf das echte Schild liegen, ist
+  aber nicht mehr eingebunden.
+
+Liegt irgendwann das Original-Logo als Vektordatei vor, kann das Symbol dagegen
+ausgetauscht werden.
+
+## Datenschutz-Technik
+
+Drei Punkte, die bewusst so gebaut sind:
+
+- **Schriften lokal.** Archivo und Inter liegen als Variable Fonts in `fonts/`
+  und werden vom eigenen Server ausgeliefert – **keine Verbindung zu Google
+  Fonts**. Das war der größte Abmahnpunkt (LG München, 2022). Die Seite lädt
+  jetzt ohne einen einzigen externen Request. Zwei Dateien pro Familie, aufgeteilt
+  nach `latin` und `latin-ext`; letzteres lädt nur, wenn Zeichen wie das „Š" in
+  „Škoda" vorkommen. Lizenz: SIL OFL 1.1, Texte liegen in `fonts/` daneben.
+- **Karte erst nach Klick.** Der OpenStreetMap-`iframe` steht nicht im HTML,
+  sondern wird von `app.js` (`mapConsent()`) erst nach einem Klick auf
+  „Karte laden" eingesetzt. Vorher verlässt keine IP-Adresse den Browser. Die
+  Zustimmung wird lokal gemerkt (`localStorage`, Schlüssel `bw-map-ok`).
+- **Kein Tracking, keine Cookies.** Im `localStorage` stehen nur zwei
+  Ja/Nein-Werte: Cookie-Hinweis bestätigt und Karte freigegeben.
+
+Ändert sich an einem dieser Punkte etwas, muss `datenschutz.html` mitgeändert
+werden – die Abschnitte 5 bis 8 beschreiben genau diesen Stand.
 
 ## Technik
 
 - Reines HTML + CSS + Vanilla-JS, **kein Build-Schritt**, keine Abhängigkeiten.
 - Responsiv (375 / 768 / 1024 / 1440 px), semantisches Markup, Fokuszustände,
   `AutoRepair`-Structured-Data für Google.
-- Das Kontaktformular sendet nichts an einen Server, sondern öffnet eine
-  vorausgefüllte E-Mail (`mailto:`). Für ein echtes Backend-Formular müsste die
-  Datenschutzerklärung ergänzt werden.
-- Karte über OpenStreetMap eingebunden (kein Google-Maps-Tracking).
-- Schriften werden von Google Fonts geladen; für maximale Datensparsamkeit
-  können sie lokal abgelegt werden (siehe Hinweis in `datenschutz.html`).
+- **Keine externen Requests** im Auslieferungszustand – geprüft im Browser.
+- Kontaktformular: eigene Pflichtfeldprüfung mit Meldungen im Seitendesign,
+  Honigtopf-Feld gegen Spam-Bots, Versand per `fetch` ohne Seitenneuladen,
+  Erfolgs- und Fehlermeldung direkt im Formular. Ohne `FORM_ENDPOINT` greift der
+  `mailto:`-Rückfall.
+- Bilder als `<picture>` mit WebP und JPEG-Rückfall, `loading="lazy"`,
+  `width`/`height` gesetzt (kein Layout-Springen beim Laden).
 
 ## Lokal testen
 
