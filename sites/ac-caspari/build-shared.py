@@ -73,12 +73,17 @@ def schneide(quelle, anfang, ende):
 
 
 def aktiv_setzen(block, seite):
-    """`class="active"` auf den Menüpunkt der aktuellen Seite umhängen."""
+    """`class="active"` auf den Menüpunkt der aktuellen Seite umhängen.
+
+    Getroffen werden nur die reinen Menü-Links `<a href="…">`. Der Knopf
+    „Termin anfragen“ zeigt ebenfalls auf kontakt.html, hat aber schon ein
+    class-Attribut – dort ein zweites anzuhängen ergäbe ungültiges HTML.
+    """
     block = block.replace(' class="active"', "")
     if not seite:
         return block                      # Impressum/Datenschutz: kein Punkt aktiv
-    return block.replace('href="%s.html"' % seite,
-                         'href="%s.html" class="active"' % seite)
+    return block.replace('<a href="%s.html">' % seite,
+                         '<a href="%s.html" class="active">' % seite)
 
 
 def main():
