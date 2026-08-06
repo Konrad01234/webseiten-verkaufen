@@ -50,6 +50,7 @@
   /* ── Scroll: Fortschritt, Navbar, Back-to-top ──────────────────────── */
   var bar = $("#scroll-progress");
   var toTop = $(".to-top");
+  var mobileBar = $("#mobile-bar");
   var ticking = false;
 
   function onScroll() {
@@ -58,6 +59,9 @@
     if (bar) bar.style.width = (h > 0 ? (y / h) * 100 : 0) + "%";
     if (nav) nav.classList.toggle("scrolled", y > 20);
     if (toTop) toTop.classList.toggle("show", y > 620);
+    // Aktionsleiste erst zeigen, wenn die Buttons aus dem Hero weg sind,
+    // und am Seitenende wieder ausblenden, damit sie den Footer nicht deckt.
+    if (mobileBar) mobileBar.classList.toggle("show", y > 420 && y < h - 120);
     ticking = false;
   }
   window.addEventListener("scroll", function () {

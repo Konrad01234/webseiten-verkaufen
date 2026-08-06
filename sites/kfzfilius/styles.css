@@ -284,6 +284,34 @@ section { position: relative; }
   33%      { transform: translate(50px, 34px) scale(1.09); }
   66%      { transform: translate(-34px, 22px) scale(0.95); }
 }
+/* Echtes Werkstattfoto hinter dem Hero – stark abgedunkelt, mit langsamem
+   Ken-Burns-Zoom. Text bleibt dadurch voll lesbar. */
+.hero-photo { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hero-photo img {
+  width: 100%; height: 100%; object-fit: cover; opacity: 0.62;
+  transform: scale(1.06);
+  animation: kenburns 30s ease-in-out infinite alternate;
+}
+/* Links dunkel (Textseite), nach rechts hin lichter – so bleibt die Headline
+   kontrastreich und die Halle trotzdem erkennbar. */
+.hero-photo::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(4, 9, 11, 0.42) 0%, rgba(4, 9, 11, 0.6) 62%, var(--ink) 100%),
+    linear-gradient(90deg, rgba(4, 9, 11, 0.94) 0%, rgba(4, 9, 11, 0.66) 42%, rgba(4, 9, 11, 0.34) 100%);
+}
+@media (max-width: 1024px) {
+  /* Einspaltig läuft der Text über die volle Breite – gleichmäßig abdunkeln. */
+  .hero-photo img { opacity: 0.5; }
+  .hero-photo::after {
+    background: linear-gradient(180deg, rgba(4, 9, 11, 0.72) 0%, rgba(4, 9, 11, 0.82) 60%, var(--ink) 100%);
+  }
+}
+@keyframes kenburns {
+  from { transform: scale(1.06) translate(0, 0); }
+  to   { transform: scale(1.19) translate(-1.6%, -2.2%); }
+}
+
 .hero-inner { position: relative; z-index: 2; display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 56px; align-items: center; }
 
 .hero h1 { margin-bottom: 8px; }
@@ -465,10 +493,69 @@ section { position: relative; }
   display: grid; place-items: center;
 }
 .split-visual::after {
-  content: ""; position: absolute; inset: 0;
+  content: ""; position: absolute; inset: 0; z-index: 1;
   background: radial-gradient(circle at 30% 25%, rgba(25, 211, 198, 0.16), transparent 60%);
 }
-.sv-icon { width: 96px; height: 96px; color: rgba(25, 211, 198, 0.32); position: relative; z-index: 1; animation: floaty 7s ease-in-out infinite; }
+.sv-icon { width: 96px; height: 96px; color: rgba(25, 211, 198, 0.32); position: relative; z-index: 2; animation: floaty 7s ease-in-out infinite; }
+
+/* ── Echte Fotos in den Bildflächen ───────────────── */
+.split-visual > img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: transform 1.1s var(--ease);
+}
+.split-visual.has-photo::after {
+  background:
+    linear-gradient(165deg, rgba(4, 9, 11, 0.2), rgba(4, 9, 11, 0.55)),
+    radial-gradient(circle at 30% 22%, rgba(25, 211, 198, 0.16), transparent 62%);
+}
+/* Kacheln, in denen zusätzlich ein Icon liegt (Leistungsseite): dunkler,
+   damit das Icon lesbar bleibt. */
+.split-visual.has-photo.with-icon::after {
+  background:
+    linear-gradient(165deg, rgba(4, 9, 11, 0.55), rgba(4, 9, 11, 0.82)),
+    radial-gradient(circle at 30% 22%, rgba(25, 211, 198, 0.2), transparent 62%);
+}
+/* Auf dem Foto braucht das Icon einen eigenen Träger, sonst verschwindet es
+   im Bildrauschen. */
+.split-visual.has-photo.with-icon .sv-icon {
+  width: 94px; height: 94px; display: grid; place-items: center;
+  border-radius: 26px; color: var(--teal-bright);
+  background: rgba(4, 9, 11, 0.66);
+  border: 1px solid var(--line-teal);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.5);
+}
+.split-visual.has-photo.with-icon .sv-icon svg { width: 42px; height: 42px; }
+.split-visual:hover > img { transform: scale(1.055); }
+
+/* ── Galerie ──────────────────────────────────────── */
+/* 3 Spalten: das breite Bild (2) + 1 füllt Reihe 1, die restlichen 3 füllen
+   Reihe 2 – so bleibt keine Lücke. */
+/* 3 Spalten mit fester Zeilenhöhe: das breite Bild (2 Spalten) + 1 füllt Reihe 1,
+   die restlichen 3 füllen Reihe 2. Feste Zeilenhöhe statt aspect-ratio – sonst
+   würde die breite Kachel die ganze Reihe in die Höhe ziehen. */
+.gallery {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+  grid-auto-rows: clamp(190px, 21vw, 260px);
+}
+.gallery figure {
+  position: relative; margin: 0; overflow: hidden; height: 100%;
+  border-radius: var(--radius); border: 1px solid var(--line); background: var(--ink-3);
+  transition: border-color 0.4s, transform 0.5s var(--ease), box-shadow 0.5s;
+}
+.gallery figure.wide { grid-column: span 2; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--ease); }
+.gallery figure::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(4, 9, 11, 0.75), transparent 55%);
+  opacity: 0.9; transition: opacity 0.4s;
+}
+.gallery figcaption {
+  position: absolute; left: 16px; right: 16px; bottom: 13px; z-index: 1;
+  font-size: 0.83rem; font-weight: 500; color: var(--text);
+}
+.gallery figure:hover { transform: translateY(-4px); border-color: var(--line-teal); box-shadow: var(--shadow-md); }
+.gallery figure:hover img { transform: scale(1.07); }
 
 /* Kontaktformular läuft auf Desktop mit, damit neben der längeren linken
    Spalte kein leerer Block entsteht. Sticky sitzt auf der Karte, nicht auf
@@ -591,6 +678,12 @@ section { position: relative; }
 .to-top svg { width: 19px; height: 19px; }
 
 /* =========================================================================
+   Mobile Aktionsleiste – „Anrufen“ und „Termin“ immer in Daumenreichweite.
+   Erscheint erst, wenn der Hero (mit den gleichen Buttons) durchgescrollt ist.
+   ========================================================================= */
+.mobile-bar { display: none; }
+
+/* =========================================================================
    Cookie-Banner
    ========================================================================= */
 .cookie {
@@ -657,6 +750,30 @@ section { position: relative; }
   .waterfall { grid-template-columns: repeat(2, 1fr); height: 620px; }
   .field-row { grid-template-columns: 1fr; }
 }
+@media (max-width: 860px) {
+  .gallery { grid-template-columns: repeat(2, 1fr); }
+  .gallery figure.wide { grid-column: span 2; }
+}
+
+/* ── Mobil ──────────────────────────────────────────── */
+@media (max-width: 720px) {
+  /* Aktionsleiste am unteren Rand */
+  .mobile-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 140;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+    background: rgba(4, 9, 11, 0.95); border-top: 1px solid var(--line);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transform: translateY(115%); transition: transform 0.4s var(--ease);
+  }
+  .mobile-bar.show { transform: none; }
+  .mobile-bar .btn { padding: 14px 12px; font-size: 0.92rem; }
+  /* Platz schaffen, damit die Leiste den Footer nicht überdeckt */
+  body { padding-bottom: 78px; }
+  .to-top { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+  .cookie { bottom: calc(88px + env(safe-area-inset-bottom, 0px)); }
+}
+
 @media (max-width: 620px) {
   .wrap { padding-inline: 18px; }
   .g-4 { grid-template-columns: 1fr; }
@@ -664,10 +781,37 @@ section { position: relative; }
   .waterfall { grid-template-columns: 1fr; height: 560px; }
   .rev-grid { columns: 1; }
   .footer-grid { grid-template-columns: 1fr; }
-  .cookie { left: 14px; right: 14px; bottom: 14px; max-width: none; }
-  .hero-trust { gap: 16px; }
+  .cookie { left: 14px; right: 14px; max-width: none; }
+  .gallery { grid-template-columns: 1fr; }
+  .gallery figure.wide { grid-column: span 1; }
   .nav-cta .btn-primary { display: none; }
+
+  /* Tap-Targets und Lesbarkeit */
+  .btn { padding: 14px 22px; }
+  .btn-lg { padding: 16px 24px; }
+  .hero-actions .btn { width: 100%; }
+  .cta-actions .btn { width: 100%; }
+  .topbar .wrap { height: 44px; }
+  .footer-col a, .footer-bottom a { display: inline-block; padding-block: 8px; }
+  .footer-col ul { gap: 4px; }
+  /* Textlinks auf komfortable Antippgröße bringen */
+  .card-link, .topbar a, .crumbs a { padding-block: 7px; }
+  .hours-row { padding: 15px 18px; }
+  .faq-q { padding: 18px; }
+
+  /* Drei Kennzahlen nebeneinander sind zu eng – untereinander lesbarer */
+  .hero-trust { gap: 18px; flex-direction: column; align-items: flex-start; }
+  .split-visual { aspect-ratio: 3 / 2; }
 }
+
+@media (max-width: 380px) {
+  .wrap { padding-inline: 15px; }
+  .hero-card { padding: 22px; }
+  .hc-score b { font-size: 2.8rem; }
+}
+
+/* Kein blauer Blitz beim Antippen auf iOS/Android */
+a, button, .btn, .chip, .faq-q { -webkit-tap-highlight-color: rgba(25, 211, 198, 0.18); }
 
 /* =========================================================================
    Reduzierte Bewegung

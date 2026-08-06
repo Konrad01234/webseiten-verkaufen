@@ -9,6 +9,7 @@
   <meta property="og:title" content="KFZ-Service Filius | Kfz-Werkstatt in Wuppertal-Elberfeld" />
   <meta property="og:description" content="Ehrliche Beratung, faire Preise, pünktliche Termine – Ihre freie Werkstatt in Wuppertal-Elberfeld." />
   <meta property="og:type" content="website" />
+  <meta property="og:image" content="img/hero.jpg" />
   <meta property="og:locale" content="de_DE" />
   <link rel="icon" type="image/svg+xml" href="favicon.svg" />
   <link rel="stylesheet" href="styles.css" />
@@ -104,6 +105,9 @@
          Hero
          =================================================================== -->
     <section class="hero">
+      <div class="hero-photo" aria-hidden="true">
+        <img src="img/hero.jpg" alt="" width="1179" height="1457" fetchpriority="high" />
+      </div>
       <div class="hero-bg" aria-hidden="true">
         <span class="glow-blob b1"></span>
         <span class="glow-blob b2"></span>
@@ -340,10 +344,8 @@
     <section class="sec">
       <div class="wrap">
         <div class="split">
-          <div class="split-visual" data-reveal="left">
-            <svg class="sv-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M14.7 6.3a4 4 0 0 1-5.4 5.4L4 17v3h3l5.3-5.3a4 4 0 0 1 5.4-5.4l-2.5 2.5-2.5-2.5 2.5-2.5"/>
-            </svg>
+          <div class="split-visual has-photo" data-reveal="left">
+            <img src="img/halle.jpg" alt="Werkstatthalle von KFZ-Service Filius mit Hebebühnen" width="1000" height="750" loading="lazy" />
           </div>
 
           <div data-reveal="right">
@@ -579,6 +581,13 @@
       <button class="btn btn-primary" data-consent="alle">Einverstanden</button>
       <button class="btn btn-ghost" data-consent="notwendig">Nur notwendige</button>
     </div>
+  </div>
+
+
+  <!-- ===== Mobile Aktionsleiste ===== -->
+  <div class="mobile-bar" id="mobile-bar" aria-label="Schnellkontakt">
+    <a href="tel:+492022839611" class="btn btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>Anrufen</a>
+    <a href="kontakt.html" class="btn btn-primary">Termin anfragen</a>
   </div>
 
   <script src="reviews.js"></script>

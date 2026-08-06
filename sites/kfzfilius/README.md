@@ -18,6 +18,7 @@ in Wuppertal-Elberfeld (Quellenstraße 36).
 | `app.js` | Navigation, Animationen, Wasserfall, Formular, Cookie-Hinweis |
 | `reviews.js` | Rezensionsdaten – **enthält Platzhalter, siehe unten** |
 | `favicon.svg` | Favicon |
+| `img/` | Fotos der Werkstatt (Herkunft siehe unten) |
 
 ## Design
 
@@ -33,13 +34,30 @@ in Wuppertal-Elberfeld (Quellenstraße 36).
 - **Rezensions-Wasserfall:** drei Spalten, abwechselnd auf-/abwärts, endlos, weich
   ein-/ausgeblendet. Hält beim Überfahren mit der Maus an. Auf Tablet zwei, auf
   Handy eine Spalte.
+- **Fotos:** echtes Werkstattfoto hinter dem Hero (abgedunkelt, Ken-Burns-Zoom),
+  Bildflächen auf Start-, Werkstatt- und Kontaktseite, Galerie auf `werkstatt.html`,
+  auf der Leistungsseite Fotos als Textur hinter den Icon-Plaketten.
 - `prefers-reduced-motion` wird respektiert – Inhalte sind dann sofort sichtbar.
+
+## Mobil
+
+- Feste **Aktionsleiste am unteren Rand** („Anrufen“ / „Termin anfragen“). Sie
+  erscheint erst, wenn die Hero-Buttons weggescrollt sind, und blendet sich am
+  Seitenende wieder aus, damit sie den Footer nicht verdeckt. Berücksichtigt
+  `env(safe-area-inset-bottom)` für iPhones mit Home-Indicator.
+- Navigation ab 980 px als Vollbild-Overlay (vorher wurde es zwischen 861 und
+  980 px zu eng).
+- Buttons über die volle Breite, Tap-Targets ≥ 32 px, kein blauer Antipp-Blitz.
+- Kennzahlen im Hero untereinander, Galerie einspaltig, Wasserfall einspaltig.
+- Geprüft auf 1440 / 1200 / 1024 / 900 / 768 / 430 / 390 / 360 / 320 px –
+  auf keiner Breite horizontales Scrollen.
 
 ## Technik
 
 - Reines HTML + CSS + Vanilla-JS, **kein Build-Schritt**.
-- Geprüft auf 1440 / 1024 / 900 / 768 / 390 px – kein horizontales Scrollen,
-  keine JS-Fehler, keine toten internen Links.
+- Keine JS-Fehler, keine toten internen Links, alle Bilder laden.
+- Bilder mit `width`/`height` und `loading="lazy"` (Hero mit `fetchpriority="high"`),
+  Gesamtgröße der Fotos rund 690 kB.
 - Öffnungszeiten heben den heutigen Tag hervor; „Jetzt geöffnet / Öffnet um …“
   wird live aus der Uhrzeit berechnet.
 - Das Terminformular sendet **nichts an einen Server**, sondern öffnet eine
@@ -50,6 +68,22 @@ in Wuppertal-Elberfeld (Quellenstraße 36).
 Adresse, Telefonnummer, Öffnungszeiten, die 14 Leistungen, Bewertung (4,9 bei 142
 Rezensionen), Barrierefreiheit und Zahlungsarten stammen aus dem
 Google-Unternehmensprofil (vom Inhaber per Screenshot bereitgestellt).
+
+### Fotos
+
+Die Bilder in `img/` wurden aus den Screenshots des Google-Unternehmensprofils
+freigestellt (Uploads des Inhabers, „Dariusz Filius“). Zwei Hinweise dazu:
+
+- **Ein Pin-up-Poster an der Werkstattwand wurde weggeschnitten.** Es war auf
+  zwei Aufnahmen zu sehen und ist auf einer Firmenwebsite fehl am Platz.
+  Betroffen ist `rampe.jpg` (linke Bildhälfte entfernt); die zweite Aufnahme
+  mit dem Poster wird gar nicht verwendet.
+- **Das Street-View-Bild des Eingangs wurde bewusst nicht übernommen** – das ist
+  Bildmaterial von Google, nicht des Betriebs.
+
+Weil die Bilder aus Screenshots stammen, ist ihre Auflösung begrenzt
+(`hero.jpg` 1179 px breit, die übrigen 370–1000 px). Originaldateien vom Inhaber
+würden die Seite sichtbar schärfer machen – siehe Punkt 5 unten.
 
 ## ⚠️ Vor dem Livegang zu erledigen
 
@@ -66,9 +100,10 @@ Google-Unternehmensprofil (vom Inhaber per Screenshot bereitgestellt).
    eingebettete Karte) und muss angepasst werden, wenn sich das ändert.
 4. **E-Mail-Adresse eintragen** – aktuell `info@kfz-service-filius.de` als
    Platzhalter im Attribut `data-mailto` des Formulars in `kontakt.html`.
-5. **Fotos ergänzen** – es lag kein Bildmaterial der Werkstatt vor. Die
-   Bildflächen (`.split-visual`) zeigen derzeit Icons. Echte Fotos von Halle,
-   Team und Fahrzeugen würden die Seite deutlich aufwerten.
+5. **Fotos in Originalauflösung nachliefern** – die aktuellen Bilder sind aus
+   Screenshots freigestellt und entsprechend begrenzt aufgelöst. Die Originale
+   (und zusätzliche Aufnahmen von Team und Arbeitsplätzen) einfach in `img/`
+   unter den gleichen Dateinamen ablegen, dann greift alles automatisch.
 6. Optional: Google Fonts lokal einbinden, dann entfällt der externe Aufruf und
    der entsprechende Abschnitt der Datenschutzerklärung.
 
