@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="8" fill="#15181c"/>
+  <rect x="8" y="26" width="48" height="14" rx="2" fill="#dd5117"/>
+  <text x="32" y="37.6" text-anchor="middle" font-family="Arial Narrow, Helvetica, sans-serif"
+        font-weight="700" font-size="15" letter-spacing="0.5" fill="#ffffff">DW</text>
+  <rect x="8" y="14" width="20" height="5" rx="1.5" fill="#ffffff"/>
+  <rect x="8" y="47" width="34" height="5" rx="1.5" fill="#414a55"/>
+</svg>
