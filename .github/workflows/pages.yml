@@ -1,8 +1,16 @@
-name: Deploy Davids site to GitHub Pages
+name: Deploy sites to GitHub Pages
 
-# Hinweis: Vor dem ersten Lauf muss GitHub Pages einmalig aktiviert werden:
-# Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions".
-# Danach diesen Workflow manuell starten (Actions -> diesen Workflow -> "Run workflow").
+# Einmalig nötig, sonst scheitert jeder Lauf mit
+# "Resource not accessible by integration":
+#   Repo Settings -> Pages -> "Build and deployment" -> Source: "GitHub Actions".
+# Das Actions-Token darf die Pages-Site nicht selbst anlegen; auch
+# configure-pages mit enablement: true hilft dagegen nicht.
+#
+# Danach: Actions -> diesen Workflow -> "Run workflow" (Branch auswählen).
+# GitHub Pages erlaubt nur eine Seite pro Repository, deshalb wird der
+# komplette Ordner sites/ veröffentlicht und jede Website liegt in einem
+# Unterordner:
+#   https://<user>.github.io/webseiten-verkaufen/die-werkstatt/
 
 on:
   workflow_dispatch:
@@ -25,12 +33,38 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Übersichtsseite erzeugen
+        run: |
+          {
+            echo '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
+            echo '<meta name="viewport" content="width=device-width,initial-scale=1">'
+            echo '<meta name="robots" content="noindex, nofollow">'
+            echo '<title>Webseiten – Übersicht</title>'
+            echo '<style>body{font:16px/1.6 system-ui,sans-serif;margin:0;background:#f4f4f1;color:#262b31}'
+            echo 'main{max-width:44rem;margin:4rem auto;padding:0 1.5rem}h1{font-size:1.6rem;margin:0 0 .5rem}'
+            echo 'p{color:#5f666d}ul{list-style:none;padding:0;margin:2rem 0 0}'
+            echo 'li a{display:block;padding:1rem 1.2rem;background:#fff;border:1px solid #d5d5cf;'
+            echo 'border-radius:3px;margin-bottom:.6rem;text-decoration:none;color:#262b31;font-weight:600}'
+            echo 'li a:hover{border-color:#dd5117}</style></head><body><main>'
+            echo '<h1>Webseiten – Vorschau</h1>'
+            echo '<p>Interne Übersicht. Jede Seite liegt in einem eigenen Unterordner.</p><ul>'
+            for d in sites/*/; do
+              name=$(basename "$d")
+              [ -f "$d/index.html" ] || continue
+              echo "<li><a href=\"$name/\">$name</a></li>"
+            done
+            echo '</ul></main></body></html>'
+          } > sites/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "sites/davids"
+          path: "sites"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
