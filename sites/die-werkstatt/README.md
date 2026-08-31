@@ -18,6 +18,8 @@ Große Brenne 5, 58099 Hagen.
 | `fonts.css` + `fonts/` | Selbst gehostete Schriften (Barlow, Barlow Condensed, IBM Plex Mono, OFL 1.1) |
 | `app.js` | Navigation, Öffnungsstatus, Reveals, Wasserfall, Formular |
 | `img/` | Fotos + Favicon |
+| `vorschau.html` | Einzeldatei-Vorschau: alle Unterseiten, Schriften und Bilder eingebettet |
+| `build-vorschau.py` | Erzeugt `vorschau.html` neu |
 
 ## Design
 
@@ -74,6 +76,36 @@ sind im Wortlaut übernommen (nur Emojis entfernt).
    aus dem Profil abgeleitet; Klimaservice für R1234yf, RDKS und Achsvermessung
    bitte bestätigen, sonst die entsprechenden Stichpunkte in `leistungen.html`
    streichen.
+
+## Vorschau ohne Deployment
+
+`vorschau.html` enthält die komplette Website in einer einzigen Datei: alle sieben
+Seiten als Vorlagen, Navigation clientseitig über `#leistungen`, `#kontakt` usw.,
+Schriften und Fotos als Data-URI. Die Datei lädt nichts nach und läuft deshalb auch
+über einen HTML-Proxy:
+
+```
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/Konrad01234/webseiten-verkaufen/<branch>/sites/die-werkstatt/vorschau.html
+```
+
+**Nach jeder Änderung an den Seiten neu erzeugen**, sonst zeigt die Vorschau einen
+alten Stand:
+
+```bash
+cd sites/die-werkstatt
+python3 build-vorschau.py     # braucht Pillow
+```
+
+Die Vorschau trägt ein orangefarbenes Hinweisband und `noindex, nofollow` – sie ist
+zum Herumzeigen gedacht, nicht als Veröffentlichung.
+
+## GitHub Pages
+
+Bisher scheitert jeder Pages-Workflow in diesem Repo mit
+`Resource not accessible by integration`: Das Actions-Token darf keine Pages-Site
+anlegen. Einmalig in **Repo Settings → Pages → Source: „GitHub Actions"** umstellen,
+danach lässt sich ein Workflow für diesen Ordner einrichten. Pro Repository ist nur
+eine Pages-Seite möglich – mehrere Seiten müssen daher in Unterordnern liegen.
 
 ## Lokal testen
 
