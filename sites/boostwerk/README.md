@@ -245,3 +245,25 @@ python3 -m http.server 8000
 
 Eigenes Projekt mit **Root Directory** `sites/boostwerk`, Framework-Preset `Other`
 (statisch, kein Build).
+
+## Vorschau ohne Deployment
+
+`vorschau.html` enthält die **komplette Website in einer einzigen Datei**: alle
+sieben Seiten, Schriften und Bilder eingebettet, Navigation im Browser. Damit
+lässt sich die Seite ohne Server und ohne Deployment anzeigen – auch über einen
+HTML-Proxy wie htmlpreview.github.io. Es kann nichts fehlen, weil nichts
+nachgeladen wird.
+
+Neu bauen nach Änderungen an der Seite:
+
+```bash
+python3 tools/vorschau_bauen.py
+```
+
+Das Skript liest die echten Seiten aus `sites/boostwerk/`, wandelt die großen
+JPEGs für die Vorschau nach WebP und legt jedes Bild genau einmal ab (sonst
+steckt allein das Hero-Foto fünfmal in der Datei). Ergebnis: rund 1,9 MB.
+
+Die Datei ist **nur zum Zeigen** gedacht, nicht zum Ausliefern – dafür bleiben
+die normalen Einzelseiten zuständig. Sie trägt `noindex` und unten links ein
+Hinweisband, das sich wegklicken lässt.
