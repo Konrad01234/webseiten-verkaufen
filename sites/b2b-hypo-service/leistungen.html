@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leistungen | B2B Hypo Service GmbH</title>
+  <meta name="description" content="Unterlagenprüfung, Bankenplatzierung, Antragsmanagement, Prolongation und Backoffice-Auslagerung für Vermittler, Makler und Institute." />
+  <meta name="theme-color" content="#070c1d" />
+  <meta property="og:title" content="Leistungen | B2B Hypo Service GmbH" />
+  <meta property="og:description" content="Unterlagenprüfung, Bankenplatzierung, Antragsmanagement, Prolongation und Backoffice-Auslagerung für Vermittler, Makler und Institute." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="de_DE" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <svg class="pl-mark" viewBox="0 0 48 48" fill="none" stroke="#4a74ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 22 24 7l18 15" />
+        <path class="d2" d="M10 22v18h28V22" stroke="#00bfa6" />
+        <polyline class="d3" points="17,32 22,27 27,31 33,24" stroke="#ffb547" />
+      </svg>
+      <p class="pl-name">B2B Hypo Service</p>
+      <div class="pl-track"><div class="pl-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== Overlay-Navigation ===== -->
+  <div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" type="button" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+        <a href="index.html">Start</a>
+        <a href="leistungen.html" aria-current="page">Leistungen</a>
+        <a href="ablauf.html">Ablauf</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="partner.html">Für Partner</a>
+        <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">Finanzierungs-Services für Profis</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="mailto:info@b2b-hypo-service.de">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        info@b2b-hypo-service.de
+      </a>
+      <div class="tb-right">
+        <span>Mo–Fr 08:00–18:00 Uhr</span>
+        <span>Antwort in der Regel binnen 24 Stunden</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="B2B Hypo Service GmbH – Startseite">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2a55f5" /><stop offset="100%" stop-color="#00bfa6" />
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="url(#bm)" />
+          <path d="M12 23 24 12l12 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M15 23v13h18V23" stroke="rgba(255,255,255,.72)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="20,31 23,28 26,30 30,25" stroke="#ffb547" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">
+          <b>B2B Hypo Service</b>
+          <span>Finanzierungs-Services</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="leistungen.html" class="active">Leistungen</a>
+        <a href="ablauf.html">Ablauf</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="partner.html">Für Partner</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary">Erstgespräch anfragen</a>
+        <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="hero-mesh" aria-hidden="true">
+        <span class="blob blob-1"></span>
+        <span class="blob blob-2"></span>
+      </div>
+      <div class="hero-grid-lines" aria-hidden="true"></div>
+      <div class="wrap" style="position:relative;z-index:2;max-width:820px">
+        <p class="crumbs"><a href="index.html">Start</a><span>/</span>Leistungen</p>
+        <span class="eyebrow">Leistungen</span>
+        <h1>Alles zwischen Anfrage und Auszahlung</h1>
+        <p class="lead">
+          Sie entscheiden, wo unsere Arbeit beginnt: bei der ersten Machbarkeitsfrage, bei der
+          fertigen Akte oder erst in der Bestandsbetreuung. Jede Leistung ist einzeln buchbar.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== Leistungsübersicht ===== -->
+    <section class="sec">
+      <div class="wrap">
+        <div class="grid grid-2">
+          <article class="card" data-reveal data-delay="0">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg>
+            </div>
+            <h3>Unterlagen- &amp; Vollständigkeitsprüfung</h3>
+            <p>Selbstauskunft, Einkommensnachweise, Objektunterlagen, Eigenkapitalnachweis: Wir prüfen jede Akte gegen die Anforderungen des Zielinstituts, bevor sie eingereicht wird.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Checkliste je Kreditgeber</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Plausibilisierung von Einkommen &amp; Haushaltsrechnung</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Fehlende Dokumente werden direkt nachgefordert</li>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal data-delay="0.08">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V9l7-5 7 5v12"/><path d="M10 21v-6h4v6"/></svg>
+            </div>
+            <h3>Objekt- &amp; Bonitätsvorprüfung</h3>
+            <p>Beleihungswert, Lage, Zustand, Nutzungsart – wir schätzen früh ein, wie das Objekt bei den Häusern ankommt, und bereiten die Wertermittlung vor.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Ersteinschätzung Beleihungswert</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aufbereitung von Exposé &amp; Objektdaten</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Hinweis auf K.-o.-Kriterien vor Einreichung</li>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal data-delay="0.16">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            </div>
+            <h3>Bankenplatzierung &amp; Konditionsvergleich</h3>
+            <p>Wir fragen gezielt bei den Häusern an, die zu Ihrer Konstellation passen, vergleichen Konditionen und dokumentieren die Ergebnisse nachvollziehbar für Sie.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Auswahl passender Kreditgeber statt Streuanfrage</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Aufbereiteter Vergleich als Entscheidungsgrundlage</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Nachverhandlung bei Sonderkonstellationen</li>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal data-delay="0.24">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16v5H4z"/><path d="M4 13h16v7H4z"/><path d="M8 17h4"/></svg>
+            </div>
+            <h3>Antragsbegleitung bis zur Auszahlung</h3>
+            <p>Vertragsprüfung, Auflagenmanagement, Kommunikation mit Bank, Notar und Verkäufer – wir bleiben an der Akte, bis das Geld fließt.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Fristen- und Auflagenüberwachung</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Abstimmung mit Notar &amp; Grundbuchamt</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Statusmeldung an Sie bei jedem Meilenstein</li>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal data-delay="0.32">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+            </div>
+            <h3>Prolongation &amp; Bestandsbetreuung</h3>
+            <p>Wir behalten auslaufende Zinsbindungen im Blick und bereiten die Anschluss&shy;finanzierung so vor, dass Sie den Kunden rechtzeitig ansprechen können.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Wiedervorlage 12 Monate vor Ablauf</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Vorbereitete Angebotsvergleiche</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Wiederkehrender Umsatz aus Ihrem Bestand</li>
+            </ul>
+          </article>
+
+          <article class="card" data-reveal data-delay="0.4">
+            <div class="card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/></svg>
+            </div>
+            <h3>Schulung &amp; Fachsupport</h3>
+            <p>Onboarding für neue Mitarbeitende, Update-Sessions zu Kreditrichtlinien und ein fachlicher Draht für knifflige Fälle – auf Wunsch als feste Betreuung.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Praxis-Workshops für Ihr Team</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Fallbesprechung bei Sonderkonstellationen</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Checklisten &amp; Vorlagen für Ihren Alltag</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Pakete ===== -->
+    <section class="sec sec-dark">
+      <div class="wrap">
+        <div class="sec-head center" data-reveal>
+          <span class="eyebrow">Modelle</span>
+          <h2>Drei Wege der Zusammenarbeit</h2>
+          <p class="lead" style="margin-inline:auto">Preise stimmen wir nach Aktenvolumen und Umfang individuell ab – transparent und ohne Grundgebühr.</p>
+        </div>
+
+        <div class="grid grid-3">
+          <article class="card card-dark" data-reveal data-delay="0">
+            <span class="card-num">Modell 01</span>
+            <h3>Einzelakte</h3>
+            <p>Sie geben einzelne Fälle ab – etwa bei Spitzen oder Sonder&shy;konstellationen. Abrechnung pro Akte.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Keine Mindestmenge</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Feste Bearbeitungszeiten</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Ideal zum Testen</li>
+            </ul>
+          </article>
+
+          <article class="card card-dark" data-reveal data-delay="0.1" style="border-color:rgba(0,191,166,.45)">
+            <span class="card-num" style="color:var(--brand-2)">Modell 02 · beliebt</span>
+            <h3>Backoffice-Paket</h3>
+            <p>Ihr ausgelagertes Backoffice mit festem Kontingent, festem Team und vereinbarten Reaktionszeiten.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Fester Ansprechpartner</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Vereinbarte Servicezeiten</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Monatliches Reporting</li>
+            </ul>
+          </article>
+
+          <article class="card card-dark" data-reveal data-delay="0.2">
+            <span class="card-num">Modell 03</span>
+            <h3>White Label</h3>
+            <p>Wir arbeiten unter Ihrer Marke: Ihre Vorlagen, Ihre Signatur, Ihre Außenwirkung. Für Institute und größere Vertriebe.</p>
+            <ul class="check-list">
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Auftritt in Ihrem Namen</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Individuelle Prozesse</li>
+              <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Skalierbar bei Wachstum</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Volumen-Balken ===== -->
+    <section class="sec">
+      <div class="wrap split">
+        <div class="chart-card chart" data-reveal="left">
+          <h3 style="font-size:1.05rem;margin-bottom:.2rem">Typische Aktenarten</h3>
+          <p style="font-size:.86rem;color:var(--muted);margin-bottom:1rem">Verteilung der Anfragen, die wir bearbeiten (schematisch).</p>
+          <svg viewBox="0 0 520 230" role="img" aria-label="Balkendiagramm der typischen Aktenarten">
+            <g stroke="rgba(16,27,62,.10)" stroke-width="1">
+              <line x1="20" y1="30" x2="500" y2="30" />
+              <line x1="20" y1="80" x2="500" y2="80" />
+              <line x1="20" y1="130" x2="500" y2="130" />
+              <line x1="20" y1="180" x2="500" y2="180" />
+            </g>
+            <rect class="bar" x="40"  y="40"  width="62" height="140" rx="8" fill="#2a55f5" />
+            <rect class="bar" x="140" y="70"  width="62" height="110" rx="8" fill="#3d63f6" />
+            <rect class="bar" x="240" y="100" width="62" height="80"  rx="8" fill="#0eaf9d" />
+            <rect class="bar" x="340" y="118" width="62" height="62"  rx="8" fill="#00bfa6" />
+            <rect class="bar" x="440" y="145" width="62" height="35"  rx="8" fill="#ffb547" />
+            <g font-size="11" fill="#626e8c" font-family="Inter, sans-serif" text-anchor="middle">
+              <text x="71"  y="200">Eigenheim</text>
+              <text x="171" y="200">Kapital&#8203;anlage</text>
+              <text x="271" y="200">Anschluss</text>
+              <text x="371" y="200">Neubau</text>
+              <text x="471" y="200">Gewerbe</text>
+            </g>
+          </svg>
+        </div>
+
+        <div data-reveal="right">
+          <span class="eyebrow">Passt das zu Ihnen?</span>
+          <h2>Für wen wir arbeiten</h2>
+          <p class="lead">
+            Unsere Auftraggeber sind ausschließlich gewerbliche Partner. Privatkunden betreuen
+            wir nicht direkt – dafür sind Sie da.
+          </p>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Finanzierungs- und Versicherungs&shy;vermittler</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Immobilienmakler mit Finanzierungs&shy;bedarf</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Bauträger und Projektentwickler</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Banken und Institute mit Auslastungs&shy;spitzen</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Vertriebe, die ohne eigenes Backoffice wachsen wollen</li>
+          </ul>
+          <a href="partner.html" class="btn btn-primary" style="margin-top:1.8rem">Details für Partner</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap" data-reveal>
+        <h2>Welche Leistung brauchen Sie zuerst?</h2>
+        <p>Schildern Sie uns einen aktuellen Fall – wir sagen Ihnen konkret, was wir übernehmen und was es kostet.</p>
+        <div class="cta-actions">
+          <a href="kontakt.html" class="btn btn-light btn-lg">Unverbindlich anfragen</a>
+          <a href="ablauf.html" class="btn btn-outline-light btn-lg">So läuft die Zusammenarbeit</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand" style="margin-bottom:1rem">
+            <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="bmf" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#2a55f5" /><stop offset="100%" stop-color="#00bfa6" />
+                </linearGradient>
+              </defs>
+              <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="url(#bmf)" />
+              <path d="M12 23 24 12l12 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M15 23v13h18V23" stroke="rgba(255,255,255,.72)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              <polyline points="20,31 23,28 26,30 30,25" stroke="#ffb547" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="brand-text"><b>B2B Hypo Service</b><span>GmbH</span></span>
+          </a>
+          <p>Wir übernehmen für Vermittler, Makler und Institute die Arbeit rund um die Immobilien&shy;finanzierung – von der Unterlagenprüfung bis zur Auszahlung.</p>
+        </div>
+
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="leistungen.html">Leistungen</a></li>
+            <li><a href="ablauf.html">Ablauf</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="partner.html">Für Partner</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Rechtliches</h4>
+          <ul>
+            <li><a href="impressum.html">Impressum</a></li>
+            <li><a href="datenschutz.html">Datenschutz</a></li>
+            <li><a href="#" data-cookie-open>Cookie-Einstellungen</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="mailto:info@b2b-hypo-service.de">info@b2b-hypo-service.de</a></li>
+            <li><span class="ph">[Telefonnummer eintragen]</span></li>
+            <li><span class="ph">[Straße Hausnummer]</span><br /><span class="ph">[PLZ Ort]</span></li>
+            <li>Mo–Fr 08:00–18:00 Uhr</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; <span data-year>2026</span> B2B Hypo Service GmbH. Alle Rechte vorbehalten.</span>
+        <nav aria-label="Rechtliche Links">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="#" data-cookie-open>Cookies</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" type="button" aria-label="Nach oben scrollen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- ===== Cookie-Hinweis ===== -->
+  <div class="cookie" role="dialog" aria-label="Cookie-Hinweis">
+    <h4>Cookies &amp; Datenschutz</h4>
+    <p>Diese Website nutzt nur technisch notwendige Speicherung. Optionale Dienste (z.&nbsp;B. Statistik) werden erst nach Ihrer Zustimmung geladen. Details in der <a href="datenschutz.html" style="color:var(--brand);text-decoration:underline">Datenschutzerklärung</a>.</p>
+    <div class="cookie-actions">
+      <button class="btn btn-primary" type="button" data-cookie="accept">Alle akzeptieren</button>
+      <button class="btn btn-ghost" type="button" data-cookie="decline">Nur notwendige</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

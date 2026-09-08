@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Über uns | B2B Hypo Service GmbH</title>
+  <meta name="description" content="Wer hinter B2B Hypo Service GmbH steht: Haltung, Arbeitsweise und Werte eines B2B-Dienstleisters für Immobilienfinanzierung." />
+  <meta name="theme-color" content="#070c1d" />
+  <meta property="og:title" content="Über uns | B2B Hypo Service GmbH" />
+  <meta property="og:description" content="Wer hinter B2B Hypo Service GmbH steht: Haltung, Arbeitsweise und Werte eines B2B-Dienstleisters für Immobilienfinanzierung." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="de_DE" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Zum Inhalt springen</a>
+
+  <!-- ===== Preloader ===== -->
+  <div id="preloader" aria-hidden="true">
+    <div class="pl-inner">
+      <svg class="pl-mark" viewBox="0 0 48 48" fill="none" stroke="#4a74ff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M6 22 24 7l18 15" />
+        <path class="d2" d="M10 22v18h28V22" stroke="#00bfa6" />
+        <polyline class="d3" points="17,32 22,27 27,31 33,24" stroke="#ffb547" />
+      </svg>
+      <p class="pl-name">B2B Hypo Service</p>
+      <div class="pl-track"><div class="pl-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== Overlay-Navigation ===== -->
+  <div id="nav-overlay" role="dialog" aria-modal="true" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" type="button" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+        <a href="index.html">Start</a>
+        <a href="leistungen.html">Leistungen</a>
+        <a href="ablauf.html">Ablauf</a>
+        <a href="ueber-uns.html" aria-current="page">Über uns</a>
+        <a href="partner.html">Für Partner</a>
+        <a href="kontakt.html">Kontakt</a>
+    <span class="ov-tagline">Finanzierungs-Services für Profis</span>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- ===== Topbar ===== -->
+  <div class="topbar">
+    <div class="wrap">
+      <a href="mailto:info@b2b-hypo-service.de">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        info@b2b-hypo-service.de
+      </a>
+      <div class="tb-right">
+        <span>Mo–Fr 08:00–18:00 Uhr</span>
+        <span>Antwort in der Regel binnen 24 Stunden</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="B2B Hypo Service GmbH – Startseite">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="bm" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2a55f5" /><stop offset="100%" stop-color="#00bfa6" />
+            </linearGradient>
+          </defs>
+          <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="url(#bm)" />
+          <path d="M12 23 24 12l12 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M15 23v13h18V23" stroke="rgba(255,255,255,.72)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+          <polyline points="20,31 23,28 26,30 30,25" stroke="#ffb547" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <span class="brand-text">
+          <b>B2B Hypo Service</b>
+          <span>Finanzierungs-Services</span>
+        </span>
+      </a>
+
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="leistungen.html">Leistungen</a>
+        <a href="ablauf.html">Ablauf</a>
+        <a href="ueber-uns.html" class="active">Über uns</a>
+        <a href="partner.html">Für Partner</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary">Erstgespräch anfragen</a>
+        <button class="nav-toggle" type="button" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="hero-mesh" aria-hidden="true">
+        <span class="blob blob-1"></span>
+        <span class="blob blob-3"></span>
+      </div>
+      <div class="hero-grid-lines" aria-hidden="true"></div>
+      <div class="wrap" style="position:relative;z-index:2;max-width:820px">
+        <p class="crumbs"><a href="index.html">Start</a><span>/</span>Über uns</p>
+        <span class="eyebrow">Über uns</span>
+        <h1>Menschen, die Akten mögen – damit Sie es nicht müssen</h1>
+        <p class="lead">
+          Wir kommen aus der Finanzierungspraxis: aus Bankfilialen, aus Vermittler&shy;büros, aus dem
+          Backoffice. Wir wissen, woran Akten scheitern – und was es braucht, damit sie durchgehen.
+        </p>
+      </div>
+    </section>
+
+    <!-- ===== Geschichte ===== -->
+    <section class="sec">
+      <div class="wrap split">
+        <div data-reveal="left">
+          <span class="eyebrow">Warum es uns gibt</span>
+          <h2>Aus einem alltäglichen Ärgernis entstanden</h2>
+          <p>
+            Gute Beraterinnen und Berater verbringen einen großen Teil ihres Tages nicht mit
+            Beratung. Sie sortieren Gehaltsabrechnungen, fassen bei Bankmitarbeitenden nach,
+            suchen Grundrisse und erklären zum dritten Mal, warum eine Unterlage fehlt.
+          </p>
+          <p>
+            Genau diese Arbeit ist notwendig – aber sie muss nicht von der Person erledigt werden,
+            die den Kunden gewinnt. Aus dieser Überzeugung ist B2B Hypo Service entstanden:
+            ein Dienstleister, der ausschließlich im Hintergrund arbeitet und Vertriebspartnern
+            den Rücken freihält.
+          </p>
+          <p>
+            Wir treten nie in Konkurrenz zu unseren Auftraggebern. Wir haben keine eigenen
+            Privatkunden und werben keine ab. Unser Geschäft funktioniert nur, wenn Ihres läuft.
+          </p>
+        </div>
+
+        <div data-reveal="right">
+          <div class="grid" style="gap:1rem">
+            <article class="card">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M5 8h14"/><path d="M7 21h10"/></svg>
+              </div>
+              <h3>Fachlich statt formal</h3>
+              <p>Wir schieben keine Formulare hin und her, sondern denken in Kreditrichtlinien, Beleihungswerten und Haushaltsrechnungen.</p>
+            </article>
+            <article class="card">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/></svg>
+              </div>
+              <h3>Feste Gesichter</h3>
+              <p>Jeder Partner hat einen festen Ansprechpartner und eine Vertretung. Keine anonyme Hotline, kein wechselnder Bearbeiter.</p>
+            </article>
+            <article class="card">
+              <div class="card-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 8 4v5c0 5-3.5 8.2-8 9-4.5-.8-8-4-8-9V7z"/><path d="m9 12 2 2 4-4"/></svg>
+              </div>
+              <h3>Diskret im Hintergrund</h3>
+              <p>Auf Wunsch arbeiten wir vollständig unter Ihrer Marke. Ihre Kunden merken nur, dass es schneller geht.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Werte ===== -->
+    <section class="sec sec-dark">
+      <div class="wrap">
+        <div class="sec-head center" data-reveal>
+          <span class="eyebrow">Haltung</span>
+          <h2>Vier Grundsätze, an denen Sie uns messen können</h2>
+        </div>
+        <div class="grid grid-4">
+          <article class="card card-dark" data-reveal data-delay="0">
+            <span class="card-num">01</span>
+            <h3>Ehrlich früh</h3>
+            <p>Wenn eine Finanzierung nicht darstellbar ist, sagen wir das am ersten Tag – nicht nach vier Wochen Bearbeitung.</p>
+          </article>
+          <article class="card card-dark" data-reveal data-delay="0.08">
+            <span class="card-num">02</span>
+            <h3>Sauber statt schnell</h3>
+            <p>Eine vollständige Akte schlägt eine schnelle. Wir reichen erst ein, wenn die Unterlagen bankfähig sind.</p>
+          </article>
+          <article class="card card-dark" data-reveal data-delay="0.16">
+            <span class="card-num">03</span>
+            <h3>Ihre Kunden bleiben Ihre</h3>
+            <p>Kein Direktgeschäft, keine Abwerbung, kein Zweitkontakt. Vertraglich zugesichert.</p>
+          </article>
+          <article class="card card-dark" data-reveal data-delay="0.24">
+            <span class="card-num">04</span>
+            <h3>Nachvollziehbar</h3>
+            <p>Jede Entscheidung, jede Bankanfrage, jeder Absagegrund ist dokumentiert und für Sie einsehbar.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Team ===== -->
+    <section class="sec">
+      <div class="wrap">
+        <div class="sec-head center" data-reveal>
+          <span class="eyebrow">Team</span>
+          <h2>Wer an Ihren Akten arbeitet</h2>
+          <p class="lead" style="margin-inline:auto">
+            Ein kleines, eingespieltes Team aus Bank- und Vertriebspraxis.
+            <span class="ph">Namen, Funktionen und Fotos bitte ergänzen.</span>
+          </p>
+        </div>
+
+        <div class="grid grid-3">
+          <article class="card" data-reveal data-delay="0" style="text-align:center">
+            <span class="q-avatar" aria-hidden="true" style="width:64px;height:64px;font-size:1.2rem;margin:0 auto 1rem">GF</span>
+            <h3 class="ph">[Name Geschäftsführung]</h3>
+            <p style="color:var(--brand);font-weight:600;font-size:.88rem">Geschäftsführung</p>
+            <p style="margin-top:.6rem">Verantwortet Partnerbeziehungen, Kreditgeber&shy;netzwerk und die fachliche Linie des Hauses.</p>
+          </article>
+          <article class="card" data-reveal data-delay="0.1" style="text-align:center">
+            <span class="q-avatar" aria-hidden="true" style="width:64px;height:64px;font-size:1.2rem;margin:0 auto 1rem">BO</span>
+            <h3 class="ph">[Name Teamleitung]</h3>
+            <p style="color:var(--brand);font-weight:600;font-size:.88rem">Leitung Backoffice</p>
+            <p style="margin-top:.6rem">Steuert die Aktenbearbeitung, Qualitätssicherung und die Einhaltung der Reaktionszeiten.</p>
+          </article>
+          <article class="card" data-reveal data-delay="0.2" style="text-align:center">
+            <span class="q-avatar" aria-hidden="true" style="width:64px;height:64px;font-size:1.2rem;margin:0 auto 1rem">KB</span>
+            <h3 class="ph">[Name Ansprechpartner:in]</h3>
+            <p style="color:var(--brand);font-weight:600;font-size:.88rem">Partnerbetreuung</p>
+            <p style="margin-top:.6rem">Erste Anlaufstelle für neue Partner, Onboarding und laufende Abstimmung.</p>
+          </article>
+        </div>
+
+        <div class="note-box" style="margin-top:2rem" data-reveal>
+          <strong>Hinweis für die Freigabe:</strong> Alle mit gelbem Hintergrund markierten Stellen sind
+          Platzhalter und sollten vor der Veröffentlichung durch echte Angaben ersetzt werden.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Zahlen ===== -->
+    <section class="sec sec-alt">
+      <div class="wrap split">
+        <div data-reveal="left">
+          <span class="eyebrow">Arbeitsweise</span>
+          <h2>Struktur schlägt Improvisation</h2>
+          <p class="lead">
+            Jede Akte durchläuft dieselben Prüfschritte – unabhängig davon, wer sie bearbeitet.
+            Das macht Qualität planbar und Vertretung möglich.
+          </p>
+          <ul class="check-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Dokumentierte Prüfschritte je Aktenart</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Vier-Augen-Prinzip vor jeder Einreichung</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Laufende Pflege der Kreditrichtlinien-Datenbank</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg> Regelmäßige Auswertung von Absagegründen</li>
+          </ul>
+        </div>
+
+        <div data-reveal="right">
+          <blockquote class="quote">
+            <p>
+              Unser Ziel ist nicht, möglichst viele Akten zu bearbeiten. Unser Ziel ist, dass unsere
+              Partner mehr Zeit für Gespräche haben, die niemand sonst führen kann.
+            </p>
+            <footer>
+              <span class="q-avatar" aria-hidden="true">GF</span>
+              <span>
+                <span class="q-name ph">[Name Geschäftsführung]</span>
+                <span class="q-role">Geschäftsführung, B2B Hypo Service GmbH</span>
+              </span>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap" data-reveal>
+        <h2>Lernen wir uns kennen</h2>
+        <p>Ein kurzes Gespräch reicht, um zu klären, ob wir zueinander passen.</p>
+        <div class="cta-actions">
+          <a href="kontakt.html" class="btn btn-light btn-lg">Kontakt aufnehmen</a>
+          <a href="partner.html" class="btn btn-outline-light btn-lg">Für Partner</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand" style="margin-bottom:1rem">
+            <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <defs>
+                <linearGradient id="bmf" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#2a55f5" /><stop offset="100%" stop-color="#00bfa6" />
+                </linearGradient>
+              </defs>
+              <rect x="1.5" y="1.5" width="45" height="45" rx="13" fill="url(#bmf)" />
+              <path d="M12 23 24 12l12 11" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M15 23v13h18V23" stroke="rgba(255,255,255,.72)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+              <polyline points="20,31 23,28 26,30 30,25" stroke="#ffb547" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <span class="brand-text"><b>B2B Hypo Service</b><span>GmbH</span></span>
+          </a>
+          <p>Wir übernehmen für Vermittler, Makler und Institute die Arbeit rund um die Immobilien&shy;finanzierung – von der Unterlagenprüfung bis zur Auszahlung.</p>
+        </div>
+
+        <div>
+          <h4>Navigation</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="leistungen.html">Leistungen</a></li>
+            <li><a href="ablauf.html">Ablauf</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="partner.html">Für Partner</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Rechtliches</h4>
+          <ul>
+            <li><a href="impressum.html">Impressum</a></li>
+            <li><a href="datenschutz.html">Datenschutz</a></li>
+            <li><a href="#" data-cookie-open>Cookie-Einstellungen</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li><a href="mailto:info@b2b-hypo-service.de">info@b2b-hypo-service.de</a></li>
+            <li><span class="ph">[Telefonnummer eintragen]</span></li>
+            <li><span class="ph">[Straße Hausnummer]</span><br /><span class="ph">[PLZ Ort]</span></li>
+            <li>Mo–Fr 08:00–18:00 Uhr</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>&copy; <span data-year>2026</span> B2B Hypo Service GmbH. Alle Rechte vorbehalten.</span>
+        <nav aria-label="Rechtliche Links">
+          <a href="impressum.html">Impressum</a>
+          <a href="datenschutz.html">Datenschutz</a>
+          <a href="#" data-cookie-open>Cookies</a>
+        </nav>
+      </div>
+    </div>
+  </footer>
+
+  <button class="to-top" type="button" aria-label="Nach oben scrollen">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+  </button>
+
+  <!-- ===== Cookie-Hinweis ===== -->
+  <div class="cookie" role="dialog" aria-label="Cookie-Hinweis">
+    <h4>Cookies &amp; Datenschutz</h4>
+    <p>Diese Website nutzt nur technisch notwendige Speicherung. Optionale Dienste (z.&nbsp;B. Statistik) werden erst nach Ihrer Zustimmung geladen. Details in der <a href="datenschutz.html" style="color:var(--brand);text-decoration:underline">Datenschutzerklärung</a>.</p>
+    <div class="cookie-actions">
+      <button class="btn btn-primary" type="button" data-cookie="accept">Alle akzeptieren</button>
+      <button class="btn btn-ghost" type="button" data-cookie="decline">Nur notwendige</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
