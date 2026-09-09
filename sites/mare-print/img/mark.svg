@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" role="img" aria-label="MARE-Print Signet">
+  <circle cx="32" cy="32" r="30" stroke="currentColor" stroke-width="2.5" opacity=".25"/>
+  <circle cx="32" cy="32" r="19" stroke="currentColor" stroke-width="2.5"/>
+  <path d="M32 0v18M32 46v18M0 32h18M46 32h18" stroke="currentColor" stroke-width="2.5"/>
+  <path d="M13 36c4.5-5 9.5-5 14 0s9.5 5 14 0" stroke="#00A9E0" stroke-width="3" stroke-linecap="round"/>
+  <path d="M13 26c4.5-5 9.5-5 14 0s9.5 5 14 0" stroke="#E6007E" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+</svg>

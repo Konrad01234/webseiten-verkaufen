@@ -6,7 +6,9 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 
 ```
 sites/
-└── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── davids/          Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── eiscafefranco/   Eiscafé de Franco
+└── mare-print/      MARE-Print – Großformatdruck Dresden (statisches HTML + CSS + JS)
 ```
 
 ## Vercel-Setup
@@ -16,6 +18,7 @@ Für jede Seite ein eigenes Vercel-Projekt:
 1. In Vercel **Add New Project** → dieses Repo auswählen
 2. **Root Directory** auf den jeweiligen Ordner setzen:
    - Projekt „davids" → Root Directory `sites/davids`
+   - Projekt „mare-print" → Root Directory `sites/mare-print`
 3. **Framework Preset**: `Other` (statisches HTML, kein Build nötig)
 4. Production Branch: `claude/vercel-deployment-branch-VgNvi` (oder den, den du als Default setzt)
 
