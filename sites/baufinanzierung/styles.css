@@ -230,17 +230,24 @@ img { max-width: 100%; display: block; }
 }
 .hero .wrap { position: relative; z-index: 2; }
 .hero-layout { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
-.hero h1 { color: #fff; }
+/* Etwas kleiner als die globale H1: neben der Schnellstart-Karte ist die
+   Spalte schmaler, „Ihre Baufinanzierung." soll auf eine Zeile passen. */
+.hero h1 { color: #fff; font-size: clamp(2.1rem, 3.6vw, 3.1rem); }
 .hero h1 em { font-style: normal; color: #7ee0bd; }
 .hero .eyebrow { color: #7ee0bd; }
 .hero .eyebrow::before { background: linear-gradient(90deg, #7ee0bd, transparent); }
 .hero .lede { color: rgba(232, 240, 247, 0.82); max-width: 52ch; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 0.8rem; margin: 1.8rem 0 2rem; }
 
-.hero-facts { display: flex; flex-wrap: wrap; gap: 1.6rem 2.6rem; padding-top: 1.6rem; border-top: 1px solid rgba(255, 255, 255, 0.14); }
+/* Zwei Spalten statt einer Reihe: vier Kennzahlen passen sonst nicht neben
+   die Schnellstart-Karte und brechen unschön um. */
+.hero-facts {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.3rem 2rem;
+  padding-top: 1.6rem; border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
 .hero-facts div { display: flex; flex-direction: column; }
 .hero-facts strong {
-  font-family: var(--head); font-size: clamp(1.5rem, 2.6vw, 1.9rem); color: #fff; font-weight: 800;
+  font-family: var(--head); font-size: clamp(1.4rem, 2.2vw, 1.75rem); color: #fff; font-weight: 800;
 }
 .hero-facts span { font-size: 0.82rem; color: rgba(232, 240, 247, 0.66); }
 
@@ -692,6 +699,7 @@ html:not(.js) .wstep + .wstep { margin-top: 2.4rem; padding-top: 2rem; border-to
 }
 @media (max-width: 620px) {
   .wrap { width: min(100% - 1.8rem, var(--maxw)); }
+  .tb-right { display: none; }  /* sonst bricht die Kopfleiste zweizeilig um */
   .field-row, .choices.cols-2, .choices.cols-3 { grid-template-columns: 1fr; }
   .aside { grid-template-columns: 1fr; }
   .steps { grid-template-columns: 1fr; }
