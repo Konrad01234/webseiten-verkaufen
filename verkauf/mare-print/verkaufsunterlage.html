@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>MARE-Print – Entwurf &amp; Angebot</title>
+<link rel="stylesheet" href="../../sites/mare-print/fonts.css">
+<style>
+/* ===== Seitenformat ===== */
+@page{ size:A4; margin:0 }
+*{ box-sizing:border-box; margin:0; padding:0 }
+html{ -webkit-print-color-adjust:exact; print-color-adjust:exact }
+
+:root{
+  --ink:#0B1015; --ink-2:#141C24;
+  --paper:#F6F3ED; --paper-2:#EDE8DE; --paper-3:#E2DCD0;
+  --cyan:#00A9E0; --magenta:#E6007E; --yellow:#FFD100;
+  --txt:#0B1015; --mute:#5B6874; --inv:#F6F3ED; --inv-mute:#93A3B0;
+  --line:#0b101522; --line-strong:#0b101540; --line-inv:#ffffff24;
+  --fd:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --ft:"Inter","Helvetica Neue",Arial,sans-serif;
+  --fm:"JetBrains Mono",monospace;
+}
+body{ font-family:var(--ft); color:var(--txt); background:#8a8a8a; font-size:10.2pt; line-height:1.55 }
+
+.page{
+  position:relative; width:210mm; height:297mm; overflow:hidden;
+  background:var(--paper); page-break-after:always; break-after:page;
+}
+.page:last-child{ page-break-after:auto; break-after:auto }
+.page.dark{ background:var(--ink); color:var(--inv) }
+.pad{ position:absolute; inset:0; padding:20mm 18mm 16mm; z-index:2 }
+
+/* Papierkorn – nur am Bildschirm; im Druck erzwingt mix-blend-mode
+   die Rasterung ganzer Seiten und blaeht die PDF-Datei auf. */
+@media screen{
+  .page::after{
+    content:""; position:absolute; inset:0; pointer-events:none; opacity:.42; mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.26'/%3E%3C/svg%3E");
+  }
+  .page.dark::after{ mix-blend-mode:screen; opacity:.16 }
+}
+
+/* ===== Typografie ===== */
+h1,h2,h3,h4{ font-family:var(--fd); font-weight:800; line-height:1.03; letter-spacing:-.032em }
+h1{ font-size:44pt; font-weight:900; letter-spacing:-.045em }
+h2{ font-size:23pt }
+h3{ font-size:12.5pt; letter-spacing:-.02em; font-weight:700 }
+h4{ font-size:10.5pt; letter-spacing:-.012em; font-weight:700 }
+p{ margin:0 0 3.4mm }
+p:last-child{ margin-bottom:0 }
+.lead{ font-size:11.4pt; line-height:1.6; color:var(--mute) }
+.dark .lead{ color:#C4D0DA }
+.mute{ color:var(--mute) }
+.dark .mute{ color:var(--inv-mute) }
+strong{ font-weight:600; color:var(--txt) }
+.dark strong{ color:var(--inv) }
+
+.kicker{
+  display:flex; align-items:center; gap:2.4mm; font-family:var(--fm); font-size:7pt;
+  letter-spacing:.22em; text-transform:uppercase; color:var(--mute); margin-bottom:5mm;
+}
+.dark .kicker{ color:var(--inv-mute) }
+.kicker::before{
+  content:""; width:9mm; height:2.6mm; flex:none;
+  background:
+    radial-gradient(circle 1.3mm at 1.3mm 1.3mm,var(--cyan) 98%,transparent 100%),
+    radial-gradient(circle 1.1mm at 4.4mm 1.3mm,var(--magenta) 98%,transparent 100%),
+    radial-gradient(circle .95mm at 7.3mm 1.3mm,var(--yellow) 98%,transparent 100%);
+}
+.mono{ font-family:var(--fm); font-size:7pt; letter-spacing:.16em; text-transform:uppercase; color:var(--mute) }
+.dark .mono{ color:var(--inv-mute) }
+
+.bar{ display:flex; height:1.8mm; border-radius:99px; overflow:hidden }
+.bar i{ flex:1 }
+.bar i:nth-child(1){ background:var(--cyan) }
+.bar i:nth-child(2){ background:var(--magenta) }
+.bar i:nth-child(3){ background:var(--yellow) }
+.bar i:nth-child(4){ background:var(--ink) }
+.dark .bar i:nth-child(4){ background:var(--paper) }
+
+/* Passermarken */
+.reg{ position:absolute; width:7mm; height:7mm; opacity:.32; z-index:3 }
+.reg svg{ width:100%; height:100% }
+.r1{ top:8mm; left:8mm } .r2{ top:8mm; right:8mm } .r3{ bottom:8mm; left:8mm } .r4{ bottom:8mm; right:8mm }
+
+/* Fußzeile */
+.foot{
+  position:absolute; z-index:3; left:18mm; right:18mm; bottom:9mm; display:flex; justify-content:space-between;
+  font-family:var(--fm); font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; color:var(--mute);
+  border-top:.3mm solid var(--line); padding-top:2.6mm;
+}
+.dark .foot{ color:var(--inv-mute); border-color:var(--line-inv) }
+
+/* ===== Bausteine ===== */
+.shot{ width:100%; border:.3mm solid var(--line); border-radius:2.4mm; overflow:hidden; background:var(--ink); display:block }
+.shot img{ width:100%; display:block }
+.shot-cap{ font-family:var(--fm); font-size:6.6pt; letter-spacing:.14em; text-transform:uppercase; color:var(--mute); margin-top:2.4mm }
+
+.cols{ display:grid; gap:7mm }
+.c2{ grid-template-columns:1fr 1fr }
+.c3{ grid-template-columns:repeat(3,1fr) }
+.c25{ grid-template-columns:1.15fr .85fr }
+
+.box{ border:.3mm solid var(--line); border-radius:3mm; padding:6mm; background:#fff6 }
+.dark .box{ border-color:var(--line-inv); background:#ffffff0a }
+
+.feat{ display:flex; gap:3.4mm; align-items:flex-start; margin-bottom:4.6mm }
+.feat:last-child{ margin-bottom:0 }
+.feat .n{
+  flex:none; width:7mm; height:7mm; border-radius:1.8mm; display:grid; place-content:center;
+  background:#00a9e01f; border:.3mm solid #00a9e045; color:#0079a3;
+  font-family:var(--fm); font-size:7pt; font-weight:500;
+}
+.dark .feat .n{ background:#00a9e01f; border-color:#00a9e055; color:var(--cyan) }
+.feat h4{ margin-bottom:1mm }
+.feat p{ font-size:9.4pt; color:var(--mute); margin:0; line-height:1.5 }
+.dark .feat p{ color:var(--inv-mute) }
+
+table{ width:100%; border-collapse:collapse; font-size:9.4pt }
+th{
+  text-align:left; font-family:var(--fm); font-size:6.8pt; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--mute); font-weight:500; padding:0 3mm 2.4mm 0; border-bottom:.3mm solid var(--line-strong);
+}
+td{ padding:3mm 3mm 3mm 0; border-bottom:.3mm solid var(--line); vertical-align:top; color:var(--mute) }
+td:first-child{ font-family:var(--fd); font-weight:700; color:var(--txt); white-space:nowrap }
+tr:last-child td{ border-bottom:0 }
+
+ul.check{ list-style:none }
+ul.check li{ position:relative; padding-left:6.5mm; margin-bottom:2.6mm; font-size:9.6pt; color:var(--mute) }
+ul.check li:last-child{ margin-bottom:0 }
+ul.check li::before{
+  content:""; position:absolute; left:0; top:1.4mm; width:3.4mm; height:1.9mm;
+  border-left:.6mm solid var(--cyan); border-bottom:.6mm solid var(--cyan); transform:rotate(-45deg);
+}
+ul.check li b{ color:var(--txt); font-weight:600 }
+.dark ul.check li{ color:var(--inv-mute) }
+.dark ul.check li b{ color:var(--inv) }
+
+.ph{ background:#FFD10055; border-bottom:.35mm dashed #a98400; padding:0 1.4mm; border-radius:.8mm;
+     font-family:var(--fm); font-size:8.4pt; color:#4a3c00 }
+.dark .ph{ background:#FFD1002e; border-color:#FFD100aa; color:#FFE98A }
+
+.stat{ display:grid; grid-template-columns:repeat(4,1fr); gap:.3mm; background:var(--line-inv);
+       border:.3mm solid var(--line-inv); border-radius:3mm; overflow:hidden }
+.stat div{ background:var(--ink); padding:5mm 4mm }
+.stat b{ display:block; font-family:var(--fd); font-weight:800; font-size:19pt; letter-spacing:-.04em; line-height:1 }
+.stat b em{ font-style:normal; color:var(--cyan) }
+.stat span{ display:block; margin-top:2mm; font-family:var(--fm); font-size:6.4pt; letter-spacing:.14em;
+            text-transform:uppercase; color:var(--inv-mute); line-height:1.4 }
+
+.note{ display:flex; gap:3.4mm; padding:5mm; border:.3mm solid var(--line); background:var(--paper-2);
+       border-radius:3mm; font-size:9.2pt; color:var(--mute); line-height:1.5 }
+.note .ic{ flex:none; width:4mm; height:4mm; border-radius:50%; border:.4mm solid var(--cyan);
+           color:var(--cyan); font-family:var(--fd); font-size:7pt; font-weight:800;
+           display:grid; place-content:center; margin-top:.6mm }
+.note b{ color:var(--txt) }
+.dark .note{ background:#ffffff0a; border-color:var(--line-inv); color:var(--inv-mute) }
+.dark .note b{ color:var(--inv) }
+
+.brand{ display:flex; align-items:center; gap:3mm }
+.brand svg{ width:9mm; height:9mm }
+.brand b{ font-family:var(--fd); font-weight:900; font-size:14pt; letter-spacing:-.045em }
+.brand b i{ font-style:normal; color:var(--cyan) }
+.brand small{ display:block; font-family:var(--fm); font-size:6.2pt; letter-spacing:.22em;
+              text-transform:uppercase; color:var(--mute); margin-top:.8mm }
+.dark .brand small{ color:var(--inv-mute) }
+
+.mobil{ display:grid; grid-template-columns:repeat(3,1fr); gap:5mm }
+.mobil .shot{ border-radius:4mm; height:78mm }
+.mobil .shot img{ height:100%; object-fit:cover; object-position:top center }
+
+@media screen{
+  body{ padding:10mm 0 }
+  .page{ margin:0 auto 8mm; box-shadow:0 3mm 12mm #0006 }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ 1 · TITEL ══════════════ -->
+<section class="page dark">
+  <span class="reg r1"><svg viewBox="0 0 24 24" fill="none" stroke="#F6F3ED" stroke-width="1.2"><circle cx="12" cy="12" r="7"/><path d="M12 0v24M0 12h24"/></svg></span>
+  <span class="reg r2"><svg viewBox="0 0 24 24" fill="none" stroke="#F6F3ED" stroke-width="1.2"><circle cx="12" cy="12" r="7"/><path d="M12 0v24M0 12h24"/></svg></span>
+  <span class="reg r3"><svg viewBox="0 0 24 24" fill="none" stroke="#F6F3ED" stroke-width="1.2"><circle cx="12" cy="12" r="7"/><path d="M12 0v24M0 12h24"/></svg></span>
+  <span class="reg r4"><svg viewBox="0 0 24 24" fill="none" stroke="#F6F3ED" stroke-width="1.2"><circle cx="12" cy="12" r="7"/><path d="M12 0v24M0 12h24"/></svg></span>
+
+  <div style="position:absolute;inset:0;background:
+      radial-gradient(90mm 60mm at 78% 16%,#00a9e029,transparent 68%),
+      radial-gradient(80mm 60mm at 10% 88%,#e6007e1f,transparent 70%),
+      linear-gradient(160deg,#101A22,#0B1015 48%,#08252F)"></div>
+  <div style="position:absolute;inset:0;opacity:.3;background-image:
+      radial-gradient(#ffffff 0.24mm,transparent 0.26mm);background-size:3.8mm 3.8mm;
+      -webkit-mask-image:radial-gradient(62% 52% at 50% 40%,#000 8%,transparent 100%);
+      mask-image:radial-gradient(62% 52% at 50% 40%,#000 8%,transparent 100%)"></div>
+
+  <div class="pad" style="display:flex;flex-direction:column">
+    <div class="brand">
+      <svg viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="30" stroke="#F6F3ED" stroke-width="2.5" opacity=".22"/>
+        <circle cx="32" cy="32" r="19" stroke="#F6F3ED" stroke-width="2.5"/>
+        <path d="M32 2v17M32 45v17M2 32h17M45 32h17" stroke="#F6F3ED" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M14 36c4.5-5 9-5 13.5 0s9 5 13.5 0" stroke="#00A9E0" stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M14 27c4.5-5 9-5 13.5 0s9 5 13.5 0" stroke="#E6007E" stroke-width="3.2" stroke-linecap="round"/>
+      </svg>
+      <span><b style="color:#F6F3ED">MARE<i>-</i>Print</b><small>Großformatdruck · Dresden</small></span>
+    </div>
+
+    <div style="margin-top:auto">
+      <p class="kicker">Entwurf &amp; Angebot · September 2026</p>
+      <h1 style="color:#F6F3ED">Ihr neuer<br>Webauftritt.<span style="color:#00A9E0">*</span></h1>
+      <p class="lead" style="margin-top:8mm;max-width:118mm">
+        Kein Konzept, keine Skizze, kein Moodboard. Sondern eine fertig gebaute,
+        siebenseitige Website für MARE-Print – gestaltet in der Sprache Ihres eigenen
+        Handwerks: Passermarken, Farbkontrollstreifen, Halbtonraster, CMYK.
+      </p>
+      <p style="margin-top:5mm;font-family:var(--fm);font-size:8pt;letter-spacing:.1em;color:#4FC5EE">* Sie können ihn sich ansehen, bevor Sie sich entscheiden.</p>
+    </div>
+
+    <div style="margin-top:auto">
+      <div class="bar" style="max-width:60mm;margin-bottom:7mm"><i></i><i></i><i></i><i></i></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:10mm">
+        <div>
+          <p class="mono" style="margin-bottom:2.4mm">Vorgelegt von</p>
+          <p style="font-family:var(--fd);font-weight:700;font-size:11pt;color:#F6F3ED;line-height:1.5">
+            <span class="ph">Ihr Name / Firma</span><br>
+            <span class="ph">Telefon</span> · <span class="ph">E-Mail</span>
+          </p>
+        </div>
+        <div style="text-align:right">
+          <p class="mono" style="margin-bottom:2.4mm">Gültig bis</p>
+          <p style="font-family:var(--fd);font-weight:700;font-size:11pt;color:#F6F3ED">
+            <span class="ph">TT.MM.JJJJ</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ 2 · ANSCHREIBEN ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Worum es geht</p>
+    <h2>Ich habe die Seite<br>schon gebaut.</h2>
+
+    <div class="cols c25" style="margin-top:9mm">
+      <div>
+        <p class="lead" style="color:var(--txt)">Sehr geehrte Damen und Herren,</p>
+        <p style="margin-top:4mm;color:var(--mute)">
+          die meisten Angebote für eine neue Website bestehen aus Versprechen. Dieses hier
+          besteht aus einer Website. Sie ist fertig, sie läuft, und Sie können jede Seite
+          anklicken, bevor Sie entscheiden, ob Sie sie haben wollen.
+        </p>
+        <p style="color:var(--mute)">
+          Warum ausgerechnet MARE-Print? Weil Großformatdruck ein Geschäft ist, in dem
+          <strong>das Material über den Erfolg entscheidet</strong> – und weil genau dieses Wissen
+          im Netz meist untergeht. Wer ein Banner für eine windige Nordfassade sucht, braucht
+          keine Bildergalerie. Er braucht jemanden, der ihm sagt, dass er Mesh nehmen soll.
+        </p>
+        <p style="color:var(--mute)">
+          Diese Seite ist darauf gebaut. Sie erklärt vierzehn Materialien in der Sprache des
+          Einsatzorts, sie rechnet dem Besucher Fläche, Ösen und Gewicht aus, bevor er
+          überhaupt anruft – und sie tut das in einer Gestaltung, die aus Ihrem eigenen
+          Handwerk kommt statt aus einem Baukasten.
+        </p>
+        <p style="color:var(--mute)">
+          Auf den nächsten Seiten sehen Sie, was entstanden ist. Wenn Ihnen gefällt, was Sie
+          sehen, übergebe ich Ihnen den kompletten Quellcode.
+        </p>
+        <p style="margin-top:6mm;font-family:var(--fd);font-weight:700;font-size:10.5pt;color:var(--txt)">
+          Mit freundlichen Grüßen<br>
+          <span class="ph">Ihr Name</span>
+        </p>
+      </div>
+
+      <div>
+        <div class="box" style="background:var(--paper-2)">
+          <p class="mono" style="margin-bottom:5mm">Drei Dinge vorweg</p>
+          <div class="feat">
+            <span class="n">01</span>
+            <div><h4>Fertig, nicht geplant</h4>
+              <p>Sieben Seiten, vollständig ausgearbeitet. Kein Platzhaltertext, keine „Lorem ipsum“-Blöcke.</p></div>
+          </div>
+          <div class="feat">
+            <span class="n">02</span>
+            <div><h4>Keine laufenden Abhängigkeiten</h4>
+              <p>Reines HTML, CSS und JavaScript. Kein Baukasten, kein Redaktionssystem, keine Lizenzgebühren.</p></div>
+          </div>
+          <div class="feat">
+            <span class="n">03</span>
+            <div><h4>Unverbindlich</h4>
+              <p>Sie sehen sich die Seite an. Passt sie nicht, kostet Sie das nichts – auch keine Absage.</p></div>
+          </div>
+        </div>
+
+        <div class="note" style="margin-top:6mm">
+          <span class="ic">i</span>
+          <span><b>Zu den Inhalten:</b> Materialangaben, Kontaktdaten und Firmierung habe ich aus
+          öffentlich zugänglichen Quellen zusammengetragen. Vor dem Livegang gleichen wir alles
+          gemeinsam mit Ihren tatsächlichen Angaben ab – die Stellen sind im Quellcode markiert.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 2</span></div>
+</section>
+
+<!-- ══════════════ 3 · DER ENTWURF ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Der Entwurf</p>
+    <h2>Eine Druckerei sollte<br>aussehen wie Druck.</h2>
+
+    <div class="shot" style="margin-top:8mm"><img src="bilder/hero.jpg" alt="Startseite von MARE-Print"></div>
+    <p class="shot-cap">Startseite · Desktop</p>
+
+    <div class="cols c3" style="margin-top:8mm">
+      <div>
+        <h4>Die Gestaltungsidee</h4>
+        <p style="font-size:9.4pt;color:var(--mute);margin-top:2mm">
+          Die ganze Seite spricht die Sprache der Druckvorstufe: Passermarken in den Ecken,
+          Farbkontrollstreifen, Halbtonraster, Schnittmarken. Selbst die Schaltflächen laufen
+          beim Überfahren kurz aus dem Register – so wie ein Druck, bei dem Cyan und Magenta
+          nicht ganz sitzen.
+        </p>
+      </div>
+      <div>
+        <h4>Der Druckbogen</h4>
+        <p style="font-size:9.4pt;color:var(--mute);margin-top:2mm">
+          Rechts oben liegt ein Bogen im Passer, über den ein Druckkopf wandert. Vier Aufträge
+          wechseln durch: Werbebanner, Aufkleberbogen, Gerüstplane, Schaufensterfolie.
+          Der Besucher sieht in acht Sekunden, was Sie können – ohne einen Satz zu lesen.
+        </p>
+      </div>
+      <div>
+        <h4>Warum keine Fotos?</h4>
+        <p style="font-size:9.4pt;color:var(--mute);margin-top:2mm">
+          Jede Grafik auf dieser Seite ist eine Vektorzeichnung. Sie wird auf keinem Bildschirm
+          unscharf, lädt in Millisekunden und altert nicht. Ihre eigenen Produktfotos lassen sich
+          jederzeit ergänzen – die Seite ist darauf vorbereitet.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 3</span></div>
+</section>
+
+<!-- ══════════════ 4 · WERKZEUG 1 ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Das Herzstück</p>
+    <h2>Der Format-Rechner.</h2>
+    <p class="lead" style="margin-top:5mm;max-width:145mm">
+      Der Besucher gibt Breite und Höhe ein und sieht sofort, wie groß das Ganze wirklich wird –
+      im Maßstab neben einer 1,80-m-Silhouette. Dazu Fläche, Ösenanzahl, Transportgewicht,
+      Nahtbedarf und drei passende Materialien.
+    </p>
+
+    <div class="shot" style="margin-top:7mm"><img src="bilder/rechner.jpg" alt="Format-Rechner"></div>
+    <p class="shot-cap">Startseite · Format-Rechner</p>
+
+    <div class="cols c2" style="margin-top:8mm">
+      <div>
+        <div class="feat"><span class="n">✓</span><div>
+          <h4>Er beantwortet die teuerste Frage vorab</h4>
+          <p>„Wie groß ist das eigentlich?“ – die Frage, die sonst am Telefon zehn Minuten kostet und
+             hinterher trotzdem zu Fehlbestellungen führt.</p></div></div>
+        <div class="feat"><span class="n">✓</span><div>
+          <h4>Er qualifiziert die Anfrage</h4>
+          <p>Wer den Rechner benutzt, schickt Ihnen anschließend Maße statt „Was kostet ein Banner?“.
+             Das verkürzt jede Angebotsschleife.</p></div></div>
+      </div>
+      <div>
+        <div class="feat"><span class="n">✓</span><div>
+          <h4>Er verrät keine Preise</h4>
+          <p>Bewusst. Der Rechner liefert Geometrie, keine Kalkulation – Ihre Preisgestaltung bleibt,
+             wo sie hingehört: im Gespräch.</p></div></div>
+        <div class="feat"><span class="n">✓</span><div>
+          <h4>Er läuft ohne Server</h4>
+          <p>Alles rechnet im Browser des Besuchers. Keine Datenbank, keine Anmeldung, keine
+             Daten, die irgendwo gespeichert werden müssten.</p></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 4</span></div>
+</section>
+
+<!-- ══════════════ 5 · WERKZEUG 2 ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Das zweite Werkzeug</p>
+    <h2>Vierzehn Materialien,<br>einmal richtig erklärt.</h2>
+
+    <div class="shot" style="margin-top:7mm"><img src="bilder/material.jpg" alt="Material-Explorer"></div>
+    <p class="shot-cap">Materialkatalog · Explorer mit Filter</p>
+
+    <div class="cols c25" style="margin-top:8mm">
+      <div>
+        <p style="color:var(--mute)">
+          Von PVC-Frontlit 510 bis zur Alu-Verbundplatte: Jeder Werkstoff hat eine eigene
+          Materialtextur, eine Beschreibung in Klartext und vier harte Kennwerte –
+          Gewicht, Bahnbreite, Einsatz, Besonderheit. Gefiltert wird nach Materialgruppe
+          oder nach Einsatzort.
+        </p>
+        <p style="color:var(--mute)">
+          Und was am meisten zählt: Zu jedem Material steht nicht nur, wofür es gemacht ist,
+          sondern auch, <strong>wo seine Grenzen liegen</strong>. Das ist der Ton, der
+          Handwerksbetriebe von Portalen unterscheidet.
+        </p>
+      </div>
+      <div class="box">
+        <p class="mono" style="margin-bottom:4mm">Im Katalog enthalten</p>
+        <p style="font-size:9pt;color:var(--mute);line-height:1.75">
+          Frontlit 510 · Mesh 300 · Blockout 610 · Fahnenstoff 115 · Airtex 210 ·
+          Canvas 380 · Monomere Folie · Polymere Folie · Transparentfolie ·
+          Lochfolie · Magnetfolie · Hohlkammerplatte · Hartschaumplatte ·
+          Alu-Verbundplatte
+        </p>
+        <p style="font-size:9pt;color:var(--mute);margin-top:4mm">
+          Dazu vier Konfektions-Zeichnungen: Saum, Ösen, Keder, Konturschnitt.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 5</span></div>
+</section>
+
+<!-- ══════════════ 6 · SEITENÜBERSICHT ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Umfang</p>
+    <h2>Sieben Seiten.</h2>
+
+    <table style="margin-top:8mm">
+      <tr><th style="width:34mm">Seite</th><th>Inhalt</th></tr>
+      <tr><td>Startseite</td><td>Hero mit animiertem Druckbogen, vier Produktwelten, Kennzahlen,
+        Materialkacheln, Format-Rechner, sechs Anwendungsfälle, Ablauf in fünf Schritten,
+        acht häufige Fragen</td></tr>
+      <tr><td>Materialien</td><td>Explorer über 14 Werkstoffe mit Filter, Datenblattangaben,
+        Konfektionszeichnungen und Direktlinks auf einzelne Materialien</td></tr>
+      <tr><td>Technik</td><td>Latexdruck-Schema, Umweltzertifikate, Farbmanagement und alle
+        Vorgaben zur Datenanlieferung – acht Punkte, die Rückfragen ersparen</td></tr>
+      <tr><td>Über uns</td><td>Unternehmen, Zeitstrahl, Haltung in vier Sätzen, Zielgruppen</td></tr>
+      <tr><td>Kontakt</td><td>Anfrageformular mit Prüfung der Eingaben, Kontaktdaten,
+        Lageskizze, Checkliste „Diese Angaben beschleunigen alles“</td></tr>
+      <tr><td>Impressum</td><td>Vollständige Vorlage nach DDG und MStV, Pflichtfelder markiert</td></tr>
+      <tr><td>Datenschutz</td><td>Zwölf Abschnitte, zugeschnitten auf eine Seite ohne Cookies
+        und ohne Tracking</td></tr>
+    </table>
+
+    <div class="cols c2" style="margin-top:9mm">
+      <div>
+        <div class="shot"><img src="bilder/produkte.jpg" alt="Produktwelten"></div>
+        <p class="shot-cap">Startseite · Produktwelten</p>
+      </div>
+      <div>
+        <div class="shot"><img src="bilder/anwendungen.jpg" alt="Anwendungen"></div>
+        <p class="shot-cap">Startseite · Anwendungen</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 6</span></div>
+</section>
+
+<!-- ══════════════ 7 · TECHNIK & MOBIL ══════════════ -->
+<section class="page dark">
+  <div class="pad">
+    <p class="kicker">Unter der Haube</p>
+    <h2 style="color:#F6F3ED">Was Sie nicht sehen,<br>aber merken.</h2>
+
+    <div class="stat" style="margin-top:8mm">
+      <div><b>0</b><span>Externe Verbindungen</span></div>
+      <div><b>0</b><span>Cookies</span></div>
+      <div><b>~<em>550</em></b><span>Kilobyte gesamt</span></div>
+      <div><b>0 <em>€</em></b><span>Laufende Lizenzen</span></div>
+    </div>
+
+    <div class="cols c2" style="margin-top:9mm">
+      <div>
+        <ul class="check">
+          <li><b>Kein Cookie-Banner nötig.</b> Die Seite lädt nichts von fremden Servern –
+            auch keine Google-Schriften. Alles liegt bei Ihnen. Damit entfällt die
+            Einwilligungspflicht, und niemand klickt sich durch ein Banner, bevor er Sie sieht.</li>
+          <li><b>Tempo.</b> Keine Bibliotheken, keine Frameworks, keine Nachladeketten.
+            Die Startseite ist da, bevor der Besucher merkt, dass er gewartet hat.</li>
+          <li><b>Sichtbarkeit.</b> Saubere Seitentitel, Beschreibungen, Sitemap, robots.txt und
+            strukturierte Daten für den Google-Eintrag als lokales Unternehmen.</li>
+        </ul>
+      </div>
+      <div>
+        <ul class="check">
+          <li><b>Barrierefrei bedienbar.</b> Vollständig per Tastatur, mit Sprungmarke zum Inhalt,
+            sichtbarem Fokus und korrekter Auszeichnung für Screenreader.</li>
+          <li><b>Auch ohne JavaScript lesbar.</b> Schaltet der Besucher es ab, bleibt jede Seite
+            vollständig nutzbar – der Materialkatalog zeigt dann alle Einträge untereinander.</li>
+          <li><b>Geprüft, nicht behauptet.</b> Alle sieben Seiten wurden im Browser durchgetestet:
+            von 390 bis 1440 Pixel Breite, ohne Fehler, ohne horizontales Verrutschen.</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="mono" style="margin-top:9mm">Auf dem Telefon</p>
+    <div class="mobil" style="margin-top:4mm">
+      <div class="shot"><img src="bilder/mobil-1.jpg" alt="Startseite mobil"></div>
+      <div class="shot"><img src="bilder/mobil-2.jpg" alt="Format-Rechner mobil"></div>
+      <div class="shot"><img src="bilder/mobil-3.jpg" alt="Materialkatalog mobil"></div>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 7</span></div>
+</section>
+
+<!-- ══════════════ 8 · LEISTUNG & KONDITIONEN ══════════════ -->
+<section class="page">
+  <div class="pad">
+    <p class="kicker">Leistungsumfang</p>
+    <h2>Was Sie bekommen.</h2>
+
+    <div class="cols c2" style="margin-top:8mm">
+      <div>
+        <h3 style="margin-bottom:4mm">Im Preis enthalten</h3>
+        <ul class="check">
+          <li>Sieben fertige Seiten, vollständig getextet</li>
+          <li>Materialkatalog mit 14 Werkstoffen</li>
+          <li>Format-Rechner und Material-Explorer</li>
+          <li>19 eigens gezeichnete Illustrationen und Diagramme</li>
+          <li>Anfrageformular mit Eingabeprüfung</li>
+          <li>Impressum und Datenschutzerklärung als Vorlage</li>
+          <li>Suchmaschinen-Grundausstattung: Sitemap, robots.txt, strukturierte Daten</li>
+          <li>Vollständiger Quellcode zur freien Verwendung</li>
+          <li>Einrichtung auf Ihrer Domain</li>
+          <li>Eine Korrekturschleife nach Ihrer Durchsicht</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-bottom:4mm">Optional dazu</h3>
+        <ul class="check">
+          <li>Einbau Ihrer eigenen Produktfotos</li>
+          <li>Weitere Unterseiten im gleichen Stil</li>
+          <li>Anbindung des Formulars an ein Postfach statt an das E-Mail-Programm</li>
+          <li>Erweiterung des Rechners um Ihre Kalkulation</li>
+          <li>Pflege und Aktualisierung im Wartungsvertrag</li>
+        </ul>
+
+        <div class="box" style="margin-top:7mm;background:var(--paper-2)">
+          <p class="mono" style="margin-bottom:3.4mm">Konditionen</p>
+          <table style="font-size:9.4pt">
+            <tr><td style="border:0;padding:1.6mm 0">Einmalig</td>
+                <td style="border:0;padding:1.6mm 0;text-align:right"><span class="ph">Betrag</span></td></tr>
+            <tr><td style="border:0;padding:1.6mm 0">Laufend</td>
+                <td style="border:0;padding:1.6mm 0;text-align:right"><span class="ph">Hosting / Wartung</span></td></tr>
+            <tr><td style="border:0;padding:1.6mm 0">Fertigstellung</td>
+                <td style="border:0;padding:1.6mm 0;text-align:right"><span class="ph">Zeitraum</span></td></tr>
+          </table>
+          <p style="font-size:8.4pt;color:var(--mute);margin-top:3.4mm">
+            Alle Beträge zzgl. gesetzlicher Umsatzsteuer.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:8mm">
+      <span class="ic">i</span>
+      <span><b>Vor dem Livegang gemeinsam zu prüfen:</b> Firmierung und Registerdaten im Impressum,
+      die Telefonnummer samt Preisangabe nach § 66a TKG, die E-Mail-Adresse, der Hosting-Anbieter
+      in der Datenschutzerklärung sowie die Materialangaben gegen Ihr tatsächliches Sortiment.
+      Alle betroffenen Stellen sind im Quellcode gelb markiert und in wenigen Minuten gefüllt.</span>
+    </div>
+  </div>
+  <div class="foot"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 8</span></div>
+</section>
+
+<!-- ══════════════ 9 · NÄCHSTE SCHRITTE ══════════════ -->
+<section class="page dark">
+  <div style="position:absolute;inset:0;background:
+      radial-gradient(80mm 55mm at 20% 12%,#00a9e026,transparent 66%),
+      radial-gradient(80mm 60mm at 84% 86%,#e6007e1c,transparent 70%)"></div>
+  <div class="pad" style="display:flex;flex-direction:column">
+    <p class="kicker">Wie es weitergeht</p>
+    <h2 style="color:#F6F3ED">Drei Schritte.</h2>
+
+    <div style="margin-top:10mm">
+      <div class="feat" style="margin-bottom:7mm">
+        <span class="n">01</span>
+        <div><h4 style="color:#F6F3ED;font-size:12pt">Ansehen</h4>
+          <p style="font-size:10pt">Sie klicken sich durch die Seiten – am Rechner und am Telefon.
+            Den Link finden Sie unten. Dafür müssen Sie nichts unterschreiben und nichts zusagen.</p></div>
+      </div>
+      <div class="feat" style="margin-bottom:7mm">
+        <span class="n">02</span>
+        <div><h4 style="color:#F6F3ED;font-size:12pt">Sprechen</h4>
+          <p style="font-size:10pt">Ein Telefonat von zwanzig Minuten. Sie sagen mir, was fehlt,
+            was raus soll und wie Ihr Sortiment tatsächlich aussieht. Ich sage Ihnen, was das ändert.</p></div>
+      </div>
+      <div class="feat">
+        <span class="n">03</span>
+        <div><h4 style="color:#F6F3ED;font-size:12pt">Live gehen</h4>
+          <p style="font-size:10pt">Korrekturen einarbeiten, Pflichtangaben füllen, Domain umstellen.
+            Danach gehört die Seite Ihnen – samt Quellcode, ohne Bindung an mich.</p></div>
+      </div>
+    </div>
+
+    <div style="margin-top:auto;margin-bottom:auto;padding:12mm 0">
+      <div style="border-left:.8mm solid var(--cyan);padding-left:8mm;max-width:150mm">
+        <p style="font-family:var(--fd);font-weight:800;font-size:19pt;line-height:1.18;letter-spacing:-.03em;color:#F6F3ED">
+          Die Seite existiert bereits.<br>
+          Die einzige offene Frage ist,<br>
+          ob sie online geht.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <div class="box" style="padding:8mm">
+        <div class="cols c2" style="gap:8mm">
+          <div>
+            <p class="mono" style="margin-bottom:3mm">Entwurf ansehen</p>
+            <p style="font-family:var(--fd);font-weight:700;font-size:12pt;color:#00A9E0">
+              <span class="ph">Vorschau-Adresse</span></p>
+          </div>
+          <div>
+            <p class="mono" style="margin-bottom:3mm">Rückfragen</p>
+            <p style="font-family:var(--fd);font-weight:700;font-size:11pt;color:#F6F3ED;line-height:1.6">
+              <span class="ph">Ihr Name</span><br>
+              <span class="ph">Telefon</span><br>
+              <span class="ph">E-Mail</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bar" style="margin-top:7mm"><i></i><i></i><i></i><i></i></div>
+      <p class="mono" style="margin-top:4mm;margin-bottom:8mm;text-align:center;letter-spacing:.3em">
+        Danke fürs Lesen bis hierher.
+      </p>
+    </div>
+  </div>
+  <div class="foot" style="border:0"><span>MARE-Print · Entwurf &amp; Angebot</span><span>Seite 9</span></div>
+</section>
+
+</body>
+</html>
