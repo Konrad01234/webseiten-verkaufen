@@ -10,6 +10,10 @@ sites/
 └── b2b-hypo-service/   B2B Hypo Service GmbH – Finanzierungs-Services B2B (statisches HTML + CSS + JS)
 ```
 
+Screenshots und Präsentationsbilder zu den Seiten liegen unter
+`screenshots/<name>/` – bewusst außerhalb von `sites/`, damit sie nicht
+mit deployed werden.
+
 ## Vercel-Setup
 
 Für jede Seite ein eigenes Vercel-Projekt:

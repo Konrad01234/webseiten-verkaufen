@@ -664,9 +664,11 @@ section { position: relative; }
 
 /* ── Platzhalter-Auszeichnung ────────────────────────────────────────── */
 .ph {
-  border-bottom: 1px dashed rgba(255,181,71,.9);
-  background: rgba(255,181,71,.12);
-  padding: 0 .18em; border-radius: 3px; color: inherit;
+  border-bottom: 1px dotted rgba(176,124,32,.7);
+  color: inherit;
+}
+.sec-dark .ph, .hero .ph, .page-hero .ph, .footer .ph, .card-dark .ph {
+  border-bottom-color: rgba(255,181,71,.55);
 }
 .note-box {
   border-left: 3px solid var(--accent); background: rgba(255,181,71,.10);

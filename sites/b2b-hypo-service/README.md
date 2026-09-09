@@ -83,6 +83,12 @@ Konkret zu ersetzen:
 > Rechtsberatung. Beide Texte vor dem Livegang juristisch prüfen lassen – besonders,
 > falls erlaubnispflichtige Tätigkeiten nach GewO ausgeübt werden.
 
+## Screenshots
+
+Aufnahmen aller Seiten sowie drei fertige Präsentationsbilder liegen unter
+`screenshots/b2b-hypo-service/` (außerhalb von `sites/`, damit Vercel sie nicht
+mit ausliefert). Details siehe `screenshots/b2b-hypo-service/README.md`.
+
 ## Lokal testen
 
 ```bash
