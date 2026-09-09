@@ -167,7 +167,8 @@ em { font-style: italic; }
 .brand-name { font-family: var(--serif); font-size: 1.12rem; color: var(--ink); letter-spacing: -.01em; }
 .brand-sub { font-size: .62rem; letter-spacing: .21em; text-transform: uppercase; color: var(--muted); }
 
-.nav-links { display: flex; align-items: center; gap: .3rem; }
+.nav-links { display: flex; align-items: center; gap: .3rem; flex-wrap: nowrap; }
+.nav-links a { white-space: nowrap; }
 .nav-links a {
   position: relative; padding: .5rem .85rem; border-radius: 100px;
   font-size: .89rem; font-weight: 500; color: var(--text); text-decoration: none;
@@ -188,7 +189,7 @@ em { font-style: italic; }
 }
 .nav-toggle svg { width: 20px; height: 20px; }
 
-@media (max-width: 940px) {
+@media (max-width: 1099px) {
   .nav-links { display: none; }
   .nav-toggle { display: inline-flex; }
 }
