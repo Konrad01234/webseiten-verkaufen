@@ -17,6 +17,7 @@ in Aachen (mit zweitem Standort in Krefeld). **Schwerpunkt der Seite: Baufinanzi
 | `datenschutz.html` | Datenschutzerklärung, passend zur tatsächlich eingesetzten Technik |
 | `styles.css` | Gemeinsames Stylesheet (Design-System) |
 | `app.js` | Navigation, Reveals, Zähler, Akkordeon, Formular, Cookie-Hinweis |
+| `vorschau.html` | **Eigenständige Vorschau:** alle 8 Seiten, CSS und JS in einer einzigen Datei, Navigation clientseitig. Zum Teilen ohne Deployment. |
 
 ## Design
 
@@ -39,6 +40,24 @@ in Aachen (mit zweitem Standort in Krefeld). **Schwerpunkt der Seite: Baufinanzi
 - Das Anfrageformular sendet **nichts an einen Server**: Es baut im Browser eine
   vorausgefüllte E-Mail (`mailto:`), die der Nutzer selbst absendet.
 - Cookie-Hinweis speichert die Auswahl nur im `localStorage` – kein Tracking.
+
+## Vorschau ohne Deployment
+
+`vorschau.html` enthält die komplette Website in einer Datei – nichts wird nachgeladen
+(einzige Ausnahme: Google Fonts, siehe unten). Damit lässt sie sich über einen
+HTML-Proxy direkt aus GitHub anzeigen:
+
+```
+https://htmlpreview.github.io/?https://github.com/Konrad01234/webseiten-verkaufen/blob/claude/fair-konzept-website-5dlek8/sites/fair-konzept/vorschau.html
+```
+
+Neu erzeugen lässt sie sich aus den Einzelseiten; sie ist eine generierte Datei und
+sollte nach inhaltlichen Änderungen an den Seiten neu gebaut werden.
+
+> **Warum nicht GitHub Pages?** Pages ist in diesem Repo nicht aktiviert; alle bisherigen
+> Pages-Workflow-Läufe sind mit „Resource not accessible by integration" gescheitert, weil
+> das Actions-Token keine Pages-Site anlegen darf. Das lässt sich nur einmalig manuell
+> lösen: Repo → Settings → Pages → Source auf „GitHub Actions" stellen.
 
 ## Lokal testen
 
