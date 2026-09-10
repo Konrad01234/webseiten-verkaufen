@@ -17,10 +17,11 @@ dieselben Schriften.
 Alle offenen Felder sind im PDF **gelb hinterlegt**:
 
 * Seite 1 – Telefon, E-Mail, Gültigkeitsdatum
-* Seite 8 – Einmalbetrag, laufende Kosten, Fertigstellungszeitraum
 * Seite 9 – Vorschau-Adresse der Website, Telefon, E-Mail
 
-Der Absendername (Konrad Range) steht bereits auf Seite 1, 2 und 9.
+Bereits gesetzt: Absendername Konrad Range (Seite 1, 2, 9) sowie die
+Konditionen auf Seite 8 – 1.000 € einmalig, keine laufenden Kosten,
+Fertigstellung innerhalb von sieben Tagen ab vollständigen Angaben.
 
 Bearbeitet werden sie in `verkaufsunterlage.html` (Suche nach `class="ph"`),
 danach das PDF neu erzeugen.
