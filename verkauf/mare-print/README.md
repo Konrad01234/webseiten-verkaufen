@@ -16,11 +16,14 @@ dieselben Schriften.
 
 Das Dokument ist vollständig ausgefüllt – es enthält keine Platzhalter mehr.
 
-* Kontakt: Konrad Range, +49 1523 6863496 (Seite 1 und 9)
+* Absender: Konrad Range (Seite 1 und 9), ohne Kontaktdaten
 * Konditionen (Seite 8): 1.000 € einmalig, keine laufenden Kosten,
   Fertigstellung innerhalb von sieben Tagen ab vollständigen Angaben
-* Bewusst nicht enthalten: E-Mail-Adresse, Vorschau-Link, Gültigkeitsdatum.
-  Der Entwurf wird auf Anruf freigeschaltet.
+* Bewusst nicht enthalten: Telefonnummer, E-Mail-Adresse, Vorschau-Link,
+  Gültigkeitsdatum. Das Dokument wird über WhatsApp verschickt – der
+  Rückkanal ist also der Chat selbst, die Schlussseite fordert genau dazu auf
+  ("Schreiben Sie mir einfach zurück"). Wird es je anders versendet, muss ein
+  Kontaktweg ergänzt werden.
 
 Änderungen werden in `verkaufsunterlage.html` gemacht, danach das PDF neu
 erzeugen.
