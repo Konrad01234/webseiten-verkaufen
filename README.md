@@ -7,7 +7,7 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 ```
 sites/
 ├── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
-└── fair-konzept/  FAIR konzept – unabhängige Finanzberatung Aachen (statisches HTML + CSS + JS)
+└── fair-konzept/  FAIR konzept – Baufinanzierung & Finanzberatung Aachen/Krefeld (statisches HTML + CSS + JS)
 ```
 
 ## Vercel-Setup
