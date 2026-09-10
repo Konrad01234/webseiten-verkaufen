@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Baufinanzierungsrechner | Bankshop Broderstorf</title>
+  <meta name="description" content="Monatliche Rate, Restschuld und Laufzeit Ihrer Baufinanzierung berechnen – inklusive Kaufnebenkosten für Mecklenburg-Vorpommern. Kostenlos und ohne Anmeldung." />
+  <meta name="theme-color" content="#07182a" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+<body>
+
+  <div id="nav-overlay" role="dialog" aria-label="Navigation" aria-hidden="true">
+    <button class="ov-close" aria-label="Menü schließen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <a href="index.html">Start</a>
+    <a href="leistungen.html">Leistungen</a>
+    <a href="rechner.html">Rechner</a>
+    <a href="ueber-uns.html">Über uns</a>
+    <a href="kontakt.html">Kontakt</a>
+    <div class="ov-foot">
+      Am Handelspark 4 · 18184 Broderstorf<br>
+      <a href="tel:+4938204691166">038204 69 11 66</a>
+    </div>
+  </div>
+
+  <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+  <div class="topbar">
+    <div class="wrap">
+      <a href="tel:+4938204691166" aria-label="Anrufen">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+        038204 69 11 66
+      </a>
+      <div class="tb-right">
+        <span>Am Handelspark 4 · 18184 Broderstorf</span>
+        <span>Beratung vor Ort &amp; bundesweit</span>
+      </div>
+    </div>
+  </div>
+
+  <header class="nav">
+    <div class="wrap">
+      <a href="index.html" class="brand" aria-label="Bankshop Broderstorf – Startseite">
+        <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#07182a"/>
+          <path d="M24 11 36 20v17H12V20l12-9Z" stroke="#e3b465" stroke-width="2.2" stroke-linejoin="round"/>
+          <path d="M19 37V26h10v11" stroke="#e3b465" stroke-width="2.2" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-text"><b>Bankshop</b><span>Broderstorf</span></span>
+      </a>
+      <nav class="nav-links" aria-label="Hauptnavigation">
+        <a href="index.html">Start</a>
+        <a href="leistungen.html">Leistungen</a>
+        <a href="rechner.html" class="active">Rechner</a>
+        <a href="ueber-uns.html">Über uns</a>
+        <a href="kontakt.html">Kontakt</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="kontakt.html" class="btn btn-primary btn-desktop">Termin vereinbaren</a>
+        <button class="nav-toggle" aria-label="Menü öffnen" aria-expanded="false" aria-controls="nav-overlay">
+          <svg class="ic-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+          <svg class="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-head">
+      <div class="wrap">
+        <p class="breadcrumb"><a href="index.html">Start</a> · Rechner</p>
+        <span class="eyebrow">Kostenlos &amp; ohne Anmeldung</span>
+        <h1>Finanzierungsrechner</h1>
+        <p class="lede">Spielen Sie Ihre Zahlen durch: Rate, Restschuld, Zinskosten und Laufzeit
+          rechnen sich live mit. So bekommen Sie ein Gefühl dafür, was zu Ihnen passt –
+          bevor wir gemeinsam ins Detail gehen.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="calc reveal" id="calc">
+          <div class="calc-grid">
+            <div class="calc-inputs">
+              <div class="field">
+                <label for="c-preis">Kaufpreis / Baukosten <span class="val" data-for="c-preis" data-unit="€">320.000 €</span></label>
+                <input type="range" id="c-preis" min="50000" max="1200000" step="5000" value="320000" />
+                <p class="hint">Reiner Kaufpreis der Immobilie bzw. Grundstück plus Baukosten.</p>
+              </div>
+
+              <div class="field">
+                <label for="c-neben">Kaufnebenkosten <span class="val" data-for="c-neben" data-unit="%">12 %</span></label>
+                <input type="range" id="c-neben" min="0" max="18" step="0.5" value="12" />
+                <p class="hint">Ohne Makler ca. 8&nbsp;%, mit Makler ca. 11–12&nbsp;% des Kaufpreises (siehe Tabelle unten).</p>
+              </div>
+
+              <div class="field">
+                <label for="c-ek">Eigenkapital <span class="val" data-for="c-ek" data-unit="€">60.000 €</span></label>
+                <input type="range" id="c-ek" min="0" max="500000" step="5000" value="60000" />
+                <p class="hint">Erspartes, Bausparguthaben, Eigenleistung oder ein bereits bezahltes Grundstück.</p>
+              </div>
+
+              <div class="field">
+                <label for="c-zins">Sollzins p. a. <span class="val" data-for="c-zins" data-unit="%" data-dec="1">3,60 %</span></label>
+                <input type="range" id="c-zins" min="1" max="8" step="0.05" value="3.6" />
+                <p class="hint">Annahme zur Orientierung – Ihren tatsächlichen Zins ermitteln wir im Bankenvergleich.</p>
+              </div>
+
+              <div class="field">
+                <label for="c-tilgung">Anfängliche Tilgung <span class="val" data-for="c-tilgung" data-unit="%" data-dec="1">2,00 %</span></label>
+                <input type="range" id="c-tilgung" min="1" max="8" step="0.25" value="2" />
+                <p class="hint">Unter 2&nbsp;% dauert die Rückzahlung sehr lange. Viele Banken erwarten heute mindestens 2&nbsp;%.</p>
+              </div>
+
+              <div class="field" style="margin-bottom:0">
+                <label for="c-bindung">Zinsbindung <span class="val" data-for="c-bindung" data-unit="Jahre">10 Jahre</span></label>
+                <input type="range" id="c-bindung" min="5" max="30" step="5" value="10" />
+                <p class="hint">Nach 10 Jahren haben Sie ein gesetzliches Sonderkündigungsrecht (§ 489 BGB).</p>
+              </div>
+            </div>
+
+            <div class="calc-out">
+              <div class="result-main">
+                <span>Monatliche Rate</span>
+                <b id="o-rate">–</b>
+              </div>
+
+              <div class="result-rows">
+                <div><span>Darlehenssumme</span><b id="o-darlehen">–</b></div>
+                <div><span>Gesamtkosten inkl. Nebenkosten</span><b id="o-gesamt">–</b></div>
+                <div><span>davon Kaufnebenkosten</span><b id="o-neben">–</b></div>
+                <div><span>Beleihung (Darlehen / Kaufpreis)</span><b id="o-quote">–</b></div>
+                <div><span>Restschuld nach Zinsbindung</span><b id="o-restschuld">–</b></div>
+                <div><span>Zinsen bis zur Volltilgung</span><b id="o-zinsen">–</b></div>
+                <div><span>Gesamtlaufzeit</span><b id="o-laufzeit">–</b></div>
+              </div>
+
+              <svg class="calc-chart" id="o-chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-labelledby="o-chart-label"></svg>
+              <p id="o-chart-label" class="calc-note" style="margin-top:-14px">Restschuldverlauf</p>
+
+              <p class="calc-note" id="o-warn" style="display:none;color:#f0c987;margin-top:12px"></p>
+
+              <p style="margin:22px 0 0">
+                <a href="#" class="btn btn-primary" id="calc-send">Angebot zu diesen Werten anfordern</a>
+              </p>
+
+              <p class="calc-note" style="margin-top:18px">
+                Unverbindliche Beispielrechnung für ein Annuitätendarlehen, ohne Gebühren,
+                Bereitstellungszinsen und Sondertilgungen. Kein Angebot im Sinne des § 491 BGB.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nebenkosten -->
+    <section class="tinted">
+      <div class="wrap">
+        <div class="split wide-l">
+          <div class="reveal-l">
+            <span class="eyebrow">Mecklenburg-Vorpommern</span>
+            <h2>Die Kaufnebenkosten nicht vergessen</h2>
+            <p>Sie sind der häufigste Grund, warum Finanzierungen kippen: Neben dem Kaufpreis fallen
+              Steuern und Gebühren an, die Banken ungern mitfinanzieren. Diese Positionen sollten
+              möglichst aus Eigenkapital bezahlt werden.</p>
+            <div class="card" style="padding:0;overflow:hidden">
+              <table class="hours-table" style="width:100%;font-size:.95rem">
+                <tbody style="color:var(--text)">
+                  <tr style="border-bottom:1px solid var(--line)">
+                    <th style="color:var(--text);padding:14px 18px">Grunderwerbsteuer M-V</th>
+                    <td style="color:var(--ink);padding:14px 18px;font-weight:600">6,00 %</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid var(--line)">
+                    <th style="color:var(--text);padding:14px 18px">Notar</th>
+                    <td style="color:var(--ink);padding:14px 18px;font-weight:600">ca. 1,5 %</td>
+                  </tr>
+                  <tr style="border-bottom:1px solid var(--line)">
+                    <th style="color:var(--text);padding:14px 18px">Grundbucheintrag</th>
+                    <td style="color:var(--ink);padding:14px 18px;font-weight:600">ca. 0,5 %</td>
+                  </tr>
+                  <tr>
+                    <th style="color:var(--text);padding:14px 18px">Maklercourtage (Käuferanteil, falls anfällt)</th>
+                    <td style="color:var(--ink);padding:14px 18px;font-weight:600">ca. 3,57 %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p style="margin-top:16px;font-size:.88rem;color:var(--muted)">
+              Richtwerte zur Orientierung. Notar- und Grundbuchkosten richten sich nach dem GNotKG
+              und sinken prozentual mit steigendem Kaufpreis; die Courtage ist frei verhandelbar und
+              wird seit Dezember 2020 in der Regel zwischen Käufer und Verkäufer geteilt.
+            </p>
+          </div>
+
+          <div class="reveal-r">
+            <div class="card">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M6 8h9a3 3 0 0 1 0 6H6"/><path d="M6 8H5M6 14H5"/></svg></div>
+              <h3>Warum die Restschuld wichtiger ist als die Rate</h3>
+              <p>Zwei Finanzierungen mit derselben Monatsrate können nach zehn Jahren 40.000 Euro
+                Restschuld auseinanderliegen. Entscheidend ist die Tilgung – und die sieht man
+                der Rate allein nicht an.</p>
+              <p style="margin-bottom:0">Probieren Sie es aus: Erhöhen Sie im Rechner die Tilgung um
+                einen halben Prozentpunkt und beobachten Sie, wie Restschuld und Gesamtlaufzeit
+                reagieren.</p>
+            </div>
+
+            <div class="card" style="margin-top:22px">
+              <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.5-7-10a7 7 0 0 1 14 0c0 5.5-7 10-7 10Z"/><circle cx="12" cy="11" r="2.6"/></svg></div>
+              <h3>Faustregel für Ihr Budget</h3>
+              <p style="margin-bottom:0">Rate plus Rücklage für Instandhaltung sollten dauerhaft
+                nicht mehr als etwa 35 Prozent Ihres Nettohaushaltseinkommens binden. Wir rechnen
+                mit Ihnen gemeinsam eine belastbare Haushaltsrechnung – inklusive der Posten,
+                die im ersten Überschwang gern vergessen werden.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Glossar -->
+    <section>
+      <div class="wrap">
+        <div class="sec-head center reveal">
+          <span class="eyebrow">Klartext</span>
+          <h2>Die wichtigsten Begriffe</h2>
+        </div>
+        <div class="faq reveal">
+          <details open>
+            <summary>Annuitätendarlehen</summary>
+            <p>Die Standardform der Baufinanzierung: Sie zahlen eine gleichbleibende Monatsrate
+              aus Zins und Tilgung. Weil die Restschuld sinkt, wird der Zinsanteil jeden Monat
+              kleiner und der Tilgungsanteil größer – die Rückzahlung beschleunigt sich also
+              von selbst.</p>
+          </details>
+          <details>
+            <summary>Sollzins und Effektivzins</summary>
+            <p>Der Sollzins ist der reine Zinssatz für das Darlehen. Der Effektivzins enthält
+              zusätzlich Kosten wie Bearbeitungsgebühren oder die Wirkung der Zahlungsweise und
+              ist deshalb die ehrlichere Vergleichsgröße zwischen zwei Angeboten.</p>
+          </details>
+          <details>
+            <summary>Beleihungsauslauf</summary>
+            <p>Das Verhältnis von Darlehenssumme zum Beleihungswert der Immobilie. Je niedriger,
+              desto günstiger der Zins. Die Sprünge liegen typischerweise bei 60, 80 und 90 Prozent –
+              manchmal lohnt es sich, mit etwas mehr Eigenkapital knapp unter eine dieser Grenzen
+              zu kommen.</p>
+          </details>
+          <details>
+            <summary>Sondertilgung</summary>
+            <p>Das Recht, zusätzlich zur Rate außerplanmäßig zu tilgen – meist bis 5 Prozent der
+              Darlehenssumme pro Jahr. Kostet bei den meisten Banken keinen Zinsaufschlag und
+              schafft Flexibilität, etwa bei Bonus oder Erbschaft.</p>
+          </details>
+          <details>
+            <summary>Bereitstellungszinsen</summary>
+            <p>Fallen an, wenn das Darlehen bewilligt, aber noch nicht abgerufen ist – typisch beim
+              Neubau. Wichtig ist eine ausreichend lange bereitstellungszinsfreie Zeit; darauf
+              achten wir bei der Auswahl der Bank.</p>
+          </details>
+          <details>
+            <summary>Forward-Aufschlag</summary>
+            <p>Der Zinszuschlag dafür, dass eine Bank Ihnen heutige Konditionen für die Zukunft
+              garantiert. Er wird meist pro Monat Vorlaufzeit berechnet. Ob er sich lohnt, ist
+              eine reine Rechenfrage – und die machen wir für Sie.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta-band">
+      <div class="wrap">
+        <span class="eyebrow">Von der Rechnung zum Angebot</span>
+        <h2>Jetzt echte Konditionen statt Annahmen.</h2>
+        <p class="lede">Der Rechner arbeitet mit Beispielwerten. Ihren tatsächlichen Zins ermitteln
+          wir im Vergleich von über 750 Banken – meist innerhalb von 48 Stunden.</p>
+        <div class="cta-actions">
+          <a href="kontakt.html" class="btn btn-primary btn-lg">Unverbindliches Angebot anfordern</a>
+          <a href="tel:+4938204691166" class="btn btn-ghost-light btn-lg">038204 69 11 66</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="brand" style="margin-bottom:16px">
+            <svg class="brand-mark" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+              <rect x="1.5" y="1.5" width="45" height="45" rx="12" fill="#0d2740"/>
+              <path d="M24 11 36 20v17H12V20l12-9Z" stroke="#e3b465" stroke-width="2.2" stroke-linejoin="round"/>
+              <path d="M19 37V26h10v11" stroke="#e3b465" stroke-width="2.2" stroke-linejoin="round"/>
+            </svg>
+            <span class="brand-text"><b>Bankshop</b><span>Broderstorf</span></span>
+          </a>
+          <p style="max-width:38ch">Unabhängige Baufinanzierung für Rostock, Broderstorf und
+            ganz Mecklenburg-Vorpommern – und auf Wunsch bundesweit.</p>
+          <p class="footer-note">Vermittlung von Immobiliardarlehen gemäß § 34i GewO.
+            Wir vermitteln, wir vergeben keine Kredite.</p>
+        </div>
+        <div>
+          <h4>Seiten</h4>
+          <ul>
+            <li><a href="index.html">Start</a></li>
+            <li><a href="leistungen.html">Leistungen</a></li>
+            <li><a href="rechner.html">Rechner</a></li>
+            <li><a href="ueber-uns.html">Über uns</a></li>
+            <li><a href="kontakt.html">Kontakt</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Rechtliches</h4>
+          <ul>
+            <li><a href="impressum.html">Impressum</a></li>
+            <li><a href="datenschutz.html">Datenschutz</a></li>
+            <li><a href="#" data-cookie-open>Cookie-Einstellungen</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Kontakt</h4>
+          <ul>
+            <li>Am Handelspark 4<br>18184 Broderstorf</li>
+            <li><a href="tel:+4938204691166">038204 69 11 66</a></li>
+            <li><a href="mailto:baufinanz@bankshop-nord.de">baufinanz@bankshop-nord.de</a></li>
+            <li>Mo–Do ab 9 Uhr · Fr bis 15 Uhr</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© <span id="year">2026</span> Bankshop Broderstorf. Alle Rechte vorbehalten.</span>
+        <span>Am Handelspark 4 · 18184 Broderstorf bei Rostock</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="callbar">
+    <a href="tel:+4938204691166">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 3h3l2 5-2 1c1 3 3 5 6 6l1-2 5 2v3a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg>
+      Anrufen
+    </a>
+    <a href="kontakt.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v14H4z"/><path d="m4 6 8 6 8-6"/></svg>
+      Termin
+    </a>
+  </div>
+
+  <div id="cookie-banner" role="dialog" aria-label="Cookie-Hinweis">
+    <p>Diese Website setzt keine Analyse- oder Marketing-Cookies. Gespeichert wird lediglich
+      Ihre Auswahl hier – lokal in Ihrem Browser. Schriftarten werden von Google Fonts geladen.
+      Details in der <a href="datenschutz.html">Datenschutzerklärung</a>.</p>
+    <div class="cb-actions">
+      <button class="btn btn-primary" data-cookie="ok">Verstanden</button>
+      <a class="btn btn-ghost" href="datenschutz.html">Mehr erfahren</a>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
