@@ -16,12 +16,13 @@ dieselben Schriften.
 
 Alle offenen Felder sind im PDF **gelb hinterlegt**:
 
-* Seite 1 – Telefon, E-Mail, Gültigkeitsdatum
-* Seite 9 – Vorschau-Adresse der Website, Telefon, E-Mail
+* Seite 1 – Gültigkeitsdatum (einziges offenes Feld)
 
-Bereits gesetzt: Absendername Konrad Range (Seite 1, 2, 9) sowie die
-Konditionen auf Seite 8 – 1.000 € einmalig, keine laufenden Kosten,
+Bereits gesetzt: Konrad Range und +49 1523 6863496 als Kontakt (Seite 1 und 9)
+sowie die Konditionen auf Seite 8 – 1.000 € einmalig, keine laufenden Kosten,
 Fertigstellung innerhalb von sieben Tagen ab vollständigen Angaben.
+Das Dokument nennt bewusst keine E-Mail-Adresse und keinen Vorschau-Link:
+Der Entwurf wird auf Anruf freigeschaltet.
 
 Bearbeitet werden sie in `verkaufsunterlage.html` (Suche nach `class="ph"`),
 danach das PDF neu erzeugen.
