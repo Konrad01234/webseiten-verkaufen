@@ -12,20 +12,18 @@ dieselben Schriften.
 | `screenshots.js` | Nimmt die Screenshots neu auf |
 | `pdf.js` | Rendert das HTML nach PDF und prüft auf Seitenüberlauf |
 
-## Vor dem Versenden ausfüllen
+## Stand
 
-Alle offenen Felder sind im PDF **gelb hinterlegt**:
+Das Dokument ist vollständig ausgefüllt – es enthält keine Platzhalter mehr.
 
-* Seite 1 – Gültigkeitsdatum (einziges offenes Feld)
+* Kontakt: Konrad Range, +49 1523 6863496 (Seite 1 und 9)
+* Konditionen (Seite 8): 1.000 € einmalig, keine laufenden Kosten,
+  Fertigstellung innerhalb von sieben Tagen ab vollständigen Angaben
+* Bewusst nicht enthalten: E-Mail-Adresse, Vorschau-Link, Gültigkeitsdatum.
+  Der Entwurf wird auf Anruf freigeschaltet.
 
-Bereits gesetzt: Konrad Range und +49 1523 6863496 als Kontakt (Seite 1 und 9)
-sowie die Konditionen auf Seite 8 – 1.000 € einmalig, keine laufenden Kosten,
-Fertigstellung innerhalb von sieben Tagen ab vollständigen Angaben.
-Das Dokument nennt bewusst keine E-Mail-Adresse und keinen Vorschau-Link:
-Der Entwurf wird auf Anruf freigeschaltet.
-
-Bearbeitet werden sie in `verkaufsunterlage.html` (Suche nach `class="ph"`),
-danach das PDF neu erzeugen.
+Änderungen werden in `verkaufsunterlage.html` gemacht, danach das PDF neu
+erzeugen.
 
 ## Neu erzeugen
 
