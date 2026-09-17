@@ -6,7 +6,9 @@ Monorepo mit mehreren eigenständigen Webseiten. Jede Webseite liegt in `sites/<
 
 ```
 sites/
-└── davids/        Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── davids/         Davids im Landhaus – Restaurant Neuss (statisches HTML + CSS + JS)
+├── eiscafefranco/  Eiscafé Franco
+└── hoern-finanz/   Hörn Finanz Vermittlung GmbH – Finanzberatung Sinsheim/Angelbachtal
 ```
 
 ## Vercel-Setup
@@ -16,6 +18,7 @@ Für jede Seite ein eigenes Vercel-Projekt:
 1. In Vercel **Add New Project** → dieses Repo auswählen
 2. **Root Directory** auf den jeweiligen Ordner setzen:
    - Projekt „davids" → Root Directory `sites/davids`
+   - Projekt „hoern-finanz" → Root Directory `sites/hoern-finanz`
 3. **Framework Preset**: `Other` (statisches HTML, kein Build nötig)
 4. Production Branch: `claude/vercel-deployment-branch-VgNvi` (oder den, den du als Default setzt)
 
